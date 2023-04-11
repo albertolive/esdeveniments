@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -o-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#map {
+  height: 100%;
+}
+
+#__next {
+  min-height: 100% !important;
+  position: relative;
+}
+
+.fit {
+  min-height: calc(100vh - 88px);
+}
+
+.next-image-wrapper > span {
+  height: 100% !important;
+}
+
+.reset-this * {
+  font-size: revert;
+  font-weight: revert;
+  font-family: revert;
+  font-style: revert;
+}
+
+.ql-toolbar {
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-radius-topleft: 6px;
+  -moz-border-radius-topright: 6px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.ql-container {
+  -webkit-border-bottom-right-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -moz-border-radius-bottomright: 6px;
+  -moz-border-radius-bottomleft: 6px;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+[type="text"]:focus {
+  box-shadow: inset 0px 0px 0px 0px white;
+}
+
+.select-container input {
+  --tw-border-opacity: 1;
+  border-color: rgb(209 213 219 / var(--tw-border-opacity));
+  box-shadow: inset 0px 0px 0px 0px white;
+}
+
+.select-container input:focus {
+  box-shadow: inset 0px 0px 0px 0px white;
+}
+
+.break-word {
+  word-break: break-word;
+}
+
+#mymap {
+  background: url(/static/images/gMaps.webp);
+  background-size: auto;
+  overflow: hidden;
+}
+
+#mymap iframe {
+  border: 0;
+}
+
+iframe {
+  max-width: 100% !important;
+}
+
+.blurred-image {
+  image-rendering: -moz-crisp-edges; /* Firefox */
+  image-rendering: -o-crisp-edges; /* Opera */
+  image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+
+#ad-card-slot {
+  min-height: 240px;
+  min-width: 280px;
+}
+
+#ad-article-slot {
+  min-height: 280px;
+  min-width: 280px;
+}
+
+.ql-editor > p {
+  margin-top: 1.3333333em !important;
+  margin-bottom: 1.3333333em !important;
+}
+
+.ql-editor > ul {
+  margin-top: 1.3333333em !important;
+  margin-bottom: 1.3333333em !important;
+}
+
+.ql-editor > ul > li {
+  margin-top: 0.6666667em;
+  margin-bottom: 0.6666667em;
+}

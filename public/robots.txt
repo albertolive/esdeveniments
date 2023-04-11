@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /404
+
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.culturacardedeu.com
+
+# Sitemaps
+Sitemap: https://www.culturacardedeu.com/sitemap.xml
+Sitemap: https://www.culturacardedeu.com/server-sitemap.xml
