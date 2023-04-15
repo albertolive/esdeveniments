@@ -43,22 +43,20 @@ export default function SubMenu() {
 
   return (
     <>
-      <div className="min-h-[325px] lg:min-h-[100px]">
-        <AdArticle slot="6387726014" />
-      </div>
       <div className="flex justify-center my-4">
         <div className="w-full px-2">
           <Select
             options={REGIONS}
             value={initialRegionValue}
-            onChange={({ value }) => push(`/${value}`)}
+            onChange={({ value = "/" }) => push(`/${value}`)}
           />
         </div>
         <div className="w-full px-2">
           <Select
             options={TOWNS}
             value={initialTownValue}
-            onChange={({ value }) => push(`/${region}/${value}`)}
+            onChange={({ value = `/${region}` }) => push(`/${region}/${value}`)}
+            isDisabled={!initialRegionValue}
           />
         </div>
         <div className="w-full px-2">
@@ -69,6 +67,9 @@ export default function SubMenu() {
             isDisabled={!initialByDateValue}
           />
         </div>
+      </div>
+      <div className="min-h-[325px] lg:min-h-[100px]">
+        <AdArticle slot="6387726014" />
       </div>
     </>
   );

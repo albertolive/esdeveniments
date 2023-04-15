@@ -46,7 +46,7 @@ export default function SelectComponent({
 
   const handleChange = (value) => {
     setSelectedOption(value);
-    onChange(value);
+    onChange(value || "");
   };
 
   return (
@@ -62,6 +62,7 @@ export default function SelectComponent({
           id={id}
           instanceId={id}
           isSearchable
+          isClearable
           autoComplete
           formatCreateLabel={(inputValue) => `Afegir nou lloc: "${inputValue}"`}
           placeholder="Selecciona una opció"

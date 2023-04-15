@@ -37,7 +37,8 @@ const nextConfig = {
       "https://www.cinemaesbarjo.cat/*",
       "https://www.cardedeu.cat",
       "http://www.teatreauditoricardedeu.cat",
-      "www.ayrshare.com"
+      "www.ayrshare.com",
+      "www.cardedeu.cat",
     ],
   },
   async headers() {

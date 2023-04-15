@@ -1,32 +1,23 @@
 import Link from "next/link";
-import Script from "next/script";
 import dynamic from "next/dynamic";
 import { monthsName, generateJsonData } from "@utils/helpers";
-import List from "@components/ui/list";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import SubMenu from "@components/ui/common/subMenu";
-import Meta from "@components/partials/seo-meta";
-import { capitalizeFirstLetter } from "@utils/normalize";
+import { addArticleToMonth, getTownLabel } from "@utils/normalize";
 
-const NoEventsFound = dynamic(
-  () => import("@components/ui/common/noEventsFound"),
-  {
-    loading: () => "",
-  }
-);
-
-const Card = dynamic(() => import("@components/ui/card"), {
+const Events = dynamic(() => import("@components/ui/events"), {
   loading: () => "",
 });
 
-const generateData = (byDate, town, townCapitalized, currentYear) => {
+const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
+
+const generateData = (byDate, town, townLabel, currentYear) => {
   if (byDate === "avui") {
     return {
-      title: `Què fer ${byDate} a ${townCapitalized}`,
+      title: `Què fer ${byDate} a ${townLabel}`,
       subTitle: `Aprofita el teu temps i troba el que necessites: el millor del dia al teu abast.`,
       description: (
         <>
-          Les coses per fer a {townCapitalized} no descansen ni un dia.{" "}
+          Les coses per fer a {townLabel} no descansen ni un dia.{" "}
           <Link href={`/${town}/setmana`} prefetch={false}>
             <a className="font-medium text-black underline">Cada setmana</a>
           </Link>
@@ -34,44 +25,45 @@ const generateData = (byDate, town, townCapitalized, currentYear) => {
           racons. Perquè us sigui més fàcil la tria, us ajudem a trobar el pla
           ideal per a vosaltres: cinema alternatiu, l&apos;exposició imperdible,
           l&apos;obra de teatre de la qual tothom parla, mercats, activitats
-          familiars... Us oferim tota la informació per gaudir de{" "}
-          {townCapitalized} i de la seva enorme activitat cultural. No cal
-          moderació, la podeu gaudir a l&apos;engròs.
+          familiars... Us oferim tota la informació per gaudir de {townLabel} i
+          de la seva enorme activitat cultural. No cal moderació, la podeu
+          gaudir a l&apos;engròs.
         </>
       ),
-      metaTitle: `Què fer ${byDate} a ${townCapitalized}`,
-      metaDescription: `Què fer ${byDate} a ${townCapitalized}. Us oferim tota la informació per gaudir de ${townCapitalized} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar. . Us oferim tota la informació per gaudir de ${townCapitalized} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar.`,
+      metaTitle: `Què fer ${byDate} a ${townLabel}`,
+      metaDescription: `Què fer ${byDate} a ${townLabel}. Us oferim tota la informació per gaudir de ${townLabel} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar. . Us oferim tota la informació per gaudir de ${townLabel} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar.`,
     };
   } else if (byDate === "setmana") {
     return {
-      title: `Coses per fer a ${townCapitalized} aquesta ${byDate}`,
-      subTitle: `Us proposem activitats d'oci i cultura a ${townCapitalized} per a tots els gustos i butxaques.`,
+      title: `Coses per fer a ${townLabel} aquesta ${byDate}`,
+      subTitle: `Us proposem activitats d'oci i cultura a ${townLabel} per a tots els gustos i butxaques.`,
       description: `Teniu ganes de gaudir de aquesta setmana? Esteu en el lloc correcte! Us hem fet
       una selecció dels plans d'aquesta setmana que engloben el millor de
       tots els àmbits i per a tots els públics. Teatre, cinema, música, art i
-      altres excuses per no parar de descobrir ${townCapitalized}!`,
-      metaTitle: `Què fer aquesta ${byDate} a ${townCapitalized}`,
-      metaDescription: `Què fer aquesta ${byDate} a ${townCapitalized}. Teniu ganes de gaudir de aquesta setmana? Teatre, cinema, música, art i altres excuses per no parar de descobrir ${townCapitalized}!`,
+      altres excuses per no parar de descobrir ${townLabel}!`,
+      metaTitle: `Què fer aquesta ${byDate} a ${townLabel}`,
+      metaDescription: `Què fer aquesta ${byDate} a ${townLabel}. Teniu ganes de gaudir de aquesta setmana? Teatre, cinema, música, art i altres excuses per no parar de descobrir ${townLabel}!`,
     };
   } else if (byDate === "cap-de-setmana") {
     return {
-      title: `Què fer aquest cap de setmana a ${townCapitalized}`,
-      subTitle: `Les millors propostes per esprémer al màxim el cap de setmana a ${townCapitalized}, de divendres a diumenge.`,
-      description: `Hem bussejat en l'agenda cultural de ${townCapitalized} i us portem una tria
+      title: `Què fer aquest cap de setmana a ${townLabel}`,
+      subTitle: `Les millors propostes per esprémer al màxim el cap de setmana a ${townLabel}, de divendres a diumenge.`,
+      description: `Hem bussejat en l'agenda cultural de ${townLabel} i us portem una tria
       del milloret que podreu fer aquest cap de setmana. Art, cinema,
       teatre... No teniu excusa, us espera un cap de setmana increïble sense
-      moure-us de ${townCapitalized}.`,
-      metaTitle: `Què fer aquest cap de setmana a ${townCapitalized}`,
-      metaDescription: `Què fer aquest cap de setmana a ${townCapitalized}. Les millors propostes culturals per esprémer al màxim el cap de setmana, de divendres a diumenge.`,
+      moure-us de ${townLabel}.`,
+      metaTitle: `Què fer aquest cap de setmana a ${townLabel}`,
+      metaDescription: `Què fer aquest cap de setmana a ${townLabel}. Les millors propostes culturals per esprémer al màxim el cap de setmana, de divendres a diumenge.`,
     };
   }
 
+  const normalizedMonth = addArticleToMonth("març");
+
   return {
-    title: `Agenda ${townCapitalized} ${currentYear}`,
-    subTitle: `Les millors coses per fer a ${townCapitalized}: mercats, exposicions,
+    title: `Agenda ${townLabel} ${currentYear}`,
+    subTitle: `Les millors coses per fer a ${townLabel}: mercats, exposicions,
     descobriments, passejades, concerts, museus, teatre... Aquests són els
-    millors plans per gaudir de ${townCapitalized} al${" "}
-    ${monthsName[new Date().getMonth()]}!`,
+    millors plans per gaudir de ${townLabel} ${normalizedMonth}!`,
     description: (
       <>
         Us donem un ventall de possibilitats perquè no us quedi temps per
@@ -87,12 +79,12 @@ const generateData = (byDate, town, townCapitalized, currentYear) => {
         <Link href={`/${town}cap-de-setmana`} prefetch={false}>
           <a className="font-medium text-black underline">el cap de setmana</a>
         </Link>{" "}
-        a {townCapitalized}. Ja no teniu cap excusa, per no estar al dia, de tot
-        el que passa a {townCapitalized} vinculat a la cultura!
+        a {townLabel}. Ja no teniu cap excusa, per no estar al dia, de tot el
+        que passa a {townLabel} vinculat a la cultura!
       </>
     ),
     metaTitle: `Agenda ${currentYear}`,
-    metaDescription: `Què fer és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${townCapitalized}. L'agenda és col·laborativa.`,
+    metaDescription: `Què fer és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${townLabel}. L'agenda és col·laborativa.`,
   };
 };
 
@@ -106,51 +98,32 @@ export default function App(props) {
 
   if (error) return <div>failed to load</div>;
 
-  const jsonData = events
+  const jsonEvents = events
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));
 
-  const { town, byDate, currentYear } = props;
-  const townCapitalized = capitalizeFirstLetter(town);
+  const { town, byDate, region, currentYear } = props;
+  const townLabel = getTownLabel(town);
   const { title, subTitle, description, metaTitle, metaDescription } =
-    generateData(byDate, town, townCapitalized, currentYear);
+    generateData(byDate, town, townLabel, currentYear);
+  const canonical = `${siteUrl}/${region}/${town}/${byDate}`;
 
   return (
-    <>
-      <Script
-        id="avui-script"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
-      />
-      <Meta
-        title={`${metaTitle} - Què fer`}
-        description={`${metaDescription}`}
-        canonical="https://www.culturacardedeu.com/avui-a-cardedeu"
-      />
-      <SubMenu />
-      <div className="reset-this">
-        <h1 className="mb-4 block text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-          {title}
-        </h1>
-      </div>
-      <p className="mb-4 font-bold">{subTitle}</p>
-      <p className="mb-4">{description}</p>
-      {noEventsFound && (
-        <NoEventsFound
-          title={`Ho sentim, però no hi ha esdeveniments ${byDate} a ${townCapitalized}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`}
-        />
-      )}
-      <List events={events}>
-        {(event) => (
-          <Card
-            key={event.id}
-            event={event}
-            isLoading={isLoading}
-            isValidating={isValidating}
-          />
-        )}
-      </List>
-    </>
+    <Events
+      events={events}
+      jsonEvents={jsonEvents}
+      metaTitle={metaTitle}
+      metaDescription={metaDescription}
+      title={title}
+      subTitle={subTitle}
+      description={description}
+      noEventsFound={noEventsFound}
+      byDate={byDate}
+      townLabel={townLabel}
+      canonical={canonical}
+      isLoading={isLoading}
+      isValidating={isValidating}
+    />
   );
 }
 

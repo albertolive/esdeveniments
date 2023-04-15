@@ -55,9 +55,10 @@ export default function Card({ event, isLoading, isValidating }) {
 
   const { description, icon } = event.weather || {};
   const image = event.imageUploaded ? event.imageUploaded : event.images[0];
-  const title = event.title.length > 70
-    ? event.title.substring(0, 45) + "..."
-    : event.title;
+  const title =
+    event.title.length > 70
+      ? event.title.substring(0, 45) + "..."
+      : event.title;
   const location =
     event.location.length > 45
       ? event.location.substring(0, 45) + "..."
@@ -67,7 +68,7 @@ export default function Card({ event, isLoading, isValidating }) {
   if (isValidating) <IsLoadingComponent />;
 
   return (
-    <Link href={`/${event.slug}`} passHref prefetch={false}>
+    <Link href={`/e/${event.slug}`} passHref prefetch={false}>
       <div className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 max-h-[240px]">
         <div className="flex h-full">
           <div className="flex-1 h-full next-image-wrapper">
@@ -85,11 +86,20 @@ export default function Card({ event, isLoading, isValidating }) {
                   ? `Del ${event.formattedStart} al ${event.formattedEnd}`
                   : `${event.nameDay}, ${event.formattedStart}`}
               </div>
-              {icon && <div className="flex mb-4 lg:absolute lg:right-2 lg:mb-0"><NextImage alt={description} src={icon} width="30px" height="30px" /></div>}
+              {icon && (
+                <div className="flex mb-4 lg:absolute lg:right-2 lg:mb-0">
+                  <NextImage
+                    alt={description}
+                    src={icon}
+                    width="30px"
+                    height="30px"
+                  />
+                </div>
+              )}
             </div>
 
             <p className="block mt-1 text-sm lg:text-xl leading-tight font-bold text-black hover:underline">
-              <a href={`/${event.slug}`}>{title}</a>
+              <a href={`/e/${event.slug}`}>{title}</a>
             </p>
             <p className="flex mt-2 mb-4 text-sm sm:text-base text-gray-900">
               <LocationMarkerIcon className="h-6 w-6" />
