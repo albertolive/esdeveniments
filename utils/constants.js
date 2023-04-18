@@ -576,7 +576,6 @@ export const TOWNS = [
 
 export const BYDATES = [
   // Replace it with a dynamic data source
-  { value: "agenda", label: "Agenda" },
   { value: "avui", label: "Avui" },
   { value: "setmana", label: "Aquesta setmana" },
   { value: "cap-de-setmana", label: "Cap de setmana" },

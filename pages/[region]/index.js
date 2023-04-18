@@ -1,13 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { monthsName, generateJsonData } from "@utils/helpers";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import {
-  getTownLabel,
-  getRegionLabel,
-  addArticleToMonth,
-  fixArticles,
-} from "@utils/normalize";
+import { getTownLabel, getRegionLabel, fixArticles } from "@utils/normalize";
 
 const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
 

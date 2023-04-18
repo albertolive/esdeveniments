@@ -56,36 +56,6 @@ const generateData = (byDate, town, townLabel, currentYear) => {
       metaDescription: `Què fer aquest cap de setmana a ${townLabel}. Les millors propostes culturals per esprémer al màxim el cap de setmana, de divendres a diumenge.`,
     };
   }
-
-  const normalizedMonth = addArticleToMonth("març");
-
-  return {
-    title: `Agenda ${townLabel} ${currentYear}`,
-    subTitle: `Les millors coses per fer a ${townLabel}: mercats, exposicions,
-    descobriments, passejades, concerts, museus, teatre... Aquests són els
-    millors plans per gaudir de ${townLabel} ${normalizedMonth}!`,
-    description: (
-      <>
-        Us donem un ventall de possibilitats perquè no us quedi temps per
-        avorrir-vos. La cultura no descansa. Podeu veure què passa{" "}
-        <Link href={`/${town}/avui`} prefetch={false}>
-          <a className="font-medium text-black underline">avui</a>
-        </Link>
-        ,{" "}
-        <Link href={`/${town}/setmana`} prefetch={false}>
-          <a className="font-medium text-black underline">aquesta setmana</a>
-        </Link>
-        , o ve,{" "}
-        <Link href={`/${town}cap-de-setmana`} prefetch={false}>
-          <a className="font-medium text-black underline">el cap de setmana</a>
-        </Link>{" "}
-        a {townLabel}. Ja no teniu cap excusa, per no estar al dia, de tot el
-        que passa a {townLabel} vinculat a la cultura!
-      </>
-    ),
-    metaTitle: `Agenda ${currentYear}`,
-    metaDescription: `Què fer és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${townLabel}. L'agenda és col·laborativa.`,
-  };
 };
 
 export default function App(props) {

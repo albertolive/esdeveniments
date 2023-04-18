@@ -41,6 +41,8 @@ export default function SelectComponent({
   options = LOCATIONS_ARRAY,
   isDisabled = false,
   isValidNewOption = false,
+  isClearable = false,
+  placeholder = "una opció",
 }) {
   const [selectedOption, setSelectedOption] = useState(initialValue);
 
@@ -62,10 +64,10 @@ export default function SelectComponent({
           id={id}
           instanceId={id}
           isSearchable
-          isClearable
+          isClearable={isClearable}
           autoComplete
           formatCreateLabel={(inputValue) => `Afegir nou lloc: "${inputValue}"`}
-          placeholder="Selecciona una opció"
+          placeholder={`Selecciona ${placeholder}`}
           defaultValue={selectedOption}
           value={selectedOption}
           onChange={handleChange}

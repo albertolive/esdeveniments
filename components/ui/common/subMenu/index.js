@@ -12,33 +12,17 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
   ssr: false,
 });
 
-const RenderButton = ({ text, goTo }) => {
-  const router = useRouter();
-  const pathname = router.pathname;
-  const isActiveLink = pathname === goTo ? "bg-[#ECB84A]" : "bg-gray-800";
-
-  return (
-    <button
-      className={`relative inline-flex items-center px-4 mx-1 py-2 border border-transparent shadow-md text-sm font-medium rounded-md text-white ${isActiveLink} hover:bg-yellow-400 focus:outline-none`}
-      type="button"
-      onClick={() => router.push(goTo)}
-    >
-      {text}
-    </button>
-  );
-};
-
 export default function SubMenu() {
   const { push, query } = useRouter();
   const { region, town, byDate } = query;
+  const initialRegionValue = REGIONS.find(
+    (regionOption) => regionOption.value === region
+  );
   const initialTownValue = TOWNS.find(
     (townOption) => townOption.value === town
   );
   const initialByDateValue = BYDATES.find(
     (byDateOption) => byDateOption.value === byDate
-  );
-  const initialRegionValue = REGIONS.find(
-    (regionOption) => regionOption.value === region
   );
 
   return (
@@ -46,25 +30,37 @@ export default function SubMenu() {
       <div className="flex justify-center my-4">
         <div className="w-full px-2">
           <Select
+            id="regions"
             options={REGIONS}
             value={initialRegionValue}
             onChange={({ value = "/" }) => push(`/${value}`)}
+            isClearable
+            placeholder="una comarca"
           />
         </div>
         <div className="w-full px-2">
           <Select
+            id="towns"
             options={TOWNS}
             value={initialTownValue}
-            onChange={({ value = `/${region}` }) => push(`/${region}/${value}`)}
+            onChange={({ value }) =>
+              push(value ? `/${region}/${value}` : `/${region}`)
+            }
             isDisabled={!initialRegionValue}
+            isClearable
+            placeholder="un poble"
           />
         </div>
         <div className="w-full px-2">
           <Select
+            id="dates"
             options={BYDATES}
             value={initialByDateValue}
-            onChange={({ value }) => push(`/${region}/${town}/${value}`)}
-            isDisabled={!initialByDateValue}
+            onChange={({ value }) =>
+              push(value ? `/${region}/${town}/${value}` : `/${region}/${town}`)
+            }
+            isDisabled={!initialTownValue}
+            isClearable
           />
         </div>
       </div>
