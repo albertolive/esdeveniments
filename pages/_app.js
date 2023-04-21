@@ -7,8 +7,6 @@ import { useRouter } from "next/router";
 
 function CulturaCardedeuMainEntry({ Component, pageProps }) {
   const { events } = useRouter();
-  const infolinks_pid = 3386219;
-  const infolinks_wsid = 0;
 
   useEffect(() => {
     const handleRouteChange = (url) => {

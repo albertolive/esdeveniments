@@ -5,7 +5,6 @@ import { useGetEvents } from "@components/hooks/useGetEvents";
 import {
   getTownLabel,
   getRegionLabel,
-  fixArticles,
   addArticleToMonth,
 } from "@utils/normalize";
 import Link from "next/link";
@@ -17,6 +16,7 @@ const Events = dynamic(() => import("@components/ui/events"), {
 });
 
 export default function Town(props) {
+  const { town, byDate, region, currentYear } = props;
   const [page, setPage] = useState(() => {
     const storedPage =
       typeof window !== "undefined" &&
@@ -28,7 +28,12 @@ export default function Town(props) {
     error,
     isLoading,
     isValidating,
-  } = useGetEvents({ props, pageIndex: "all", maxResults: page * 10 });
+  } = useGetEvents({
+    props,
+    pageIndex: "all",
+    q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
+    maxResults: page * 10,
+  });
 
   if (error) return <div>failed to load</div>;
 
@@ -36,7 +41,6 @@ export default function Town(props) {
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));
 
-  const { town, byDate, region, currentYear } = props;
   const townLabel = getTownLabel(town);
   const regionLabel = getRegionLabel(region);
   const canonical = `${siteUrl}/${region}/${town}`;
@@ -109,12 +113,12 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { getCalendarEvents } = require("@lib/helpers");
   const { twoWeeksDefault } = require("@lib/dates");
-
   const { from, until } = twoWeeksDefault();
-
+  const { town, region } = params;
   const { events } = await getCalendarEvents({
     from,
     until,
+    q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
   });
   const normalizedEvents = JSON.parse(JSON.stringify(events));
 

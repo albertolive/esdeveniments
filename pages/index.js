@@ -53,7 +53,6 @@ export default function App(props) {
 export async function getStaticProps() {
   const { getCalendarEvents } = require("@lib/helpers");
   const { twoWeeksDefault } = require("@lib/dates");
-
   const { from, until } = twoWeeksDefault();
 
   const { events } = await getCalendarEvents({

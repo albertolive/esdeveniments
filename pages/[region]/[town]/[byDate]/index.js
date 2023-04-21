@@ -2,7 +2,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { monthsName, generateJsonData } from "@utils/helpers";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import { addArticleToMonth, getTownLabel } from "@utils/normalize";
+import { getRegionLabel, getTownLabel } from "@utils/normalize";
 
 const Events = dynamic(() => import("@components/ui/events"), {
   loading: () => "",
@@ -58,13 +58,24 @@ const generateData = (byDate, town, townLabel, currentYear) => {
   }
 };
 
+const dateFunctions = {
+  avui: "today",
+  setmana: "week",
+  "cap-de-setmana": "weekend",
+};
+
 export default function App(props) {
+  const { town, byDate, region, currentYear } = props;
   const {
     data: { events = [], noEventsFound = false },
     error,
     isLoading,
     isValidating,
-  } = useGetEvents({ props, pageIndex: "today" });
+  } = useGetEvents({
+    props,
+    pageIndex: dateFunctions[byDate] || "all",
+    q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
+  });
 
   if (error) return <div>failed to load</div>;
 
@@ -72,7 +83,6 @@ export default function App(props) {
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));
 
-  const { town, byDate, region, currentYear } = props;
   const townLabel = getTownLabel(town);
   const { title, subTitle, description, metaTitle, metaDescription } =
     generateData(byDate, town, townLabel, currentYear);
@@ -119,12 +129,20 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const { getCalendarEvents } = require("@lib/helpers");
-  const { today, twoWeeksDefault } = require("@lib/dates");
+  const { town, region, byDate } = params;
+  const { today, week, weekend, twoWeeksDefault } = require("@lib/dates");
+  const dateFunctions = {
+    avui: today,
+    setmana: week,
+    "cap-de-setmana": weekend,
+  };
+  const selectedFunction = dateFunctions[byDate];
 
-  const { from, until } = today();
+  const { from, until } = selectedFunction();
   const { events: todayEvents } = await getCalendarEvents({
     from,
     until,
+    q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
   });
 
   let events = todayEvents;
@@ -137,6 +155,7 @@ export async function getStaticProps({ params }) {
       from,
       until,
       maxResults: 7,
+      q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
     });
 
     noEventsFound = true;

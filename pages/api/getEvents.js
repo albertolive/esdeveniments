@@ -21,7 +21,12 @@ const handler = async (req, res) => {
     case "today":
       const { from: fromToday, until: untilToday } = today();
 
-      events = await getCalendarEvents({ from: fromToday, until: untilToday });
+      events = await getCalendarEvents({
+        from: fromToday,
+        until: untilToday,
+        q,
+        maxResults,
+      });
 
       if (events.noEventsFound) events = await noEventsFound(events);
 
@@ -29,7 +34,12 @@ const handler = async (req, res) => {
     case "week":
       const { from: fromWeek, until: toWeek } = week();
 
-      events = await getCalendarEvents({ from: fromWeek, until: toWeek });
+      events = await getCalendarEvents({
+        from: fromWeek,
+        until: toWeek,
+        q,
+        maxResults,
+      });
 
       if (events.noEventsFound) events = await noEventsFound(events);
 
@@ -37,7 +47,12 @@ const handler = async (req, res) => {
     case "weekend":
       const { from: fromWeekend, until: toWeekend } = weekend();
 
-      events = await getCalendarEvents({ from: fromWeekend, until: toWeekend });
+      events = await getCalendarEvents({
+        from: fromWeekend,
+        until: toWeekend,
+        q,
+        maxResults,
+      });
 
       if (events.noEventsFound) events = await noEventsFound(events);
 
@@ -57,14 +72,14 @@ const handler = async (req, res) => {
   }
 
   try {
-    res.setHeader('Cache-Control', 'max-age=1800');
+    res.setHeader("Cache-Control", "max-age=1800");
     res.setHeader("Content-Type", "application/json");
     res.status(200).json({
       ...events,
       noEventsFound: events.noEventsFound
         ? events.noEventsFound
         : events.length === 0,
-      currentYear: new Date().getFullYear()
+      currentYear: new Date().getFullYear(),
     });
   } catch (error) {
     console.error(error);

@@ -9,7 +9,16 @@ const GoogleAdsenseContainer = ({
   setDisplayAd,
 }) => {
   const adRef = useRef(null);
+
   useEffect(() => {
+    if (
+      adRef.current &&
+      adRef.current.firstChild &&
+      adRef.current.firstChild.tagName === "INS"
+    ) {
+      return; // Ad already loaded in this element, return early
+    }
+
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (err) {

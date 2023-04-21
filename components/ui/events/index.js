@@ -89,7 +89,7 @@ export default function Events({
           />
         )}
       </List>
-      {loadMore && (
+      {!noEventsFound && loadMore && events.length > 7 && (
         <div className="text-center">
           <button
             type="button"

@@ -29,8 +29,6 @@ const nextConfig = {
   images: {
     domains: [
       "res.cloudinary.com",
-      "impfr.tradedoubler.com",
-      "connect.tradedoubler.com",
       "tarambana.cat",
       "cinemaesbarjo.cat",
       "www.cinemaesbarjo.cat",
