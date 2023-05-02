@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import { useRouter } from "next/router";
@@ -129,6 +129,7 @@ const sendGoogleEvent = (event, obj) =>
   window.gtag("event", event, { ...obj });
 
 export default function Event(props) {
+  const mapRef = useRef(null);
   const { push, query, asPath } = useRouter();
   const { newEvent, edit_suggested = false } = query;
   const [openModal, setOpenModal] = useState(false);
@@ -143,29 +144,27 @@ export default function Event(props) {
   useEffect(() => {
     if (newEvent || edit_suggested) return;
 
-    if (title !== "CANCELLED" && slug && asPath !== `/${slug}`)
+    if (title !== "CANCELLED" && slug && asPath !== `/e/${slug}`)
       push(slug, undefined, { shallow: true });
   }, [asPath, data, edit_suggested, newEvent, push, slug, title]);
 
-  const handleMapLoad = useCallback(() => {
-    setTimeout(() => {
-      const map = document.getElementById("mymap");
-      const frame = document.createElement("iframe");
-      if (!map) return;
-
-      frame.src = map.getAttribute("data-src");
-      map.appendChild(frame);
-    }, 1500);
-  }, []);
-
   useEffect(() => {
-    if (document.readyState === "complete") {
-      handleMapLoad();
-    } else {
-      window.addEventListener("load", handleMapLoad);
-      return () => window.removeEventListener("load", handleMapLoad);
-    }
-  }, [handleMapLoad]);
+    const map = mapRef.current;
+    if (!map) return;
+
+    const frame = document.createElement("iframe");
+    frame.src = map.getAttribute("data-src");
+    const onLoad = () => {
+      // Remove the event listener to prevent memory leaks
+      frame.removeEventListener("load", onLoad);
+    };
+    frame.addEventListener("load", onLoad);
+    map.appendChild(frame);
+
+    return () => {
+      map.removeChild(frame);
+    };
+  }, [mapRef]);
 
   const onSendDeleteReason = async () => {
     const { id, title } = data.event;
@@ -210,7 +209,7 @@ export default function Event(props) {
     social,
     isEventFinished,
     isMoney,
-    eventImage
+    eventImage,
   } = data.event;
 
   const descriptionHTML = isHTML(description)
@@ -222,7 +221,11 @@ export default function Event(props) {
   if (title === "CANCELLED") return <NoEventFound />;
 
   const gMapsQuery =
-    lat && lng ? `${lat},${lng}` : isMoney ? location : `${location},Cardedeu+08440`;
+    lat && lng
+      ? `${lat},${lng}`
+      : isMoney
+      ? location
+      : `${location},Cardedeu+08440`;
 
   return (
     <>
@@ -319,22 +322,26 @@ export default function Event(props) {
                     <dt className="text-md font-bold text-gray-900">
                       Descripció
                     </dt>
-                    {!isMoney && <div className="ml-auto">
-                      <button
-                        onClick={() => {
-                          setOpenModal(true);
-                          sendGoogleEvent("open-change-modal");
-                        }}
-                        type="button"
-                        className="relative inline-flex items-center px-4 py-2 border border-slate-200  text-xs font-medium rounded-full text-gray-800 bg-white hover:border-[#ECB84A] focus:outline-none"
-                      >
-                        <PencilIcon
-                          className="-ml-1 mr-2 h-5 w-5 text-[#ECB84A] text-xs"
-                          aria-hidden="true"
-                        />
-                        <span className="text-gray-800">Suggerir un canvi</span>
-                      </button>
-                    </div>}
+                    {!isMoney && (
+                      <div className="ml-auto">
+                        <button
+                          onClick={() => {
+                            setOpenModal(true);
+                            sendGoogleEvent("open-change-modal");
+                          }}
+                          type="button"
+                          className="relative inline-flex items-center px-4 py-2 border border-slate-200  text-xs font-medium rounded-full text-gray-800 bg-white hover:border-[#ECB84A] focus:outline-none"
+                        >
+                          <PencilIcon
+                            className="-ml-1 mr-2 h-5 w-5 text-[#ECB84A] text-xs"
+                            aria-hidden="true"
+                          />
+                          <span className="text-gray-800">
+                            Suggerir un canvi
+                          </span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <Weather startDate={startDate} />
                   <div className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500 break-words">
@@ -382,8 +389,13 @@ export default function Event(props) {
                 <div>
                   <dt className="text-md font-bold text-gray-900">Lloc</dt>
                   <dd className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500">
-                    <a href={`https://www.google.com/maps/search/?api=1&query=${location}`} target="_blank"
-                      rel="noreferrer">{location}</a>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${location}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {location}
+                    </a>
                   </dd>
                 </div>
               </dl>
@@ -407,34 +419,37 @@ export default function Event(props) {
                 <AdArticle slot="8822317665" />
               </div>
             </div>
-            {!isMoney && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden">
-                <div
-                  className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden"
-                  data-src={`https://www.google.com/maps/embed/v1/place?q=${gMapsQuery}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS}`}
-                  id="mymap"
-                ></div>
+            {!isMoney && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden">
+                  <div
+                    className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden"
+                    data-src={`https://www.google.com/maps/embed/v1/place?q=${gMapsQuery}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS}`}
+                    id="mymap"
+                    ref={mapRef}
+                  ></div>
+                </div>
+                <div className="grid grid-cols-2 lg:grid-cols-2 grid-rows-1 lg:grid-rows-2 gap-4 mt-4 sm:gap-6 sm:mt-6 lg:gap-8 lg:mt-0">
+                  {images.length > 0 &&
+                    images.map((image) => (
+                      <div
+                        key={image}
+                        className="lg:col-start-1 aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden"
+                      >
+                        <Image
+                          alt={location}
+                          title={location}
+                          image={image}
+                          className="w-full h-full object-center object-cover"
+                        />
+                      </div>
+                    ))}
+                </div>
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-2 grid-rows-1 lg:grid-rows-2 gap-4 mt-4 sm:gap-6 sm:mt-6 lg:gap-8 lg:mt-0">
-                {images.length > 0 &&
-                  images.map((image) => (
-                    <div
-                      key={image}
-                      className="lg:col-start-1 aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden"
-                    >
-                      <Image
-                        alt={location}
-                        title={location}
-                        image={image}
-                        className="w-full h-full object-center object-cover"
-                      />
-                    </div>
-                  ))}
-              </div>
-            </div>}
+            )}
           </div>
-        </div >
-      </div >
+        </div>
+      </div>
       <Modal
         open={openModal}
         setOpen={setOpenModal}
