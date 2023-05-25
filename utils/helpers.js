@@ -9,37 +9,33 @@ const isLessThanFiveDays = (date) => {
   return Math.floor(Math.abs(dayDiff)) < 5;
 };
 
-export const sanitize = (str) =>
-  str
-    .toLowerCase()
-    .replace(/ /g, "-")
-    .replace("–", "-")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/"/g, "")
-    .replace(/,/g, "")
-    .replace(/’/g, "")
-    .replace(/'/g, "")
-    .replace(".", "")
-    .replace("(", "")
-    .replace(")", "")
-    .replace("%", "")
-    .replace("&", "")
-    .replace("?", "")
-    .replace("¿", "")
-    .replace(/“/g, "")
-    .replace(/”/g, "")
-    .replace("…", "")
-    .replace("ª", "a")
-    .replace("/", "-")
-    .replace(/\+/g, "")
-    .replace(/\|/g, "")
-    .replace(/•|/g, "")
-    .replace(/·|/g, "")
-    .replace(/º|/g, "")
-    .replace(/:/g, "")
-    .replace(/\[Ad\]/g, "")
-    .replace(/(<([^>]+)>)/gi, "");
+export const sanitize = (url) => {
+  const accents = [
+    /[\u0300-\u030f]/g, // Combining Diacritical Marks
+    /[\u1AB0-\u1AFF]/g, // Combining Diacritical Marks Extended
+    /[\u1DC0-\u1DFF]/g, // Combining Diacritical Marks Supplement
+    /[\u1F00-\u1FFF]/g, // Greek Extended
+    /[\u2C80-\u2CFF]/g, // Coptic
+    /[\uFB00-\uFB06]/g, // Alphabetic Presentation Forms (ligatures)
+  ];
+
+  let sanitizedUrl = url.toLowerCase();
+
+  sanitizedUrl = sanitizedUrl.replace(/\s+$/, "");
+
+  // Remove accents
+  accents.forEach((regex) => {
+    sanitizedUrl = sanitizedUrl.normalize("NFD").replace(regex, "");
+  });
+
+  // Replace spaces and illegal characters with hyphens
+  sanitizedUrl = sanitizedUrl.replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-");
+
+  // Replace consecutive hyphens, en-dashes, and em-dashes with a single hyphen
+  sanitizedUrl = sanitizedUrl.replace(/[-\s]+/g, "-");
+
+  return sanitizedUrl;
+};
 
 export const sanitizeText = (str) =>
   str.replace("&amp;", "&").replace(/\[Ad\]/g, "");

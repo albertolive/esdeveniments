@@ -31,8 +31,9 @@ export default function DatePickerComponent({
   const onChangeStart = (date) => {
     onChange("startDate", date);
     setStartDate(date);
-    // onChangeEnd(setMinutes(date, 60));
+    setEndDate(new Date(date.getTime() + 60 * 60 * 1000));
   };
+
   const onChangeEnd = (date) => {
     onChange("endDate", date);
     setEndDate(date);
@@ -103,7 +104,7 @@ const DateComponent = ({
       previousMonthButtonLabel="<"
       popperClassName="react-datepicker-left"
       popperPlacement="top-end"
-      dateFormat="d MMMM, yyyy h:mm aa"
+      dateFormat="d MMMM, yyyy HH:mm aa"
       customInput={<ButtonInput />}
       renderCustomHeader={({
         date,
@@ -122,8 +123,9 @@ const DateComponent = ({
               onClick={decreaseMonth}
               disabled={prevMonthButtonDisabled}
               type="button"
-              className={`${prevMonthButtonDisabled && "cursor-not-allowed opacity-50"
-                }inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500`}
+              className={`${
+                prevMonthButtonDisabled && "cursor-not-allowed opacity-50"
+              }inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500`}
             >
               <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
             </button>
@@ -132,8 +134,9 @@ const DateComponent = ({
               onClick={increaseMonth}
               disabled={nextMonthButtonDisabled}
               type="button"
-              className={`${nextMonthButtonDisabled && "cursor-not-allowed opacity-50"
-                }inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500`}
+              className={`${
+                nextMonthButtonDisabled && "cursor-not-allowed opacity-50"
+              }inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500`}
             >
               <ChevronRightIcon className="w-5 h-5 text-gray-600" />
             </button>
