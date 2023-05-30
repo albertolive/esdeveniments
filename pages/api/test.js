@@ -59,9 +59,13 @@ async function handleFeedItem(item) {
     try {
       await insertItemToCalendar(item);
     } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error inserting item to calendar:", error });
       console.error("Error inserting item to calendar:", error);
     }
   } else {
+    res.status(500).json({ message: "Already fetched item: " + itemTitle });
     console.log("Already fetched item: " + itemTitle);
   }
 }
@@ -103,8 +107,12 @@ async function insertItemToCalendar(item) {
     // });
     console.log("Inserted new item: " + title);
     insertedItemsCache.add(title);
+    res.status(200).json({ message: "Inserted new item: " + title });
   } catch (error) {
     console.error("Error inserting item to calendar:", error);
+    res
+      .status(500)
+      .json({ message: "Error inserting item to calendar:", error });
     throw error;
   }
 }
