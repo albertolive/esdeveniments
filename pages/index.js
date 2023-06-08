@@ -32,8 +32,8 @@ export default function App(props) {
     <Events
       events={events}
       jsonEvents={jsonEvents}
-      metaTitle={`Agenda ${currentYear} - Què fer`}
-      metaDescription={`Què fer és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a. L'agenda és col·laborativa.`}
+      metaTitle={`Agenda ${currentYear} - Esdeveniments.cat`}
+      metaDescription={`Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a. L'agenda és col·laborativa.`}
       title={`Agenda ${currentYear}`}
       subTitle={`Viu aquest ${month} com mai amb les millors activitats de la temporada: mercats, exposicions, descobriments, passejades, concerts, museus, teatre... 
       No et quedis sense provar tots aquests plans imprescindibles per aprofitar-lo al màxim!`}

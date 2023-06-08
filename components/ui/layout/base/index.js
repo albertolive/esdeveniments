@@ -14,12 +14,12 @@ export default function BaseLayout({ children }) {
   return (
     <>
       <Head>
-        <title>Cultura Cardedeu</title>
-        <meta name="description" content="Cultura Cardedeu" />
+        <title>Esdeveniments</title>
+        <meta name="description" content="Esdeveniments.cat" />
         <link rel="icon" href="/favicon.ico" />
         <link
           rel="alternative"
-          title="RSS Feed Cultura Cardedeu"
+          title="RSS Feed Esdeveniments.cat"
           type="application/rss+xml"
           href="/rss.xml"
         />

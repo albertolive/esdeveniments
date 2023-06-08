@@ -18,18 +18,18 @@ const getAllArticles = async () => {
   return normalizedEvents;
 };
 
-const hostUrl = "https://www.culturacardedeu.com";
+const hostUrl = "https://www.esdeveniments.cat";
 
 const buildFeed = (items) => {
   const feed = new Feed({
     id: hostUrl,
     link: hostUrl,
-    title: "Cultura Cardedeu",
-    description: "Calendari col·laboratiu dels actes culturals de Cardedeu",
-    copyright: "Cultura Cardedeu",
+    title: "Esdeveniments.cat",
+    description: "Calendari col·laboratiu dels actes culturals de Catalunya",
+    copyright: "Esdeveniments.cat",
     updated: new Date(items[0].startDate),
     author: {
-      name: "Cultura Cardedeu",
+      name: "Esdeveniments.cat",
       link: hostUrl,
     },
   });
@@ -45,7 +45,7 @@ const buildFeed = (items) => {
     const description = `${item.title}\n\n🗓️ ${item.nameDay} ${item.formattedStart}\n\n🏡 ${item.location} \n\nℹ️ Més informació a l'enllaç de la nostra bio!`;
     const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)/g;
     const hasEventImage = item.description.match(regex);
-    const eventImage = hasEventImage && hasEventImage[0]
+    const eventImage = hasEventImage && hasEventImage[0];
 
     feed.addItem({
       id: item.id,
@@ -54,12 +54,11 @@ const buildFeed = (items) => {
       description,
       content: item.location,
       date: new Date(item.startDate),
-      image:
-        item.imageUploaded
-          ? item.imageUploaded
-          : eventImage
-            ? eventImage
-            : `${hostUrl}${item.images[0]}`
+      image: item.imageUploaded
+        ? item.imageUploaded
+        : eventImage
+        ? eventImage
+        : `${hostUrl}${item.images[0]}`,
     });
   });
 

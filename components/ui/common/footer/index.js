@@ -4,13 +4,13 @@ export default function Footer() {
       <div className="container mx-auto h-full">
         <div className="flex flex-col justify-center items-center h-full">
           <div className="text-white text-sm text-primary-2 font-bold text-center">
-            © {new Date().getFullYear()} Cultura Cardedeu <br />
+            © {new Date().getFullYear()} Esdeveniments <br />
             Contacte:&nbsp;
             <a
               className="hover:text-[#ECB84A]"
-              href="mailto:hola@culturacardedeu.com"
+              href="mailto:hola@esdeveniments.cat"
             >
-              hola@culturacardedeu.com
+              hola@esdeveniments.cat
             </a>
             <div className="flex space-x-2">
               Segueix-nos a:&nbsp;
@@ -19,7 +19,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   target="_blank"
                   className="hover:text-[#ECB84A]"
-                  href="https://twitter.com/culturacardedeu"
+                  href="https://twitter.com/esdeveniments"
                 >
                   Twitter
                 </a>
@@ -30,7 +30,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   target="_blank"
                   className="hover:text-[#ECB84A]"
-                  href="https://t.me/culturacardedeu"
+                  href="https://t.me/esdeveniments"
                 >
                   Telegram
                 </a>
@@ -41,7 +41,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   target="_blank"
                   className="hover:text-[#ECB84A]"
-                  href="https://www.facebook.com/culturacardedeu"
+                  href="https://www.facebook.com/esdeveniments"
                 >
                   Facebook
                 </a>

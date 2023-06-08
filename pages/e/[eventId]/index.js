@@ -235,12 +235,12 @@ export default function Event(props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
       />
       <Meta
-        title={generateMetaTitle(title, "Cultura Cardedeu", location)}
+        title={generateMetaTitle(title, "Esdeveniments.cat", location)}
         description={generateMetaDescription(
           `${title} - ${nameDay} ${formattedStart} - ${location}`,
           description
         )}
-        canonical={`https://www.culturacardedeu.com/${slug}`}
+        canonical={`https://www.esdeveniments.cat/${slug}`}
         image={images[0]}
         imageUploaded={imageUploaded || eventImage}
         preload="/static/images/gMaps.webp"
@@ -251,7 +251,7 @@ export default function Event(props) {
           customNotification={false}
           hideClose
           hideNotification={setShowThankYouBanner}
-          title="Gràcies per contribuir a millorar el contingut de Cultura Cardedeu! En menys de 24 hores estarà disponible el canvi."
+          title="Gràcies per contribuir a millorar el contingut de Esdeveniments.cat! En menys de 24 hores estarà disponible el canvi."
         />
       )}
       <nav className="flex" aria-label="Breadcrumb">
@@ -596,9 +596,9 @@ export default function Event(props) {
                   Envieu un correu amb el motiu a:{" "}
                   <a
                     className="hover:text-[#ECB84A]"
-                    href="mailto:hola@culturacardedeu.com"
+                    href="mailto:hola@esdeveniments.cat"
                   >
-                    hola@culturacardedeu.com
+                    hola@esdeveniments.cat
                   </a>
                 </p>
               </div>

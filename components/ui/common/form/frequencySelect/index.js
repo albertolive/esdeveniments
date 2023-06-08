@@ -77,9 +77,9 @@ export default function FrequencySelect({ id, value, title, onChange }) {
         Vols més opcions? Posa&apos;t en contacte a{" "}
         <a
           className="hover:text-[#ECB84A]"
-          href="mailto:hola@culturacardedeu.com"
+          href="mailto:hola@esdeveniments.cat"
         >
-          hola@culturacardedeu.com
+          hola@esdeveniments.cat
         </a>{" "}
         i t&apos;ajudarem.
       </div>

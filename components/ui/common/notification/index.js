@@ -31,9 +31,9 @@ export default function Notification({
                 necessites modificar-lo: <br />
                 <a
                   className="font-bold"
-                  href={`https://www.culturacardedeu.com/${url}/edita`}
+                  href={`https://www.esdeveniments.cat/${url}/edita`}
                 >
-                  {`https://www.culturacardedeu.com/${url}/edita`}
+                  {`https://www.esdeveniments.cat/${url}/edita`}
                 </a>
               </p>
             </div>

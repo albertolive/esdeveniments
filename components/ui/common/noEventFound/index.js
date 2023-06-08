@@ -8,9 +8,9 @@ export default function NoEventFound() {
       <div className="max-w-3xl mx-auto">
         <div className="block blurred-image">
           <Image
-            title="Esdeveniment no trobat - Cultura Cardedeu"
+            title="Esdeveniment no trobat - Esdeveniments.cat"
             src={eventNotFound}
-            alt="Esdeveniment no trobat - Cultura Cardedeu"
+            alt="Esdeveniment no trobat - Esdeveniments.cat"
             layout="intrinsic"
           />
         </div>
@@ -42,9 +42,9 @@ export default function NoEventFound() {
             a:{" "}
             <a
               className="font-bold text-black hover:underline"
-              href="mailto:hola@culturacardedeu.com"
+              href="mailto:hola@esdeveniments.cat"
             >
-              hola@culturacardedeu.com
+              hola@esdeveniments.cat
             </a>
             .
           </p>

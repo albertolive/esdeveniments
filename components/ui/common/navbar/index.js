@@ -38,7 +38,7 @@ export default function Example() {
                       <Image
                         src={logo}
                         className="block h-8 cursor-pointer"
-                        alt="Logo Cultura Cardedeu"
+                        alt="Logo Esdeveniments.cat"
                         width={120}
                         height={60}
                         layout="fixed"

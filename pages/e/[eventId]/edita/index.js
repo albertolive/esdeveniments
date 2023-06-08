@@ -212,16 +212,16 @@ export default function Edita({ event }) {
   return (
     <>
       <Meta
-        title="Edita - Cultura Cardedeu"
-        description="Edita - Cultura Cardedeu"
-        canonical="https://www.culturacardedeu.com/edita"
+        title="Edita - Esdeveniments.cat"
+        description="Edita - Esdeveniments.cat"
+        canonical="https://www.esdeveniments.cat/edita"
       />
       {showDeleteMessage && (
         <Notification
           customNotification={false}
           hideNotification={setShowDeleteMessage}
           title="Estem revisant la teva sol·licitud. Si en menys de 24 hores no ha estat eliminat. Si us plau, posa't en contacte amb nosaltres a:"
-          url="hola@culturacardedeu.com"
+          url="hola@esdeveniments.cat"
         />
       )}
       <div className="space-y-8 divide-y divide-gray-200 max-w-3xl mx-auto">

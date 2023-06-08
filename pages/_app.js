@@ -5,7 +5,7 @@ import Script from "next/script";
 import { BaseLayout } from "@components/ui/layout";
 import { useRouter } from "next/router";
 
-function CulturaCardedeuMainEntry({ Component, pageProps }) {
+function EsdevenimentsMainEntry({ Component, pageProps }) {
   const { events } = useRouter();
 
   useEffect(() => {
@@ -63,4 +63,4 @@ function CulturaCardedeuMainEntry({ Component, pageProps }) {
   );
 }
 
-export default CulturaCardedeuMainEntry;
+export default EsdevenimentsMainEntry;

@@ -9,9 +9,9 @@ export default function Sitemaps() {
   return (
     <>
       <Meta
-        title={`Arxiu. Descobreix tot el que passa a Cardedeu - Cultura Cardedeu`}
-        description="Descobreix tot el què ha passat a Cardedeu cada any. Les millors propostes culturals per esprémer al màxim de Cardedeu - Arxiu - Cultura Cardedeu"
-        canonical="https://www.culturacardedeu.com/sitemaps"
+        title={`Arxiu. Descobreix tot el que passa a Cardedeu - Esdeveniments.cat`}
+        description="Descobreix tot el què ha passat a Cardedeu cada any. Les millors propostes culturals per esprémer al màxim de Cardedeu - Arxiu - Esdeveniments.cat"
+        canonical="https://www.esdeveniments.cat/sitemaps"
       />
       <div className="grid overflow-hidden grid-cols-2 lg:grid-cols-4 auto-rows-auto gap-2 grid-flow-row w-auto">
         {years.map((year) => (
@@ -33,7 +33,7 @@ export default function Sitemaps() {
                     </a>
                   </Link>
                 </div>
-              )
+              );
             }).reverse()}
           </div>
         ))}

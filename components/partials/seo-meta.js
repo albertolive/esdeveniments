@@ -8,8 +8,8 @@ const Meta = (props) => {
   const image = props.imageUploaded
     ? props.imageUploaded
     : props.image
-      ? siteUrl + props.image
-      : `${siteUrl}/static/images/banners/cultura-cardedeu-banner-${getRandomImage}.jpeg`;
+    ? siteUrl + props.image
+    : `${siteUrl}/static/images/banners/cultura-cardedeu-banner-${getRandomImage}.jpeg`;
 
   return (
     <Head>
@@ -37,15 +37,15 @@ const Meta = (props) => {
       />
       <meta property="og:image" content={image} />
       <meta property="og:url" content={props.canonical} />
-      <meta property="og:site_name" content="Cultura Cardedeu" />
+      <meta property="og:site_name" content="Esdeveniments.cat" />
       <meta property="og:locale" content="ca-ES" />
       <meta name="revisit-after" content="1 days" />
-      <meta name="author" content="Cultura Cardedeu" />
+      <meta name="author" content="Esdeveniments.cat" />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={props.title} />
       <meta name="twitter:description" content={props.description} />
-      <meta name="twitter:site" content="@culturaCardedeu" />
-      <meta name="twitter:creator" content="Cultura Cardedeu" />
+      <meta name="twitter:site" content="@esdeveniments" />
+      <meta name="twitter:creator" content="Esdeveniments.cat" />
       <meta name="twitter:url" content={props.canonical} />
       <meta name="twitter:domain" content={siteUrl} />
       <meta name="twitter:image:alt" content={props.title} />

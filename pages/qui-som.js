@@ -6,9 +6,9 @@ export default function QuiSom() {
   return (
     <>
       <Meta
-        title="Qui som - Cultura Cardedeu"
-        description="Qui som? - Cultura Cardedeu és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a Cardedeu."
-        canonical="https://www.culturacardedeu.com/qui-som"
+        title="Qui som - Esdeveniments.cat"
+        description="Qui som? - Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a Cardedeu."
+        canonical="https://www.esdeveniments.com/qui-som"
       />
       <div className="relative py-16 bg-white overflow-hidden">
         <div className="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
@@ -121,12 +121,12 @@ export default function QuiSom() {
                 Qui som?
               </span>
               <span className="mt-2 block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Cultura Cardedeu
+                Esdeveniments.cat
               </span>
             </h1>
             <p className="mt-8 prose prose-lg text-gray-500 leading-8">
-              Cultura Cardedeu és una iniciativa ciutadana per veure en un cop
-              d&apos;ull tots els actes culturals que es fan a Cardedeu.
+              Esdeveniments.cat és una iniciativa ciutadana per veure en un cop
+              d&apos;ull tots els actes culturals que es fan a tot arreu.
             </p>
           </div>
           <div className="mt-6 prose prose-lg text-gray-500 mx-auto">
@@ -146,55 +146,59 @@ export default function QuiSom() {
                 <span>🐦 Twitter: </span>
                 <a
                   className="text-[#ECB84A]"
-                  href="https://twitter.com/CulturaCardedeu"
+                  href="https://twitter.com/esdeveniments"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  https://twitter.com/CulturaCardedeu
+                  https://twitter.com/esdeveniments
                 </a>
               </div>
               <div>
                 <span>ғ Facebook: </span>
                 <a
                   className="text-[#ECB84A]"
-                  href="https://www.facebook.com/agendaculturacardedeu/"
+                  href="https://www.facebook.com/agendaesdeveniments/"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  https://www.facebook.com/agendaculturacardedeu/
+                  https://www.facebook.com/agendaesdeveniments/
                 </a>
               </div>
               <div>
                 <span>ᴛ Telegram: </span>
                 <a
                   className="text-[#ECB84A]"
-                  href="https://t.me/culturacardedeu"
+                  href="https://t.me/esdeveniments"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  https://t.me/culturacardedeu
+                  https://t.me/esdeveniments
                 </a>
               </div>
               <div>
                 <span>📷 Instagram: </span>
                 <a
                   className="text-[#ECB84A]"
-                  href="https://www.instagram.com/culturacardedeu/"
+                  href="https://www.instagram.com/esdeveniments/"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  https://www.instagram.com/culturacardedeu/
+                  https://www.instagram.com/esdeveniments/
                 </a>
               </div>
             </ul>
           </div>
-        <div className="mt-6 prose prose-lg text-gray-500 mx-auto">
-          <a href="https://www.ayrshare.com?utm_source=powered">
-            <Image
-              src="https://www.ayrshare.com/wp-content/uploads/ayrshare-badge.png"
-              target="_blank" alt="Social Powered by Ayrshare" width="90px" height="30px" />
-          </a>
-        </div>
+          <div className="mt-6 prose prose-lg text-gray-500 mx-auto">
+            <a href="https://www.ayrshare.com?utm_source=powered">
+              <Image
+                src="https://www.ayrshare.com/wp-content/uploads/ayrshare-badge.png"
+                target="_blank"
+                alt="Social Powered by Ayrshare"
+                width="90px"
+                height="30px"
+              />
+            </a>
+          </div>
         </div>
       </div>
     </>

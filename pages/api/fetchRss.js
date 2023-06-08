@@ -22,7 +22,7 @@ const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
 const RSS_FEED_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
 let REQUEST_COUNT = 0;
 const REQUEST_LIMIT = 1;
-const DELAY_IN_MS = 2000;
+const DELAY_IN_MS = 1000;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -138,7 +138,7 @@ async function scrapeDescription(url) {
 async function insertItemToCalendar(item) {
   if (!item) return;
 
-  const { pubDate, title, link, guid } = item || {};
+  const { pubDate, title, link, guid, location } = item || {};
   const dateTime = new Date(pubDate);
   const endDateTime = new Date(dateTime);
   endDateTime.setHours(endDateTime.getHours() + 1);
@@ -146,7 +146,7 @@ async function insertItemToCalendar(item) {
   const event = {
     summary: title,
     description,
-    location: "",
+    location: `${location ? location : "Cardedeu"}, Cardedeu, Vallès Oriental`,
     start: {
       dateTime: dateTime.toISOString(),
       timeZone: "UTC",
@@ -210,7 +210,7 @@ export default async function handler(req, res) {
       }
     });
     await setProcessedItems(processedItems);
-    console.log("Finished processing new items");
+    console.log("Finished processing items");
     // Send the response
     res.status(200).json(newItems);
   } catch (err) {

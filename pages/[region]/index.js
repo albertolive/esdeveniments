@@ -44,8 +44,8 @@ export default function App(props) {
     <Events
       events={events}
       jsonEvents={jsonEvents}
-      metaTitle={`Agenda ${regionLabel} ${currentYear} - Què fer`}
-      metaDescription={`Què fer és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${regionLabel}. L'agenda és col·laborativa.`}
+      metaTitle={`Agenda ${regionLabel} ${currentYear} - Esdeveniments.cat`}
+      metaDescription={`Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${regionLabel}. L'agenda és col·laborativa.`}
       title={`Agenda ${regionLabel} ${currentYear}`}
       subTitle={`${fixArticles(`Les millors coses per fer ${regionLabel}: mercats, exposicions,
       descobriments, passejades, concerts, museus, teatre... Aquests són els

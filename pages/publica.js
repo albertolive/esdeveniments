@@ -176,16 +176,16 @@ export default function Publica() {
   };
 
   const notificationTitle =
-    "Avís! Preveient que s'acosta un any electoral, us volíem informar que Cultura Cardedeu no és un espai per a la publicació d'actes de partits polítics i quan en detectem algun, l'eliminarem. Considerem que els partits ja tenen els seus canals i volem deixar aquest espai per a les entitats i iniciatives culturals. Gràcies per la comprensió!";
+    "Avís! Preveient que s'acosta un any electoral, us volíem informar que Esdeveniments no és un espai per a la publicació d'actes de partits polítics i quan en detectem algun, l'eliminarem. Considerem que els partits ja tenen els seus canals i volem deixar aquest espai per a les entitats i iniciatives culturals. Gràcies per la comprensió!";
 
   return (
     <>
       <Meta
-        title="Publica - Cultura Cardedeu"
-        description="Publica un acte cultural - Cultura Cardedeu"
-        canonical="https://www.culturacardedeu.com/publica"
+        title="Publica - Esdeveniments.cat"
+        description="Publica un acte cultural - Esdeveniments.cat"
+        canonical="https://www.esdeveniments.cat/publica"
       />
-      {!hideNotification && (
+      {false && (
         <Notification
           type="warning"
           customNotification={false}

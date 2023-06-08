@@ -62,7 +62,7 @@ export default function Events({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonEvents) }}
       />
       <Meta
-        title={`${metaTitle} - Què fer`}
+        title={`${metaTitle} - Esdeveniments.cat`}
         description={`${metaDescription}`}
         canonical={canonical}
       />

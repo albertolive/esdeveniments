@@ -71,8 +71,8 @@ export default function Town(props) {
     <Events
       events={events}
       jsonEvents={jsonEvents}
-      metaTitle={`Agenda ${townLabel} ${currentYear} - Què fer`}
-      metaDescription={`Què fer és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${regionLabel}. L'agenda és col·laborativa.`}
+      metaTitle={`Agenda ${townLabel} ${currentYear} - Esdeveniments.cat`}
+      metaDescription={`Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${regionLabel}. L'agenda és col·laborativa.`}
       title={`Agenda ${townLabel} ${currentYear}`}
       subTitle={`Les millors coses per fer a ${townLabel}: mercats, exposicions, descobriments, passejades, concerts, museus, teatre... Aquests són els
       millors plans per gaudir de ${townLabel} ${normalizedMonth}!`}

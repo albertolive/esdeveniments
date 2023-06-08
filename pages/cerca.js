@@ -155,9 +155,9 @@ export default function Search() {
   return (
     <>
       <Meta
-        title="Cerca - Cultura Cardedeu"
-        description="Cerca esdeveniments a Cardedeu. Cultura i esdeveniments a Cardedeu. Cultura Cardedeu"
-        canonical="https://www.culturacardedeu.com/cerca"
+        title="Cerca - Esdeveniments.cat"
+        description="Cerca esdeveniments. Cultura i esdeveniments. Esdeveniments.cat"
+        canonical="https://www.esdeveniments.cat/cerca"
       />
       <div className="space-y-8 divide-y divide-gray-200 max-w-3xl mx-auto mb-4">
         <div className="space-y-8 divide-y divide-gray-200">
