@@ -18,7 +18,7 @@ const fetcher = async ([url]) => {
 export const useCalendarEventsList = ({ from, until }) => {
   const fromDate = from.toISOString();
   const untilDate = until.toISOString();
-  const URL = `https://www.googleapis.com/calendar/v3/calendars/8e1jse11ireht56ho13r6a470s@group.calendar.google.com/events?timeMin=${fromDate}&timeMax=${untilDate}&singleEvents=true&orderBy=startTime&showDeleted=false&maxResults=100&${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}`;
+  const URL = `https://www.googleapis.com/calendar/v3/calendars/${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com/events?timeMin=${fromDate}&timeMax=${untilDate}&singleEvents=true&orderBy=startTime&showDeleted=false&maxResults=100&${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_ID}`;
 
   preload(URL, fetcher);
 

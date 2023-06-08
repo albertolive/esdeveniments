@@ -8,13 +8,11 @@ const parser = new XMLParser();
 
 const calendar = google.calendar("v3");
 const auth = new google.auth.GoogleAuth({
-  keyFile: "cultura-cardedeu-2be40f56af2a.json",
+  keyFile: JSON.parse(process.env.GOOGLE_AUTH_KEYFILE),
   scopes: ["https://www.googleapis.com/auth/calendar"],
 });
 
 // Configuration
-const CALENDAR_ID =
-  "d5c87644a31fb1296ac8ec2ff606e6b7845065255e98505ea94bb92ec3d35413@group.calendar.google.com";
 const RSS_FEED_URL = "https://www.cardedeu.cat/rss/12/0/";
 const PROCESSED_ITEMS_KEY = "processedItems";
 const RSS_FEED_CACHE_KEY = "rssFeedCache";
@@ -162,7 +160,7 @@ async function insertItemToCalendar(item) {
 
     await calendar.events.insert({
       auth: authToken,
-      calendarId: CALENDAR_ID,
+      calendarId: `${NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
       resource: event,
     });
     console.log("Inserted new item successfully: " + title);

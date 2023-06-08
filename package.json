@@ -26,6 +26,7 @@
     "@vercel/edge-config": "^0.2.1",
     "@vercel/kv": "^0.2.1",
     "autoprefixer": "^10.4.13",
+    "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.29.3",
     "fast-xml-parser": "^4.2.2",
