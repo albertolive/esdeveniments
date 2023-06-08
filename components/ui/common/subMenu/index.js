@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { TOWNS, BYDATES, REGIONS } from "@utils/constants";
+import { BYDATES, CITIES_DATA } from "@utils/constants";
+import { useMemo } from "react";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -12,18 +13,69 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
   ssr: false,
 });
 
+function generateRegionsOptions() {
+  return [...CITIES_DATA.entries()].map(([regionKey, region]) => ({
+    value: regionKey,
+    label: region.label,
+  }));
+}
+
+function generateTownsOptions(region) {
+  return region
+    ? [...CITIES_DATA.get(region)?.towns.entries()].map(([townKey, town]) => ({
+        value: townKey,
+        label: town.label,
+      }))
+    : [];
+}
+
+function generateDatesOptions(byDate) {
+  return byDate
+    ? BYDATES.filter((byDateOption) => byDateOption.value === byDate)
+    : [];
+}
+
 export default function SubMenu() {
-  const { push, query } = useRouter();
-  const { region, town, byDate } = query;
-  const initialRegionValue = REGIONS.find(
-    (regionOption) => regionOption.value === region
+  const {
+    push,
+    query: { region, town, byDate },
+  } = useRouter();
+
+  const regionsArray = useMemo(() => generateRegionsOptions(), []);
+  const citiesArray = useMemo(() => generateTownsOptions(region), [region]);
+
+  const initialRegionObject = useMemo(() => {
+    if (region) {
+      const regionData = CITIES_DATA.get(region);
+      return { value: region, label: regionData.label };
+    }
+    return null;
+  }, [region]);
+
+  const initialTownObject = useMemo(() => {
+    if (region && town) {
+      const townData = CITIES_DATA.get(region).towns.get(town);
+      return { value: town, label: townData.label };
+    }
+    return null;
+  }, [region, town]);
+
+  const initialByDateValue = useMemo(
+    () => generateDatesOptions(byDate),
+    [byDate]
   );
-  const initialTownValue = TOWNS.find(
-    (townOption) => townOption.value === town
-  );
-  const initialByDateValue = BYDATES.find(
-    (byDateOption) => byDateOption.value === byDate
-  );
+
+  const handleRegionChange = ({ value = "/" }) => {
+    push(`/${value}`);
+  };
+
+  const handleTownChange = ({ value }) => {
+    push(value ? `/${region}/${value}` : `/${region}`);
+  };
+
+  const handleByDateChange = ({ value }) => {
+    push(value ? `/${region}/${town}/${value}` : `/${region}/${town}`);
+  };
 
   return (
     <>
@@ -31,22 +83,20 @@ export default function SubMenu() {
         <div className="w-full px-2">
           <Select
             id="regions"
-            options={REGIONS}
-            value={initialRegionValue}
-            onChange={({ value = "/" }) => push(`/${value}`)}
+            options={regionsArray}
+            value={initialRegionObject}
+            onChange={handleRegionChange}
             isClearable
             placeholder="una comarca"
           />
         </div>
         <div className="w-full px-2">
           <Select
-            id="towns"
-            options={TOWNS}
-            value={initialTownValue}
-            onChange={({ value }) =>
-              push(value ? `/${region}/${value}` : `/${region}`)
-            }
-            isDisabled={!initialRegionValue}
+            id="cities"
+            options={citiesArray}
+            value={initialTownObject}
+            onChange={handleTownChange}
+            isDisabled={!initialRegionObject}
             isClearable
             placeholder="un poble"
           />
@@ -56,10 +106,8 @@ export default function SubMenu() {
             id="dates"
             options={BYDATES}
             value={initialByDateValue}
-            onChange={({ value }) =>
-              push(value ? `/${region}/${town}/${value}` : `/${region}/${town}`)
-            }
-            isDisabled={!initialTownValue}
+            onChange={handleByDateChange}
+            isDisabled={!initialTownObject}
             isClearable
           />
         </div>

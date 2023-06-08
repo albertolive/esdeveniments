@@ -582,3 +582,44 @@ export const BYDATES = [
 ];
 
 export const REGIONS = [{ value: "valles-oriental", label: "Vallès Oriental" }];
+
+export const CITIES_DATA = new Map([
+  [
+    "valles-oriental",
+    {
+      label: "Vallès Oriental",
+      towns: new Map([
+        [
+          "cardedeu",
+          {
+            label: "Cardedeu",
+            rssFeed: "https://www.cardedeu.cat/rss/12/0",
+          },
+        ],
+        [
+          "llinars",
+          {
+            label: "Llinars",
+            rssFeed: "https://www.llinarsdelvalles.cat/rss/12",
+          },
+        ],
+        [
+          "granollers",
+          {
+            label: "Granollers",
+            rssFeed: "https://www.granollers.cat/rss.xml",
+          },
+        ],
+        [
+          "la-garriga",
+          {
+            label: "La Garriga",
+            rssFeed: "http://lagarriga.webmunicipal.diba.cat/rss/12/0",
+          },
+        ],
+        // Add more towns with their respective RSS feed URLs
+      ]),
+    },
+  ],
+  // Add more regions with their respective towns and data
+]);
