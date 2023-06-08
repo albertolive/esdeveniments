@@ -23,6 +23,8 @@
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",
+    "@vercel/edge-config": "^0.2.1",
+    "@vercel/kv": "^0.2.1",
     "autoprefixer": "^10.4.13",
     "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.29.3",
