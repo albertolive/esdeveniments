@@ -1,4 +1,4 @@
-import { TAGS, TOWNS, REGIONS } from "./constants";
+import { TAGS, CITIES_DATA } from "./constants";
 import {
   slug,
   getFormattedDate,
@@ -151,13 +151,23 @@ export const capitalizeFirstLetter = (string) =>
   string.charAt(0).toUpperCase() + string.slice(1);
 
 export const getTownLabel = (townValue) => {
-  const town = TOWNS.find((t) => t.value === townValue);
-  return town ? town.label : "";
+  for (const region of CITIES_DATA.values()) {
+    for (const [townKey, town] of region.towns.entries()) {
+      if (townKey === townValue) {
+        return town.label;
+      }
+    }
+  }
+  return "";
 };
 
 export const getRegionLabel = (regionValue) => {
-  const region = REGIONS.find((t) => t.value === regionValue);
-  return region ? region.label : "";
+  for (const [regionKey, region] of CITIES_DATA.entries()) {
+    if (regionKey === regionValue) {
+      return region.label;
+    }
+  }
+  return "";
 };
 
 export const addArticleToMonth = (monthString) => {

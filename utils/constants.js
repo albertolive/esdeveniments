@@ -566,22 +566,12 @@ export const VITAMINED_LOCATIONS = {
   },
 };
 
-export const TOWNS = [
-  // Replace it with a dynamic data source
-  { value: "cardedeu", label: "Cardedeu" },
-  { value: "llinars", label: "Llinars" },
-  { value: "granollers", label: "Granollers" },
-  { value: "la-garriga", label: "La Garriga" },
-];
-
 export const BYDATES = [
   // Replace it with a dynamic data source
   { value: "avui", label: "Avui" },
   { value: "setmana", label: "Aquesta setmana" },
   { value: "cap-de-setmana", label: "Cap de setmana" },
 ];
-
-export const REGIONS = [{ value: "valles-oriental", label: "Vallès Oriental" }];
 
 export const CITIES_DATA = new Map([
   [

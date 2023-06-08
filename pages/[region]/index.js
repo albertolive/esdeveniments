@@ -49,9 +49,7 @@ export default function App(props) {
       title={`Agenda ${regionLabel} ${currentYear}`}
       subTitle={`${fixArticles(`Les millors coses per fer ${regionLabel}: mercats, exposicions,
       descobriments, passejades, concerts, museus, teatre... Aquests són els
-      millors plans per gaudir ${regionLabel} aquest ${
-        monthsName[new Date().getMonth()]
-      }!`)}`}
+      millors plans per gaudir aquest ${monthsName[new Date().getMonth()]}!`)}`}
       description={`${fixArticles(`Voleu viure experiències úniques i emocionants? La cultura ${regionLabel} és el lloc on cal estar! Us oferim una gran varietat d'opcions perquè mai us avorriu i sempre tingueu
       alguna cosa interessant per fer. Descobriu tot el que passa ${regionLabel} i voltants, i deixeu-vos sorprendre per la seva riquesa cultural.`)}`}
       noEventsFound={false}
@@ -68,21 +66,22 @@ export default function App(props) {
 }
 
 export async function getStaticPaths() {
-  const { REGIONS, TOWNS, BYDATES } = require("@utils/constants");
+  const { CITIES_DATA, BYDATES } = require("@utils/constants");
 
-  const paths = REGIONS.reduce((acc, region) => {
-    const townPaths = TOWNS.map((town) => {
+  const paths = [];
+
+  for (const [regionKey, region] of CITIES_DATA) {
+    for (const [townKey, town] of region.towns) {
       const datePaths = BYDATES.map((byDate) => ({
         params: {
-          region: region.value,
-          town: town.value,
+          region: regionKey,
+          town: townKey,
           byDate: byDate.value,
         },
       }));
-      return datePaths;
-    });
-    return [...acc, ...townPaths.flat()];
-  }, []);
+      paths.push(...datePaths);
+    }
+  }
 
   return { paths, fallback: false };
 }

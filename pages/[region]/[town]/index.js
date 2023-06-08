@@ -91,21 +91,22 @@ export default function Town(props) {
 }
 
 export async function getStaticPaths() {
-  const { REGIONS, TOWNS, BYDATES } = require("@utils/constants");
+  const { CITIES_DATA, BYDATES } = require("@utils/constants");
 
-  const paths = REGIONS.reduce((acc, region) => {
-    const townPaths = TOWNS.map((town) => {
+  const paths = [];
+
+  for (const [regionKey, region] of CITIES_DATA) {
+    for (const [townKey, town] of region.towns) {
       const datePaths = BYDATES.map((byDate) => ({
         params: {
-          region: region.value,
-          town: town.value,
+          region: regionKey,
+          town: townKey,
           byDate: byDate.value,
         },
       }));
-      return datePaths;
-    });
-    return [...acc, ...townPaths.flat()];
-  }, []);
+      paths.push(...datePaths);
+    }
+  }
 
   return { paths, fallback: false };
 }
