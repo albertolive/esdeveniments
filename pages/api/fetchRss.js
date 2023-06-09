@@ -114,20 +114,30 @@ async function cleanProcessedItems(processedItems) {
   await removeExpiredItems(processedItems, expiredItems);
 }
 
-async function scrapeDescription(url) {
+function replaceImageUrl(imageUrl, baseUrl) {
+  if (imageUrl) {
+    return imageUrl.replace('src="/media', `src="${baseUrl}/media`);
+  }
+  return null;
+}
+
+function getBaseUrl(url) {
+  const urlObject = new URL(url);
+  return `${urlObject.protocol}/${urlObject.host}`;
+}
+
+async function scrapeDescription(url, descriptionSelector, imageSelector) {
   try {
     const response = await fetch(url);
     const html = await response.text();
     const $ = cheerio.load(html);
 
-    const description = $(".ddbbtext").html()?.trim() || "";
-    let image = $(".first-image").html()?.trim() || null;
+    const description = $(descriptionSelector).html()?.trim() || "";
+    let image = $(imageSelector).html()?.trim() || null;
 
+    const baseUrl = getBaseUrl(url);
     if (image) {
-      image = image.replace(
-        'src="/media',
-        'src="https://www.cardedeu.cat/media'
-      );
+      image = replaceImageUrl(image, baseUrl);
     }
 
     const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
@@ -139,13 +149,21 @@ async function scrapeDescription(url) {
   }
 }
 
-async function insertItemToCalendar(item, region, town) {
+async function insertItemToCalendar(
+  item,
+  region,
+  town,
+  descriptionSelector,
+  imageSelector
+) {
   if (!item) return;
   const { pubDate, title, link, guid, location = "" } = item || {};
   const dateTime = new Date(pubDate);
   const endDateTime = new Date(dateTime);
   endDateTime.setHours(endDateTime.getHours() + 1);
-  const description = link ? await scrapeDescription(link) : null;
+  const description = link
+    ? await scrapeDescription(link, descriptionSelector, imageSelector)
+    : null;
 
   const event = {
     summary: title,
@@ -203,7 +221,12 @@ export default async function handler(req, res) {
     }
 
     // Retrieve the rssFeed value for the given town
-    const { label: townLabel, rssFeed } = towns.get(town);
+    const {
+      label: townLabel,
+      rssFeed,
+      descriptionSelector,
+      imageSelector,
+    } = towns.get(town);
 
     // Check if the rssFeed is available
     if (!rssFeed) {
@@ -225,10 +248,26 @@ export default async function handler(req, res) {
     for (const item of newItems) {
       if (REQUEST_COUNT >= REQUEST_LIMIT) {
         await delay(DELAY_IN_MS);
-        promises.push(await insertItemToCalendar(item, regionLabel, townLabel));
+        promises.push(
+          await insertItemToCalendar(
+            item,
+            regionLabel,
+            townLabel,
+            descriptionSelector,
+            imageSelector
+          )
+        );
         REQUEST_COUNT++;
       } else {
-        promises.push(await insertItemToCalendar(item, regionLabel, townLabel));
+        promises.push(
+          await insertItemToCalendar(
+            item,
+            regionLabel,
+            townLabel,
+            descriptionSelector,
+            imageSelector
+          )
+        );
         REQUEST_COUNT++;
       }
       console.log(`Adding item ${item.guid} to processed items`);

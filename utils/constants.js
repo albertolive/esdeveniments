@@ -584,6 +584,8 @@ export const CITIES_DATA = new Map([
           {
             label: "Cardedeu",
             rssFeed: "https://www.cardedeu.cat/rss/12/0",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
           },
         ],
         [
@@ -591,6 +593,8 @@ export const CITIES_DATA = new Map([
           {
             label: "Llinars",
             rssFeed: "https://www.llinarsdelvalles.cat/rss/12",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
           },
         ],
         [
@@ -598,6 +602,8 @@ export const CITIES_DATA = new Map([
           {
             label: "Granollers",
             rssFeed: "https://www.granollers.cat/rss.xml",
+            descriptionSelector: ".categories",
+            imageSelector: ".foto",
           },
         ],
         [
@@ -605,6 +611,8 @@ export const CITIES_DATA = new Map([
           {
             label: "La Garriga",
             rssFeed: "http://lagarriga.webmunicipal.diba.cat/rss/12/0",
+            descriptionSelector: ".td_justificat",
+            imageSelector: ".justified-gallery",
           },
         ],
         // Add more towns with their respective RSS feed URLs

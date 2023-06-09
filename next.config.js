@@ -29,14 +29,12 @@ const nextConfig = {
   images: {
     domains: [
       "res.cloudinary.com",
-      "tarambana.cat",
-      "cinemaesbarjo.cat",
+      "www.tarambana.cat",
       "www.cinemaesbarjo.cat",
-      "https://www.cinemaesbarjo.cat/*",
-      "https://www.cardedeu.cat",
-      "http://www.teatreauditoricardedeu.cat",
-      "www.ayrshare.com",
+      "www.teatreauditoricardedeu.cat",
       "www.cardedeu.cat",
+      "www.llinarsdelvalles.cat",
+      "lagarriga.webmunicipal.diba.cat",
     ],
   },
   async headers() {
