@@ -1,16 +1,42 @@
+import React, { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-// import Notify from "@components/ui/common/notify";
+import LoadingScreen from "@components/ui/common/loading";
 
 const Navbar = dynamic(() => import("@components/ui/common/navbar"), {
-  loading: () => "",
+  ssr: false,
 });
 
 const Footer = dynamic(() => import("@components/ui/common/footer"), {
-  loading: () => "",
+  ssr: false,
 });
 
+// const Notify = dynamic(() => import("@components/ui/common/notify"), {
+//   ssr: false,
+// });
+
 export default function BaseLayout({ children }) {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleStart = () => setLoading(true);
+    const handleComplete = () => setLoading(false);
+
+    router.events.on("routeChangeStart", handleStart);
+    router.events.on("routeChangeComplete", handleComplete);
+    router.events.on("routeChangeError", handleComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleStart);
+      router.events.off("routeChangeComplete", handleComplete);
+      router.events.off("routeChangeError", handleComplete);
+    };
+  }, [router.events]);
+
+  const memoizedChildren = useMemo(() => children, [children]);
+
   return (
     <>
       <Head>
@@ -28,7 +54,7 @@ export default function BaseLayout({ children }) {
       {/* <Notify /> */}
       <div className="mx-auto pb-[85px]">
         <div className="fit max-w-7xl mx-auto p-4 xl:p-0 xl:py-4">
-          {children}
+          {loading ? <LoadingScreen /> : memoizedChildren}
         </div>
       </div>
       <Footer />

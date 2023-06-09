@@ -2,18 +2,23 @@ import axios from "axios";
 import { kv } from "@vercel/kv";
 import { google } from "googleapis";
 import cheerio from "cheerio";
+import { CITIES_DATA } from "@utils/constants";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
 
 const calendar = google.calendar("v3");
 const auth = new google.auth.GoogleAuth({
-  keyFile: JSON.parse(process.env.GOOGLE_AUTH_KEYFILE),
+  credentials: {
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    project_id: process.env.GOOGLE_PROJECT_ID,
+    private_key: process.env.GOOGLE_PRIVATE_KEY,
+  },
   scopes: ["https://www.googleapis.com/auth/calendar"],
 });
 
 // Configuration
-const RSS_FEED_URL = "https://www.cardedeu.cat/rss/12/0/";
 const PROCESSED_ITEMS_KEY = "processedItems";
 const RSS_FEED_CACHE_KEY = "rssFeedCache";
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -39,10 +44,10 @@ function isCacheValid(cachedData) {
 }
 
 // Fetches the RSS feed and returns the parsed data
-async function fetchRSSFeed() {
+async function fetchRSSFeed(rssFeed, townLabel) {
   try {
     // Check if the data is cached
-    const cachedData = await kv.get(RSS_FEED_CACHE_KEY);
+    const cachedData = await kv.get(`${townLabel}_${RSS_FEED_CACHE_KEY}`);
 
     if (isCacheValid(cachedData)) {
       console.log("Returning cached data");
@@ -50,7 +55,8 @@ async function fetchRSSFeed() {
     }
 
     // Fetch the data
-    const response = await axios.get(RSS_FEED_URL);
+    const response = await axios.get(rssFeed);
+
     const json = parser.parse(response.data);
 
     // Validate the data
@@ -66,7 +72,7 @@ async function fetchRSSFeed() {
     const data = json.rss.channel.item;
 
     // Cache the data
-    await kv.set(RSS_FEED_CACHE_KEY, {
+    await kv.set(`${townLabel}_${RSS_FEED_CACHE_KEY}`, {
       timestamp: Date.now(),
       data,
     });
@@ -80,13 +86,13 @@ async function fetchRSSFeed() {
   }
 }
 
-async function getProcessedItems() {
-  const processedItems = await kv.get(PROCESSED_ITEMS_KEY);
+async function getProcessedItems(townLabel) {
+  const processedItems = await kv.get(`${townLabel}_${PROCESSED_ITEMS_KEY}`);
   return processedItems ? new Map(processedItems) : new Map();
 }
 
-async function setProcessedItems(processedItems) {
-  await kv.set(PROCESSED_ITEMS_KEY, [...processedItems]);
+async function setProcessedItems(processedItems, townLabel) {
+  await kv.set(`${townLabel}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
 }
 
 async function getExpiredItems(processedItems) {
@@ -133,18 +139,18 @@ async function scrapeDescription(url) {
   }
 }
 
-async function insertItemToCalendar(item) {
+async function insertItemToCalendar(item, region, town) {
   if (!item) return;
-
-  const { pubDate, title, link, guid, location } = item || {};
+  const { pubDate, title, link, guid, location = "" } = item || {};
   const dateTime = new Date(pubDate);
   const endDateTime = new Date(dateTime);
   endDateTime.setHours(endDateTime.getHours() + 1);
   const description = link ? await scrapeDescription(link) : null;
+
   const event = {
     summary: title,
     description,
-    location: `${location ? location : "Cardedeu"}, Cardedeu, Vallès Oriental`,
+    location: `${location}, ${town}, ${region}`,
     start: {
       dateTime: dateTime.toISOString(),
       timeZone: "UTC",
@@ -157,10 +163,9 @@ async function insertItemToCalendar(item) {
 
   try {
     const authToken = await auth.getClient();
-
     await calendar.events.insert({
       auth: authToken,
-      calendarId: `${NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
+      calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
       resource: event,
     });
     console.log("Inserted new item successfully: " + title);
@@ -173,11 +178,43 @@ async function insertItemToCalendar(item) {
 
 export default async function handler(req, res) {
   try {
+    const { region, town } = req.query;
+
+    // Check if the region parameter is provided
+    if (!region) {
+      throw new Error("Region parameter is missing");
+    }
+
+    // Check if the town parameter is provided
+    if (!town) {
+      throw new Error("Town parameter is missing");
+    }
+
+    // Check if the region exists in the CITIES_DATA map
+    if (!CITIES_DATA.has(region)) {
+      throw new Error("Region not found");
+    }
+
+    const { label: regionLabel, towns } = CITIES_DATA.get(region);
+
+    // Check if the town exists in the townsData map
+    if (!towns.has(town)) {
+      throw new Error("Town not found");
+    }
+
+    // Retrieve the rssFeed value for the given town
+    const { label: townLabel, rssFeed } = towns.get(town);
+
+    // Check if the rssFeed is available
+    if (!rssFeed) {
+      throw new Error("RSS feed URL not found for the town");
+    }
+
     // Fetch the RSS feed
-    const items = await fetchRSSFeed();
+    const items = await fetchRSSFeed(rssFeed, townLabel);
 
     // Read the database
-    const processedItems = await getProcessedItems();
+    const processedItems = await getProcessedItems(townLabel);
     cleanProcessedItems(processedItems);
 
     // Filter out already fetched items
@@ -188,10 +225,10 @@ export default async function handler(req, res) {
     for (const item of newItems) {
       if (REQUEST_COUNT >= REQUEST_LIMIT) {
         await delay(DELAY_IN_MS);
-        promises.push(await insertItemToCalendar(item));
+        promises.push(await insertItemToCalendar(item, regionLabel, townLabel));
         REQUEST_COUNT++;
       } else {
-        promises.push(await insertItemToCalendar(item));
+        promises.push(await insertItemToCalendar(item, regionLabel, townLabel));
         REQUEST_COUNT++;
       }
       console.log(`Adding item ${item.guid} to processed items`);
@@ -207,7 +244,7 @@ export default async function handler(req, res) {
         console.error("Error inserting item to calendar:", result.reason);
       }
     });
-    await setProcessedItems(processedItems);
+    await setProcessedItems(processedItems, townLabel);
     console.log("Finished processing items");
     // Send the response
     res.status(200).json(newItems);
