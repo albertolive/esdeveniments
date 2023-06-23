@@ -168,7 +168,9 @@ async function insertItemToCalendar(
   const event = {
     summary: title,
     description,
-    location: `${location}, ${town}, ${region}`,
+    location: location
+      ? `${location}, ${town}, ${region}`
+      : `${town}, ${region}`,
     start: {
       dateTime: dateTime.toISOString(),
       timeZone: "UTC",

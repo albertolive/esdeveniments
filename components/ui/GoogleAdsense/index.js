@@ -13,8 +13,8 @@ const GoogleAdsenseContainer = ({
   useEffect(() => {
     if (
       adRef.current &&
-      adRef.current.firstChild &&
-      adRef.current.firstChild.tagName === "INS"
+      adRef.current.children &&
+      adRef.current.children.length > 0
     ) {
       return; // Ad already loaded in this element, return early
     }
