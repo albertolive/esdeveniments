@@ -188,17 +188,6 @@ export default function QuiSom() {
               </div>
             </ul>
           </div>
-          <div className="mt-6 prose prose-lg text-gray-500 mx-auto">
-            <a href="https://www.ayrshare.com?utm_source=powered">
-              <Image
-                src="https://www.ayrshare.com/wp-content/uploads/ayrshare-badge.png"
-                target="_blank"
-                alt="Social Powered by Ayrshare"
-                width="90px"
-                height="30px"
-              />
-            </a>
-          </div>
         </div>
       </div>
     </>

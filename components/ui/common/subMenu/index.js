@@ -26,7 +26,7 @@ export default function SubMenu() {
 
   const regionsArray = useMemo(() => generateRegionsOptions(), []);
   const citiesArray = useMemo(() => generateTownsOptions(region), [region]);
-  console.log(regionsArray);
+
   const initialRegionObject = useMemo(() => {
     if (region) {
       const regionData = CITIES_DATA.get(region);
