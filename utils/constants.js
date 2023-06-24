@@ -591,7 +591,7 @@ export const CITIES_DATA = new Map([
         [
           "llinars",
           {
-            label: "Llinars",
+            label: "Llinars del Vallès",
             rssFeed: "https://www.llinarsdelvalles.cat/rss/12",
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",

@@ -1,4 +1,11 @@
-import { DAYS, MONTHS, LOCATIONS, VITAMINED_LOCATIONS } from "./constants";
+import {
+  DAYS,
+  MONTHS,
+  LOCATIONS,
+  VITAMINED_LOCATIONS,
+  CITIES_DATA,
+  BYDATES,
+} from "./constants";
 
 const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
 
@@ -233,4 +240,71 @@ export function createArrayOfObjects(arr) {
   return arr.map(function (item) {
     return { value: item, label: item.charAt(0).toUpperCase() + item.slice(1) };
   });
+}
+
+export function generateRegionsOptions() {
+  return [...CITIES_DATA.entries()].map(([regionKey, region]) => ({
+    value: regionKey,
+    label: region.label,
+  }));
+}
+
+export function getTownLabel(townValue) {
+  for (const region of CITIES_DATA.values()) {
+    for (const [townKey, town] of region.towns.entries()) {
+      if (townKey === townValue) {
+        return town.label;
+      }
+    }
+  }
+  return "";
+}
+
+export function getRegionLabel(regionValue) {
+  for (const [regionKey, region] of CITIES_DATA.entries()) {
+    if (regionKey === regionValue) {
+      return region.label;
+    }
+  }
+  return "";
+}
+
+export function generateTownsOptions(region) {
+  return region
+    ? [...CITIES_DATA.get(region)?.towns.entries()].map(([townKey, town]) => ({
+        value: townKey,
+        label: town.label,
+      }))
+    : [];
+}
+
+export function generateDatesOptions(byDate) {
+  return byDate
+    ? BYDATES.filter((byDateOption) => byDateOption.value === byDate)
+    : [];
+}
+
+export function getTownOptionsWithoutRegion(town) {
+  let townData;
+
+  for (const [_, regionData] of CITIES_DATA.entries()) {
+    if (regionData.towns.has(town)) {
+      townData = regionData.towns.get(town);
+      break;
+    }
+  }
+
+  return townData;
+}
+
+export function getRegionByTown(town) {
+  let region = "";
+  for (const [key, value] of CITIES_DATA.entries()) {
+    if (value.towns.has(town)) {
+      region = key;
+      break;
+    }
+  }
+
+  return getRegionLabel(region);
 }

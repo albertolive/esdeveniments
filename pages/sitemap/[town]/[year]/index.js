@@ -5,7 +5,7 @@ export default function Year() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/sitemaps");
+    router.replace("/sitemap");
   });
 
   return null;

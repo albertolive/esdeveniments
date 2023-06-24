@@ -27,9 +27,9 @@ export default function NoEventFound() {
               <a className="font-bold text-black hover:underline">cercador</a>
             </Link>
             , veure{" "}
-            <Link href="/avui-a-cardedeu" prefetch={false}>
+            <Link href="/" prefetch={false}>
               <a className="font-bold text-black hover:underline">
-                que passa avui a Cardedeu
+                que passa avui a Catalunya
               </a>
             </Link>
             , o bé,{" "}

@@ -2,7 +2,8 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { monthsName, generateJsonData } from "@utils/helpers";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import { getTownLabel, getRegionLabel, fixArticles } from "@utils/normalize";
+import { fixArticles } from "@utils/normalize";
+import { getTownLabel, getRegionLabel } from "@utils/helpers";
 
 const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
 
@@ -71,7 +72,7 @@ export async function getStaticPaths() {
   const paths = [];
 
   for (const [regionKey, region] of CITIES_DATA) {
-    for (const [townKey, town] of region.towns) {
+    for (const [townKey] of region.towns) {
       const datePaths = BYDATES.map((byDate) => ({
         params: {
           region: regionKey,

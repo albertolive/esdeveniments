@@ -1,8 +1,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { monthsName, generateJsonData } from "@utils/helpers";
+import { getRegionLabel, getTownLabel, generateJsonData } from "@utils/helpers";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import { getRegionLabel, getTownLabel } from "@utils/normalize";
 
 const Events = dynamic(() => import("@components/ui/events"), {
   loading: () => "",

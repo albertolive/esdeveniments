@@ -1,7 +1,12 @@
+import { useMemo } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { BYDATES, CITIES_DATA } from "@utils/constants";
-import { useMemo } from "react";
+import {
+  generateRegionsOptions,
+  generateTownsOptions,
+  generateDatesOptions,
+} from "@utils/helpers";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -13,28 +18,6 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
   ssr: false,
 });
 
-function generateRegionsOptions() {
-  return [...CITIES_DATA.entries()].map(([regionKey, region]) => ({
-    value: regionKey,
-    label: region.label,
-  }));
-}
-
-function generateTownsOptions(region) {
-  return region
-    ? [...CITIES_DATA.get(region)?.towns.entries()].map(([townKey, town]) => ({
-        value: townKey,
-        label: town.label,
-      }))
-    : [];
-}
-
-function generateDatesOptions(byDate) {
-  return byDate
-    ? BYDATES.filter((byDateOption) => byDateOption.value === byDate)
-    : [];
-}
-
 export default function SubMenu() {
   const {
     push,
@@ -43,7 +26,7 @@ export default function SubMenu() {
 
   const regionsArray = useMemo(() => generateRegionsOptions(), []);
   const citiesArray = useMemo(() => generateTownsOptions(region), [region]);
-
+  console.log(regionsArray);
   const initialRegionObject = useMemo(() => {
     if (region) {
       const regionData = CITIES_DATA.get(region);

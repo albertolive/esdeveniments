@@ -7,7 +7,7 @@ export default function QuiSom() {
     <>
       <Meta
         title="Qui som - Esdeveniments.cat"
-        description="Qui som? - Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a Cardedeu."
+        description="Qui som? - Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a Catalunya."
         canonical="https://www.esdeveniments.com/qui-som"
       />
       <div className="relative py-16 bg-white overflow-hidden">

@@ -150,26 +150,6 @@ export const normalizeEvent = (event) => {
 export const capitalizeFirstLetter = (string) =>
   string.charAt(0).toUpperCase() + string.slice(1);
 
-export const getTownLabel = (townValue) => {
-  for (const region of CITIES_DATA.values()) {
-    for (const [townKey, town] of region.towns.entries()) {
-      if (townKey === townValue) {
-        return town.label;
-      }
-    }
-  }
-  return "";
-};
-
-export const getRegionLabel = (regionValue) => {
-  for (const [regionKey, region] of CITIES_DATA.entries()) {
-    if (regionKey === regionValue) {
-      return region.label;
-    }
-  }
-  return "";
-};
-
 export const addArticleToMonth = (monthString) => {
   const vowels = ["a", "e", "i", "o", "u"];
   const firstLetter = monthString.charAt(0);

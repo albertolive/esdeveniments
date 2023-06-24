@@ -30,6 +30,7 @@ const nextConfig = {
     domains: [
       "res.cloudinary.com",
       "www.tarambana.cat",
+      "tarambana.cat",
       "www.cinemaesbarjo.cat",
       "www.teatreauditoricardedeu.cat",
       "www.cardedeu.cat",
