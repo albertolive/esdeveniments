@@ -1,31 +1,23 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 import { slug, getFormattedDate } from "@utils/helpers";
 import {
   DatePicker,
   Input,
   Select,
-  FrequencySelect,
   TextArea,
   ImageUpload,
 } from "@components/ui/common/form";
 import Meta from "@components/partials/seo-meta";
-
-const Notification = dynamic(
-  () => import("@components/ui/common/notification"),
-  {
-    loading: () => "",
-  }
-);
+import { generateRegionsOptions, generateTownsOptions } from "@utils/helpers";
 
 const defaultForm = {
   title: "",
   description: "",
   startDate: "",
   endDate: "",
-  location: "",
-  frequency: "",
+  region: "",
+  town: "",
   imageUploaded: false,
 };
 
@@ -40,7 +32,7 @@ const _createFormState = (
 });
 
 const createFormState = (
-  { title, description, startDate, endDate, location },
+  { title, description, startDate, endDate, region, town, imageUploaded },
   isPristine
 ) => {
   if (!isPristine) {
@@ -59,8 +51,16 @@ const createFormState = (
     );
   }
 
-  if (!location) {
-    return _createFormState(true, true, "Lloc obligatori");
+  if (!imageUploaded) {
+    return _createFormState(true, true, "Imatge obligatoria");
+  }
+
+  if (!region) {
+    return _createFormState(true, true, "Comarca obligatoria");
+  }
+
+  if (!town) {
+    return _createFormState(true, true, "Ciutat obligatoria");
   }
 
   if (!startDate) {
@@ -85,11 +85,14 @@ const createFormState = (
 export default function Publica() {
   const router = useRouter();
   const [form, setForm] = useState(defaultForm);
+  const [region, setRegion] = useState("");
   const [formState, setFormState] = useState(_createFormState());
   const [isLoading, setIsLoading] = useState(false);
   const [imageToUpload, setImageToUpload] = useState(null);
-  const [hideNotification, setHideNotification] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  const regionsArray = useMemo(() => generateRegionsOptions(), []);
+  const citiesArray = useMemo(() => generateTownsOptions(region), [region]);
 
   const handleFormChange = (name, value) => {
     const newForm = { ...form, [name]: value };
@@ -103,11 +106,12 @@ export default function Publica() {
 
   const handleChangeDate = (name, value) => handleFormChange(name, value);
 
-  const handleChangeLocation = ({ value }) =>
-    handleFormChange("location", value);
+  const handleRegionChange = ({ value }) => {
+    setRegion(value);
+    handleFormChange("region", value);
+  };
 
-  const handleChangeFrequencyLocation = ({ value }) =>
-    handleFormChange("frequency", value);
+  const handleTownChange = ({ value }) => handleFormChange("town", value);
 
   const goToEventPage = (url) => ({
     pathname: `${url}`,
@@ -175,9 +179,6 @@ export default function Publica() {
     xhr.send(fd);
   };
 
-  const notificationTitle =
-    "Avís! Preveient que s'acosta un any electoral, us volíem informar que Esdeveniments no és un espai per a la publicació d'actes de partits polítics i quan en detectem algun, l'eliminarem. Considerem que els partits ja tenen els seus canals i volem deixar aquest espai per a les entitats i iniciatives culturals. Gràcies per la comprensió!";
-
   return (
     <>
       <Meta
@@ -185,14 +186,6 @@ export default function Publica() {
         description="Publica un acte cultural - Esdeveniments.cat"
         canonical="https://www.esdeveniments.cat/publica"
       />
-      {false && (
-        <Notification
-          type="warning"
-          customNotification={false}
-          hideNotification={() => setHideNotification(true)}
-          title={notificationTitle}
-        />
-      )}
       <div className="space-y-8 divide-y divide-gray-200 max-w-3xl mx-auto">
         <div className="space-y-8 divide-y divide-gray-200">
           <div className="pt-8">
@@ -223,24 +216,30 @@ export default function Publica() {
               />
 
               <Select
-                id="location"
-                value={form.location}
-                title="Localització *"
-                onChange={handleChangeLocation}
-                isValidNewOption
+                id="region"
+                title="Comarca *"
+                options={regionsArray}
+                value={form.region}
+                onChange={handleRegionChange}
+                isClearable
+                placeholder="una comarca"
+              />
+
+              <Select
+                id="town"
+                title="Ciutat *"
+                options={citiesArray}
+                value={form.town}
+                onChange={handleTownChange}
+                isDisabled={!form.region}
+                isClearable
+                placeholder="un poble"
               />
 
               <DatePicker
                 startDate={form.start}
                 endDate={form.end}
                 onChange={handleChangeDate}
-              />
-
-              <FrequencySelect
-                id="frequency"
-                value={form.frequency}
-                title="Freqüència"
-                onChange={handleChangeFrequencyLocation}
               />
             </div>
           </div>

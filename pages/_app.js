@@ -1,6 +1,6 @@
 import "@styles/globals.css";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, memo, Suspense } from "react";
 import Script from "next/script";
 import { BaseLayout } from "@components/ui/layout";
 import { useRouter } from "next/router";
@@ -69,10 +69,12 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
       />
 
       <BaseLayout>
-        <Component {...pageProps} />
+        <Suspense fallback={<></>}>
+          <Component {...pageProps} />
+        </Suspense>
       </BaseLayout>
     </>
   );
 }
 
-export default EsdevenimentsMainEntry;
+export default memo(EsdevenimentsMainEntry);

@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="container mx-auto h-full">
         <div className="flex flex-col justify-center items-center h-full">
           <div className="text-white text-sm text-primary-2 font-bold text-center">
-            © {new Date().getFullYear()} Esdeveniments <br />
+            © {new Date().getFullYear()} Esdeveniments.cat <br />
             Contacte:&nbsp;
             <a
               className="hover:text-[#ECB84A]"
