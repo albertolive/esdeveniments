@@ -62,8 +62,8 @@ export default function SubMenu() {
 
   return (
     <>
-      <div className="flex justify-center my-4">
-        <div className="w-full px-2">
+      <div className="flex justify-center my-4 flex-col xs:flex-row">
+        <div className="w-full p-2">
           <Select
             id="regions"
             options={regionsArray}
@@ -73,7 +73,7 @@ export default function SubMenu() {
             placeholder="una comarca"
           />
         </div>
-        <div className="w-full px-2">
+        <div className="w-full p-2">
           <Select
             id="cities"
             options={citiesArray}
@@ -84,7 +84,7 @@ export default function SubMenu() {
             placeholder="un poble"
           />
         </div>
-        <div className="w-full px-2">
+        <div className="w-full p-2">
           <Select
             id="dates"
             options={BYDATES}

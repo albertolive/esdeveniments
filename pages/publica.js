@@ -18,6 +18,7 @@ const defaultForm = {
   endDate: "",
   region: "",
   town: "",
+  location: "",
   imageUploaded: false,
 };
 
@@ -32,7 +33,16 @@ const _createFormState = (
 });
 
 const createFormState = (
-  { title, description, startDate, endDate, region, town, imageUploaded },
+  {
+    title,
+    description,
+    startDate,
+    endDate,
+    region,
+    town,
+    location,
+    imageUploaded,
+  },
   isPristine
 ) => {
   if (!isPristine) {
@@ -61,6 +71,10 @@ const createFormState = (
 
   if (!town) {
     return _createFormState(true, true, "Ciutat obligatoria");
+  }
+
+  if (!location) {
+    return _createFormState(true, true, "Lloc obligatori");
   }
 
   if (!startDate) {
@@ -137,7 +151,11 @@ export default function Publica() {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...form, imageUploaded: !!imageToUpload }),
+        body: JSON.stringify({
+          ...form,
+          location: `${form.location}, ${form.town}, ${form.region}`,
+          imageUploaded: !!imageToUpload,
+        }),
       });
       const { id } = await rawResponse.json();
 
@@ -234,6 +252,13 @@ export default function Publica() {
                 isDisabled={!form.region}
                 isClearable
                 placeholder="un poble"
+              />
+
+              <Input
+                id="location"
+                title="Lloc *"
+                value={form.location}
+                onChange={handleChange}
               />
 
               <DatePicker
