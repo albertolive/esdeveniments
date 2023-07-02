@@ -1,8 +1,6 @@
 import {
   DAYS,
   MONTHS,
-  LOCATIONS,
-  VITAMINED_LOCATIONS,
   CITIES_DATA,
   BYDATES,
 } from "./constants";
@@ -94,12 +92,10 @@ export const getFormattedDate = (start, end) => {
   const formattedStart =
     isMultipleDays && isSameMonth
       ? `${startDay}`
-      : `${startDay} de ${nameMonth} ${
-          isMultipleDays && isSameYear ? "" : `del ${year}`
-        }`;
-  const formattedEnd = `${endDay} de ${
-    MONTHS[endDateConverted.getMonth()]
-  } del ${endDateConverted.getFullYear()}`;
+      : `${startDay} de ${nameMonth} ${isMultipleDays && isSameYear ? "" : `del ${year}`
+      }`;
+  const formattedEnd = `${endDay} de ${MONTHS[endDateConverted.getMonth()]
+    } del ${endDateConverted.getFullYear()}`;
   const startTime = `${startDateConverted.getHours()}:${String(
     startDateConverted.getMinutes()
   ).padStart(2, "0")}`;
@@ -116,27 +112,11 @@ export const getFormattedDate = (start, end) => {
     nameDay,
     startDate: isMultipleDays
       ? (startDay <= new Date().getDate() &&
-          convertTZ(new Date(), "Europe/Madrid")) ||
-        startDateConverted
+        convertTZ(new Date(), "Europe/Madrid")) ||
+      startDateConverted
       : startDateConverted,
     isLessThanFiveDays: isLessThanFiveDays(startDate),
   };
-};
-
-export const getVitaminedLocation = (location) => {
-  let locationNormalized = VITAMINED_LOCATIONS["cardedeu"];
-
-  Object.keys(LOCATIONS).find((k) => {
-    if (
-      location
-        .toLowerCase()
-        .split(" ")
-        .some((word) => LOCATIONS[k].includes(word))
-    )
-      locationNormalized = VITAMINED_LOCATIONS[k];
-  });
-
-  return locationNormalized;
 };
 
 export const nextDay = (x) => {
@@ -168,9 +148,6 @@ export const monthsName = [
   "desembre",
 ];
 
-const transformImagestoAbsoluteUrl = (images) =>
-  images.map((image) => `${siteUrl}${image}`);
-
 export const generateJsonData = ({
   title,
   slug,
@@ -178,63 +155,57 @@ export const generateJsonData = ({
   startDate,
   endDate,
   location,
-  lat,
-  lng,
   imageUploaded,
-  images,
-  isMoney,
   eventImage,
-}) => ({
-  "@context": "https://schema.org",
-  "@type": "Event",
-  name: title,
-  url: `${siteUrl}/${slug}`,
-  startDate,
-  endDate,
-  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-  eventStatus: "https://schema.org/EventScheduled",
-  location: {
-    "@type": "Place",
-    name: location,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: location,
-      addressLocality: isMoney ? "Barcelona" : "Cardedeu",
-      postalCode: isMoney ? "" : "08440",
-      addressCountry: "ES",
-      addressRegion: "CT",
-    },
-    geo: {
-      latitude: lat,
-      "@type": "GeoCoordinates",
-      longitude: lng,
-    },
-  },
-  image: [
-    imageUploaded,
-    eventImage,
-    ...transformImagestoAbsoluteUrl(images),
-  ].filter(Boolean),
-  description,
-  performer: {
-    "@type": "PerformingGroup",
-    name: location,
-  },
-  organizer: {
-    "@type": "Organization",
-    name: location,
-    url: siteUrl,
-  },
-  offers: {
-    "@type": "Offer",
-    price: 0,
-    priceCurrency: "EUR",
-    availability: "https://schema.org/InStock",
+  postalCode,
+  label
+}) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: title,
     url: `${siteUrl}/${slug}`,
-    validFrom: startDate,
-  },
-  isAccessibleForFree: true,
-});
+    startDate,
+    endDate,
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    eventStatus: "https://schema.org/EventScheduled",
+    location: {
+      "@type": "Place",
+      name: location,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: location,
+        addressLocality: label,
+        postalCode,
+        addressCountry: "ES",
+        addressRegion: "CT",
+      },
+    },
+    image: [
+      imageUploaded,
+      eventImage,
+    ].filter(Boolean),
+    description,
+    performer: {
+      "@type": "PerformingGroup",
+      name: location,
+    },
+    organizer: {
+      "@type": "Organization",
+      name: location,
+      url: siteUrl,
+    },
+    offers: {
+      "@type": "Offer",
+      price: 0,
+      priceCurrency: "EUR",
+      availability: "https://schema.org/InStock",
+      url: `${siteUrl}/${slug}`,
+      validFrom: startDate,
+    },
+    isAccessibleForFree: true,
+  }
+};
 
 export function createArrayOfObjects(arr) {
   return arr.map(function (item) {
@@ -260,6 +231,17 @@ export function getTownLabel(townValue) {
   return "";
 }
 
+export function getTownPostalCode(townValue) {
+  for (const region of CITIES_DATA.values()) {
+    for (const [townKey, town] of region.towns.entries()) {
+      if (townKey === townValue) {
+        return town.postalCode;
+      }
+    }
+  }
+  return "";
+}
+
 export function getRegionLabel(regionValue) {
   for (const [regionKey, region] of CITIES_DATA.entries()) {
     if (regionKey === regionValue) {
@@ -272,9 +254,9 @@ export function getRegionLabel(regionValue) {
 export function generateTownsOptions(region) {
   return region
     ? [...CITIES_DATA.get(region)?.towns.entries()].map(([townKey, town]) => ({
-        value: townKey,
-        label: town.label,
-      }))
+      value: townKey,
+      label: town.label,
+    }))
     : [];
 }
 
@@ -307,4 +289,8 @@ export function getRegionByTown(town) {
   }
 
   return getRegionLabel(region);
+}
+
+export function truncateString(text, maxLength) {
+  return text.length > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
 }

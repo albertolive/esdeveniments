@@ -1,6 +1,5 @@
 import { useState } from "react";
 import CreatableSelect from "react-select/creatable";
-import { LOCATIONS_ARRAY } from "@utils/constants";
 
 const customStyles = {
   container: (provided) => ({
@@ -38,7 +37,7 @@ export default function SelectComponent({
   title,
   value: initialValue = null,
   onChange,
-  options = LOCATIONS_ARRAY,
+  options = [],
   isDisabled = false,
   isValidNewOption = false,
   isClearable = false,

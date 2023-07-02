@@ -27,9 +27,8 @@ export const getServerSideProps = async (ctx) => {
       lastmod: new Date().toISOString(),
       changefreq: "daily",
       "image:image": `
-    <image:loc>${
-      data.imageUploaded ? data.imageUploaded : siteUrl + data.images[0]
-    }</image:loc>
+    <image:loc>${data.imageUploaded ? data.imageUploaded : undefined
+        }</image:loc>
     <image:title>${sanitize(data.title)}</image:title>
   `,
     }));
@@ -37,4 +36,4 @@ export const getServerSideProps = async (ctx) => {
   return getServerSideSitemap(ctx, fields);
 };
 
-export default function Site() {}
+export default function Site() { }

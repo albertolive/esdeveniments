@@ -1,9 +1,10 @@
-import { TAGS, CITIES_DATA } from "./constants";
+import { TAGS } from "./constants";
 import {
   slug,
   getFormattedDate,
-  getVitaminedLocation,
   sanitizeText,
+  getTownPostalCode,
+  getTownOptionsWithoutRegion,
 } from "./helpers";
 
 function to3HourForecastFormat(date) {
@@ -58,13 +59,15 @@ export const normalizeEvents = (event, weatherInfo) => {
   } = getFormattedDate(event.start, event.end);
   const weatherObject = normalizeWeather(startDate, weatherInfo);
   const eventImage = hasEventImage(event.description);
-  const location = event.location ? event.location.split(",")[0] : "Cardedeu";
+  const locationParts = event.location ? event.location.split(",") : [];
+  const location = locationParts[0] || "";
+  const town = locationParts[1] || "";
+  const region = locationParts[2] || "";
   let title = event.summary ? sanitizeText(event.summary) : "";
   const tag = TAGS.find((v) => title.includes(v)) || null;
 
-  if (tag) title = title.replace(`${tag}:`, "").trim();
+  if (tag) title = title.replace(`${tag}: `, "").trim();
 
-  const locationNormalized = getVitaminedLocation(location);
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
 
@@ -74,19 +77,19 @@ export const normalizeEvents = (event, weatherInfo) => {
     startTime,
     endTime,
     location,
+    subLocation: `${town}${town && region ? ", " : ""}${region}`,
     formattedStart,
     formattedEnd,
     nameDay,
     tag,
     slug: slug(title, originalFormattedStart, event.id),
-    ...locationNormalized,
     startDate: event.start && event.start.dateTime,
     endDate: event.end && event.end.dateTime,
     imageUploaded: imageUploaded
       ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
       : eventImage
-      ? eventImage
-      : null,
+        ? eventImage
+        : null,
     description: event.description
       ? event.description
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
@@ -106,16 +109,15 @@ export const normalizeEvent = (event) => {
     nameDay,
   } = getFormattedDate(event.start, event.end);
 
-  let location = event.location ? event.location.split(",")[0] : "Cardedeu";
   let title = event.summary ? sanitizeText(event.summary) : "";
+  const locationParts = event.location ? event.location.split(",") : [];
+  const town = locationParts[1] ? locationParts[1].toLowerCase().trim() : "";
   const tag = TAGS.find((v) => title.includes(v)) || null;
-
+  const { postalCode, label } = getTownOptionsWithoutRegion(town)
   if (tag) title = title.replace(`${tag}:`, "").trim();
 
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
-
-  const locationNormalized = getVitaminedLocation(location);
   const eventImage = hasEventImage(event.description);
 
   return {
@@ -123,7 +125,9 @@ export const normalizeEvent = (event) => {
     title,
     startTime,
     endTime,
-    location,
+    location: event.location,
+    label,
+    postalCode,
     formattedStart,
     formattedEnd,
     nameDay,
@@ -132,7 +136,6 @@ export const normalizeEvent = (event) => {
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
     tag,
     slug: slug(title, originalFormattedStart, event.id),
-    ...locationNormalized,
     startDate: event.start && event.start.dateTime,
     endDate: event.end && event.end.dateTime,
     imageUploaded: imageUploaded
@@ -143,7 +146,6 @@ export const normalizeEvent = (event) => {
     isEventFinished: event.end
       ? new Date(event.end.dateTime) < new Date()
       : false,
-    isMoney: event.summary ? event.summary.search(/\[Ad\]/g, "") !== -1 : false,
   };
 };
 

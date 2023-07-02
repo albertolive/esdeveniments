@@ -4,6 +4,7 @@ import Image from "@components/ui/common/image";
 import NextImage from "next/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
+import { truncateString } from "@utils/helpers";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -54,15 +55,10 @@ export default function Card({ event, isLoading, isValidating }) {
     );
 
   const { description, icon } = event.weather || {};
-  const image = event.imageUploaded ? event.imageUploaded : event.images[0];
-  const title =
-    event.title.length > 70
-      ? event.title.substring(0, 45) + "..."
-      : event.title;
-  const location =
-    event.location.length > 45
-      ? event.location.substring(0, 45) + "..."
-      : event.location;
+  const image = event.imageUploaded ? event.imageUploaded : undefined;
+  const title = truncateString(event.title || "", 70);
+  const location = truncateString(event.location || "", 45);
+  const subLocation = truncateString(event.subLocation || "", 45);
 
   if (isLoading) <IsLoadingComponent />;
   if (isValidating) <IsLoadingComponent />;
@@ -104,6 +100,10 @@ export default function Card({ event, isLoading, isValidating }) {
             <p className="flex mt-2 mb-4 text-sm sm:text-base text-gray-900">
               <LocationMarkerIcon className="h-6 w-6" />
               <span className="ml-1">{location}</span>
+            </p>
+            <p className="flex mt-2 mb-4 text-sm sm:text-base text-gray-900">
+              <LocationMarkerIcon className="h-6 w-6" />
+              <span className="ml-1">{subLocation}</span>
             </p>
             <div className="mt-2 mb-4 text-sm sm:text-base text-gray-500 ">
               <span className="inline-flex p-1 px-2 rounded-full bg-slate-200 items-center border border-transparent shadow-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-grey-500/40">

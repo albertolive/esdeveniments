@@ -57,8 +57,8 @@ const buildFeed = (items) => {
       image: item.imageUploaded
         ? item.imageUploaded
         : eventImage
-        ? eventImage
-        : `${hostUrl}${item.images[0]}`,
+          ? eventImage
+          : undefined,
     });
   });
 
