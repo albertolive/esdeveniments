@@ -49,7 +49,7 @@ export default function ImageUploader({ value, onUpload, progress }) {
       </label>
 
       <div
-        className={`mt-1 border-2 border-dashed rounded-lg p-2 ${
+        className={`mt-1 border-2 border-dashed rounded-lg p-2 cursor-pointer ${
           dragOver ? "border-green-600" : "border-gray-300"
         }`}
         onDragOver={(e) => {

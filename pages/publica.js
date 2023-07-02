@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/router";
-import { slug, getFormattedDate } from "@utils/helpers";
+import { slug, getFormattedDate, getRegionLabel, getTownLabel } from "@utils/helpers";
 import {
   DatePicker,
   Input,
@@ -19,7 +19,7 @@ const defaultForm = {
   region: "",
   town: "",
   location: "",
-  imageUploaded: false,
+  imageUploaded: null,
 };
 
 const _createFormState = (
@@ -125,6 +125,11 @@ export default function Publica() {
     handleFormChange("region", value);
   };
 
+  const handleImageChange = (value) => {
+    setImageToUpload(value);
+    handleFormChange("imageUploaded", value);
+  };
+
   const handleTownChange = ({ value }) => handleFormChange("town", value);
 
   const goToEventPage = (url) => ({
@@ -145,56 +150,79 @@ export default function Publica() {
     if (!newFormState.isDisabled) {
       setIsLoading(true);
 
-      const rawResponse = await fetch(process.env.NEXT_PUBLIC_CREATE_EVENT, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...form,
-          location: `${form.location}, ${form.town}, ${form.region}`,
-          imageUploaded: !!imageToUpload,
-        }),
-      });
-      const { id } = await rawResponse.json();
+      try {
+        const rawResponse = await fetch('/api/postEvent', {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...form,
+            location: `${form.location}, ${getTownLabel(form.town)}, ${getRegionLabel(form.region)}`,
+            imageUploaded: !!imageToUpload,
+          }),
+        });
 
-      const { formattedStart } = getFormattedDate(form.startDate, form.endDate);
-      const slugifiedTitle = slug(form.title, formattedStart, id);
+        if (rawResponse.ok) {
+          const { id } = await rawResponse.json();
 
-      imageToUpload
-        ? uploadFile(id, slugifiedTitle)
-        : router.push(goToEventPage(`/${slugifiedTitle}`));
+          const { formattedStart } = getFormattedDate(form.startDate, form.endDate);
+          const slugifiedTitle = slug(form.title, formattedStart, id);
+
+          imageToUpload
+            ? uploadFile(id, slugifiedTitle)
+            : router.push(goToEventPage(`/${slugifiedTitle}`));
+        } else {
+          // Handle API error
+          console.error("Error submitting form");
+          setIsLoading(false);
+        }
+
+      } catch (error) {
+        // Handle fetch or other errors
+        console.error("Error submitting form:", error);
+        setIsLoading(false);
+        setFormState(_createFormState(true, true, "Hi ha hagut un error, torna-ho a provar més tard o contacta amb nosaltres."));
+      }
     }
   };
 
   const uploadFile = (id, slugifiedTitle) => {
-    const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUDNAME}/upload`;
-    const xhr = new XMLHttpRequest();
-    const fd = new FormData();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    try {
+      const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUDNAME}/upload`;
+      const xhr = new XMLHttpRequest();
+      const fd = new FormData();
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
-    xhr.upload.addEventListener("progress", (e) => {
-      setProgress(Math.round((e.loaded * 100.0) / e.total));
-    });
+      xhr.upload.addEventListener("progress", (e) => {
+        setProgress(Math.round((e.loaded * 100.0) / e.total));
+      });
 
-    xhr.onreadystatechange = (e) => {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        const public_id = JSON.parse(xhr.responseText).public_id;
-        console.log(public_id);
-        router.push(goToEventPage(`/${slugifiedTitle}`));
-      }
-    };
+      xhr.onreadystatechange = (e) => {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          const public_id = JSON.parse(xhr.responseText).public_id;
+          console.log(public_id);
+          router.push(goToEventPage(`/${slugifiedTitle}`));
+        }
+      };
 
-    fd.append(
-      "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UNSIGNED_UPLOAD_PRESET
-    );
-    fd.append("tags", "browser_upload");
-    fd.append("file", imageToUpload);
-    fd.append("public_id", id);
-    xhr.send(fd);
+      fd.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLOUDINARY_UNSIGNED_UPLOAD_PRESET
+      );
+      fd.append("tags", "browser_upload");
+      fd.append("file", imageToUpload);
+      fd.append("public_id", id);
+      xhr.send(fd);
+    } catch (error) {
+      // Handle fetch or other errors
+      console.error("Error uploading file:", error);
+      setIsLoading(false);
+      setFormState(_createFormState(true, true, "Hi ha hagut un error en pujar la imatge, torna-ho a provar més tard o contacta amb nosaltres."));
+      throw error;
+    }
   };
 
   return (
@@ -229,7 +257,7 @@ export default function Publica() {
 
               <ImageUpload
                 value={imageToUpload}
-                onUpload={setImageToUpload}
+                onUpload={handleImageChange}
                 progress={progress}
               />
 

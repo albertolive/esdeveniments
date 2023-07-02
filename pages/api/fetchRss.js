@@ -24,8 +24,8 @@ const RSS_FEED_CACHE_KEY = "rssFeedCache";
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
 const RSS_FEED_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
 let REQUEST_COUNT = 0;
-const REQUEST_LIMIT = 1;
-const DELAY_IN_MS = 1000;
+const REQUEST_LIMIT = 2;
+const DELAY_IN_MS = 500;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -128,11 +128,13 @@ function getBaseUrl(url) {
 
 async function scrapeDescription(url, descriptionSelector, imageSelector) {
   try {
-    const response = await fetch(url);
+    const response = await fetch("https://www.cardedeu.cat/actualitat/agenda/exposicio-estiueig-de-proximitat-1850-1950.html");
     const html = await response.text();
     const $ = cheerio.load(html);
 
-    const description = $(descriptionSelector).html()?.trim() || "";
+    const description =
+      $(".ddbbtext").html()?.trim() ||
+      "Cap descripció. Afegeix-ne una!";
     let image = $(imageSelector).html()?.trim() || null;
 
     const baseUrl = getBaseUrl(url);
@@ -142,7 +144,7 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
 
     const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
 
-    return `${description}\n${image}\n${appendUrl}`;
+    return `${description}\n${image || ""}\n${appendUrl}`;
   } catch (error) {
     console.error("Error occurred during scraping:", url);
     throw error;
@@ -173,11 +175,11 @@ async function insertItemToCalendar(
       : `${town}, ${region}`,
     start: {
       dateTime: dateTime.toISOString(),
-      timeZone: "UTC",
+      timeZone: "Europe/Madrid",
     },
     end: {
       dateTime: endDateTime.toISOString(),
-      timeZone: "UTC",
+      timeZone: "Europe/Madrid",
     },
   };
 
