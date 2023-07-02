@@ -3,8 +3,7 @@ import {
   slug,
   getFormattedDate,
   sanitizeText,
-  getTownPostalCode,
-  getTownOptionsWithoutRegion,
+  getTownOptionsWithLabel,
 } from "./helpers";
 
 function to3HourForecastFormat(date) {
@@ -66,7 +65,7 @@ export const normalizeEvents = (event, weatherInfo) => {
   let title = event.summary ? sanitizeText(event.summary) : "";
   const tag = TAGS.find((v) => title.includes(v)) || null;
 
-  if (tag) title = title.replace(`${tag}: `, "").trim();
+  if (tag) title = title.replace(`${tag}:`, "").trim();
 
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
@@ -111,11 +110,10 @@ export const normalizeEvent = (event) => {
 
   let title = event.summary ? sanitizeText(event.summary) : "";
   const locationParts = event.location ? event.location.split(",") : [];
-  const town = locationParts[1] ? locationParts[1].toLowerCase().trim() : "";
+  const town = locationParts[1] ? locationParts[1].trim() : "";
   const tag = TAGS.find((v) => title.includes(v)) || null;
-  const { postalCode, label } = getTownOptionsWithoutRegion(town)
   if (tag) title = title.replace(`${tag}:`, "").trim();
-
+  const { postalCode = null, label = null } = getTownOptionsWithLabel(town)
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
   const eventImage = hasEventImage(event.description);

@@ -267,7 +267,7 @@ export function generateDatesOptions(byDate) {
 }
 
 export function getTownOptionsWithoutRegion(town) {
-  let townData;
+  let townData = {};
 
   for (const [_, regionData] of CITIES_DATA.entries()) {
     if (regionData.towns.has(town)) {
@@ -289,6 +289,18 @@ export function getRegionByTown(town) {
   }
 
   return getRegionLabel(region);
+}
+
+export function getTownOptionsWithLabel(label) {
+  let townOptions = {};
+  CITIES_DATA.forEach(region => {
+    region.towns.forEach(town => {
+      if (town.label === label) {
+        townOptions = town;
+      }
+    });
+  });
+  return townOptions;
 }
 
 export function truncateString(text, maxLength) {
