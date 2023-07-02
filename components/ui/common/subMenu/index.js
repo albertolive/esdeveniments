@@ -13,10 +13,10 @@ const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   ssr: false,
 });
 
-const Select = dynamic(() => import("@components/ui/common/form/select"), {
-  loading: () => "",
-  ssr: false,
-});
+// const Select = dynamic(() => import("@components/ui/common/form/select"), {
+//   loading: () => "",
+//   ssr: false,
+// });
 
 export default function SubMenu() {
   const {
@@ -63,7 +63,7 @@ export default function SubMenu() {
   return (
     <>
       <div className="flex justify-center my-4 flex-col xs:flex-row">
-        <div className="w-full p-2">
+        {/* <div className="w-full p-2">
           <Select
             id="regions"
             options={regionsArray}
@@ -93,10 +93,10 @@ export default function SubMenu() {
             isDisabled={!initialTownObject}
             isClearable
           />
-        </div>
+        </div> */}
       </div>
       <div className="min-h-[325px] lg:min-h-[100px]">
-        <AdArticle slot="6387726014" />
+        {/* <AdArticle slot="6387726014" /> */}
       </div>
     </>
   );
