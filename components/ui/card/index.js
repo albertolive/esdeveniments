@@ -55,7 +55,6 @@ export default function Card({ event, isLoading, isValidating }) {
     );
 
   const { description, icon } = event.weather || {};
-  const image = event.imageUploaded ? event.imageUploaded : undefined;
   const title = truncateString(event.title || "", 70);
   const location = truncateString(event.location || "", 45);
   const subLocation = truncateString(event.subLocation || "", 45);
@@ -68,12 +67,12 @@ export default function Card({ event, isLoading, isValidating }) {
       <div className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 max-h-[240px]">
         <div className="flex h-full">
           <div className="flex-1 h-full next-image-wrapper">
-            {/* <Image
+            <Image
               title={event.title}
-              image={image}
+              image={event.imageUploaded}
               alt={event.title}
               layout="responsive"
-            /> */}
+            />
           </div>
           <div className="p-4 pr-2 flex-2 lg:relative">
             <div className="flex items-center">
