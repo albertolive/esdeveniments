@@ -88,7 +88,7 @@ export const normalizeEvents = (event, weatherInfo) => {
       ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
       : eventImage
         ? eventImage
-        : null,
+        : "/static/images/blur.png",
     description: event.description
       ? event.description
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
