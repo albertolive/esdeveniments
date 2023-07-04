@@ -35,7 +35,8 @@ const nextConfig = {
       "www.teatreauditoricardedeu.cat",
       "www.cardedeu.cat",
       "www.llinarsdelvalles.cat",
-      "lagarriga.webmunicipal.diba.cat",
+      "www.canovesisamalus.cat",
+      "www.lagarriga.cat"
     ],
   },
   async headers() {

@@ -8,10 +8,10 @@ import {
   generateDatesOptions,
 } from "@utils/helpers";
 
-const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
-  loading: () => "",
-  ssr: false,
-});
+// const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
+//   loading: () => "",
+//   ssr: false,
+// });
 
 const Select = dynamic(() => import("@components/ui/common/form/select"), {
   loading: () => "",
@@ -96,7 +96,7 @@ export default function SubMenu() {
         </div>
       </div>
       <div className="min-h-[325px] lg:min-h-[100px]">
-        <AdArticle slot="6387726014" />
+        {/* <AdArticle slot="6387726014" /> */}
       </div>
     </>
   );

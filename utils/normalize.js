@@ -41,7 +41,7 @@ export const normalizeWeather = (startDate, weatherInfo) => {
 };
 
 const hasEventImage = (description) => {
-  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)/g;
+  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
   const hasEventImage = description && description.match(regex);
   return hasEventImage && hasEventImage[0];
 };

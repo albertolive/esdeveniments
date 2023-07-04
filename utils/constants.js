@@ -82,13 +82,13 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
-          "granollers",
+          "canoves",
           {
-            label: "Granollers",
-            rssFeed: "https://www.granollers.cat/rss.xml",
-            descriptionSelector: ".categories",
-            imageSelector: ".foto",
-            postalCode: "08400",
+            label: "Cànoves i Samalús",
+            rssFeed: "https://www.canovesisamalus.cat/rss/15/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08445",
           },
         ],
         [
@@ -96,11 +96,33 @@ export const CITIES_DATA = new Map([
           {
             label: "La Garriga",
             rssFeed: "http://lagarriga.webmunicipal.diba.cat/rss/12/0",
-            descriptionSelector: ".td_justificat",
+            descriptionSelector: ".text-maquetat",
             imageSelector: ".justified-gallery",
             postalCode: "08530",
           },
         ],
+        // [
+        //   "turisme-valles",
+        //   {
+        //     hide: true,
+        //     label: "Turisme Vallès",
+        //     rssFeed: "https://www.turismevalles.com/events/feed/",
+        //     descriptionSelector: ".mec-event-content",
+        //     imageSelector: ".mec-events-event-image",
+        //     postalCode: "",
+        //   },
+        // ],
+        // [
+        //   "granollers",
+        //   {
+        //     label: "Granollers",
+        //     rssFeed: "https://www.granollers.cat/rss.xml",
+        //     descriptionSelector: ".categories",
+        //     imageSelector: ".foto",
+        //     postalCode: "08400",
+        //   },
+        // ],
+
         // Add more towns with their respective RSS feed URLs
       ]),
     },

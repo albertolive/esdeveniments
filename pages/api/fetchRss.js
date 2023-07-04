@@ -1,7 +1,7 @@
 import axios from "axios";
 import { kv } from "@vercel/kv";
 import { google } from "googleapis";
-import cheerio from "cheerio";
+import * as cheerio from 'cheerio';
 import { CITIES_DATA } from "@utils/constants";
 
 const { XMLParser } = require("fast-xml-parser");
@@ -87,7 +87,7 @@ async function fetchRSSFeed(rssFeed, townLabel) {
 }
 
 async function getProcessedItems(townLabel) {
-  const processedItems = await kv.get(`${townLabel}_${PROCESSED_ITEMS_KEY}`);
+  const processedItems = await kv.get(`${townLabel}_${PROCESSED_ITEMS_KEY}_`);
   return processedItems ? new Map(processedItems) : new Map();
 }
 
@@ -116,24 +116,28 @@ async function cleanProcessedItems(processedItems) {
 
 function replaceImageUrl(imageUrl, baseUrl) {
   if (imageUrl) {
-    return imageUrl.replace('src="/media', `src="${baseUrl}/media`);
+    imageUrl = imageUrl.replace(/src="\/media/g, `src="${baseUrl}/media`);
+    imageUrl = imageUrl.replace(/href="\/media/g, `href="${baseUrl}/media`);
+
+    return imageUrl;
   }
   return null;
 }
 
 function getBaseUrl(url) {
   const urlObject = new URL(url);
-  return `${urlObject.protocol}/${urlObject.host}`;
+  return `${urlObject.protocol}//${urlObject.host}`;
 }
 
 async function scrapeDescription(url, descriptionSelector, imageSelector) {
   try {
-    const response = await fetch("https://www.cardedeu.cat/actualitat/agenda/exposicio-estiueig-de-proximitat-1850-1950.html");
+    const sanitizeUrl = url.replace(/\.html$/, '');
+    const response = await fetch(sanitizeUrl);
     const html = await response.text();
     const $ = cheerio.load(html);
 
     const description =
-      $(".ddbbtext").html()?.trim() ||
+      $(descriptionSelector).html()?.trim() ||
       "Cap descripció. Afegeix-ne una!";
     let image = $(imageSelector).html()?.trim() || null;
 
@@ -144,7 +148,10 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
 
     const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
 
-    return `${description}\n${image || ""}\n${appendUrl}`;
+    return `
+    <div>${description}</div>\n\n
+    ${image ? `<div class="flex-1 next-image-wrapper w-full h-full object-center object-cover">${image}</div>` : ""}\n\n
+    <div>${appendUrl}</div>`;
   } catch (error) {
     console.error("Error occurred during scraping:", url);
     throw error;

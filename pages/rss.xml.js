@@ -43,7 +43,7 @@ const buildFeed = (items) => {
 
   removedDuplicatedItems.forEach((item) => {
     const description = `${item.title}\n\n🗓️ ${item.nameDay} ${item.formattedStart}\n\n🏡 ${item.location} \n\nℹ️ Més informació a l'enllaç de la nostra bio!`;
-    const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)/g;
+    const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
     const hasEventImage = item.description.match(regex);
     const eventImage = hasEventImage && hasEventImage[0];
 

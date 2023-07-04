@@ -6,10 +6,10 @@ import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import { truncateString } from "@utils/helpers";
 
-const AdCard = dynamic(() => import("@components/ui/adCard"), {
-  loading: () => "",
-  ssr: false,
-});
+// const AdCard = dynamic(() => import("@components/ui/adCard"), {
+//   loading: () => "",
+//   ssr: false,
+// });
 
 const IsLoadingComponent = () => (
   <div className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl pointer-events-none cursor-none h-48 md:lg-52 lg:h-56 hover:shadow-gray-500/40">
@@ -50,7 +50,7 @@ export default function Card({ event, isLoading, isValidating }) {
   if (event.isAd)
     return (
       <div className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 block visible md:hidden md:invisible">
-        <AdCard event={event} />
+        {/* <AdCard event={event} /> */}
       </div>
     );
 

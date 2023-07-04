@@ -253,7 +253,7 @@ export function getRegionLabel(regionValue) {
 
 export function generateTownsOptions(region) {
   return region
-    ? [...CITIES_DATA.get(region)?.towns.entries()].map(([townKey, town]) => ({
+    ? [...CITIES_DATA.get(region)?.towns.entries()].filter(([_, town]) => !town.hide).map(([townKey, town]) => ({
       value: townKey,
       label: town.label,
     }))
