@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill"), { noSSR: false });
 import "react-quill/dist/quill.snow.css";
 
 const modules = {

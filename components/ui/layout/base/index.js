@@ -3,15 +3,15 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 
 const Navbar = dynamic(() => import("@components/ui/common/navbar"), {
-  ssr: false,
+  noSSR: false,
 });
 
 const Footer = dynamic(() => import("@components/ui/common/footer"), {
-  ssr: false,
+  noSSR: false,
 });
 
 // const Notify = dynamic(() => import("@components/ui/common/notify"), {
-//   ssr: false,
+//   noSSR: false,
 // });
 
 export default function BaseLayout({ children }) {

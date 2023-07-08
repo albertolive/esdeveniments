@@ -20,6 +20,7 @@ const List = dynamic(() => import("@components/ui/list"), {
 
 const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
   loading: () => "",
+  noSSR: true,
 });
 
 export default function Events({
