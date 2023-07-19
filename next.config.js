@@ -36,7 +36,8 @@ const nextConfig = {
       "www.cardedeu.cat",
       "www.llinarsdelvalles.cat",
       "www.canovesisamalus.cat",
-      "www.lagarriga.cat"
+      "www.lagarriga.cat",
+      "www.granollers.cat"
     ],
   },
   async headers() {

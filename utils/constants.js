@@ -101,6 +101,16 @@ export const CITIES_DATA = new Map([
             postalCode: "08530",
           },
         ],
+        [
+          "granollers",
+          {
+            label: "Granollers",
+            rssFeed: `${process.env.NEXT_PUBLIC_DOMAIN_URL}/api/scrapeEvents?city=granollers`,
+            descriptionSelector: ".body-text",
+            imageSelector: ".responsive-image",
+            postalCode: "08400",
+          },
+        ],
         // [
         //   "turisme-valles",
         //   {
@@ -112,17 +122,6 @@ export const CITIES_DATA = new Map([
         //     postalCode: "",
         //   },
         // ],
-        // [
-        //   "granollers",
-        //   {
-        //     label: "Granollers",
-        //     rssFeed: "https://www.granollers.cat/rss.xml",
-        //     descriptionSelector: ".categories",
-        //     imageSelector: ".foto",
-        //     postalCode: "08400",
-        //   },
-        // ],
-
         // Add more towns with their respective RSS feed URLs
       ]),
     },

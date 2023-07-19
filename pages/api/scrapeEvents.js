@@ -14,14 +14,15 @@ const CITIES = {
     titleSelector: "h3 a",
     urlSelector: "h3 a",
     dateSelector: ".date-info .date-day",
-    descriptionSelector: "h3 a",
+    descriptionSelector: "div > h3",
     imageSelector: ".responsive-image",
     locationSelector: "h4",
-    urlImage: "/styles/home_agenda/public/"
+    urlImage: "/styles/home_agenda/public/",
+    dateRegex: /^(\d{1,2}) ([a-z]+)\. (\d{4}) - (\d{2}):(\d{2})h$/i,
   },
 };
 
-function convertToRSSDate(dateString) {
+function convertToRSSDate(dateString, dateRegex) {
   const monthMap = {
     gen: "01",
     feb: "02",
@@ -37,7 +38,6 @@ function convertToRSSDate(dateString) {
     des: "12",
   };
 
-  const dateRegex = /^(\d{1,2}) ([a-z]+)\. (\d{4}) - (\d{2}):(\d{2})h$/i;
   const match = dateString.match(dateRegex);
 
   if (match) {
@@ -67,7 +67,7 @@ async function fetchHtmlContent(url) {
 }
 
 function extractEventDetails(html, selectors) {
-  const { listSelector, titleSelector, urlSelector, dateSelector, descriptionSelector, imageSelector } = selectors;
+  const { listSelector, titleSelector, urlSelector, locationSelector, dateSelector, descriptionSelector, imageSelector, dateRegex } = selectors;
   const $ = cheerio.load(html);
   const events = [];
 
@@ -76,13 +76,14 @@ function extractEventDetails(html, selectors) {
     const title = $(element).find(titleSelector).text().trim();
     const url = $(element).find(urlSelector).attr("href");
     const date = $(element).find(dateSelector).text().trim();
+    const location = $(element).find(locationSelector).text().trim();
     const description = $(element).find(descriptionSelector).text();
     const image = $(element).find(imageSelector).attr("src");
-    const rssDate = date && convertToRSSDate(date);
+    const rssDate = date && convertToRSSDate(date, dateRegex);
     const rssUrl = `${selectors.domain}${url}`;
     const rssImage = image && image.replace(selectors.urlImage, '/');
 
-    events.push({ id, url: rssUrl, title, date: rssDate, description, image: rssImage });
+    events.push({ id, url: rssUrl, title, location, date: rssDate, description, image: rssImage });
   });
 
   return events;
@@ -107,6 +108,9 @@ function createRssFeed(events, city) {
       url: event.url,
       date: event.date,
       enclosure: { url: event.image },
+      custom_elements: [
+        {location: event.location},
+      ]
     });
   });
 
