@@ -92,7 +92,7 @@ async function getProcessedItems(town) {
 }
 
 async function setProcessedItems(processedItems, town) {
-  console.log("Updating processed items", processedItems, town)
+  console.log(`Setting processed items for ${town}`);
   await kv.set(`${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
 }
 
