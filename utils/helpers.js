@@ -1,9 +1,4 @@
-import {
-  DAYS,
-  MONTHS,
-  CITIES_DATA,
-  BYDATES,
-} from "./constants";
+import { DAYS, MONTHS, CITIES_DATA, BYDATES } from "./constants";
 
 const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
 
@@ -92,10 +87,12 @@ export const getFormattedDate = (start, end) => {
   const formattedStart =
     isMultipleDays && isSameMonth
       ? `${startDay}`
-      : `${startDay} de ${nameMonth} ${isMultipleDays && isSameYear ? "" : `del ${year}`
-      }`;
-  const formattedEnd = `${endDay} de ${MONTHS[endDateConverted.getMonth()]
-    } del ${endDateConverted.getFullYear()}`;
+      : `${startDay} de ${nameMonth} ${
+          isMultipleDays && isSameYear ? "" : `del ${year}`
+        }`;
+  const formattedEnd = `${endDay} de ${
+    MONTHS[endDateConverted.getMonth()]
+  } del ${endDateConverted.getFullYear()}`;
   const startTime = `${startDateConverted.getHours()}:${String(
     startDateConverted.getMinutes()
   ).padStart(2, "0")}`;
@@ -112,8 +109,8 @@ export const getFormattedDate = (start, end) => {
     nameDay,
     startDate: isMultipleDays
       ? (startDay <= new Date().getDate() &&
-        convertTZ(new Date(), "Europe/Madrid")) ||
-      startDateConverted
+          convertTZ(new Date(), "Europe/Madrid")) ||
+        startDateConverted
       : startDateConverted,
     isLessThanFiveDays: isLessThanFiveDays(startDate),
   };
@@ -158,7 +155,7 @@ export const generateJsonData = ({
   imageUploaded,
   eventImage,
   postalCode,
-  label
+  label,
 }) => {
   return {
     "@context": "https://schema.org",
@@ -181,10 +178,7 @@ export const generateJsonData = ({
         addressRegion: "CT",
       },
     },
-    image: [
-      imageUploaded,
-      eventImage,
-    ].filter(Boolean),
+    image: [imageUploaded, eventImage].filter(Boolean),
     description,
     performer: {
       "@type": "PerformingGroup",
@@ -204,7 +198,7 @@ export const generateJsonData = ({
       validFrom: startDate,
     },
     isAccessibleForFree: true,
-  }
+  };
 };
 
 export function createArrayOfObjects(arr) {
@@ -214,10 +208,12 @@ export function createArrayOfObjects(arr) {
 }
 
 export function generateRegionsOptions() {
-  return [...CITIES_DATA.entries()].map(([regionKey, region]) => ({
-    value: regionKey,
-    label: region.label,
-  }));
+  return [...CITIES_DATA.entries()]
+    .sort((a, b) => a[1].label.localeCompare(b[1].label))
+    .map(([regionKey, region]) => ({
+      value: regionKey,
+      label: region.label,
+    }));
 }
 
 export function getTownLabel(townValue) {
@@ -253,10 +249,13 @@ export function getRegionLabel(regionValue) {
 
 export function generateTownsOptions(region) {
   return region
-    ? [...CITIES_DATA.get(region)?.towns.entries()].filter(([_, town]) => !town.hide).map(([townKey, town]) => ({
-      value: townKey,
-      label: town.label,
-    }))
+    ? [...CITIES_DATA.get(region)?.towns.entries()]
+        .filter(([_, town]) => !town.hide)
+        .sort((a, b) => a[1].label.localeCompare(b[1].label))
+        .map(([townKey, town]) => ({
+          value: townKey,
+          label: town.label,
+        }))
     : [];
 }
 
@@ -293,8 +292,8 @@ export function getRegionByTown(town) {
 
 export function getTownOptionsWithLabel(label) {
   let townOptions = {};
-  CITIES_DATA.forEach(region => {
-    region.towns.forEach(town => {
+  CITIES_DATA.forEach((region) => {
+    region.towns.forEach((town) => {
       if (town.label === label) {
         townOptions = town;
       }
@@ -304,5 +303,7 @@ export function getTownOptionsWithLabel(label) {
 }
 
 export function truncateString(text, maxLength) {
-  return text.length > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
+  return text.length > maxLength
+    ? text.substring(0, maxLength - 3) + "..."
+    : text;
 }

@@ -190,7 +190,7 @@ async function scrapeLocation(url, location, locationSelector) {
 
     const locationElement = $(locationSelector)
       .find("p, span")
-      .map((i, el) => $(el).text())
+      .map((_, el) => $(el).text())
       .get()
       .join(" ");
     const locationFromHtml =

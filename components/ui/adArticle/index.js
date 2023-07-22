@@ -7,7 +7,7 @@ export default memo(function AdArticle({ isDisplay = true, slot }) {
   if (!displayAd) return;
 
   return (
-    <div id="ad-article-slot" className="flex">
+    <div id="ad-article-slot" className="flex z-10">
       <GoogleAdsenseContainer
         slot={slot}
         format={isDisplay ? "auto" : "fluid"}
