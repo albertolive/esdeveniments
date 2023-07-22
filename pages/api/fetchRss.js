@@ -167,7 +167,7 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
 
 function getLocationFromHtml(html) {
   // Define the regular expression pattern to match the location
-  const pattern = /(?:Al|A la|A les \d+ h, a|Espai|al| a la) ([^<.,]+)/g;
+  const pattern = /(?:Al|A la|A les \d+ h, a|Espai|al|a la|A ) ([^<.,]+)/g;
 
   // Use the matchAll method to find all matches in the HTML text
   const matches = [...html.matchAll(pattern)];
@@ -231,8 +231,8 @@ async function insertItemToCalendar(
   const event = {
     summary: title,
     description,
-    location: location
-      ? `${location}, ${townLabel}, ${region}`
+    location: scrapedLocation
+      ? `${scrapedLocation}, ${townLabel}, ${region}`
       : `${townLabel}, ${region}`,
     start: {
       dateTime: dateTime.toISOString(),
