@@ -44,10 +44,10 @@ function isCacheValid(cachedData) {
 }
 
 // Fetches the RSS feed and returns the parsed data
-async function fetchRSSFeed(rssFeed, townLabel) {
+async function fetchRSSFeed(rssFeed, town) {
   try {
     // Check if the data is cached
-    const cachedData = await kv.get(`${townLabel}_${RSS_FEED_CACHE_KEY}`);
+    const cachedData = await kv.get(`${town}_${RSS_FEED_CACHE_KEY}`);
 
     if (isCacheValid(cachedData)) {
       console.log("Returning cached data");
@@ -72,7 +72,7 @@ async function fetchRSSFeed(rssFeed, townLabel) {
     const data = json.rss.channel.item;
 
     // Cache the data
-    await kv.set(`${townLabel}_${RSS_FEED_CACHE_KEY}`, {
+    await kv.set(`${town}_${RSS_FEED_CACHE_KEY}`, {
       timestamp: Date.now(),
       data,
     });
@@ -86,13 +86,14 @@ async function fetchRSSFeed(rssFeed, townLabel) {
   }
 }
 
-async function getProcessedItems(townLabel) {
-  const processedItems = await kv.get(`${townLabel}_${PROCESSED_ITEMS_KEY}_`);
+async function getProcessedItems(town) {
+  const processedItems = await kv.get(`${town}_${PROCESSED_ITEMS_KEY}`);
   return processedItems ? new Map(processedItems) : new Map();
 }
 
-async function setProcessedItems(processedItems, townLabel) {
-  await kv.set(`${townLabel}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
+async function setProcessedItems(processedItems, town) {
+  console.log("Updating processed items", processedItems, town)
+  await kv.set(`${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
 }
 
 async function getExpiredItems(processedItems) {
@@ -207,7 +208,7 @@ async function scrapeLocation(url, location, locationSelector) {
 async function insertItemToCalendar(
   item,
   region,
-  town,
+  townLabel,
   descriptionSelector,
   imageSelector,
   locationSelector
@@ -231,8 +232,8 @@ async function insertItemToCalendar(
     summary: title,
     description,
     location: location
-      ? `${location}, ${town}, ${region}`
-      : `${town}, ${region}`,
+      ? `${location}, ${townLabel}, ${region}`
+      : `${townLabel}, ${region}`,
     start: {
       dateTime: dateTime.toISOString(),
       timeZone: "Europe/Madrid",
@@ -299,10 +300,10 @@ export default async function handler(req, res) {
     }
 
     // Fetch the RSS feed
-    const items = await fetchRSSFeed(rssFeed, townLabel);
+    const items = await fetchRSSFeed(rssFeed, town);
 
     // Read the database
-    const processedItems = await getProcessedItems(townLabel);
+    const processedItems = await getProcessedItems(town);
     cleanProcessedItems(processedItems);
 
     // Filter out already fetched items
@@ -350,7 +351,7 @@ export default async function handler(req, res) {
         console.error("Error inserting item to calendar:", result.reason);
       }
     });
-    await setProcessedItems(processedItems, townLabel);
+    await setProcessedItems(processedItems, town);
     console.log("Finished processing items");
     // Send the response
     res.status(200).json(newItems);
