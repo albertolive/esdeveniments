@@ -159,7 +159,47 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
     ${image ? `<div class="hidden">${image}</div>` : ""}
     <div>${appendUrl}</div>`;
   } catch (error) {
-    console.error("Error occurred during scraping:", url);
+    console.error("Error occurred during scraping description:", url);
+    throw error;
+  }
+}
+
+function getLocationFromHtml(html) {
+  // Define the regular expression pattern to match the location
+  const pattern = /(?:Al|A la|A les \d+ h, a|Espai|al| a la) ([^<.,]+)/g;
+
+  // Use the matchAll method to find all matches in the HTML text
+  const matches = [...html.matchAll(pattern)];
+
+  // Map the matches to an array of locations
+  const locations = matches.map((match) => match[1]);
+
+  // Return the array of matched locations
+  return locations;
+}
+
+async function scrapeLocation(url, location, locationSelector) {
+  try {
+    if (location) return location;
+
+    const sanitizeUrl = url.replace(/\.html$/, "");
+    const response = await fetch(sanitizeUrl);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    const locationElement = $(locationSelector)
+      .find("p, span")
+      .map((i, el) => $(el).text())
+      .get()
+      .join(" ");
+    const locationFromHtml =
+      locationElement && getLocationFromHtml(locationElement);
+
+    return Array.isArray(locationFromHtml) && locationFromHtml[0]
+      ? locationFromHtml[0].trim()
+      : location;
+  } catch (error) {
+    console.error("Error occurred during scraping locataion:", url);
     throw error;
   }
 }
@@ -169,7 +209,8 @@ async function insertItemToCalendar(
   region,
   town,
   descriptionSelector,
-  imageSelector
+  imageSelector,
+  locationSelector
 ) {
   if (!item) return;
   const { pubDate, title, link, guid, location = "" } = item || {};
@@ -179,6 +220,12 @@ async function insertItemToCalendar(
   const description = link
     ? await scrapeDescription(link, descriptionSelector, imageSelector)
     : null;
+
+  const scrapedLocation = await scrapeLocation(
+    link,
+    location,
+    locationSelector
+  );
 
   const event = {
     summary: title,
@@ -243,6 +290,7 @@ export default async function handler(req, res) {
       rssFeed,
       descriptionSelector,
       imageSelector,
+      locationSelector,
     } = towns.get(town);
 
     // Check if the rssFeed is available
@@ -271,7 +319,8 @@ export default async function handler(req, res) {
             regionLabel,
             townLabel,
             descriptionSelector,
-            imageSelector
+            imageSelector,
+            locationSelector
           )
         );
         REQUEST_COUNT++;
@@ -282,7 +331,8 @@ export default async function handler(req, res) {
             regionLabel,
             townLabel,
             descriptionSelector,
-            imageSelector
+            imageSelector,
+            locationSelector
           )
         );
         REQUEST_COUNT++;
