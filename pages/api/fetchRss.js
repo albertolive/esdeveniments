@@ -1,7 +1,7 @@
 import axios from "axios";
 import { kv } from "@vercel/kv";
 import { google } from "googleapis";
-import * as cheerio from 'cheerio';
+import * as cheerio from "cheerio";
 import { CITIES_DATA } from "@utils/constants";
 
 const { XMLParser } = require("fast-xml-parser");
@@ -118,7 +118,9 @@ function replaceImageUrl(imageUrl, baseUrl) {
   if (imageUrl) {
     imageUrl = imageUrl.replace(/src="\/media/g, `src="${baseUrl}/media`);
     imageUrl = imageUrl.replace(/href="\/media/g, `href="${baseUrl}/media`);
-
+    // Force HTTPS for src and href attributes
+    imageUrl = imageUrl.replace(/src="http:/g, 'src="https:');
+    imageUrl = imageUrl.replace(/href="http:/g, 'href="https:');
     return imageUrl;
   }
   return null;
@@ -131,7 +133,7 @@ function getBaseUrl(url) {
 
 async function scrapeDescription(url, descriptionSelector, imageSelector) {
   try {
-    const sanitizeUrl = url.replace(/\.html$/, '');
+    const sanitizeUrl = url.replace(/\.html$/, "");
     const response = await fetch(sanitizeUrl);
     const html = await response.text();
     const $ = cheerio.load(html);
@@ -139,18 +141,22 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
     const description =
       $(descriptionSelector).html()?.trim() ||
       "Cap descripció. Afegeix-ne una!";
-    let image = $(imageSelector).html()?.trim() || null;
+    let image = $(imageSelector).prop("outerHTML")?.trim();
 
-    const baseUrl = getBaseUrl(url);
+    // Remove styles and classes from the image
     if (image) {
-      image = replaceImageUrl(image, baseUrl);
+      let $img = cheerio.load(image);
+      $img("*").removeAttr("style");
+      $img("*").removeAttr("class");
+      image = $img("a").prop("outerHTML");
+      image = replaceImageUrl(image, getBaseUrl(url));
     }
 
     const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
 
     return `
     <div>${description}</div>\n\n
-    ${image ? `<div class="flex-1 next-image-wrapper w-full h-full object-center object-cover">${image}</div>` : ""}\n\n
+    ${image ? `<div class="hidden">${image}</div>` : ""}
     <div>${appendUrl}</div>`;
   } catch (error) {
     console.error("Error occurred during scraping:", url);

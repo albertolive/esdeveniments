@@ -41,7 +41,7 @@ export const normalizeWeather = (startDate, weatherInfo) => {
 };
 
 const hasEventImage = (description) => {
-  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
+  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG|PNG)/g;
   const hasEventImage = description && description.match(regex);
   return hasEventImage && hasEventImage[0];
 };
@@ -138,7 +138,9 @@ export const normalizeEvent = (event) => {
     endDate: event.end && event.end.dateTime,
     imageUploaded: imageUploaded
       ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
-      : null,
+      : eventImage
+        ? eventImage
+        : null,
     eventImage,
     imageId,
     isEventFinished: event.end

@@ -172,7 +172,7 @@ export default function Publica() {
 
           imageToUpload
             ? uploadFile(id, slugifiedTitle)
-            : router.push(goToEventPage(`/${slugifiedTitle}`));
+            : router.push(goToEventPage(`/e/${slugifiedTitle}`));
         } else {
           // Handle API error
           console.error("Error submitting form");
@@ -204,7 +204,7 @@ export default function Publica() {
         if (xhr.readyState == 4 && xhr.status == 200) {
           const public_id = JSON.parse(xhr.responseText).public_id;
           console.log(public_id);
-          router.push(goToEventPage(`/${slugifiedTitle}`));
+          router.push(goToEventPage(`/e/${slugifiedTitle}`));
         }
       };
 

@@ -296,7 +296,7 @@ export default function Event(props) {
                     ? `Del ${formattedStart} al ${formattedEnd}`
                     : `${nameDay}, ${formattedStart}`}
                 </h2>
-                <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl break-words">
                   {title}
                 </h1>
               </div>
@@ -339,10 +339,10 @@ export default function Event(props) {
 
               {imageUploaded && (
                 <dl className="space-y-10">
-                  <div className="w-1/2">
+                  <div className="sm:w-80 w-full">
                     <div className="rounded-lg bg-gray-100 overflow-hidden">
                       <a
-                        href={`https://res.cloudinary.com/culturaCardedeu/image/upload/v1/culturaCardedeu/${imageId}`}
+                        href={imageUploaded}
                         className="pointer"
                         target="_blank"
                         rel="image_src noreferrer"
