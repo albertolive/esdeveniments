@@ -2,10 +2,12 @@ import axios from "axios";
 import { kv } from "@vercel/kv";
 import { google } from "googleapis";
 import * as cheerio from "cheerio";
+import Bottleneck from "bottleneck";
 import { CITIES_DATA } from "@utils/constants";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
+const limiter = new Bottleneck({ maxConcurrent: 1, minTime: 1000 });
 
 const calendar = google.calendar("v3");
 const auth = new google.auth.GoogleAuth({
@@ -23,11 +25,6 @@ const PROCESSED_ITEMS_KEY = "processedItems";
 const RSS_FEED_CACHE_KEY = "rssFeedCache";
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
 const RSS_FEED_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
-let REQUEST_COUNT = 0;
-const REQUEST_LIMIT = 2;
-const DELAY_IN_MS = 500;
-
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Custom error class for RSS feed errors
 class RSSFeedError extends Error {
@@ -259,6 +256,46 @@ async function insertItemToCalendar(
   }
 }
 
+async function insertItemToCalendarWithRetry(
+  item,
+  regionLabel,
+  townLabel,
+  descriptionSelector,
+  imageSelector,
+  locationSelector
+) {
+  if (!item) return null;
+
+  const MAX_RETRIES = 3;
+  let retries = 0;
+
+  while (retries < MAX_RETRIES) {
+    try {
+      const insertedGuid = await insertItemToCalendar(
+        item,
+        regionLabel,
+        townLabel,
+        descriptionSelector,
+        imageSelector,
+        locationSelector
+      );
+
+      // If the insertion is successful, return the GUID
+      if (insertedGuid) {
+        return insertedGuid;
+      }
+    } catch (error) {
+      console.error("Error inserting item to calendar:", error);
+      retries++;
+      // Implement a delay before retrying (exponential backoff)
+      await delay(Math.pow(2, retries) * 1000); // 2 seconds, 4 seconds, 8 seconds, etc.
+    }
+  }
+
+  // If the maximum number of retries is reached, return null to indicate failure
+  return null;
+}
+
 export default async function handler(req, res) {
   try {
     const { region, town } = req.query;
@@ -310,47 +347,31 @@ export default async function handler(req, res) {
     const newItems = items.filter((item) => !processedItems.has(item.guid));
 
     // Insert items in GCal
-    const promises = [];
     for (const item of newItems) {
-      if (REQUEST_COUNT >= REQUEST_LIMIT) {
-        await delay(DELAY_IN_MS);
-        promises.push(
-          await insertItemToCalendar(
+      await limiter.schedule(async () => {
+        try {
+          const insertedGuid = await insertItemToCalendarWithRetry(
             item,
             regionLabel,
             townLabel,
             descriptionSelector,
             imageSelector,
             locationSelector
-          )
-        );
-        REQUEST_COUNT++;
-      } else {
-        promises.push(
-          await insertItemToCalendar(
-            item,
-            regionLabel,
-            townLabel,
-            descriptionSelector,
-            imageSelector,
-            locationSelector
-          )
-        );
-        REQUEST_COUNT++;
-      }
-      console.log(`Adding item ${item.guid} to processed items`);
+          );
+
+          // Update the database with the successful GUID
+          if (insertedGuid) {
+            const now = Date.now();
+            processedItems.set(insertedGuid, now);
+            console.log(`Added item ${insertedGuid} to processed items`);
+          }
+        } catch (error) {
+          console.error("Error inserting item to calendar:", error);
+        }
+      });
     }
 
     // Update the database
-    const results = await Promise.allSettled(promises);
-    const now = Date.now();
-    results.forEach((result) => {
-      if (result.status === "fulfilled") {
-        processedItems.set(result.value, now);
-      } else {
-        console.error("Error inserting item to calendar:", result.reason);
-      }
-    });
     await setProcessedItems(processedItems, town);
     console.log("Finished processing items");
     // Send the response

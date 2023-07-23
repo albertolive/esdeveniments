@@ -338,7 +338,7 @@ export default function Event(props) {
               </dl>
 
               {imageUploaded && (
-                <dl className="space-y-10">
+                <dl className="mt-6 space-y-10">
                   <div className="sm:w-80 w-full">
                     <div className="rounded-lg bg-gray-100 overflow-hidden">
                       <a

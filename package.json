@@ -27,6 +27,7 @@
     "@vercel/kv": "^0.2.1",
     "autoprefixer": "^10.4.13",
     "axios": "^1.4.0",
+    "bottleneck": "^2.19.5",
     "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.29.3",
     "date-fns-tz": "^2.0.0",

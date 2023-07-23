@@ -58,29 +58,23 @@ export default function SubMenu({
 
   const handleRegionChange = ({ value }) => {
     setRegion(value);
-    window.history.pushState(null, null, value ? `/${value}` : "/");
 
     if (!value) {
       setTown(null);
+      setByDate(null);
     }
   };
 
   const handleTownChange = ({ value }) => {
     setTown(value);
-    window.history.pushState(
-      null,
-      null,
-      value ? `/${region}/${value}` : `/${region}`
-    );
+
+    if (!value) {
+      setByDate(null);
+    }
   };
 
   const handleByDateChange = ({ value }) => {
     setByDate(value);
-    window.history.pushState(
-      null,
-      null,
-      value ? `/${region}/${town}/${value}` : `/${region}/${town}`
-    );
   };
 
   return (
