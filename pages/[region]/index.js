@@ -1,67 +1,63 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { monthsName, generateJsonData } from "@utils/helpers";
+import { generateJsonData } from "@utils/helpers";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import { fixArticles } from "@utils/normalize";
-import { getTownLabel, getRegionLabel } from "@utils/helpers";
-
-const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
+import { getRegionLabel } from "@utils/helpers";
+import { dateFunctions } from "@utils/constants";
 
 const Events = dynamic(() => import("@components/ui/events"), {
   loading: () => "",
 });
 
 export default function App(props) {
-  const { town, byDate, region, currentYear } = props;
+  const {
+    town: townProps,
+    byDate: byDateProps,
+    region: regionProps,
+    currentYear,
+  } = props;
   const [page, setPage] = useState(() => {
     const storedPage =
       typeof window !== "undefined" &&
       window.localStorage.getItem("currentPage");
     return storedPage ? parseInt(storedPage) : 1;
   });
+  const [region, setRegion] = useState(regionProps);
+  const [town, setTown] = useState(townProps);
+  const [byDate, setByDate] = useState(byDateProps);
   const {
-    data: { events = [] },
+    data: { events = [], noEventsFound = false },
     error,
     isLoading,
     isValidating,
   } = useGetEvents({
     props,
-    pageIndex: "all",
+    pageIndex: dateFunctions[byDate] || "all",
     q: getRegionLabel(region) || "",
     maxResults: page * 10,
   });
 
   if (error) return <div>failed to load</div>;
 
-  const jsonEvents = events
-    .filter(({ isAd }) => !isAd)
-    .map((event) => generateJsonData(event));
-
-  const townLabel = getTownLabel(town);
-  const regionLabel = getRegionLabel(region);
-  const canonical = `${siteUrl}/${region}`;
+  const jsonEvents = events.map((event) => generateJsonData(event));
 
   return (
     <Events
       events={events}
       jsonEvents={jsonEvents}
-      metaTitle={`Agenda ${regionLabel} ${currentYear} - Esdeveniments.cat`}
-      metaDescription={`Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${regionLabel}. L'agenda és col·laborativa.`}
-      title={`Agenda ${regionLabel} ${currentYear}`}
-      subTitle={`${fixArticles(`Les millors coses per fer ${regionLabel}: mercats, exposicions,
-      descobriments, passejades, concerts, museus, teatre... Aquests són els
-      millors plans per gaudir aquest ${monthsName[new Date().getMonth()]}!`)}`}
-      description={`${fixArticles(`Voleu viure experiències úniques i emocionants? La cultura ${regionLabel} és el lloc on cal estar! Us oferim una gran varietat d'opcions perquè mai us avorriu i sempre tingueu
-      alguna cosa interessant per fer. Descobriu tot el que passa ${regionLabel} i voltants, i deixeu-vos sorprendre per la seva riquesa cultural.`)}`}
-      noEventsFound={false}
-      byDate={byDate}
-      townLabel={townLabel}
-      canonical={canonical}
+      noEventsFound={noEventsFound}
       isLoading={isLoading}
       isValidating={isValidating}
       loadMore
       page={page}
       setPage={setPage}
+      region={region}
+      setRegion={setRegion}
+      town={town}
+      setTown={setTown}
+      byDate={byDate}
+      setByDate={setByDate}
+      currentYear={currentYear}
     />
   );
 }

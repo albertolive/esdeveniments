@@ -18,11 +18,19 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
   noSSR: false,
 });
 
-export default function SubMenu() {
+export default function SubMenu({
+  region: regionProps,
+  setRegion,
+  town: townProps,
+  setTown,
+  setByDate,
+}) {
   const {
-    push,
-    query: { region, town, byDate },
+    query: { region: regionQuery, town: townQuery, byDate },
   } = useRouter();
+
+  const region = regionProps || regionQuery;
+  const town = townProps || townQuery;
 
   const regionsArray = useMemo(() => generateRegionsOptions(), []);
   const citiesArray = useMemo(() => generateTownsOptions(region), [region]);
@@ -48,16 +56,31 @@ export default function SubMenu() {
     [byDate]
   );
 
-  const handleRegionChange = ({ value = "/" }) => {
-    push(`/${value}`);
+  const handleRegionChange = ({ value }) => {
+    setRegion(value);
+    window.history.pushState(null, null, value ? `/${value}` : "/");
+
+    if (!value) {
+      setTown(null);
+    }
   };
 
   const handleTownChange = ({ value }) => {
-    push(value ? `/${region}/${value}` : `/${region}`);
+    setTown(value);
+    window.history.pushState(
+      null,
+      null,
+      value ? `/${region}/${value}` : `/${region}`
+    );
   };
 
   const handleByDateChange = ({ value }) => {
-    push(value ? `/${region}/${town}/${value}` : `/${region}/${town}`);
+    setByDate(value);
+    window.history.pushState(
+      null,
+      null,
+      value ? `/${region}/${town}/${value}` : `/${region}/${town}`
+    );
   };
 
   return (

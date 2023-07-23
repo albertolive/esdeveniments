@@ -37,7 +37,8 @@ const nextConfig = {
       "www.llinarsdelvalles.cat",
       "www.canovesisamalus.cat",
       "www.lagarriga.cat",
-      "www.granollers.cat"
+      "www.granollers.cat",
+      "www.llissadevall.cat",
     ],
   },
   async headers() {

@@ -6,6 +6,8 @@ export default memo(function AdCard({ event }) {
 
   // if (!displayAd) return;
 
+  return null;
+
   return (
     <div
       id="ad-card-slot"

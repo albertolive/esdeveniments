@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
+import { generatePagesData } from "@components/partials/generatePagesData";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -26,20 +27,19 @@ const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
 export default function Events({
   events,
   jsonEvents,
-  metaTitle,
-  metaDescription,
-  title,
-  subTitle,
-  description,
+  currentYear,
   noEventsFound,
-  byDate,
-  townLabel,
-  canonical,
   isLoading,
   isValidating,
   loadMore,
   page,
   setPage,
+  region,
+  setRegion,
+  town,
+  setTown,
+  byDate,
+  setByDate
 }) {
   const sendGA = () => {
     if (typeof window !== "undefined") {
@@ -54,6 +54,21 @@ export default function Events({
   useEffect(() => {
     localStorage.removeItem("currentPage");
   }, []);
+
+  const {
+    metaTitle,
+    metaDescription,
+    title,
+    subTitle,
+    description,
+    canonical,
+    notFoundText,
+  } = generatePagesData({
+    currentYear,
+    region,
+    town,
+    byDate
+  });
 
   return (
     <>
@@ -74,12 +89,14 @@ export default function Events({
       </div>
       <p className="mb-4 font-bold">{subTitle}</p>
       <p className="mb-4">{description}</p>
-      <SubMenu />
-      {noEventsFound && (
-        <NoEventsFound
-          title={`Ho sentim, però no hi ha esdeveniments ${byDate} a ${townLabel}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`}
-        />
-      )}
+      <SubMenu
+        region={region}
+        setRegion={setRegion}
+        town={town}
+        setTown={setTown}
+        setByDate={setByDate}
+      />
+      {noEventsFound && <NoEventsFound title={notFoundText} />}
       <List events={events}>
         {(event) => (
           <Card

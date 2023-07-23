@@ -55,6 +55,12 @@ export const BYDATES = [
   { value: "cap-de-setmana", label: "Cap de setmana" },
 ];
 
+export const dateFunctions = {
+  avui: "today",
+  setmana: "week",
+  "cap-de-setmana": "weekend",
+};
+
 export const CITIES_DATA = new Map([
   [
     "valles-oriental",
@@ -90,6 +96,16 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08445",
+          },
+        ],
+        [
+          "llissadevall",
+          {
+            label: "Lliçà de Vall",
+            rssFeed: "https://www.llissadevall.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08185",
           },
         ],
         [
