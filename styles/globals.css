@@ -124,3 +124,7 @@ ins.adsbygoogle[data-ad-status="unfilled"] {
   margin-top: 0.6666667em;
   margin-bottom: 0.6666667em;
 }
+
+.dropdown-select__control.dropdown-select__control--is-focused {
+  font-size: 16px !important;
+}
