@@ -1,8 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
+import { useGetEvents } from "@components/hooks/useGetEvents";
+import { generateJsonData, getRegionLabel, getTownLabel } from "@utils/helpers";
+import { dateFunctions } from "@utils/constants";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -24,28 +27,35 @@ const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
   noSSR: true,
 });
 
-export default function Events({
-  events,
-  jsonEvents,
-  currentYear,
-  noEventsFound,
-  isLoading,
-  isValidating,
-  loadMore,
-  page,
-  setPage,
-  region,
-  setRegion,
-  town,
-  setTown,
-  byDate,
-  setByDate
-}) {
+export default function Events({ props, loadMore = true }) {
   const sendGA = () => {
     if (typeof window !== "undefined") {
       window.gtag && window.gtag("event", "load-more-events");
     }
   };
+
+  const [page, setPage] = useState(() => {
+    const storedPage =
+      typeof window !== "undefined" &&
+      window.localStorage.getItem("currentPage");
+    return storedPage ? parseInt(storedPage) : 1;
+  });
+  const [region, setRegion] = useState();
+  const [town, setTown] = useState();
+  const [byDate, setByDate] = useState();
+  const {
+    data: { events = [], currentYear, noEventsFound = false },
+    error,
+    isLoading,
+    isValidating,
+  } = useGetEvents({
+    props,
+    pageIndex: dateFunctions[byDate] || "all",
+    maxResults: page * 10,
+    q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
+  });
+
+  const jsonEvents = events.map((event) => generateJsonData(event));
 
   useEffect(() => {
     localStorage.setItem("currentPage", page);
@@ -54,6 +64,8 @@ export default function Events({
   useEffect(() => {
     localStorage.removeItem("currentPage");
   }, []);
+
+  if (error) return <div>failed to load</div>;
 
   const {
     metaTitle,
@@ -67,7 +79,7 @@ export default function Events({
     currentYear,
     region,
     town,
-    byDate
+    byDate,
   });
 
   return (
