@@ -28,6 +28,8 @@ const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
 });
 
 export default function Events({ props, loadMore = true }) {
+  const { town: townProps, byDate: byDateProps, region: regionProps } = props;
+
   const sendGA = () => {
     if (typeof window !== "undefined") {
       window.gtag && window.gtag("event", "load-more-events");
@@ -40,9 +42,9 @@ export default function Events({ props, loadMore = true }) {
       window.localStorage.getItem("currentPage");
     return storedPage ? parseInt(storedPage) : 1;
   });
-  const [region, setRegion] = useState();
-  const [town, setTown] = useState();
-  const [byDate, setByDate] = useState();
+  const [region, setRegion] = useState(regionProps);
+  const [town, setTown] = useState(townProps);
+  const [byDate, setByDate] = useState(byDateProps);
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
@@ -52,7 +54,9 @@ export default function Events({ props, loadMore = true }) {
     props,
     pageIndex: dateFunctions[byDate] || "all",
     maxResults: page * 10,
-    q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
+    q: `${town ? getTownLabel(town) : ""} ${
+      region ? getRegionLabel(region) : ""
+    }`,
   });
 
   const jsonEvents = events.map((event) => generateJsonData(event));
@@ -66,7 +70,7 @@ export default function Events({ props, loadMore = true }) {
   }, []);
 
   if (error) return <div>failed to load</div>;
-
+  console.log(region, town, byDate);
   const {
     metaTitle,
     metaDescription,

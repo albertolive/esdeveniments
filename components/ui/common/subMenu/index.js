@@ -60,8 +60,8 @@ export default function SubMenu({
     setRegion(value);
 
     if (!value) {
-      setTown(null);
-      setByDate(null);
+      setTown(undefined);
+      setByDate(undefined);
     }
   };
 
@@ -69,7 +69,7 @@ export default function SubMenu({
     setTown(value);
 
     if (!value) {
-      setByDate(null);
+      setByDate(undefined);
     }
   };
 

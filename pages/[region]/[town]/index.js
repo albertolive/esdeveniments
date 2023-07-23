@@ -32,9 +32,8 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const {
     getCalendarEvents,
-    getTownLabel,
-    getRegionLabel,
   } = require("@lib/helpers");
+  const { getTownLabel, getRegionLabel } =  require("@utils/helpers");
   const { twoWeeksDefault } = require("@lib/dates");
   const { from, until } = twoWeeksDefault();
   const { town, region } = params;
