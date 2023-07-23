@@ -6,6 +6,7 @@ import {
   generateRegionsOptions,
   generateTownsOptions,
   generateDatesOptions,
+  generateRegionsAndTownsOptions,
 } from "@utils/helpers";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
@@ -32,16 +33,17 @@ export default function SubMenu({
   const region = regionProps || regionQuery;
   const town = townProps || townQuery;
 
-  const regionsArray = useMemo(() => generateRegionsOptions(), []);
-  const citiesArray = useMemo(() => generateTownsOptions(region), [region]);
+  const regionsAndCitiesArray = useMemo(() => generateRegionsAndTownsOptions(), [])
 
   const initialRegionObject = useMemo(() => {
     if (region) {
-      const regionData = CITIES_DATA.get(region);
-      return { value: region, label: regionData.label };
+      const regionOption = regionsAndCitiesArray
+        .flatMap((group) => group.options)
+        .find((option) => option.value === region);
+      return regionOption || null;
     }
     return null;
-  }, [region]);
+  }, [region, regionsAndCitiesArray]);
 
   const initialTownObject = useMemo(() => {
     if (region && town) {
@@ -82,23 +84,12 @@ export default function SubMenu({
       <div className="flex justify-center my-4 flex-col xs:flex-row">
         <div className="w-full p-2">
           <Select
-            id="regions"
-            options={regionsArray}
+            id="options"
+            options={regionsAndCitiesArray}
             value={initialRegionObject}
             onChange={handleRegionChange}
             isClearable
-            placeholder="una comarca"
-          />
-        </div>
-        <div className="w-full p-2">
-          <Select
-            id="cities"
-            options={citiesArray}
-            value={initialTownObject}
-            onChange={handleTownChange}
-            isDisabled={!initialRegionObject}
-            isClearable
-            placeholder="un poble"
+            placeholder="una opció"
           />
         </div>
         <div className="w-full p-2">
