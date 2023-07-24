@@ -236,6 +236,36 @@ export function generateRegionsOptions() {
     }));
 }
 
+export function getPlaceLabel(placeValue) {
+  for (const [regionKey, region] of CITIES_DATA.entries()) {
+    if (regionKey === placeValue) {
+      return region.label;
+    }
+    for (const [townKey, town] of region.towns.entries()) {
+      if (townKey === placeValue) {
+        return town.label;
+      }
+    }
+  }
+  return "";
+}
+
+export function getPlaceTypeAndLabel(place) {
+  const placeLabel = getPlaceLabel(place);
+  if (placeLabel) {
+    if (CITIES_DATA.has(place)) {
+      // place is a region
+      return { type: "region", label: getRegionLabel(place), regionLabel: "" };
+    } else {
+      // place is a town
+      const regionLabel = getRegionByTown(place);
+      return { type: "town", label: getTownLabel(place), regionLabel };
+    }
+  }
+  return { type: null, label: "", regionLabel: "" };
+}
+
+
 export function getTownLabel(townValue) {
   for (const region of CITIES_DATA.values()) {
     for (const [townKey, town] of region.towns.entries()) {

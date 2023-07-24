@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import { getRegionLabel } from "@utils/helpers";
 
 const Events = dynamic(() => import("@components/ui/events"), {
   loading: () => "",
@@ -14,33 +15,42 @@ export async function getStaticPaths() {
   const paths = [];
 
   for (const [regionKey, region] of CITIES_DATA) {
+    // Add paths for regions
+    const regionDatePaths = BYDATES.map((byDate) => ({
+      params: {
+        place: regionKey,
+        byDate: byDate.value,
+      },
+    }));
+    paths.push(...regionDatePaths);
+
+    // Add paths for towns
     for (const [townKey] of region.towns) {
-      const datePaths = BYDATES.map((byDate) => ({
+      const townDatePaths = BYDATES.map((byDate) => ({
         params: {
-          region: regionKey,
-          town: townKey,
+          place: townKey,
           byDate: byDate.value,
         },
       }));
-      paths.push(...datePaths);
+      paths.push(...townDatePaths);
     }
   }
 
   return { paths, fallback: false };
 }
 
+
 export async function getStaticProps({ params }) {
-  const {
-    getCalendarEvents,
-  } = require("@lib/helpers");
-  const { getTownLabel, getRegionLabel } =  require("@utils/helpers");
+  const { getCalendarEvents } = require("@lib/helpers");
+  const { getPlaceTypeAndLabel } =  require("@utils/helpers");
   const { twoWeeksDefault } = require("@lib/dates");
   const { from, until } = twoWeeksDefault();
-  const { town, region } = params;
+  const { place } = params;
+  const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const { events } = await getCalendarEvents({
     from,
     until,
-    q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
+    q: type === "town" ? `${label} ${regionLabel}` : label,
   });
   const normalizedEvents = JSON.parse(JSON.stringify(events));
 

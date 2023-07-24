@@ -13,16 +13,25 @@ export async function getStaticPaths() {
 
   const paths = [];
 
-  for (const [regionKey, region] of CITIES_DATA.entries()) {
-    for (const [townKey] of region.towns.entries()) {
-      const datePaths = BYDATES.map((byDate) => ({
+  for (const [regionKey, region] of CITIES_DATA) {
+    // Add paths for regions
+    const regionDatePaths = BYDATES.map((byDate) => ({
+      params: {
+        place: regionKey,
+        byDate: byDate.value,
+      },
+    }));
+    paths.push(...regionDatePaths);
+
+    // Add paths for towns
+    for (const [townKey] of region.towns) {
+      const townDatePaths = BYDATES.map((byDate) => ({
         params: {
-          region: regionKey,
-          town: townKey,
+          place: townKey,
           byDate: byDate.value,
         },
       }));
-      paths.push(...datePaths);
+      paths.push(...townDatePaths);
     }
   }
 
@@ -32,7 +41,7 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { getCalendarEvents } = require("@lib/helpers");
   const { getTownLabel, getRegionLabel } =  require("@utils/helpers");
-  const { town, region, byDate } = params;
+  const { place, byDate } = params;
   const { today, week, weekend, twoWeeksDefault } = require("@lib/dates");
   const dateFunctions = {
     avui: today,
@@ -40,12 +49,14 @@ export async function getStaticProps({ params }) {
     "cap-de-setmana": weekend,
   };
   const selectedFunction = dateFunctions[byDate];
+  const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
+  const q = type === "town" ? `${label} ${regionLabel}` : label;
 
   const { from, until } = selectedFunction();
   const { events: todayEvents } = await getCalendarEvents({
     from,
     until,
-    q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
+    q
   });
 
   let events = todayEvents;
@@ -58,7 +69,7 @@ export async function getStaticProps({ params }) {
       from,
       until,
       maxResults: 7,
-      q: `${getTownLabel(town) || ""} ${getRegionLabel(region) || ""}`,
+      q
     });
 
     noEventsFound = true;

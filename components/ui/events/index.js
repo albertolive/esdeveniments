@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import { generateJsonData, getRegionLabel, getTownLabel } from "@utils/helpers";
+import { generateJsonData, getPlaceTypeAndLabel } from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
 
 const NoEventsFound = dynamic(
@@ -28,7 +28,7 @@ const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
 });
 
 export default function Events({ props, loadMore = true }) {
-  const { town: townProps, byDate: byDateProps, region: regionProps } = props;
+  const { place: placeProps, byDate: byDateProps } = props;
 
   const sendGA = () => {
     if (typeof window !== "undefined") {
@@ -42,9 +42,9 @@ export default function Events({ props, loadMore = true }) {
       window.localStorage.getItem("currentPage");
     return storedPage ? parseInt(storedPage) : 1;
   });
-  const [region, setRegion] = useState(regionProps);
-  const [town, setTown] = useState(townProps);
+  const [place, setPlace] = useState(placeProps);
   const [byDate, setByDate] = useState(byDateProps);
+  const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
@@ -54,9 +54,7 @@ export default function Events({ props, loadMore = true }) {
     props,
     pageIndex: dateFunctions[byDate] || "all",
     maxResults: page * 10,
-    q: `${town ? getTownLabel(town) : ""} ${
-      region ? getRegionLabel(region) : ""
-    }`,
+    q: type === "town" ? `${label} ${regionLabel}` : label,
   });
 
   const jsonEvents = events.map((event) => generateJsonData(event));
@@ -70,7 +68,7 @@ export default function Events({ props, loadMore = true }) {
   }, []);
 
   if (error) return <div>failed to load</div>;
-  console.log(region, town, byDate);
+
   const {
     metaTitle,
     metaDescription,
@@ -81,8 +79,7 @@ export default function Events({ props, loadMore = true }) {
     notFoundText,
   } = generatePagesData({
     currentYear,
-    region,
-    town,
+    place,
     byDate,
   });
 
@@ -106,10 +103,8 @@ export default function Events({ props, loadMore = true }) {
       <p className="mb-4 font-bold">{subTitle}</p>
       <p className="mb-4">{description}</p>
       <SubMenu
-        region={region}
-        setRegion={setRegion}
-        town={town}
-        setTown={setTown}
+        place={place}
+        setPlace={setPlace}
         setByDate={setByDate}
       />
       {noEventsFound && <NoEventsFound title={notFoundText} />}

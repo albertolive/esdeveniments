@@ -21,7 +21,7 @@ module.exports = {
     "node_modules",
     "package.json",
     "[eventId]",
-    "[town]",
+    "[place]",
   ],
   generateRobotsTxt: true,
   robotsTxtOptions: {
