@@ -105,6 +105,7 @@ export default function Events({ props, loadMore = true }) {
       <SubMenu
         place={place}
         setPlace={setPlace}
+        byDate={byDate}
         setByDate={setByDate}
       />
       {noEventsFound && <NoEventsFound title={notFoundText} />}

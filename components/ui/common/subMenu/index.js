@@ -17,18 +17,16 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
   noSSR: false,
 });
 
-const RenderButton = ({ text, goTo }) => {
-  const router = useRouter();
-  const pathname = router.pathname;
-  const isActiveLink = pathname === goTo ? "bg-[#ECB84A]" : "bg-gray-800";
+const RenderButton = ({ value, label, goTo, byDate }) => {
+  const isActiveLink = byDate === value ? "bg-[#ECB84A]" : "bg-gray-800";
 
   return (
     <button
-      className={`relative inline-flex items-center px-4 mx-1 py-2 border border-transparent shadow-md text-sm font-medium rounded-md text-white ${isActiveLink} hover:bg-yellow-400 focus:outline-none`}
+      className={`relative inline-flex items-center px-4 mx-1 py-2 border border-transparent shadow-md text-sm font-medium rounded-md text-white ${isActiveLink} lg:hover:bg-yellow-400 focus:outline-none`}
       type="button"
-      onClick={() => router.push(goTo)}
+      onClick={() => goTo(value)}
     >
-      {text}
+      {label}
     </button>
   );
 };
@@ -36,14 +34,16 @@ const RenderButton = ({ text, goTo }) => {
 export default function SubMenu({
   place: placeProps,
   setPlace,
+  byDate: byDateProps,
   setByDate,
 }) {
   const {
-    query: { place: regionQuery, byDate },
+    query: { place: placeQuery, byDate: byDateQuery },
   } = useRouter();
+  const place = placeProps || placeQuery;
+  const byDate = byDateProps || byDateQuery;
 
-  const place = placeProps || regionQuery;
-
+  console.log(place, byDate);
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
     []
@@ -62,15 +62,37 @@ export default function SubMenu({
   const handleRegionChange = ({ value }) => {
     setPlace(value);
 
-    window.history.pushState(null, null, value ? `/${value}` : "/");
-
-    if (!value) {
-      setByDate(undefined);
+    if (byDate) {
+      window.history.pushState(
+        null,
+        null,
+        value ? `/${value}/${byDate}` : `/${byDate}`
+      );
+    } else {
+      window.history.pushState(null, null, value ? `/${value}` : "/");
     }
+
+    // if (!value) {
+    //   setByDate(undefined);
+    // }
   };
 
-  const handleByDateChange = ({ value }) => {
-    setByDate(value);
+  const handleByDateChange = (value) => {
+    if (value === byDate) {
+      setByDate(undefined);
+      window.history.pushState(null, null, place ? `/${place}` : "/");
+    } else {
+      setByDate(value);
+      window.history.pushState(
+        null,
+        null,
+        place && value
+          ? `/${place}/${value}`
+          : place
+          ? `/${place}`
+          : `/${value}`
+      );
+    }
   };
 
   return (
@@ -90,8 +112,10 @@ export default function SubMenu({
           {BYDATES.map(({ value, label }) => (
             <RenderButton
               key={value}
-              text={label}
-              goTo={`/${place}/${value}`}
+              value={value}
+              label={label}
+              goTo={handleByDateChange}
+              byDate={byDate}
             />
           ))}
         </div>
