@@ -108,18 +108,24 @@ export default function Events({ props, loadMore = true }) {
         byDate={byDate}
         setByDate={setByDate}
       />
-      {noEventsFound && <NoEventsFound title={notFoundText} />}
-      <List events={events}>
-        {(event) => (
-          <Card
-            key={event.id}
-            event={event}
-            isLoading={isLoading}
-            isValidating={isValidating}
-          />
-        )}
-      </List>
-      {!noEventsFound && loadMore && events.length > 7 && (
+      {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
+      {isLoading ? (
+        <div class="flex justify-center items-center">
+          <div class="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#ECB84A]"></div>
+        </div>
+      ) : (
+        <List events={events}>
+          {(event) => (
+            <Card
+              key={event.id}
+              event={event}
+              isLoading={isLoading}
+              isValidating={isValidating}
+            />
+          )}
+        </List>
+      )}
+      {!noEventsFound && loadMore && !isLoading && events.length > 7 && (
         <div className="text-center">
           <button
             type="button"

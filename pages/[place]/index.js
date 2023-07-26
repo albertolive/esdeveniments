@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import { getRegionLabel } from "@utils/helpers";
 
 const Events = dynamic(() => import("@components/ui/events"), {
   loading: () => "",
@@ -39,10 +38,9 @@ export async function getStaticPaths() {
   return { paths, fallback: false };
 }
 
-
 export async function getStaticProps({ params }) {
   const { getCalendarEvents } = require("@lib/helpers");
-  const { getPlaceTypeAndLabel } =  require("@utils/helpers");
+  const { getPlaceTypeAndLabel } = require("@utils/helpers");
   const { twoWeeksDefault } = require("@lib/dates");
   const { from, until } = twoWeeksDefault();
   const { place } = params;
