@@ -1,11 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { BYDATES } from "@utils/constants";
-import {
-  generateDatesOptions,
-  generateRegionsAndTownsOptions,
-} from "@utils/helpers";
+import { generateRegionsAndTownsOptions } from "@utils/helpers";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -37,63 +34,62 @@ export default function SubMenu({
   byDate: byDateProps,
   setByDate,
 }) {
+  const [selectedOption, setSelectedOption] = useState(null);
   const {
     query: { place: placeQuery, byDate: byDateQuery },
   } = useRouter();
   const place = placeProps || placeQuery;
   const byDate = byDateProps || byDateQuery;
 
-  console.log(place, byDate);
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
     []
   );
 
-  const initialRegionObject = useMemo(() => {
+  useEffect(() => {
     if (place) {
       const regionOption = regionsAndCitiesArray
         .flatMap((group) => group.options)
         .find((option) => option.value === place);
-      return regionOption || null;
+      setSelectedOption(regionOption || null);
     }
-    return null;
   }, [place, regionsAndCitiesArray]);
 
   const handleRegionChange = ({ value }) => {
     setPlace(value);
+    setSelectedOption(value);
 
-    if (byDate) {
-      window.history.pushState(
-        null,
-        null,
-        value ? `/${value}/${byDate}` : `/${byDate}`
-      );
-    } else {
-      window.history.pushState(null, null, value ? `/${value}` : "/");
-    }
-
-    // if (!value) {
-    //   setByDate(undefined);
-    // }
+    // Save the state to localStorage
+    localStorage.setItem("place", value);
+    localStorage.setItem("byDate", byDate);
   };
 
   const handleByDateChange = (value) => {
-    if (value === byDate) {
-      setByDate(undefined);
-      window.history.pushState(null, null, place ? `/${place}` : "/");
-    } else {
-      setByDate(value);
-      window.history.pushState(
-        null,
-        null,
-        place && value
-          ? `/${place}/${value}`
-          : place
-          ? `/${place}`
-          : `/${value}`
-      );
-    }
+    setByDate(value);
+
+    // Save the state to localStorage
+    localStorage.setItem("place", place);
+    localStorage.setItem("byDate", value);
   };
+
+  // Restore the state from localStorage when the component mounts
+  useEffect(() => {
+    const place = localStorage.getItem("place");
+    const byDate = localStorage.getItem("byDate");
+
+    if (place) {
+      setPlace(place);
+      const regionOption = regionsAndCitiesArray
+        .flatMap((group) => group.options)
+        .find((option) => option.value === place);
+      setSelectedOption(regionOption || null);
+    }
+
+    if (byDate) {
+      setByDate(byDate);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -102,7 +98,7 @@ export default function SubMenu({
           <Select
             id="options"
             options={regionsAndCitiesArray}
-            value={initialRegionObject}
+            value={selectedOption}
             onChange={handleRegionChange}
             isClearable
             placeholder="una opció"

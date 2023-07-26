@@ -67,8 +67,8 @@ export default function SelectComponent({
           autoComplete
           formatCreateLabel={(inputValue) => `Afegir nou lloc: "${inputValue}"`}
           placeholder={`Selecciona ${placeholder}`}
-          defaultValue={selectedOption}
-          value={selectedOption}
+          defaultValue={selectedOption || initialValue}
+          value={selectedOption || initialValue}
           onChange={handleChange}
           options={options}
           styles={customStyles}

@@ -110,8 +110,8 @@ export default function Events({ props, loadMore = true }) {
       />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
       {isLoading ? (
-        <div class="flex justify-center items-center">
-          <div class="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#ECB84A]"></div>
+        <div className="flex justify-center items-center">
+          <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#ECB84A]"></div>
         </div>
       ) : (
         <List events={events}>
