@@ -55,41 +55,14 @@ export default function SubMenu({
     }
   }, [place, regionsAndCitiesArray]);
 
-  const handleRegionChange = ({ value }) => {
+  const handlePlaceChange = ({ value }) => {
     setPlace(value);
     setSelectedOption(value);
-
-    // Save the state to localStorage
-    localStorage.setItem("place", value);
-    localStorage.setItem("byDate", byDate);
   };
 
   const handleByDateChange = (value) => {
     setByDate(value);
-
-    // Save the state to localStorage
-    localStorage.setItem("place", place);
-    localStorage.setItem("byDate", value);
   };
-
-  // Restore the state from localStorage when the component mounts
-  useEffect(() => {
-    const place = localStorage.getItem("place");
-    const byDate = localStorage.getItem("byDate");
-
-    if (place) {
-      setPlace(place);
-      const regionOption = regionsAndCitiesArray
-        .flatMap((group) => group.options)
-        .find((option) => option.value === place);
-      setSelectedOption(regionOption || null);
-    }
-
-    if (byDate) {
-      setByDate(byDate);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
@@ -99,7 +72,7 @@ export default function SubMenu({
             id="options"
             options={regionsAndCitiesArray}
             value={selectedOption}
-            onChange={handleRegionChange}
+            onChange={handlePlaceChange}
             isClearable
             placeholder="una opció"
           />

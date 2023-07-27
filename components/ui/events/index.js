@@ -42,8 +42,21 @@ export default function Events({ props, loadMore = true }) {
       window.localStorage.getItem("currentPage");
     return storedPage ? parseInt(storedPage) : 1;
   });
-  const [place, setPlace] = useState(placeProps);
-  const [byDate, setByDate] = useState(byDateProps);
+
+  const [place, setPlace] = useState(() => {
+    const storedPlace =
+      typeof window !== "undefined" && window.localStorage.getItem("place");
+    return storedPlace === "undefined" ? undefined : storedPlace || placeProps;
+  });
+
+  const [byDate, setByDate] = useState(() => {
+    const storedByDate =
+      typeof window !== "undefined" && window.localStorage.getItem("byDate");
+    return storedByDate === "undefined"
+      ? undefined
+      : storedByDate || byDateProps;
+  });
+
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const {
     data: { events = [], currentYear, noEventsFound = false },
@@ -62,6 +75,14 @@ export default function Events({ props, loadMore = true }) {
   useEffect(() => {
     localStorage.setItem("currentPage", page);
   }, [page]);
+
+  useEffect(() => {
+    localStorage.setItem("place", place);
+  }, [place]);
+
+  useEffect(() => {
+    localStorage.setItem("byDate", byDate);
+  }, [byDate]);
 
   useEffect(() => {
     localStorage.removeItem("currentPage");

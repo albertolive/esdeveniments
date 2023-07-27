@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { generateRegionsOptions } from "@utils/helpers";
 
 function EsdevenimentsMainEntry({ Component, pageProps }) {
-  const { events } = useRouter();
+  const { events, asPath } = useRouter();
 
   const dynamicURLs = generateRegionsOptions().map(({ value }) => `/${value}`);
 
@@ -42,6 +42,21 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
       events.off("routeChangeComplete", handleRouteChange);
     };
   }, [events, handleRouteChange]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("place");
+      localStorage.removeItem("byDate");
+      localStorage.removeItem("currentPage");
+      localStorage.removeItem("searchTerm");
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <>

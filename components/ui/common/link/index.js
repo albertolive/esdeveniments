@@ -7,9 +7,9 @@ export default function ActiveLink({ children, activeLinkClass, ...props }) {
   let className = children.props.className || "";
 
   if (pathname === props.href)
-    className = `${className} ${
+    className = `${
       activeLinkClass ? activeLinkClass : "text-[#ECB84A]"
-    }`;
+    } ${className}`;
 
   return (
     <Link {...props} prefetch={false}>

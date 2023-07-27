@@ -6,6 +6,7 @@ import SearchIcon from "@heroicons/react/solid/SearchIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-cultura-cardedeu.png";
+import { useRouter } from "next/router";
 
 const navigation = [
   { name: "Agenda", href: "/", current: true },
@@ -13,7 +14,30 @@ const navigation = [
   { name: "Arxiu", href: "/sitemap", current: false },
 ];
 
-export default function Example() {
+export default function Navbar() {
+  const router = useRouter();
+
+  const navigateToMainPage = () => {
+    localStorage.removeItem("place");
+    localStorage.removeItem("byDate");
+    localStorage.removeItem("currentPage");
+    localStorage.removeItem("searchTerm");
+
+    router.push("/");
+  };
+
+  const reloadPage = () => {
+    // Delay the page reload after navigation is complete
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
+  const handleLogoClick = () => {
+    navigateToMainPage();
+    reloadPage();
+  };
+
   return (
     <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50">
       {({ open }) => (
@@ -34,7 +58,7 @@ export default function Example() {
                 </div>
                 <div className="flex items-center">
                   <ActiveLink href="/">
-                    <a className="flex">
+                    <a className="flex" onClick={handleLogoClick}>
                       <Image
                         src={logo}
                         className="block h-8 cursor-pointer"
@@ -50,10 +74,10 @@ export default function Example() {
               </div>
 
               <div className="flex items-center">
-                <div className="hidden md:flex md:items-center">
+                <div className="hidden md:flex md:items-center text-white">
                   {navigation.map((item) => (
                     <ActiveLink href={item.href} key={item.name}>
-                      <a className="font-medium mr-4 text-white hover:text-stone-200">
+                      <a className="font-medium mr-4 hover:text-stone-200">
                         {item.name}
                       </a>
                     </ActiveLink>
