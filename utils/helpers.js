@@ -219,13 +219,8 @@ export function generateRegionsAndTownsOptions() {
         label: town.label,
       })),
   }));
-  return [
-    { label: "Comarques", options: regionsOptions },
-    ...townsOptions,
-  ];
+  return [{ label: "Comarques", options: regionsOptions }, ...townsOptions];
 }
-
-
 
 export function generateRegionsOptions() {
   return [...CITIES_DATA.entries()]
@@ -255,7 +250,11 @@ export function getPlaceTypeAndLabel(place) {
   if (placeLabel) {
     if (CITIES_DATA.has(place)) {
       // place is a region
-      return { type: "region", label: getRegionLabel(place), regionLabel: "" };
+      return {
+        type: "region",
+        label: getRegionLabelByValue(place),
+        regionLabel: "",
+      };
     } else {
       // place is a town
       const regionLabel = getRegionByTown(place);
@@ -264,7 +263,6 @@ export function getPlaceTypeAndLabel(place) {
   }
   return { type: null, label: "", regionLabel: "" };
 }
-
 
 export function getTownLabel(townValue) {
   for (const region of CITIES_DATA.values()) {
@@ -288,13 +286,23 @@ export function getTownPostalCode(townValue) {
   return "";
 }
 
-export function getRegionLabel(regionValue) {
+export function getRegionLabelByValue(regionValue) {
   for (const [regionKey, region] of CITIES_DATA.entries()) {
     if (regionKey === regionValue) {
       return region.label;
     }
   }
   return "";
+}
+
+export function getRegionsLabel() {
+  const placeNames = [];
+
+  for (const [, regionData] of CITIES_DATA.entries()) {
+    placeNames.push(regionData.label);
+  }
+
+  return placeNames;
 }
 
 export function generateTownsOptions(region) {
@@ -337,7 +345,7 @@ export function getRegionByTown(town) {
     }
   }
 
-  return getRegionLabel(region);
+  return getRegionLabelByValue(region);
 }
 
 export function getTownOptionsWithLabel(label) {

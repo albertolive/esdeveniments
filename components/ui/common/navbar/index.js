@@ -30,7 +30,7 @@ export default function Navbar() {
     // Delay the page reload after navigation is complete
     setTimeout(() => {
       window.location.reload();
-    }, 600);
+    }, 800);
   };
 
   const handleLogoClick = () => {

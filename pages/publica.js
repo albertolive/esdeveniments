@@ -1,6 +1,11 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/router";
-import { slug, getFormattedDate, getRegionLabel, getTownLabel } from "@utils/helpers";
+import {
+  slug,
+  getFormattedDate,
+  getRegionLabelByValue,
+  getTownLabel,
+} from "@utils/helpers";
 import {
   DatePicker,
   Input,
@@ -151,7 +156,7 @@ export default function Publica() {
       setIsLoading(true);
 
       try {
-        const rawResponse = await fetch('/api/postEvent', {
+        const rawResponse = await fetch("/api/postEvent", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -159,7 +164,9 @@ export default function Publica() {
           },
           body: JSON.stringify({
             ...form,
-            location: `${form.location}, ${getTownLabel(form.town)}, ${getRegionLabel(form.region)}`,
+            location: `${form.location}, ${getTownLabel(
+              form.town
+            )}, ${getRegionLabelByValue(form.region)}`,
             imageUploaded: !!imageToUpload,
           }),
         });
@@ -167,7 +174,10 @@ export default function Publica() {
         if (rawResponse.ok) {
           const { id } = await rawResponse.json();
 
-          const { formattedStart } = getFormattedDate(form.startDate, form.endDate);
+          const { formattedStart } = getFormattedDate(
+            form.startDate,
+            form.endDate
+          );
           const slugifiedTitle = slug(form.title, formattedStart, id);
 
           imageToUpload
@@ -178,12 +188,17 @@ export default function Publica() {
           console.error("Error submitting form");
           setIsLoading(false);
         }
-
       } catch (error) {
         // Handle fetch or other errors
         console.error("Error submitting form:", error);
         setIsLoading(false);
-        setFormState(_createFormState(true, true, "Hi ha hagut un error, torna-ho a provar més tard o contacta amb nosaltres."));
+        setFormState(
+          _createFormState(
+            true,
+            true,
+            "Hi ha hagut un error, torna-ho a provar més tard o contacta amb nosaltres."
+          )
+        );
       }
     }
   };
@@ -220,7 +235,13 @@ export default function Publica() {
       // Handle fetch or other errors
       console.error("Error uploading file:", error);
       setIsLoading(false);
-      setFormState(_createFormState(true, true, "Hi ha hagut un error en pujar la imatge, torna-ho a provar més tard o contacta amb nosaltres."));
+      setFormState(
+        _createFormState(
+          true,
+          true,
+          "Hi ha hagut un error en pujar la imatge, torna-ho a provar més tard o contacta amb nosaltres."
+        )
+      );
       throw error;
     }
   };

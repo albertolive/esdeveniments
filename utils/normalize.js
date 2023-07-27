@@ -4,6 +4,7 @@ import {
   getFormattedDate,
   sanitizeText,
   getTownOptionsWithLabel,
+  getRegionsLabel,
 } from "./helpers";
 
 function to3HourForecastFormat(date) {
@@ -87,8 +88,8 @@ export const normalizeEvents = (event, weatherInfo) => {
     imageUploaded: imageUploaded
       ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
       : eventImage
-        ? eventImage
-        : "/static/images/blur.png",
+      ? eventImage
+      : "/static/images/blur.png",
     description: event.description
       ? event.description
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
@@ -113,7 +114,7 @@ export const normalizeEvent = (event) => {
   const town = locationParts[1] ? locationParts[1].trim() : "";
   const tag = TAGS.find((v) => title.includes(v)) || null;
   if (tag) title = title.replace(`${tag}:`, "").trim();
-  const { postalCode = null, label = null } = getTownOptionsWithLabel(town)
+  const { postalCode = null, label = null } = getTownOptionsWithLabel(town);
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
   const eventImage = hasEventImage(event.description);
@@ -139,8 +140,8 @@ export const normalizeEvent = (event) => {
     imageUploaded: imageUploaded
       ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
       : eventImage
-        ? eventImage
-        : null,
+      ? eventImage
+      : null,
     eventImage,
     imageId,
     isEventFinished: event.end
@@ -164,9 +165,9 @@ export const addArticleToMonth = (monthString) => {
 };
 
 export const fixArticles = (text) => {
-  const placeNames = ["Vallès Oriental"];
-
+  const placeNames = getRegionsLabel();
   let newText = text;
+
   placeNames.forEach((placeName) => {
     const regex = new RegExp(`\\b${placeName}\\b`, "gi");
     newText = newText.replace(regex, `al ${placeName}`);
