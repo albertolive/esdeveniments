@@ -5,6 +5,7 @@ import NextImage from "next/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import { truncateString } from "@utils/helpers";
+import { useRouter } from "next/router";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -12,6 +13,12 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
 });
 
 export default function Card({ event }) {
+  const { prefetch } = useRouter();
+
+  const handlePrefetch = () => {
+    prefetch(`/e/${event.slug}`);
+  };
+
   if (event.isAd)
     return (
       <div className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 block visible md:hidden md:invisible">
@@ -26,7 +33,11 @@ export default function Card({ event }) {
 
   return (
     <Link href={`/e/${event.slug}`} passHref prefetch={false}>
-      <div className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 max-h-[240px]">
+      <div
+        className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 max-h-[240px]"
+        onMouseEnter={handlePrefetch}
+        onClick={handlePrefetch}
+      >
         <div className="flex h-full">
           <div className="flex-1 h-full next-image-wrapper">
             <Image
