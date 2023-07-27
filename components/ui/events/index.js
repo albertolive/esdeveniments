@@ -6,6 +6,10 @@ import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
 import { generateJsonData, getPlaceTypeAndLabel } from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
+import CardLoading from "@components/ui/cardLoading";
+import { SubMenu } from "@components/ui/common";
+import List from "@components/ui/list";
+import Card from "@components/ui/card";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -13,19 +17,6 @@ const NoEventsFound = dynamic(
     loading: () => "",
   }
 );
-
-const Card = dynamic(() => import("@components/ui/card"), {
-  loading: () => "",
-});
-
-const List = dynamic(() => import("@components/ui/list"), {
-  loading: () => "",
-});
-
-const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
-  loading: () => "",
-  noSSR: true,
-});
 
 export default function Events({ props, loadMore = true }) {
   const { place: placeProps, byDate: byDateProps } = props;
@@ -35,6 +26,8 @@ export default function Events({ props, loadMore = true }) {
       window.gtag && window.gtag("event", "load-more-events");
     }
   };
+
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   const [page, setPage] = useState(() => {
     const storedPage =
@@ -85,8 +78,24 @@ export default function Events({ props, loadMore = true }) {
   }, [byDate]);
 
   useEffect(() => {
-    localStorage.removeItem("currentPage");
-  }, []);
+    // Only reset the page state and localStorage value if place or byDate has changed
+    if (place !== placeProps || byDate !== byDateProps) {
+      setPage(1);
+
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("currentPage", "1");
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [place, byDate]);
+
+  useEffect(() => {
+    setScrollPosition(window.scrollY);
+  }, [events]);
+
+  useEffect(() => {
+    window.scrollTo(0, scrollPosition);
+  }, [scrollPosition]);
 
   if (error) return <div>failed to load</div>;
 
@@ -130,23 +139,18 @@ export default function Events({ props, loadMore = true }) {
         setByDate={setByDate}
       />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
-      {isLoading ? (
-        <div className="flex justify-center items-center">
-          <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#ECB84A]"></div>
+      {isLoading || isValidating ? (
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+          {[...Array(10)].map((_, i) => (
+            <CardLoading key={i} />
+          ))}
         </div>
       ) : (
         <List events={events}>
-          {(event) => (
-            <Card
-              key={event.id}
-              event={event}
-              isLoading={isLoading}
-              isValidating={isValidating}
-            />
-          )}
+          {(event) => <Card key={event.id} event={event} />}
         </List>
       )}
-      {!noEventsFound && loadMore && !isLoading && events.length > 7 && (
+      {!noEventsFound && loadMore && events.length > 7 && (
         <div className="text-center">
           <button
             type="button"
