@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import { useRouter } from "next/router";
@@ -7,6 +7,8 @@ import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
 import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
+import ArrowDownIcon from "@heroicons/react/outline/ArrowDownIcon";
+import ArrowUpIcon from "@heroicons/react/outline/ArrowUpIcon";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -18,6 +20,10 @@ const Image = dynamic(() => import("@components/ui/common/image"), {
 });
 
 const EditModal = dynamic(() => import("@components/ui/editModal"), {
+  loading: () => "",
+});
+
+const Maps = dynamic(() => import("@components/ui/maps"), {
   loading: () => "",
 });
 
@@ -128,7 +134,6 @@ const sendGoogleEvent = (event, obj) =>
   window.gtag("event", event, { ...obj });
 
 export default function Event(props) {
-  const mapRef = useRef(null);
   const { push, query, asPath } = useRouter();
   const { newEvent, edit_suggested = false } = query;
   const [openModal, setOpenModal] = useState(false);
@@ -136,6 +141,7 @@ export default function Event(props) {
     useState(false);
   const [showThankYouBanner, setShowThankYouBanner] = useState(edit_suggested);
   const [reasonToDelete, setReasonToDelete] = useState(null);
+  const [showMap, setShowMap] = useState(false);
   const { data, error } = useGetEvent(props);
   const slug = data.event ? data.event.slug : "";
   const title = data.event ? data.event.title : "";
@@ -146,24 +152,6 @@ export default function Event(props) {
     if (title !== "CANCELLED" && slug && asPath !== `/e/${slug}`)
       push(slug, undefined, { shallow: true });
   }, [asPath, data, edit_suggested, newEvent, push, slug, title]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    const frame = document.createElement("iframe");
-    frame.src = map.getAttribute("data-src");
-    const onLoad = () => {
-      // Remove the event listener to prevent memory leaks
-      frame.removeEventListener("load", onLoad);
-    };
-    frame.addEventListener("load", onLoad);
-    map.appendChild(frame);
-
-    return () => {
-      map.removeChild(frame);
-    };
-  }, [mapRef]);
 
   const onSendDeleteReason = async () => {
     const { id, title } = data.event;
@@ -191,6 +179,10 @@ export default function Event(props) {
     setOpenModal(false);
     setTimeout(() => setOpenModalDeleteReasonModal(true), 300);
     sendGoogleEvent("open-delete-modal");
+  };
+
+  const handleShowMap = () => {
+    setShowMap(!showMap);
   };
 
   if (error) return <div>failed to load</div>;
@@ -387,6 +379,36 @@ export default function Event(props) {
                   </dd>
                 </div>
               </dl>
+              <div
+                className="flex items-center text-sm text-gray-500 cursor-pointer mt-2"
+                onClick={handleShowMap}
+              >
+                {showMap ? (
+                  <div className="flex ">
+                    <p className="whitespace-nowrap">Ocultar mapa</p>
+                    <ArrowUpIcon
+                      className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
+                      aria-hidden="true"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <p className="whitespace-nowrap">Mostrar mapa</p>
+                    <ArrowDownIcon
+                      className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
+                      aria-hidden="true"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {showMap && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden">
+                    <Maps location={location} />
+                  </div>
+                </div>
+              )}
 
               {tag && (
                 <dl className="mt-6 space-y-10">
@@ -405,16 +427,6 @@ export default function Event(props) {
               )}
               <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
                 <AdArticle slot="8822317665" />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden">
-                <div
-                  className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden"
-                  data-src={`https://www.google.com/maps/embed/v1/place?q=${location}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS}`}
-                  id="mymap"
-                  ref={mapRef}
-                ></div>
               </div>
             </div>
           </div>
