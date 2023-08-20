@@ -361,7 +361,9 @@ export default async function handler(req, res) {
 
     // If no new items, log a message
     if (newItems.length === 0) {
-      console.log(`No new items found for ${town}`);
+      const message = `No new items found for ${town}`;
+      console.log(message);
+      res.status(200).json(message);
       return;
     }
 
@@ -379,6 +381,7 @@ export default async function handler(req, res) {
             locationSelector,
             processedItems
           );
+          return;
         } catch (error) {
           console.error("Error inserting item to calendar:", error);
         }
