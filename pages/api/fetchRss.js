@@ -105,7 +105,7 @@ async function getExpiredItems(processedItems) {
 }
 
 async function removeExpiredItems(processedItems, expiredItems) {
-  for (const [item, _] of expiredItems) {
+  for (const item of expiredItems) {
     console.log(`Removing item ${item} from processed items`);
     processedItems.delete(item);
   }
@@ -176,8 +176,8 @@ function getLocationFromHtml(html) {
   // Map the matches to an array of locations
   const locations = matches.map((match) => match[1]);
 
-  // Return the array of matched locations
-  return locations;
+  // Return the array of matched locations or null if it's empty
+  return locations.length > 0 ? locations : null;
 }
 
 async function scrapeLocation(url, location, locationSelector) {
@@ -197,7 +197,7 @@ async function scrapeLocation(url, location, locationSelector) {
     const locationFromHtml =
       locationElement && getLocationFromHtml(locationElement);
 
-    return Array.isArray(locationFromHtml) && locationFromHtml[0]
+    return locationFromHtml && locationFromHtml[0]
       ? locationFromHtml[0].trim()
       : location;
   } catch (error) {
@@ -296,6 +296,7 @@ async function insertItemToCalendarWithRetry(
         locationSelector,
         processedItems
       );
+      return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
       retries++;
