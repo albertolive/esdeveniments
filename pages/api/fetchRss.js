@@ -258,11 +258,13 @@ async function insertItemToCalendar(
 
 async function insertItemToCalendarWithRetry(
   item,
+  town,
   regionLabel,
   townLabel,
   descriptionSelector,
   imageSelector,
-  locationSelector
+  locationSelector,
+  processedItems
 ) {
   if (!item) return null;
 
@@ -286,6 +288,7 @@ async function insertItemToCalendarWithRetry(
         processedItems.set(insertedGuid, now);
         console.log(`Added item ${insertedGuid} to processed items`);
         await setProcessedItems(processedItems, town); // Save the processed item immediately
+        return;
       }
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
@@ -355,11 +358,13 @@ export default async function handler(req, res) {
         try {
           await insertItemToCalendarWithRetry(
             item,
+            town,
             regionLabel,
             townLabel,
             descriptionSelector,
             imageSelector,
-            locationSelector
+            locationSelector,
+            processedItems
           );
         } catch (error) {
           console.error("Error inserting item to calendar:", error);
@@ -367,8 +372,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Update the database
-    await setProcessedItems(processedItems, town);
     console.log("Finished processing items");
     // Send the response
     res.status(200).json(newItems);

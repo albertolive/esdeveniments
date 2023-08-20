@@ -99,7 +99,7 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
-          "llissadevall",
+          "llissa-de-vall",
           {
             label: "Lliçà de Vall",
             rssFeed: "https://www.llissadevall.cat/rss/12/0/",
