@@ -7,7 +7,7 @@ import { CITIES_DATA } from "@utils/constants";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
-const limiter = new Bottleneck({ maxConcurrent: 1, minTime: 1000 });
+const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
 
 const calendar = google.calendar("v3");
 const auth = new google.auth.GoogleAuth({
@@ -282,7 +282,10 @@ async function insertItemToCalendarWithRetry(
 
       // If the insertion is successful, return the GUID
       if (insertedGuid) {
-        return insertedGuid;
+        const now = Date.now();
+        processedItems.set(insertedGuid, now);
+        console.log(`Added item ${insertedGuid} to processed items`);
+        await setProcessedItems(processedItems, town); // Save the processed item immediately
       }
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
@@ -341,7 +344,7 @@ export default async function handler(req, res) {
 
     // Read the database
     const processedItems = await getProcessedItems(town);
-    cleanProcessedItems(processedItems);
+    await cleanProcessedItems(processedItems);
 
     // Filter out already fetched items
     const newItems = items.filter((item) => !processedItems.has(item.guid));
@@ -350,7 +353,7 @@ export default async function handler(req, res) {
     for (const item of newItems) {
       await limiter.schedule(async () => {
         try {
-          const insertedGuid = await insertItemToCalendarWithRetry(
+          await insertItemToCalendarWithRetry(
             item,
             regionLabel,
             townLabel,
@@ -358,13 +361,6 @@ export default async function handler(req, res) {
             imageSelector,
             locationSelector
           );
-
-          // Update the database with the successful GUID
-          if (insertedGuid) {
-            const now = Date.now();
-            processedItems.set(insertedGuid, now);
-            console.log(`Added item ${insertedGuid} to processed items`);
-          }
         } catch (error) {
           console.error("Error inserting item to calendar:", error);
         }

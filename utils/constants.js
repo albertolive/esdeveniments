@@ -109,6 +109,16 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "sant-antoni-vilamajor",
+          {
+            label: "Sant Antoni de Vilamajor",
+            rssFeed: "https://www.santantonidevilamajor.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08459",
+          },
+        ],
+        [
           "la-garriga",
           {
             label: "La Garriga",
