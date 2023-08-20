@@ -47,7 +47,7 @@ async function fetchRSSFeed(rssFeed, town) {
     const cachedData = await kv.get(`${town}_${RSS_FEED_CACHE_KEY}`);
 
     if (isCacheValid(cachedData)) {
-      console.log("Returning cached data");
+      console.log(`Returning cached data for ${town}`);
       return cachedData.data;
     }
 
@@ -372,7 +372,7 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log("Finished processing items");
+    console.log(`Finished processing items for ${town}`);
     // Send the response
     res.status(200).json(newItems);
   } catch (err) {
