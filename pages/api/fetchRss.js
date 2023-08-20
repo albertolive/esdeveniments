@@ -34,6 +34,10 @@ class RSSFeedError extends Error {
   }
 }
 
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function isCacheValid(cachedData) {
   return (
     cachedData && Date.now() - cachedData.timestamp < RSS_FEED_CACHE_MAX_AGE
@@ -204,11 +208,13 @@ async function scrapeLocation(url, location, locationSelector) {
 
 async function insertItemToCalendar(
   item,
-  region,
+  town,
+  regionLabel,
   townLabel,
   descriptionSelector,
   imageSelector,
-  locationSelector
+  locationSelector,
+  processedItems
 ) {
   if (!item) return;
   const { pubDate, title, link, guid, location = "" } = item || {};
@@ -229,8 +235,8 @@ async function insertItemToCalendar(
     summary: title,
     description,
     location: scrapedLocation
-      ? `${scrapedLocation}, ${townLabel}, ${region}`
-      : `${townLabel}, ${region}`,
+      ? `${scrapedLocation}, ${townLabel}, ${regionLabel}`
+      : `${townLabel}, ${regionLabel}`,
     start: {
       dateTime: dateTime.toISOString(),
       timeZone: "Europe/Madrid",
@@ -243,13 +249,20 @@ async function insertItemToCalendar(
 
   try {
     const authToken = await auth.getClient();
+
     await calendar.events.insert({
       auth: authToken,
       calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
       resource: event,
     });
+
     console.log("Inserted new item successfully: " + title);
-    return guid;
+
+    const now = Date.now();
+    processedItems.set(guid, now);
+    await setProcessedItems(processedItems, town); // Save the processed item immediately
+    console.log(`Added item ${guid} to processed items`);
+    return;
   } catch (error) {
     console.error("Error inserting item to calendar:", error);
     throw error;
@@ -273,23 +286,16 @@ async function insertItemToCalendarWithRetry(
 
   while (retries < MAX_RETRIES) {
     try {
-      const insertedGuid = await insertItemToCalendar(
+      await insertItemToCalendar(
         item,
+        town,
         regionLabel,
         townLabel,
         descriptionSelector,
         imageSelector,
-        locationSelector
+        locationSelector,
+        processedItems
       );
-
-      // If the insertion is successful, return the GUID
-      if (insertedGuid) {
-        const now = Date.now();
-        processedItems.set(insertedGuid, now);
-        console.log(`Added item ${insertedGuid} to processed items`);
-        await setProcessedItems(processedItems, town); // Save the processed item immediately
-        return;
-      }
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
       retries++;
@@ -351,6 +357,12 @@ export default async function handler(req, res) {
 
     // Filter out already fetched items
     const newItems = items.filter((item) => !processedItems.has(item.guid));
+
+    // If no new items, log a message
+    if (newItems.length === 0) {
+      console.log(`No new items found for ${town}`);
+      return;
+    }
 
     // Insert items in GCal
     for (const item of newItems) {
