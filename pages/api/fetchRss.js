@@ -58,6 +58,13 @@ async function fetchRSSFeed(rssFeed, town) {
     // Fetch the data
     const response = await axios.get(rssFeed);
 
+    // Check if the response status is not 200
+    if (response.status !== 200) {
+      throw new Error(
+        `Failed to fetch Rss data for ${town}: ${response.status}`
+      );
+    }
+
     const json = parser.parse(response.data);
 
     // Validate the data
@@ -73,10 +80,15 @@ async function fetchRSSFeed(rssFeed, town) {
     const data = json.rss.channel.item;
 
     // Cache the data
-    await kv.set(`${town}_${RSS_FEED_CACHE_KEY}`, {
-      timestamp: Date.now(),
-      data,
-    });
+    try {
+      await kv.set(`${town}_${RSS_FEED_CACHE_KEY}`, {
+        timestamp: Date.now(),
+        data,
+      });
+    } catch (err) {
+      console.error(`An error occurred while caching the RSS feed: ${err}`);
+      throw new Error(`Failed to cache RSS feed: ${err}`);
+    }
 
     console.log("Returning new RSS data");
     return data;
@@ -88,13 +100,24 @@ async function fetchRSSFeed(rssFeed, town) {
 }
 
 async function getProcessedItems(town) {
-  const processedItems = await kv.get(`${town}_${PROCESSED_ITEMS_KEY}`);
+  let processedItems;
+  try {
+    processedItems = await kv.get(`${town}_${PROCESSED_ITEMS_KEY}`);
+  } catch (err) {
+    console.error(`An error occurred while getting processed items: ${err}`);
+    throw new Error(`Failed to get processed items: ${err}`);
+  }
   return processedItems ? new Map(processedItems) : new Map();
 }
 
 async function setProcessedItems(processedItems, town) {
-  console.log(`Setting processed items for ${town}`);
-  await kv.set(`${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
+  try {
+    console.log(`Setting processed items for ${town}`);
+    await kv.set(`${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
+  } catch (err) {
+    console.error(`An error occurred while setting processed items: ${err}`);
+    throw new Error(`Failed to set processed items: ${err}`);
+  }
 }
 
 async function getExpiredItems(processedItems) {
