@@ -135,7 +135,7 @@ export const CITIES_DATA = new Map([
             label: "Granollers",
             rssFeed: `${process.env.NEXT_PUBLIC_DOMAIN_URL}/api/scrapeEvents?city=granollers`,
             descriptionSelector: ".body-text",
-            imageSelector: ".responsive-image",
+            imageSelector: ".foto a",
             postalCode: "08400",
           },
         ],
