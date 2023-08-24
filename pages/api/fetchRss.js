@@ -120,23 +120,30 @@ async function setProcessedItems(processedItems, town) {
   }
 }
 
-async function getExpiredItems(processedItems) {
+async function removeExpiredItems(processedItems) {
   const now = Date.now();
-  return [...processedItems].filter(
-    ([_, timestamp]) => now - timestamp > MAX_AGE
+  let removedItemsCount = 0;
+  for (const [item, timestamp] of processedItems) {
+    if (now - timestamp > MAX_AGE) {
+      console.log(`Removing item ${item} from processed items`);
+      processedItems.delete(item);
+      removedItemsCount++;
+    }
+  }
+  console.log(
+    `Removed ${removedItemsCount} expired items from processed items`
   );
 }
 
-async function removeExpiredItems(processedItems, expiredItems) {
-  for (const item of expiredItems) {
-    console.log(`Removing item ${item} from processed items`);
-    processedItems.delete(item);
-  }
-}
-
-async function cleanProcessedItems(processedItems) {
-  const expiredItems = await getExpiredItems(processedItems);
-  await removeExpiredItems(processedItems, expiredItems);
+async function cleanProcessedItems(processedItems, town) {
+  console.log(
+    `Initial processed items count for ${town}: ${processedItems.size}`
+  );
+  await removeExpiredItems(processedItems);
+  console.log(
+    `Final processed items count for ${town}: ${processedItems.size}`
+  );
+  await setProcessedItems(processedItems, town);
 }
 
 function replaceImageUrl(imageUrl, baseUrl) {
@@ -377,7 +384,7 @@ export default async function handler(req, res) {
 
     // Read the database
     const processedItems = await getProcessedItems(town);
-    await cleanProcessedItems(processedItems);
+    await cleanProcessedItems(processedItems, town);
 
     // Filter out already fetched items
     const newItems = items.filter((item) => !processedItems.has(item.guid));
