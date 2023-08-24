@@ -163,10 +163,19 @@ function getBaseUrl(url) {
   return `${urlObject.protocol}//${urlObject.host}`;
 }
 
+function ensureHttpProtocol(url) {
+  if (!/^https?:\/\//i.test(url)) {
+    console.log("cacaaaa", `http://${url}`);
+    return `http://${url}`;
+  }
+  return url;
+}
+
 async function scrapeDescription(url, descriptionSelector, imageSelector) {
   try {
+    console.log(`asdasdasdasd ${url}`);
     const sanitizeUrl = url.replace(/\.html$/, "");
-    const response = await fetch(sanitizeUrl);
+    const response = await fetch(ensureHttpProtocol(sanitizeUrl));
     const html = await response.text();
     const $ = cheerio.load(html);
 

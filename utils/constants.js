@@ -139,6 +139,17 @@ export const CITIES_DATA = new Map([
             postalCode: "08400",
           },
         ],
+        [
+          "la-roca",
+          {
+            label: "La Roca del Vallès",
+            rssFeed: `${process.env.NEXT_PUBLIC_DOMAIN_URL}/api/scrapeEvents?city=la-roca`,
+            descriptionSelector: ".text-maquetat",
+            imageSelector: ".justified-gallery",
+            locationSelector: ".item_info",
+            postalCode: "08430",
+          },
+        ],
         // [
         //   "turisme-valles",
         //   {
