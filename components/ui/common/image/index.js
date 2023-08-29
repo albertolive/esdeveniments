@@ -30,10 +30,11 @@ export default function ImageComponent({
           as="image"
           crossOrigin="true"
           imageSrcSet={`${image} 1200w,
-     ${image}?w=200 200w, 
-     ${image}?w=400 400w, 
-     ${image}?w=800 800w, 
-     ${image}?w=1024 1024w`}
+                        ${image}?w=200 200w, 
+                        ${image}?w=400 400w, 
+                        ${image}?w=800 800w, 
+                        ${image}?w=1024 1024w`
+                      }
         />
       </Head>
       <div className={`flex-1 h-full next-image-wrapper ${className}`}>
@@ -41,10 +42,11 @@ export default function ImageComponent({
           className="object-cover"
           src={src}
           srcSet={`${src} 1200w, 
-             ${src}?w=200 200w,
-             ${src}?w=400 400w, 
-             ${src}?w=800 800w, 
-             ${src}?w=1024 1024w`}
+                  ${src}?w=200 200w,
+                  ${src}?w=400 400w, 
+                  ${src}?w=800 800w, 
+                  ${src}?w=1024 1024w`
+                }
           layout={layout}
           width={width}
           height={height}

@@ -39,6 +39,7 @@ const nextConfig = {
       "www.lagarriga.cat",
       "www.granollers.cat",
       "www.llissadevall.cat",
+      "www.santantonidevilamajor.cat",
     ],
   },
   async headers() {

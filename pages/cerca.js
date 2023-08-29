@@ -159,7 +159,7 @@ export default function Search() {
         description="Cerca esdeveniments. Cultura i esdeveniments. Esdeveniments.cat"
         canonical="https://www.esdeveniments.cat/cerca"
       />
-      <div className="space-y-8 divide-y divide-gray-200 max-w-3xl mx-auto mb-4">
+      <div className="space-y-8 divide-y divide-gray-200 max-w-3xl mx-auto mb-4 h-screen">
         <div className="space-y-8 divide-y divide-gray-200">
           <div className="relative">
             <input

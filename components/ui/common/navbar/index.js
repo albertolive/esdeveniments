@@ -5,14 +5,35 @@ import PlusSmIcon from "@heroicons/react/solid/PlusSmIcon";
 import SearchIcon from "@heroicons/react/solid/SearchIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
-import logo from "@public/static/images/logo-cultura-cardedeu.png";
+import logo from "@public/static/images/logo-esdeveniments-fonsclar.png";
 import { useRouter } from "next/router";
 
 const navigation = [
   { name: "Agenda", href: "/", current: true },
   { name: "Qui som", href: "/qui-som", current: false },
-  { name: "Arxiu", href: "/sitemap", current: false },
+  // { name: "Arxiu", href: "/sitemap", current: false },
 ];
+
+if (typeof window !== 'undefined') {
+  // Esperamos a que el DOM esté completamente cargado
+  window.addEventListener('DOMContentLoaded', () => {
+    const navbar = document.querySelector('.navbar');
+    
+    function handleScroll() {
+      if (window.scrollY > 0) {
+        navbar.classList.add('shadow-xl','shadow-neutral-100');
+      } else {
+        navbar.classList.remove('shadow-xl','shadow-neutral-100');
+      }
+    }
+
+    // Escuchamos el evento de scroll
+    window.addEventListener('scroll', handleScroll);
+
+    // Ejecutamos la función al cargar la página
+    handleScroll();
+  });
+}
 
 export default function Navbar() {
   const router = useRouter();
@@ -39,16 +60,46 @@ export default function Navbar() {
   };
 
   return (
-    <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50">
+    <Disclosure as="nav" className="navbar bg-whiteCorp sticky top-0 z-50">
       {({ open }) => (
         <>
-          <div className="mx-auto px-4 sm:px-6 lg:px-6">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <div className="-ml-2 mr-2 flex items-center md:hidden">
-                  {/* Mobile menu button */}
-                  <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none">
-                    <span className="sr-only">Obrir menú principal</span>
+          <div className="mx-auto p-0 pt-5">
+            <div className="flex-col justify-center h-full">
+              {/* FirstBar - Logo&LaptopMenu */}
+              <div className="flex justify-around items-center p-5">
+                {/* Logo */}
+                <div className="w-full md:w-1/2 flex justify-center items-center">
+                  <a href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
+                    <Image
+                      src={logo}
+                      className="block cursor-pointer bg-whiteCorp"
+                      alt="Logo Esdeveniments.cat"
+                      width={280}
+                      height={24}
+                      layout="fixed"
+                      priority
+                    />
+                  </a>
+                </div>
+                {/* LaptopMenu */}
+                <div className="md:w-1/2 flex justify-around items-center gap-x-6">
+                  <div className="hidden md:flex md:items-center">
+                    {navigation.map((item) => (
+                      <ActiveLink href={item.href} key={item.name} className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer">
+                        <a className="font-medium mx-2">
+                          {item.name}
+                        </a>
+                      </ActiveLink>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              {/* SecondBar - Search&Share&MenuIcon */}
+              <div className="flex justify-center gap-x-12 p-5">
+                {/* MenuIcon */}
+                <div className="flex items-center md:hidden">
+                  <Disclosure.Button className="inline-flex items-center justify-center py-2 px-4 rounded-full focus:outline-none">
+                    {/* <span className="sr-only">Obrir menú principal</span> */}
                     {open ? (
                       <XIcon className="block h-6 w-6" aria-hidden="true" />
                     ) : (
@@ -56,61 +107,41 @@ export default function Navbar() {
                     )}
                   </Disclosure.Button>
                 </div>
-                <div className="flex items-center">
-                  <ActiveLink href="/">
-                    <a className="flex" onClick={handleLogoClick}>
-                      <Image
-                        src={logo}
-                        className="block h-8 cursor-pointer"
-                        alt="Logo Esdeveniments.cat"
-                        width={120}
-                        height={60}
-                        layout="fixed"
-                        priority
-                      />
-                    </a>
-                  </ActiveLink>
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <div className="hidden md:flex md:items-center text-white">
-                  {navigation.map((item) => (
-                    <ActiveLink href={item.href} key={item.name}>
-                      <a className="font-medium mr-4 hover:text-stone-200">
-                        {item.name}
-                      </a>
-                    </ActiveLink>
-                  ))}
-                </div>
-                <div className="flex-shrink-0 cursor-pointer">
+                {/* Search */}
+                <div>
                   <ActiveLink href="/cerca">
-                    <SearchIcon className="-ml-1 mr-6 h-6 w-6 text-white" />
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
+                    >
+                      <SearchIcon className="h-6 w-6" />
+                    </button>
                   </ActiveLink>
                 </div>
-                <div className="flex-shrink-0">
+                {/* Share */}
+                <div className="flex justify-center items-center cursor-pointer">
                   <ActiveLink href="/publica">
                     <button
                       type="button"
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-[#ECB84A] hover:bg-yellow-400 focus:outline-none"
+                      className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
                     >
                       <PlusSmIcon
-                        className="-ml-1 mr-2 h-5 w-5 text-white"
+                        className="h-6 w-6"
                         aria-hidden="true"
                       />
-                      <span className="text-white">Publica</span>
+                      <span className="hidden sm:visible">Publica</span>
                     </button>
                   </ActiveLink>
                 </div>
               </div>
             </div>
           </div>
-
+          {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <div className="h-full flex justify-evenly items-center gap-8 px-4 pb-8 pt-7 border-t border-secondary">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
-                  <a className="font-medium mr-4 text-white hover:text-stone-200">
+                  <a className="font-medium text-white hover:text-stone-200">
                     {item.name}
                   </a>
                 </ActiveLink>

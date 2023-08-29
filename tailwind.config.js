@@ -20,9 +20,14 @@ module.exports = {
         "8xl": "1920px",
       },
     },
-    // colors: {
-    //   cultura: "#ECB84A",
-    // },
+    colors: {
+      primary: "#FFB000",
+      primarySoft: "#FFC64D",
+      secondary: "#002933",
+      secondarySoft: "#266E80",
+      whiteCorp: "#F9F9F7",
+      darkCorp: "#E3E1CC",
+    },
   },
   variants: {
     extend: {

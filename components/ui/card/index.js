@@ -21,7 +21,7 @@ export default function Card({ event }) {
 
   if (event.isAd)
     return (
-      <div className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 block visible md:hidden md:invisible">
+      <div className="bg-whiteCorp drop-shadow-lg overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 block visible md:hidden md:invisible">
         <AdCard event={event} />
       </div>
     );
@@ -34,12 +34,12 @@ export default function Card({ event }) {
   return (
     <Link href={`/e/${event.slug}`} passHref prefetch={false}>
       <div
-        className="bg-white rounded-xl shadow-md overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 max-h-[240px]"
+        className="bg-whiteCorp drop-shadow-lg overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-dark max-h-[240px]"
         onMouseEnter={handlePrefetch}
         onClick={handlePrefetch}
       >
-        <div className="flex h-full">
-          <div className="flex-1 h-full next-image-wrapper">
+        <div className="flex w-full">
+          <div className="flex-1 w-full">
             <Image
               title={event.title}
               image={event.imageUploaded}
@@ -48,14 +48,14 @@ export default function Card({ event }) {
             />
           </div>
           <div className="p-4 pr-2 flex-2 lg:relative">
-            <div className="flex items-center">
-              <div className="flex items-center tracking-wide text-sm text-[#ECB84A] font-bold">
+            <div className="flex justify-center items-center">
+              <div className="flex items-center text-primary font-medium">
                 {event.formattedEnd
                   ? `Del ${event.formattedStart} al ${event.formattedEnd}`
                   : `${event.nameDay}, ${event.formattedStart}`}
               </div>
               {icon && (
-                <div className="flex mb-4 lg:absolute lg:right-2 lg:mb-0">
+                <div className="flex ml-4 lg:absolute lg:right-2 lg:mb-0">
                   <NextImage
                     alt={description}
                     src={icon}
@@ -86,7 +86,7 @@ export default function Card({ event }) {
               </span>
             </div>
             {event.tag && (
-              <span className="p-1 px-2 text-white bg-[#ECB84A] relative items-center border border-transparent shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 rounded-md">
+              <span className="p-1 px-2 text-white bg-primary relative items-center border border-transparent shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 rounded-md">
                 {event.tag}
               </span>
             )}

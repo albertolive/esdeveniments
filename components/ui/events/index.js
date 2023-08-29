@@ -125,13 +125,14 @@ export default function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="reset-this">
-        <h1 className="mb-4 block text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+      <div className="reset-this mx-10">
+        <h1 className="mb-12 block leading-8 tracking-wide font-normal text-secondary">
           {title}
         </h1>
       </div>
-      <p className="mb-4 font-bold">{subTitle}</p>
-      <p className="mb-4">{description}</p>
+      <p className="my-4 mx-10">{subTitle}</p>
+      <div className="mx-40 border-b border-secondary"></div>
+      <p className="my-4 mx-10">{description}</p>
       <SubMenu
         place={place}
         setPlace={setPlace}
