@@ -63,23 +63,34 @@ export default function Navbar() {
     <Disclosure as="nav" className="navbar bg-whiteCorp sticky top-0 z-50">
       {({ open }) => (
         <>
-          <div className="mx-auto p-0 pt-5">
-            <div className="flex-col justify-center h-full">
-              {/* FirstBar - Logo&LaptopMenu */}
-              <div className="flex justify-around items-center p-5">
+          <div className="mx-auto py-2">
+            <div className="flex flex-col justify-center h-full">
+              {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
+              <div className="flex justify-around items-center p-3">
                 {/* Logo */}
-                <div className="w-full md:w-1/2 flex justify-center items-center">
-                  <a href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
+                <div className="w-full md:w-1/2 flex justify-start items-center py-2 px-4">
+                  <ActiveLink href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
                     <Image
                       src={logo}
-                      className="block cursor-pointer bg-whiteCorp"
+                      className="block cursor-pointer bg-whiteCorp py-2 px-4"
                       alt="Logo Esdeveniments.cat"
-                      width={280}
-                      height={24}
+                      width={220}
+                      height={18}
                       layout="fixed"
                       priority
                     />
-                  </a>
+                  </ActiveLink>
+                </div>
+                {/* MenuIcon */}
+                <div className="flex items-center md:hidden">
+                  <Disclosure.Button className="inline-flex items-center justify-center py-2 px-4 rounded-full focus:outline-none">
+                    {/* <span className="sr-only">Obrir menú principal</span> */}
+                    {open ? (
+                      <XIcon className="block h-7 w-7" aria-hidden="true" />
+                    ) : (
+                      <MenuIcon className="block h-7 w-7" aria-hidden="true" />
+                    )}
+                  </Disclosure.Button>
                 </div>
                 {/* LaptopMenu */}
                 <div className="md:w-1/2 flex justify-around items-center gap-x-6">
@@ -95,50 +106,41 @@ export default function Navbar() {
                 </div>
               </div>
               {/* SecondBar - Search&Share&MenuIcon */}
-              <div className="flex justify-center gap-x-12 p-5">
-                {/* MenuIcon */}
-                <div className="flex items-center md:hidden">
-                  <Disclosure.Button className="inline-flex items-center justify-center py-2 px-4 rounded-full focus:outline-none">
-                    {/* <span className="sr-only">Obrir menú principal</span> */}
-                    {open ? (
-                      <XIcon className="block h-6 w-6" aria-hidden="true" />
-                    ) : (
-                      <MenuIcon className="block h-6 w-6" aria-hidden="true" />
-                    )}
-                  </Disclosure.Button>
-                </div>
-                {/* Search */}
-                <div>
-                  <ActiveLink href="/cerca">
-                    <button
-                      type="button"
-                      className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
-                    >
-                      <SearchIcon className="h-6 w-6" />
-                    </button>
-                  </ActiveLink>
-                </div>
+              <div className="fixed h-content bottom-0 left-0 right-0 bg-whiteCorp flex justify-center gap-x-32 pb-9 pt-10">
+                
                 {/* Share */}
-                <div className="flex justify-center items-center cursor-pointer">
+                <div className="fixed bottom-4 right-32 flex justify-center items-center cursor-pointer">
                   <ActiveLink href="/publica">
                     <button
                       type="button"
                       className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
                     >
                       <PlusSmIcon
-                        className="h-6 w-6"
+                        className="h-8 w-8"
                         aria-hidden="true"
                       />
                       <span className="hidden sm:visible">Publica</span>
                     </button>
                   </ActiveLink>
                 </div>
+                {/* Search */}
+                <div className="fixed bottom-4 left-32 flex justify-center items-center cursor-pointer">
+                  <ActiveLink href="/cerca">
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
+                    >
+                      <SearchIcon className="h-7 w-7" />
+                    </button>
+                  </ActiveLink>
+                </div>
+                
               </div>
             </div>
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="h-full flex justify-evenly items-center gap-8 px-4 pb-8 pt-7 border-t border-secondary">
+            <div className="h-full flex justify-evenly items-center gap-8 px-4 pb-4 pt-3 border-t border-secondary bg-darkCorp">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
                   <a className="font-medium text-white hover:text-stone-200">

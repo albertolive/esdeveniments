@@ -1,12 +1,11 @@
 import ActiveLink from "@components/ui/common/link";
 
 const navigation = [
-  { name: "Qui som", href: "/qui-som", current: false },
   { name: "Arxiu", href: "/sitemap", current: false },
 ];
 export default function Footer() {
   return (
-    <footer className="bg-whiteCorp h-min py-10 absolute bottom-0 w-full">
+    <footer className="bg-whiteCorp h-min pt-10 pb-24 absolute bottom-0 w-full">
       <div className="container mx-auto h-full">
         <div className="flex flex-col justify-center items-center h-full">
           <div className="text-white text-sm text-primary-2 text-center">
@@ -53,10 +52,10 @@ export default function Footer() {
                 </a>
               </div>
             </div>
-            <div>
+            <div className="pt-4">
               {navigation.map((item) => (
                     <ActiveLink href={item.href} key={item.name}>
-                      <a className="text-secundari font-medium mr-4 hover:text-secondarySoft">
+                      <a className="text-secundari font-medium px-4">
                         {item.name}
                       </a>
                     </ActiveLink>

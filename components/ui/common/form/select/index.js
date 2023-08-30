@@ -4,7 +4,7 @@ import CreatableSelect from "react-select/creatable";
 const customStyles = {
   container: (provided) => ({
     ...provided,
-    borderColor: "#D1D5DB !important",
+    borderColor: "#FFF !important",
   }),
   input: (provided, state) => ({
     ...provided,
@@ -21,6 +21,7 @@ const customStyles = {
   placeholder: (provided) => ({
     ...provided,
     fontSize: "14px",
+    color: "#BBB",
   }),
   option: (provided) => ({
     ...provided,
@@ -54,7 +55,7 @@ export default function SelectComponent({
     <div className="sm:col-span-6">
       <label
         htmlFor="first-name"
-        className="block text-sm font-medium text-gray-700"
+        className="block font-medium text-gray-700"
       >
         {title}
       </label>

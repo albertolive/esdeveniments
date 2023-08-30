@@ -130,11 +130,11 @@ export default function Events({ props, loadMore = true }) {
           {title}
         </h1>
       </div>
-      <div className="md:m-full md:mx-20 md:flex md:flex-row md:justify-center md:items-start md:gap-x-8
+      <div className="lg:m-full lg:mx-20 lg:flex lg:flex-row lg:justify-center lg:items-start lg:gap-x-8
       mx-10 flex flex-col justify-center">
-        <p className="my-4 m-full text-center font-bold md:m-1/2 md:text-justify md:">{subTitle}</p>
-        <div className="mx-20 border-b border-secondary md:hidden"></div>
-        <p className="my-4 m-full text-center md:m-1/2 md:text-left">{description}</p>
+        <p className="my-4 m-full text-center font-bold lg:m-1/2">{subTitle}</p>
+        <div className="mx-40 border-b border-secondary lg:hidden"></div>
+        <p className="my-4 m-full text-center lg:m-1/2">{description}</p>
       </div>
       <SubMenu
         place={place}

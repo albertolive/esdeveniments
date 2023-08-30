@@ -19,7 +19,7 @@ const RenderButton = ({ value, label, goTo, byDate }) => {
 
   return (
     <button
-      className={`w-full relative inline-flex justify-center items-center py-2 px-8 border border-secondary font-normal rounded-full ${isActiveLink} focus:outline-none`}
+      className={`w-full relative inline-flex justify-center items-center py-2 px-8 border border-secondarySoft font-normal rounded-full ${isActiveLink} focus:outline-none`}
       type="button"
       onClick={() => goTo(value)}
     >
@@ -89,9 +89,9 @@ export default function SubMenu({
           ))}
         </div>
       </div>
-      <div className="min-h-[325px] lg:min-h-[100px]">
+      {/* <div className="min-h-[325px] lg:min-h-[100px]">
         <AdArticle slot="6387726014" />
-      </div>
+      </div> */}
     </>
   );
 }

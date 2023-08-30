@@ -22,11 +22,11 @@ module.exports = {
     },
     colors: {
       primary: "#FFB000",
-      primarySoft: "#FFC64D",
+      primarySoft: "#FFDF99",
       secondary: "#002933",
-      secondarySoft: "#266E80",
-      whiteCorp: "#F9F9F7",
-      darkCorp: "#E3E1CC",
+      secondarySoft: "#0099BF",
+      whiteCorp: "#FFFFFF",
+      darkCorp: "#F3F3F0",
     },
   },
   variants: {
