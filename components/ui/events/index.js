@@ -126,13 +126,16 @@ export default function Events({ props, loadMore = true }) {
         canonical={canonical}
       />
       <div className="reset-this mx-10">
-        <h1 className="mb-12 block leading-8 tracking-wide font-normal text-secondary">
+        <h1 className="mb-2 block leading-8 tracking-wide font-normal text-secondary text-center">
           {title}
         </h1>
       </div>
-      <p className="my-4 mx-10">{subTitle}</p>
-      <div className="mx-40 border-b border-secondary"></div>
-      <p className="my-4 mx-10">{description}</p>
+      <div className="md:m-full md:mx-20 md:flex md:flex-row md:justify-center md:items-start md:gap-x-8
+      mx-10 flex flex-col justify-center">
+        <p className="my-4 m-full text-center font-bold md:m-1/2 md:text-left">{subTitle}</p>
+        <div className="mx-20 border-b border-secondary md:hidden"></div>
+        <p className="my-4 m-full text-center md:m-1/2 md:text-left">{description}</p>
+      </div>
       <SubMenu
         place={place}
         setPlace={setPlace}

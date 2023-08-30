@@ -19,7 +19,7 @@ const RenderButton = ({ value, label, goTo, byDate }) => {
 
   return (
     <button
-      className={`w-full relative inline-flex justify-center items-center py-2 px-8 border border-secondarySoft font-normal rounded-full ${isActiveLink} focus:outline-none`}
+      className={`w-full relative inline-flex justify-center items-center py-2 px-8 border border-secondary font-normal rounded-full ${isActiveLink} focus:outline-none`}
       type="button"
       onClick={() => goTo(value)}
     >
@@ -66,7 +66,7 @@ export default function SubMenu({
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center my-12">
+      <div className="flex flex-col justify-center items-center my-4">
         <div className="w-8/12 p-2">
           <Select
             id="options"
