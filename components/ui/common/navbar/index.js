@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
@@ -14,21 +15,21 @@ const navigation = [
   // { name: "Arxiu", href: "/sitemap", current: false },
 ];
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Esperamos a que el DOM esté completamente cargado
-  window.addEventListener('DOMContentLoaded', () => {
-    const navbar = document.querySelector('.navbar');
-    
+  window.addEventListener("DOMContentLoaded", () => {
+    const navbar = document.querySelector(".navbar");
+
     function handleScroll() {
       if (window.scrollY > 0) {
-        navbar.classList.add('shadow-xl','shadow-neutral-100');
+        navbar.classList.add("shadow-xl", "shadow-neutral-100");
       } else {
-        navbar.classList.remove('shadow-xl','shadow-neutral-100');
+        navbar.classList.remove("shadow-xl", "shadow-neutral-100");
       }
     }
 
     // Escuchamos el evento de scroll
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     // Ejecutamos la función al cargar la página
     handleScroll();
@@ -69,26 +70,33 @@ export default function Navbar() {
               <div className="flex justify-around items-center p-5">
                 {/* Logo */}
                 <div className="w-full md:w-1/2 flex justify-center items-center">
-                  <a href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
-                    <Image
-                      src={logo}
-                      className="block cursor-pointer bg-whiteCorp"
-                      alt="Logo Esdeveniments.cat"
-                      width={280}
-                      height={24}
-                      layout="fixed"
-                      priority
-                    />
-                  </a>
+                  <Link href="/">
+                    <a
+                      className="flex p-0 m-0 cursor-pointer"
+                      onClick={handleLogoClick}
+                    >
+                      <Image
+                        src={logo}
+                        className="block cursor-pointer bg-whiteCorp"
+                        alt="Logo Esdeveniments.cat"
+                        width={280}
+                        height={24}
+                        layout="fixed"
+                        priority
+                      />
+                    </a>
+                  </Link>
                 </div>
                 {/* LaptopMenu */}
                 <div className="md:w-1/2 flex justify-around items-center gap-x-6">
                   <div className="hidden md:flex md:items-center">
                     {navigation.map((item) => (
-                      <ActiveLink href={item.href} key={item.name} className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer">
-                        <a className="font-medium mx-2">
-                          {item.name}
-                        </a>
+                      <ActiveLink
+                        href={item.href}
+                        key={item.name}
+                        className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
+                      >
+                        <a className="font-medium mx-2">{item.name}</a>
                       </ActiveLink>
                     ))}
                   </div>
@@ -125,10 +133,7 @@ export default function Navbar() {
                       type="button"
                       className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
                     >
-                      <PlusSmIcon
-                        className="h-6 w-6"
-                        aria-hidden="true"
-                      />
+                      <PlusSmIcon className="h-6 w-6" aria-hidden="true" />
                       <span className="hidden sm:visible">Publica</span>
                     </button>
                   </ActiveLink>
