@@ -99,13 +99,23 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
-          "llissadevall",
+          "llissa-de-vall",
           {
             label: "Lliçà de Vall",
             rssFeed: "https://www.llissadevall.cat/rss/12/0/",
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08185",
+          },
+        ],
+        [
+          "sant-antoni-vilamajor",
+          {
+            label: "Sant Antoni de Vilamajor",
+            rssFeed: "https://www.santantonidevilamajor.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08459",
           },
         ],
         [
@@ -125,7 +135,7 @@ export const CITIES_DATA = new Map([
             label: "Granollers",
             rssFeed: `${process.env.NEXT_PUBLIC_DOMAIN_URL}/api/scrapeEvents?city=granollers`,
             descriptionSelector: ".body-text",
-            imageSelector: ".responsive-image",
+            imageSelector: ".foto a",
             postalCode: "08400",
           },
         ],
