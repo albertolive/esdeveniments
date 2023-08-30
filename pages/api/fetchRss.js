@@ -7,7 +7,7 @@ import { CITIES_DATA } from "@utils/constants";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
-const limiter = new Bottleneck({ maxConcurrent: 1, minTime: 1000 });
+const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
 
 const calendar = google.calendar("v3");
 const auth = new google.auth.GoogleAuth({
@@ -34,6 +34,10 @@ class RSSFeedError extends Error {
   }
 }
 
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function isCacheValid(cachedData) {
   return (
     cachedData && Date.now() - cachedData.timestamp < RSS_FEED_CACHE_MAX_AGE
@@ -47,12 +51,19 @@ async function fetchRSSFeed(rssFeed, town) {
     const cachedData = await kv.get(`${town}_${RSS_FEED_CACHE_KEY}`);
 
     if (isCacheValid(cachedData)) {
-      console.log("Returning cached data");
+      console.log(`Returning cached data for ${town}`);
       return cachedData.data;
     }
 
     // Fetch the data
     const response = await axios.get(rssFeed);
+
+    // Check if the response status is not 200
+    if (response.status !== 200) {
+      throw new Error(
+        `Failed to fetch Rss data for ${town}: ${response.status}`
+      );
+    }
 
     const json = parser.parse(response.data);
 
@@ -69,10 +80,15 @@ async function fetchRSSFeed(rssFeed, town) {
     const data = json.rss.channel.item;
 
     // Cache the data
-    await kv.set(`${town}_${RSS_FEED_CACHE_KEY}`, {
-      timestamp: Date.now(),
-      data,
-    });
+    try {
+      await kv.set(`${town}_${RSS_FEED_CACHE_KEY}`, {
+        timestamp: Date.now(),
+        data,
+      });
+    } catch (err) {
+      console.error(`An error occurred while caching the RSS feed: ${err}`);
+      throw new Error(`Failed to cache RSS feed: ${err}`);
+    }
 
     console.log("Returning new RSS data");
     return data;
@@ -84,32 +100,50 @@ async function fetchRSSFeed(rssFeed, town) {
 }
 
 async function getProcessedItems(town) {
-  const processedItems = await kv.get(`${town}_${PROCESSED_ITEMS_KEY}`);
+  let processedItems;
+  try {
+    processedItems = await kv.get(`${town}_${PROCESSED_ITEMS_KEY}`);
+  } catch (err) {
+    console.error(`An error occurred while getting processed items: ${err}`);
+    throw new Error(`Failed to get processed items: ${err}`);
+  }
   return processedItems ? new Map(processedItems) : new Map();
 }
 
 async function setProcessedItems(processedItems, town) {
-  console.log(`Setting processed items for ${town}`);
-  await kv.set(`${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
-}
-
-async function getExpiredItems(processedItems) {
-  const now = Date.now();
-  return [...processedItems].filter(
-    ([_, timestamp]) => now - timestamp > MAX_AGE
-  );
-}
-
-async function removeExpiredItems(processedItems, expiredItems) {
-  for (const [item, _] of expiredItems) {
-    console.log(`Removing item ${item} from processed items`);
-    processedItems.delete(item);
+  try {
+    console.log(`Setting processed items for ${town}`);
+    await kv.set(`${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
+  } catch (err) {
+    console.error(`An error occurred while setting processed items: ${err}`);
+    throw new Error(`Failed to set processed items: ${err}`);
   }
 }
 
-async function cleanProcessedItems(processedItems) {
-  const expiredItems = await getExpiredItems(processedItems);
-  await removeExpiredItems(processedItems, expiredItems);
+async function removeExpiredItems(processedItems) {
+  const now = Date.now();
+  let removedItemsCount = 0;
+  for (const [item, timestamp] of processedItems) {
+    if (now - timestamp > MAX_AGE) {
+      console.log(`Removing item ${item} from processed items`);
+      processedItems.delete(item);
+      removedItemsCount++;
+    }
+  }
+  console.log(
+    `Removed ${removedItemsCount} expired items from processed items`
+  );
+}
+
+async function cleanProcessedItems(processedItems, town) {
+  console.log(
+    `Initial processed items count for ${town}: ${processedItems.size}`
+  );
+  await removeExpiredItems(processedItems);
+  console.log(
+    `Final processed items count for ${town}: ${processedItems.size}`
+  );
+  await setProcessedItems(processedItems, town);
 }
 
 function replaceImageUrl(imageUrl, baseUrl) {
@@ -172,8 +206,8 @@ function getLocationFromHtml(html) {
   // Map the matches to an array of locations
   const locations = matches.map((match) => match[1]);
 
-  // Return the array of matched locations
-  return locations;
+  // Return the array of matched locations or null if it's empty
+  return locations.length > 0 ? locations : null;
 }
 
 async function scrapeLocation(url, location, locationSelector) {
@@ -193,7 +227,7 @@ async function scrapeLocation(url, location, locationSelector) {
     const locationFromHtml =
       locationElement && getLocationFromHtml(locationElement);
 
-    return Array.isArray(locationFromHtml) && locationFromHtml[0]
+    return locationFromHtml && locationFromHtml[0]
       ? locationFromHtml[0].trim()
       : location;
   } catch (error) {
@@ -204,11 +238,13 @@ async function scrapeLocation(url, location, locationSelector) {
 
 async function insertItemToCalendar(
   item,
-  region,
+  town,
+  regionLabel,
   townLabel,
   descriptionSelector,
   imageSelector,
-  locationSelector
+  locationSelector,
+  processedItems
 ) {
   if (!item) return;
   const { pubDate, title, link, guid, location = "" } = item || {};
@@ -229,8 +265,8 @@ async function insertItemToCalendar(
     summary: title,
     description,
     location: scrapedLocation
-      ? `${scrapedLocation}, ${townLabel}, ${region}`
-      : `${townLabel}, ${region}`,
+      ? `${scrapedLocation}, ${townLabel}, ${regionLabel}`
+      : `${townLabel}, ${regionLabel}`,
     start: {
       dateTime: dateTime.toISOString(),
       timeZone: "Europe/Madrid",
@@ -243,13 +279,20 @@ async function insertItemToCalendar(
 
   try {
     const authToken = await auth.getClient();
+
     await calendar.events.insert({
       auth: authToken,
       calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
       resource: event,
     });
+
     console.log("Inserted new item successfully: " + title);
-    return guid;
+
+    const now = Date.now();
+    processedItems.set(guid, now);
+    await setProcessedItems(processedItems, town); // Save the processed item immediately
+    console.log(`Added item ${guid} to processed items`);
+    return;
   } catch (error) {
     console.error("Error inserting item to calendar:", error);
     throw error;
@@ -258,11 +301,13 @@ async function insertItemToCalendar(
 
 async function insertItemToCalendarWithRetry(
   item,
+  town,
   regionLabel,
   townLabel,
   descriptionSelector,
   imageSelector,
-  locationSelector
+  locationSelector,
+  processedItems
 ) {
   if (!item) return null;
 
@@ -271,19 +316,17 @@ async function insertItemToCalendarWithRetry(
 
   while (retries < MAX_RETRIES) {
     try {
-      const insertedGuid = await insertItemToCalendar(
+      await insertItemToCalendar(
         item,
+        town,
         regionLabel,
         townLabel,
         descriptionSelector,
         imageSelector,
-        locationSelector
+        locationSelector,
+        processedItems
       );
-
-      // If the insertion is successful, return the GUID
-      if (insertedGuid) {
-        return insertedGuid;
-      }
+      return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
       retries++;
@@ -341,39 +384,41 @@ export default async function handler(req, res) {
 
     // Read the database
     const processedItems = await getProcessedItems(town);
-    cleanProcessedItems(processedItems);
+    await cleanProcessedItems(processedItems, town);
 
     // Filter out already fetched items
     const newItems = items.filter((item) => !processedItems.has(item.guid));
+
+    // If no new items, log a message
+    if (newItems.length === 0) {
+      const message = `No new items found for ${town}`;
+      console.log(message);
+      res.status(200).json(message);
+      return;
+    }
 
     // Insert items in GCal
     for (const item of newItems) {
       await limiter.schedule(async () => {
         try {
-          const insertedGuid = await insertItemToCalendarWithRetry(
+          await insertItemToCalendarWithRetry(
             item,
+            town,
             regionLabel,
             townLabel,
             descriptionSelector,
             imageSelector,
-            locationSelector
+            locationSelector,
+            processedItems
           );
-
-          // Update the database with the successful GUID
-          if (insertedGuid) {
-            const now = Date.now();
-            processedItems.set(insertedGuid, now);
-            console.log(`Added item ${insertedGuid} to processed items`);
-          }
+          return;
         } catch (error) {
           console.error("Error inserting item to calendar:", error);
         }
       });
     }
 
-    // Update the database
-    await setProcessedItems(processedItems, town);
-    console.log("Finished processing items");
+    console.log(`Finished processing items for ${town}`);
     // Send the response
     res.status(200).json(newItems);
   } catch (err) {

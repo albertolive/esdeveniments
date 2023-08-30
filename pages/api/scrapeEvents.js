@@ -24,18 +24,18 @@ const CITIES = {
 
 function convertToRSSDate(dateString, dateRegex) {
   const monthMap = {
-    gen: "01",
-    feb: "02",
-    març: "03",
-    abr: "04",
-    maig: "05",
-    juny: "06",
-    jul: "07",
-    ag: "08",
-    set: "09",
-    oct: "10",
-    nov: "11",
-    des: "12",
+    gen: "Jan",
+    feb: "Feb",
+    març: "Mar",
+    abr: "Apr",
+    maig: "May",
+    juny: "Jun",
+    jul: "Jul",
+    ag: "Aug",
+    set: "Sep",
+    oct: "Oct",
+    nov: "Nov",
+    des: "Dec",
   };
 
   const match = dateString.match(dateRegex);
@@ -47,13 +47,19 @@ function convertToRSSDate(dateString, dateRegex) {
     const hour = parseInt(match[4], 10);
     const minute = parseInt(match[5], 10);
 
-    const monthNumeric = monthMap[month.toLowerCase()];
+    const monthEnglish = monthMap[month.toLowerCase()];
 
-    const date = new Date(Date.UTC(year, monthNumeric - 1, day, hour, minute));
-    const timeZone = "Europe/Madrid";
-    const zonedDate = utcToZonedTime(date, timeZone);
-    const formattedDate = format(zonedDate, "dd MMM yyyy HH:mm:ss XXXX", {
-      locale: es,
+    if (!monthEnglish) {
+      console.error(`Invalid month value: ${month}`);
+      return null;
+    }
+
+    const date = new Date(
+      `${day} ${monthEnglish} ${year} ${hour}:${minute}:00 GMT`
+    );
+    const madridDate = utcToZonedTime(date, "Europe/Madrid");
+    const formattedDate = format(madridDate, "EEE, dd MMM yyyy HH:mm:ss xx", {
+      timeZone: "Europe/Madrid",
     });
     return formattedDate;
   }
@@ -67,7 +73,16 @@ async function fetchHtmlContent(url) {
 }
 
 function extractEventDetails(html, selectors) {
-  const { listSelector, titleSelector, urlSelector, locationSelector, dateSelector, descriptionSelector, imageSelector, dateRegex } = selectors;
+  const {
+    listSelector,
+    titleSelector,
+    urlSelector,
+    locationSelector,
+    dateSelector,
+    descriptionSelector,
+    imageSelector,
+    dateRegex,
+  } = selectors;
   const $ = cheerio.load(html);
   const events = [];
 
@@ -81,9 +96,17 @@ function extractEventDetails(html, selectors) {
     const image = $(element).find(imageSelector).attr("src");
     const rssDate = date && convertToRSSDate(date, dateRegex);
     const rssUrl = `${selectors.domain}${url}`;
-    const rssImage = image && image.replace(selectors.urlImage, '/');
+    const rssImage = image && image.replace(selectors.urlImage, "/");
 
-    events.push({ id, url: rssUrl, title, location, date: rssDate, description, image: rssImage });
+    events.push({
+      id,
+      url: rssUrl,
+      title,
+      location,
+      date: rssDate,
+      description,
+      image: rssImage,
+    });
   });
 
   return events;
@@ -108,9 +131,7 @@ function createRssFeed(events, city) {
       url: event.url,
       date: event.date,
       enclosure: { url: event.image },
-      custom_elements: [
-        {location: event.location},
-      ]
+      custom_elements: [{ location: event.location }],
     });
   });
 
