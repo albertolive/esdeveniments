@@ -22,9 +22,9 @@ if (typeof window !== "undefined") {
 
     function handleScroll() {
       if (window.scrollY > 0) {
-        navbar.classList.add("shadow-xl", "shadow-neutral-100");
+        navbar.classList.add("shadow", "shadow-neutral-100");
       } else {
-        navbar.classList.remove("shadow-xl", "shadow-neutral-100");
+        navbar.classList.remove("shadow", "shadow-neutral-100");
       }
     }
 
@@ -70,7 +70,7 @@ export default function Navbar() {
               <div className="flex justify-around items-center p-3">
                 {/* Logo */}
                 <div className="w-full md:w-1/2 flex justify-start items-center py-2 px-4">
-                  <ActiveLink href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
+                  <a href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
                     <Image
                       src={logo}
                       className="block cursor-pointer bg-whiteCorp py-2 px-4"
@@ -80,14 +80,14 @@ export default function Navbar() {
                       layout="fixed"
                       priority
                     />
-                  </ActiveLink>
+                  </a>
                 </div>
                 {/* MenuIcon */}
                 <div className="flex items-center md:hidden">
                   <Disclosure.Button className="inline-flex items-center justify-center py-2 px-4 rounded-full focus:outline-none">
                     {/* <span className="sr-only">Obrir menú principal</span> */}
                     {open ? (
-                      <XIcon className="block h-7 w-7" aria-hidden="true" />
+                      <XIcon className="block h-7 w-7 text-primary" aria-hidden="true" />
                     ) : (
                       <MenuIcon className="block h-7 w-7" aria-hidden="true" />
                     )}
@@ -109,14 +109,26 @@ export default function Navbar() {
                 </div>
               </div>
               {/* SecondBar - Search&Share&MenuIcon */}
-              <div className="fixed h-content bottom-0 left-0 right-0 bg-whiteCorp flex justify-center gap-x-32 pb-9 pt-10">
-                
+              <div className="fixed h-[84px] bottom-0 left-0 right-0 bg-whiteCorp border-t border-darkCorp flex justify-center items-center gap-x-36">
+                    
+                {/* Search */}
+                <div className="flex justify-center items-center rounded-xlcursor-pointer">
+                  <ActiveLink href="/cerca">
+                    <button
+                      type="button"
+                      className="flex items-center p-3 focus:outline-none cursor-pointer rounded-xl border-2 border-darkCorp"
+                    >
+                      <SearchIcon className="h-7 w-7" />
+                    </button>
+                  </ActiveLink>
+                </div>
+
                 {/* Share */}
-                <div className="fixed bottom-4 right-32 flex justify-center items-center cursor-pointer">
+                <div className="flex justify-center items-center rounded-xl cursor-pointer">
                   <ActiveLink href="/publica">
                     <button
                       type="button"
-                      className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
+                      className="flex items-center p-3 focus:outline-none cursor-pointer rounded-xl border-2 border-darkCorp"
                     >
                       <PlusSmIcon
                         className="h-8 w-8"
@@ -126,27 +138,16 @@ export default function Navbar() {
                     </button>
                   </ActiveLink>
                 </div>
-                {/* Search */}
-                <div className="fixed bottom-4 left-32 flex justify-center items-center cursor-pointer">
-                  <ActiveLink href="/cerca">
-                    <button
-                      type="button"
-                      className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
-                    >
-                      <SearchIcon className="h-7 w-7" />
-                    </button>
-                  </ActiveLink>
-                </div>
-                
+
               </div>
             </div>
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="h-full flex justify-evenly items-center gap-8 px-4 pb-4 pt-3 border-t border-secondary bg-darkCorp">
+            <div className="h-[75px] flex justify-evenly items-center gap-8 px-4 pb-6 pt-6 bg-whiteCorp border-t border-darkCorp">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
-                  <a className="font-medium text-white hover:text-stone-200">
+                  <a className="text-base font-semibold px-8">
                     {item.name}
                   </a>
                 </ActiveLink>

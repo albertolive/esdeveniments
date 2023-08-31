@@ -125,15 +125,15 @@ export default function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="reset-this mx-10">
-        <h1 className="mb-2 block leading-8 tracking-wide font-normal text-secondary text-center">
+      <div className="mx-10">
+        <h1 className="mb-2 block leading-8 tracking-normal font font-semibold text-blackCorp text-center">
           {title}
         </h1>
       </div>
       <div className="lg:m-full lg:mx-20 lg:flex lg:flex-row lg:justify-center lg:items-start lg:gap-x-8
       mx-10 flex flex-col justify-center">
-        <p className="my-4 m-full text-center font-bold lg:m-1/2">{subTitle}</p>
-        <div className="mx-40 border-b border-secondary lg:hidden"></div>
+        <p className="my-4 m-full text-center font-semibold lg:m-1/2">{subTitle}</p>
+        <div className="mx-40 border-b border-blackCorp lg:hidden"></div>
         <p className="my-4 m-full text-center lg:m-1/2">{description}</p>
       </div>
       <SubMenu

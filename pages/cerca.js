@@ -159,12 +159,12 @@ export default function Search() {
         description="Cerca esdeveniments. Cultura i esdeveniments. Esdeveniments.cat"
         canonical="https://www.esdeveniments.cat/cerca"
       />
-      <div className="space-y-8 divide-y divide-gray-200 max-w-3xl mx-auto mb-4 h-screen">
-        <div className="space-y-8 divide-y divide-gray-200">
-          <div className="relative">
+      <div className="flex justify-center items-start h-full">
+        <div className="">
+          <div className="flex justify-center z-10 fixed top-26 left-4 w-2/3">
             <input
               type="text"
-              className="shadow-sm focus:ring-gray-300 focus:border-gray-300 block w-full sm:text-sm border-gray-300 rounded-md"
+              className="shadow-sm focus:ring-gray-300 focus:border-gray-300 w-full sm:text-sm border-gray-300 rounded-xl"
               placeholder="Cerca..."
               defaultValue={searchTerm}
               onChange={startFetching ? handleChangeWithDebounce : handleChange}
@@ -190,7 +190,9 @@ export default function Search() {
           </div>
         </div>
       </div>
-      {startFetching && <SearchResults keyword={searchTerm} />}
+      <div className="pt-8">
+        {startFetching && <SearchResults keyword={searchTerm} />}
+      </div>
     </>
   );
 }

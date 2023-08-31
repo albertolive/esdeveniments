@@ -12,21 +12,19 @@ body {
   -moz-font-smoothing: antialiased;
   -o-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family:'Familjen Grotesk';
-  font-size: 14px;
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100;8..144,200;8..144,300;8..144,400;8..144,500;8..144,600;8..144,700;8..144,800;8..144,900;8..144,1000&display=swap');
+  font-size: 16px;
+  color: #2B2B33;
   letter-spacing: 0.025rem;
-  line-height: 1.4rem;
+  line-height: 1.062rem;
 }
 h1{
-  font-size: 37px;
-  letter-spacing: 0.04rem;
+  font-size: 30px;
+  letter-spacing: 0.025rem;
 }
+
 h2{
-  font-size: 26px;
-  letter-spacing: 0.04rem;
-}
-h3{
-  font-size: 19px;
+  font-size: 22px;
   letter-spacing: 0.04rem;
 }
 ::-webkit-scrollbar {
