@@ -70,7 +70,7 @@ export default function Navbar() {
               <div className="flex justify-around items-center p-3">
                 {/* Logo */}
                 <div className="w-full md:w-1/2 flex justify-start items-center py-2 px-4">
-                  <a href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
+                  <Link href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
                     <Image
                       src={logo}
                       className="block cursor-pointer bg-whiteCorp py-2 px-4"
@@ -80,7 +80,7 @@ export default function Navbar() {
                       layout="fixed"
                       priority
                     />
-                  </a>
+                  </Link>
                 </div>
                 {/* MenuIcon */}
                 <div className="flex items-center md:hidden">
