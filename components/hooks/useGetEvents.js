@@ -1,6 +1,6 @@
 import { siteUrl } from "@config/index";
 import useSWR, { preload } from "swr";
-
+console.log(`siteUrl: ${siteUrl}`);
 const fetcher = ([url, pageIndex, q, maxResults]) =>
   fetch(
     `${siteUrl}${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}`

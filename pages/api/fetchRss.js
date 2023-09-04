@@ -26,7 +26,7 @@ const RSS_FEED_CACHE_KEY = "rssFeedCache";
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
 const RSS_FEED_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
 const env =
-  process.env.NODE_ENV !== "production" ||
+  process.env.NODE_ENV !== "production" &&
   process.env.VERCEL_ENV !== "production"
     ? "dev"
     : "prod";
