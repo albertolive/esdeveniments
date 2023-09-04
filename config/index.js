@@ -4,4 +4,6 @@ const siteUrl =
     ? "http://localhost:3000"
     : `https://${process.env.VERCEL_URL}`;
 
+console.log(`siteUrl: ${siteUrl}`);
+
 export { siteUrl };
