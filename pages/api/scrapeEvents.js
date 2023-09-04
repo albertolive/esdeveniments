@@ -4,8 +4,8 @@ const RSS = require("rss");
 const { format } = require("date-fns");
 const { es } = require("date-fns/locale");
 const { utcToZonedTime } = require("date-fns-tz");
+import { siteUrl } from "@config/index";
 
-const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
 const CITIES = {
   granollers: {
     domain: "https://www.granollers.cat",

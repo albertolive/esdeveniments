@@ -25,6 +25,11 @@ const PROCESSED_ITEMS_KEY = "processedItems";
 const RSS_FEED_CACHE_KEY = "rssFeedCache";
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
 const RSS_FEED_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
+const env =
+  process.env.NODE_ENV !== "production" ||
+  process.env.VERCEL_ENV !== "production"
+    ? "dev"
+    : "prod";
 
 // Custom error class for RSS feed errors
 class RSSFeedError extends Error {
@@ -48,7 +53,7 @@ function isCacheValid(cachedData) {
 async function fetchRSSFeed(rssFeed, town) {
   try {
     // Check if the data is cached
-    const cachedData = await kv.get(`${town}_${RSS_FEED_CACHE_KEY}`);
+    const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
 
     if (isCacheValid(cachedData)) {
       console.log(`Returning cached data for ${town}`);
@@ -81,7 +86,7 @@ async function fetchRSSFeed(rssFeed, town) {
 
     // Cache the data
     try {
-      await kv.set(`${town}_${RSS_FEED_CACHE_KEY}`, {
+      await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
         timestamp: Date.now(),
         data,
       });
@@ -102,7 +107,7 @@ async function fetchRSSFeed(rssFeed, town) {
 async function getProcessedItems(town) {
   let processedItems;
   try {
-    processedItems = await kv.get(`${town}_${PROCESSED_ITEMS_KEY}`);
+    processedItems = await kv.get(`${env}_${town}_${PROCESSED_ITEMS_KEY}`);
   } catch (err) {
     console.error(`An error occurred while getting processed items: ${err}`);
     throw new Error(`Failed to get processed items: ${err}`);
@@ -113,7 +118,7 @@ async function getProcessedItems(town) {
 async function setProcessedItems(processedItems, town) {
   try {
     console.log(`Setting processed items for ${town}`);
-    await kv.set(`${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
+    await kv.set(`${env}_${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
   } catch (err) {
     console.error(`An error occurred while setting processed items: ${err}`);
     throw new Error(`Failed to set processed items: ${err}`);

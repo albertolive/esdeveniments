@@ -1,9 +1,9 @@
+import { siteUrl } from "@config/index";
 import { monthsName } from "@utils/helpers";
 import { addArticleToMonth, fixArticles } from "@utils/normalize";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
 import Link from "next/link";
 
-const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
 const month = monthsName[new Date().getMonth()];
 const normalizedMonth = addArticleToMonth(month);
 

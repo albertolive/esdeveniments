@@ -1,5 +1,7 @@
-const dev = process.env.NODE_ENV !== "production";
+const siteUrl =
+  process.env.NODE_ENV !== "production" ||
+  process.env.VERCEL_ENV !== "production"
+    ? "http://localhost:3000"
+    : `https://${process.env.VERCEL_URL}`;
 
-export const server = dev
-  ? "http://localhost:3000"
-  : "https://www.esdeveniments.cat";
+export { siteUrl };
