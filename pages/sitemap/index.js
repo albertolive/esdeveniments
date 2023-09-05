@@ -1,4 +1,5 @@
 import Meta from "@components/partials/seo-meta";
+import { siteUrl } from "@config/index";
 import { generateRegionsOptions, generateTownsOptions } from "@utils/helpers";
 import Link from "next/link";
 
@@ -10,7 +11,7 @@ export default function Sitemap() {
       <Meta
         title={`Arxiu. Descobreix tot el que passa a Catalunya - Esdeveniments.cat`}
         description="Descobreix tot el què ha passat a Catalunya cada any. Les millors propostes culturals per esprémer al màxim de Catalunya - Arxiu - Esdeveniments.cat"
-        canonical="https://www.esdeveniments.cat/sitemap"
+        canonical={`${siteUrl}/sitemap`}
       />
       <div className="grid overflow-hidden grid-cols-2 lg:grid-cols-4 auto-rows-auto gap-2 grid-flow-row w-auto">
         {regions.map(({ value, label }) => {

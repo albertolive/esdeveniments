@@ -1,3 +1,4 @@
+import { siteUrl } from "@config/index";
 import { Feed } from "feed";
 
 const getAllArticles = async () => {
@@ -18,19 +19,17 @@ const getAllArticles = async () => {
   return normalizedEvents;
 };
 
-const hostUrl = "https://www.esdeveniments.cat";
-
 const buildFeed = (items) => {
   const feed = new Feed({
-    id: hostUrl,
-    link: hostUrl,
+    id: siteUrl,
+    link: siteUrl,
     title: "Esdeveniments.cat",
     description: "Calendari col·laboratiu dels actes culturals de Catalunya",
     copyright: "Esdeveniments.cat",
     updated: new Date(items[0].startDate),
     author: {
       name: "Esdeveniments.cat",
-      link: hostUrl,
+      link: siteUrl,
     },
   });
 
@@ -57,8 +56,8 @@ const buildFeed = (items) => {
       image: item.imageUploaded
         ? item.imageUploaded
         : eventImage
-          ? eventImage
-          : undefined,
+        ? eventImage
+        : undefined,
     });
   });
 

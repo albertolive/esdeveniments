@@ -12,6 +12,7 @@ import {
 } from "@components/ui/common/form";
 import Meta from "@components/partials/seo-meta";
 import { Notification } from "@components/ui/common";
+import { siteUrl } from "@config/index";
 
 const _createFormState = (
   isDisabled = true,
@@ -214,7 +215,7 @@ export default function Edita({ event }) {
       <Meta
         title="Edita - Esdeveniments.cat"
         description="Edita - Esdeveniments.cat"
-        canonical="https://www.esdeveniments.cat/edita"
+        canonical={`${siteUrl}/edita`}
       />
       {showDeleteMessage && (
         <Notification
