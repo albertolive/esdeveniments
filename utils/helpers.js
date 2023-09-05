@@ -359,6 +359,27 @@ export function getTownOptionsWithLabel(label) {
   return townOptions;
 }
 
+export function getRegionValueByLabel(regionLabel) {
+  for (const [regionKey, region] of CITIES_DATA.entries()) {
+    debugger;
+    if (region.label === regionLabel) {
+      return regionKey;
+    }
+  }
+  return "";
+}
+
+export function getTownValueByLabel(townLabel) {
+  for (const region of CITIES_DATA.values()) {
+    for (const [townKey, town] of region.towns.entries()) {
+      if (town.label === townLabel) {
+        return townKey;
+      }
+    }
+  }
+  return "";
+}
+
 export function truncateString(text, maxLength) {
   return text.length > maxLength
     ? text.substring(0, maxLength - 3) + "..."

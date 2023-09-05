@@ -1,4 +1,4 @@
-import { init } from "@sentry/browser";
+import { init } from "@sentry/nextjs";
 import { BrowserTracing } from "@sentry/tracing";
 import { Replay } from "@sentry/replay";
 

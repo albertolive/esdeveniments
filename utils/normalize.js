@@ -63,9 +63,15 @@ export const normalizeEvents = (event, weatherInfo) => {
   const weatherObject = normalizeWeather(startDate, weatherInfo);
   const eventImage = hasEventImage(event.description);
   const locationParts = event.location ? event.location.split(",") : [];
-  const location = locationParts[0] || "";
-  const town = locationParts[1] || "";
-  const region = locationParts[2] || "";
+  const town =
+    locationParts.length > 1
+      ? locationParts[locationParts.length - 2].trim()
+      : "";
+  const region =
+    locationParts.length > 0
+      ? locationParts[locationParts.length - 1].trim()
+      : "";
+  const location = locationParts.length > 2 ? locationParts[0].trim() : town;
   let title = event.summary ? sanitizeText(event.summary) : "";
   const tag = TAGS.find((v) => title.includes(v)) || null;
 
@@ -114,7 +120,15 @@ export const normalizeEvent = (event) => {
 
   let title = event.summary ? sanitizeText(event.summary) : "";
   const locationParts = event.location ? event.location.split(",") : [];
-  const town = locationParts[1] ? locationParts[1].trim() : "";
+  const town =
+    locationParts.length > 1
+      ? locationParts[locationParts.length - 2].trim()
+      : "";
+  const region =
+    locationParts.length > 0
+      ? locationParts[locationParts.length - 1].trim()
+      : "";
+  const location = locationParts.length > 2 ? locationParts[0].trim() : town;
   const tag = TAGS.find((v) => title.includes(v)) || null;
   if (tag) title = title.replace(`${tag}:`, "").trim();
   const { postalCode = null, label = null } = getTownOptionsWithLabel(town);
@@ -129,6 +143,9 @@ export const normalizeEvent = (event) => {
     endTime,
     location: event.location,
     label,
+    location,
+    town,
+    region,
     postalCode,
     formattedStart,
     formattedEnd,

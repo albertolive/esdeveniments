@@ -1,4 +1,4 @@
-import { init } from "@sentry/node";
+import { init } from "@sentry/nextjs";
 
 const isProduction = process.env.NODE_ENV === "production";
 

@@ -164,7 +164,12 @@ export default function Event(props) {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id, title, reason: reasonToDelete }),
+      body: JSON.stringify({
+        id,
+        title,
+        reason: reasonToDelete,
+        isProduction: process.env.NODE_ENV === "production",
+      }),
     });
 
     const { success } = await rawResponse.json();
