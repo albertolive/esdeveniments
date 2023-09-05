@@ -5,5 +5,5 @@ const siteUrl =
       process.env.VERCEL_ENV === "development"
     ? "https://esdeveniments.vercel.app"
     : "https://www.esdeveniments.cat";
-
+console.log("VERCEL_ENV", process.env.VERCEL_ENV);
 export { siteUrl };
