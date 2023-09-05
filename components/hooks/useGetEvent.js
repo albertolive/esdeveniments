@@ -1,8 +1,7 @@
-import { siteUrl } from "@config/index";
 import useSWR, { preload } from "swr";
 
 const fetchWithId = ([url, id]) =>
-  fetch(`${siteUrl}${url}?eventId=${id}`).then((r) => r.json());
+  fetch(`${url}?eventId=${id}`).then((r) => r.json());
 
 export const useGetEvent = (props) => {
   const eventId = props.event.slug;
