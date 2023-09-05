@@ -1,9 +1,5 @@
-const siteUrl =
-  process.env.NODE_ENV !== "production" &&
-  process.env.VERCEL_ENV !== "production"
-    ? "http://localhost:3000"
-    : `https://${process.env.VERCEL_URL}`;
-
-console.log(`siteUrl: ${siteUrl}`);
+let siteUrl = process.env.VERCEL_URL;
+if (siteUrl) siteUrl = `https://${vc}`;
+else siteUrl = "http://localhost:8081";
 
 export { siteUrl };

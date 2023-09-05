@@ -1,9 +1,10 @@
+import { siteUrl } from "@config/index";
 import useSWR, { preload } from "swr";
 
 const fetcher = ([url, pageIndex, q, maxResults]) =>
-  fetch(`${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}`).then(
-    (res) => res.json()
-  );
+  fetch(
+    `${siteUrl}${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}`
+  ).then((res) => res.json());
 
 export const useGetEvents = ({
   props = {},
