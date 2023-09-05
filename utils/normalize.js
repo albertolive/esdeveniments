@@ -7,6 +7,9 @@ import {
   getRegionsLabel,
 } from "./helpers";
 
+const cloudinaryUrl = (imageId) =>
+  `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUDNAME}/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/${process.env.NEXT_PUBLIC_CLOUDINARY_UNSIGNED_UPLOAD_PRESET}/${imageId}`;
+
 function to3HourForecastFormat(date) {
   const hours = date.getHours();
   let forecastHour = Math.ceil(hours / 3) * 3;
@@ -86,7 +89,7 @@ export const normalizeEvents = (event, weatherInfo) => {
     startDate: event.start && event.start.dateTime,
     endDate: event.end && event.end.dateTime,
     imageUploaded: imageUploaded
-      ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
+      ? cloudinaryUrl(imageId)
       : eventImage
       ? eventImage
       : "/static/images/blur.png",
@@ -138,7 +141,7 @@ export const normalizeEvent = (event) => {
     startDate: event.start && event.start.dateTime,
     endDate: event.end && event.end.dateTime,
     imageUploaded: imageUploaded
-      ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
+      ? cloudinaryUrl(imageId)
       : eventImage
       ? eventImage
       : null,
