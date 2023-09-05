@@ -210,7 +210,7 @@ export default function Edita({ event }) {
       <Meta
         title="Edita - Esdeveniments.cat"
         description="Edita - Esdeveniments.cat"
-        canonical={`${siteUrl}/edita`}
+        canonical={`${siteUrl}/e/${event.slug}/edita`}
       />
       {showDeleteMessage && (
         <Notification

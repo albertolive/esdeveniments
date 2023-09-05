@@ -231,7 +231,7 @@ export default function Event(props) {
           `${title} - ${nameDay} ${formattedStart} - ${location}`,
           description
         )}
-        canonical={`${siteUrl}/${slug}`}
+        canonical={`${siteUrl}/e/${slug}`}
         imageUploaded={imageUploaded || eventImage}
         preload="/static/images/gMaps.webp"
       />
