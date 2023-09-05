@@ -1,5 +1,9 @@
-let siteUrl = process.env.VERCEL_URL;
-if (siteUrl) siteUrl = `https://${siteUrl}`;
-else siteUrl = "http://localhost:8081";
+const siteUrl =
+  process.env.NODE_ENV !== "production"
+    ? "http://localhost:3000"
+    : process.env.VERCEL_ENV === "preview" ||
+      process.env.VERCEL_ENV === "development"
+    ? "https://esdeveniments.vercel.app"
+    : "https://www.esdeveniments.cat";
 
 export { siteUrl };
