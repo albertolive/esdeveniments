@@ -77,7 +77,7 @@ export default function SubMenu({
             placeholder="una localitat"
           />
         </div>
-        <div className="flex flex-col justify-center items-start gap-4 my-4">
+        {/* <div className="flex flex-col justify-center items-start gap-4 my-4">
           {BYDATES.map(({ value, label }) => (
             <RenderButton
               key={value}
@@ -87,7 +87,7 @@ export default function SubMenu({
               byDate={byDate}
             />
           ))}
-        </div>
+        </div> */}
       </div>
       {/* <div className="min-h-[325px] lg:min-h-[100px]">
         <AdArticle slot="6387726014" />

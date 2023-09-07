@@ -113,6 +113,12 @@ export default function Events({ props, loadMore = true }) {
     byDate,
   });
 
+  const [open, setOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setOpen(!open);
+  };
+
   return (
     <>
       <Script
@@ -125,16 +131,37 @@ export default function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="mx-10">
-        <h1 className="mb-2 block leading-8 tracking-normal font font-semibold text-blackCorp text-center">
-          {title}
-        </h1>
-      </div>
-      <div className="lg:m-full lg:mx-20 lg:flex lg:flex-row lg:justify-center lg:items-start lg:gap-x-8
-      mx-10 flex flex-col justify-center">
-        <p className="my-4 m-full text-center font-semibold lg:m-1/2">{subTitle}</p>
-        <div className="mx-40 border-b border-blackCorp lg:hidden"></div>
-        <p className="my-4 m-full text-center lg:m-1/2">{description}</p>
+      <div className="flex flex-col justify-center items-center">
+        <button
+          onClick={toggleDropdown}
+          className="w-content p-3 font-semibold text-blackCorp rounded-lg border border-darkCorp bg-whiteCorp focus:outline-none
+          transition-colors ${
+            open 
+              ? 'bg-primary text-whiteCorp'
+              : 'bg-whiteCorp text-blackCorp md:hover:bg-primary'
+          }"
+        >
+          {open ? "Tancar" : "Informació"}
+        </button>
+        {open && (
+          <div className="mt-4">
+            <div className="mx-10">
+              <h1 className="mb-2 block leading-8 tracking-normal font font-semibold text-blackCorp text-center">
+                {title}
+              </h1>
+            </div>
+            <div
+              className="lg:m-full lg:mx-20 lg:flex lg:flex-row lg:justify-center lg:items-start lg:gap-x-8
+      mx-10 flex flex-col justify-center"
+            >
+              <p className="my-4 m-full text-center font-semibold lg:m-1/2">
+                {subTitle}
+              </p>
+              <div className="mx-40 border-b border-blackCorp lg:hidden"></div>
+              <p className="my-4 m-full text-center lg:m-1/2">{description}</p>
+            </div>
+          </div>
+        )}
       </div>
       <SubMenu
         place={place}
@@ -158,7 +185,7 @@ export default function Events({ props, loadMore = true }) {
         <div className="text-center">
           <button
             type="button"
-            className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-[#ECB84A] hover:bg-yellow-400 focus:outline-none"
+            className="text-whiteCorp bg-primary rounded-xl py-3 px-3 ease-in-out duration-200 border border-whiteCorp focus:outline-none"
             onClick={() => {
               setPage((prevPage) => prevPage + 1);
               sendGA();

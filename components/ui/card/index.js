@@ -6,6 +6,8 @@ import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import { truncateString } from "@utils/helpers";
 import { useRouter } from "next/router";
+import Imagi from "next/image";
+import Imago from "public/static/images/imago-esdeveniments-fonsclar.png";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -39,19 +41,26 @@ export default function Card({ event }) {
         onClick={handlePrefetch}
       >
         {/* Title */}
-        <div className="flex justify-between items-start gap-2 py-4 px-4">
-          <p className="w-3/4 block text-[19px] tracking-wide font-semibold text-blackCorp hover:underline">
+        <div className="flex justify-between items-center gap-2 p-4 pl-7">
+          <Imagi
+            src={Imago}
+            alt="Imago Esdeveniments"
+            width={20}
+            height={20}
+            className=""
+          />
+          <h2 className="w-3/4 block tracking-wide leading-6 font-semibold text-blackCorp cursor">
             <a href={`/e/${event.slug}`}>{title}</a>
-          </p>
+          </h2>
           {/* WeatherIcon */}
           <div className="">
             {icon && (
-              <div className="ml-4 lg:absolute lg:right-2 lg:mb-0">
+              <div className="pr-2">
                 <NextImage
                   alt={description}
                   src={icon}
-                  width="30px"
-                  height="30px"
+                  width="40px"
+                  height="40px"
                 />
               </div>
             )}
@@ -59,7 +68,7 @@ export default function Card({ event }) {
         </div>
         <div className="flex flex-col w-full">
           {/* ImageEvent */}
-          <div className="flex-1 h-full object-cover">
+          <div className="flex h-full object-cover">
             <Image
               className="object-fill max-h-full"
               title={event.title}
@@ -71,7 +80,7 @@ export default function Card({ event }) {
           {/* InfoEvent */}
           <div className="flex flex-col justify-center items-start p-4">
             {/* Date */}
-            <div className="flex items-center text-blackCorp font-medium p-2">
+            <div className="flex items-center text-blackCorp text-[19px] font-medium p-1 pt-2 pb-6">
               {event.formattedEnd
                 ? `Del ${event.formattedStart} al ${event.formattedEnd}`
                 : `${event.nameDay}, ${event.formattedStart}`}

@@ -32,7 +32,7 @@ export default function BaseLayout({ children }) {
       </Head>
       <Navbar />
       {/* <Notify /> */}
-      <div className="bg-whiteCorp mx-auto pb-40">
+      <div className="bg-whiteCorp mx-auto pb-60">
         <div className="mx-0 px-0 py-4 md:px-20 lg:px-40 xl:px-60 2xl:px-80">
           {memoizedChildren}
         </div>

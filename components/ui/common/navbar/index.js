@@ -22,9 +22,9 @@ if (typeof window !== "undefined") {
 
     function handleScroll() {
       if (window.scrollY > 0) {
-        navbar.classList.add("shadow", "shadow-neutral-100");
+        navbar.classList.add('shadow-lg', 'shadow-darkCorp', 'transition-all', 'ease-in-out', 'duration-300');
       } else {
-        navbar.classList.remove("shadow", "shadow-neutral-100");
+        navbar.classList.remove('shadow-lg', 'shadow-darkCorp', 'transition-all', 'ease-in-out', 'duration300');
       }
     }
 
@@ -69,8 +69,8 @@ export default function Navbar() {
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
               <div className="flex justify-around items-center p-3">
                 {/* Logo */}
-                <div className="w-full md:w-1/2 flex justify-start items-center py-2 px-4">
-                  <Link href="/" className="flex p-0 m-0 cursor-pointer" onClick={handleLogoClick}>
+                <div className="flex w-full md:w-1/2 justify-start items-center py-2 px-4 m-0 cursor-pointer"  onClick={handleLogoClick}>
+                  <Link href="/">
                     <Image
                       src={logo}
                       className="block cursor-pointer bg-whiteCorp py-2 px-4"
@@ -100,7 +100,7 @@ export default function Navbar() {
                       <ActiveLink
                         href={item.href}
                         key={item.name}
-                        className="relative inline-flex items-center px-2 py-2 rounded-full focus:outline-none cursor-pointer"
+                        className="relative inline-flex items-center rounded-full focus:outline-none cursor-pointer"
                       >
                         <a className="font-medium mx-2">{item.name}</a>
                       </ActiveLink>
@@ -144,7 +144,7 @@ export default function Navbar() {
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="h-[75px] flex justify-evenly items-center gap-8 px-4 pb-6 pt-6 bg-whiteCorp border-t border-darkCorp">
+            <div className="h-contain flex flex-col justify-evenly items-center gap-8 px-4 pb-6 pt-6 bg-whiteCorp border-t border-darkCorp">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
                   <a className="text-base font-semibold px-8">

@@ -11,6 +11,9 @@ module.exports = {
       ...defaultTheme.screens,
     },
     extend: {
+      boxShadow: {
+        'lg': '0px 5px 50px 0px rgba(241, 241, 241, 0.05)',
+      },
       flex: {
         2: "2 2 0%",
         3: "3 3 0%",
@@ -23,7 +26,7 @@ module.exports = {
     colors: {
       primary: "#FF0037",
       primarySoft: "#FF4D73",
-      secondary: "#FFB000",
+      secondary: "#FFF219",
       secondarySoft: "#FFE30D",
       whiteCorp: "#ffffff",
       darkCorp: "#dbdbdb",
