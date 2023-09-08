@@ -50,6 +50,8 @@ export default function Events({ props, loadMore = true }) {
       : storedByDate || byDateProps;
   });
 
+  const [open, setOpen] = useState(false);
+
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const {
     data: { events = [], currentYear, noEventsFound = false },
@@ -112,8 +114,6 @@ export default function Events({ props, loadMore = true }) {
     place,
     byDate,
   });
-
-  const [open, setOpen] = useState(false);
 
   const toggleDropdown = () => {
     setOpen(!open);
