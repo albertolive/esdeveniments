@@ -17,14 +17,25 @@ export default function Footer() {
             >
               hola@esdeveniments.cat
             </a>
+            <div>Segueix-nos a:&nbsp;</div>
             <div className="flex space-x-2">
-              Segueix-nos a:&nbsp;
               <div>
                 <a
                   rel="noopener noreferrer"
                   target="_blank"
                   className="hover:text-primary"
-                  href="https://twitter.com/esdeveniments"
+                  href="https://www.instagram.com/esdevenimentscat/"
+                >
+                  Instagram
+                </a>
+              </div>
+              <div>
+                |&nbsp;&nbsp;
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="hover:text-primary"
+                  href="https://x.com/esdeveniments_"
                 >
                   Twitter
                 </a>
@@ -46,7 +57,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   target="_blank"
                   className="hover:text-primary"
-                  href="https://www.facebook.com/esdeveniments"
+                  href="https://facebook.com/esdeveniments.cat"
                 >
                   Facebook
                 </a>

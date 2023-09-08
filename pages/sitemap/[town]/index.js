@@ -1,4 +1,5 @@
 import Meta from "@components/partials/seo-meta";
+import { siteUrl } from "@config/index";
 import { getAllYears } from "@lib/dates";
 import { MONTHS_URL } from "@utils/constants";
 import Link from "next/link";
@@ -11,7 +12,7 @@ export default function Sitemap({ town, label }) {
       <Meta
         title={`Arxiu. Descobreix tot el que ha passat a ${label} - Esdeveniments.cat`}
         description={`Descobreix tot el què ha passat a ${label} cada any. Les millors propostes culturals per esprémer al màxim de ${town} - Arxiu - Esdeveniments.cat`}
-        canonical={`https://www.esdeveniments.cat/sitemap/${town}`}
+        canonical={`${siteUrl}/sitemap/${town}`}
       />
       <div className="reset-this">
         <h2 className="pb-2">{label}</h2>

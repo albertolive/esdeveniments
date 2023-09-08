@@ -15,6 +15,7 @@ import {
 } from "@components/ui/common/form";
 import Meta from "@components/partials/seo-meta";
 import { generateRegionsOptions, generateTownsOptions } from "@utils/helpers";
+import { siteUrl } from "@config/index";
 
 const defaultForm = {
   title: "",
@@ -251,7 +252,7 @@ export default function Publica() {
       <Meta
         title="Publica - Esdeveniments.cat"
         description="Publica un acte cultural - Esdeveniments.cat"
-        canonical="https://www.esdeveniments.cat/publica"
+        canonical={`${siteUrl}/publica`}
       />
       <div className="space-y-8 divide-y divide-gray-200 max-w-3xl mx-auto">
         <div className="space-y-8 divide-y divide-gray-200">

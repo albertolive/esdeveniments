@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CreatableSelect from "react-select/creatable";
+import { components } from "react-select";
 
 const customStyles = {
   container: (provided) => ({
@@ -33,6 +34,10 @@ const customStyles = {
   }),
 };
 
+const Input = ({ autoComplete, ...props }) => (
+  <components.Input {...props} autoComplete="new-password" />
+);
+
 export default function SelectComponent({
   id,
   title,
@@ -45,6 +50,10 @@ export default function SelectComponent({
   placeholder = "una opció",
 }) {
   const [selectedOption, setSelectedOption] = useState(initialValue);
+
+  useEffect(() => {
+    setSelectedOption(initialValue);
+  }, [initialValue]);
 
   const handleChange = (value) => {
     setSelectedOption(value);
@@ -76,6 +85,9 @@ export default function SelectComponent({
           isDisabled={isDisabled}
           isValidNewOption={() => isValidNewOption}
           noOptionsMessage={() => "No s'ha trobat cap opció"}
+          components={{
+            Input,
+          }}
         />
       </div>
     </div>

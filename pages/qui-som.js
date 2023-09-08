@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Meta from "@components/partials/seo-meta";
 import Image from "next/image";
+import { siteUrl } from "@config/index";
 
 export default function QuiSom() {
   return (
@@ -8,7 +9,7 @@ export default function QuiSom() {
       <Meta
         title="Qui som - Esdeveniments.cat"
         description="Qui som? - Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a Catalunya."
-        canonical="https://www.esdeveniments.com/qui-som"
+        canonical={`${siteUrl}/qui-som`}
       />
       <div className="relative py-16 bg-white overflow-hidden">
         <div className="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
