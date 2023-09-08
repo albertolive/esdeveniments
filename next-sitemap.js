@@ -1,4 +1,4 @@
-const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
+import { siteUrl } from "@config/index";
 
 module.exports = {
   siteUrl,

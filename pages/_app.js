@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { generateRegionsOptions } from "@utils/helpers";
 
 function EsdevenimentsMainEntry({ Component, pageProps }) {
-  const { events, asPath } = useRouter();
+  const { events } = useRouter();
 
   const dynamicURLs = generateRegionsOptions().map(({ value }) => `/${value}`);
 

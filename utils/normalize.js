@@ -7,6 +7,9 @@ import {
   getRegionsLabel,
 } from "./helpers";
 
+const cloudinaryUrl = (imageId) =>
+  `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUDNAME}/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/${process.env.NEXT_PUBLIC_CLOUDINARY_UNSIGNED_UPLOAD_PRESET}/${imageId}`;
+
 function to3HourForecastFormat(date) {
   const hours = date.getHours();
   let forecastHour = Math.ceil(hours / 3) * 3;
@@ -60,9 +63,15 @@ export const normalizeEvents = (event, weatherInfo) => {
   const weatherObject = normalizeWeather(startDate, weatherInfo);
   const eventImage = hasEventImage(event.description);
   const locationParts = event.location ? event.location.split(",") : [];
-  const location = locationParts[0] || "";
-  const town = locationParts[1] || "";
-  const region = locationParts[2] || "";
+  const town =
+    locationParts.length > 1
+      ? locationParts[locationParts.length - 2].trim()
+      : "";
+  const region =
+    locationParts.length > 0
+      ? locationParts[locationParts.length - 1].trim()
+      : "";
+  const location = locationParts.length > 2 ? locationParts[0].trim() : town;
   let title = event.summary ? sanitizeText(event.summary) : "";
   const tag = TAGS.find((v) => title.includes(v)) || null;
 
@@ -86,7 +95,7 @@ export const normalizeEvents = (event, weatherInfo) => {
     startDate: event.start && event.start.dateTime,
     endDate: event.end && event.end.dateTime,
     imageUploaded: imageUploaded
-      ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
+      ? cloudinaryUrl(imageId)
       : eventImage
       ? eventImage
       : "/static/images/blur.png",
@@ -111,7 +120,15 @@ export const normalizeEvent = (event) => {
 
   let title = event.summary ? sanitizeText(event.summary) : "";
   const locationParts = event.location ? event.location.split(",") : [];
-  const town = locationParts[1] ? locationParts[1].trim() : "";
+  const town =
+    locationParts.length > 1
+      ? locationParts[locationParts.length - 2].trim()
+      : "";
+  const region =
+    locationParts.length > 0
+      ? locationParts[locationParts.length - 1].trim()
+      : "";
+  const location = locationParts.length > 2 ? locationParts[0].trim() : town;
   const tag = TAGS.find((v) => title.includes(v)) || null;
   if (tag) title = title.replace(`${tag}:`, "").trim();
   const { postalCode = null, label = null } = getTownOptionsWithLabel(town);
@@ -126,6 +143,9 @@ export const normalizeEvent = (event) => {
     endTime,
     location: event.location,
     label,
+    location,
+    town,
+    region,
     postalCode,
     formattedStart,
     formattedEnd,
@@ -138,7 +158,7 @@ export const normalizeEvent = (event) => {
     startDate: event.start && event.start.dateTime,
     endDate: event.end && event.end.dateTime,
     imageUploaded: imageUploaded
-      ? `https://res.cloudinary.com/culturaCardedeu/image/upload/c_fill/c_scale,w_auto,q_auto,f_auto/v1/culturaCardedeu/${imageId}`
+      ? cloudinaryUrl(imageId)
       : eventImage
       ? eventImage
       : null,

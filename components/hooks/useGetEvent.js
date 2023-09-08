@@ -1,9 +1,8 @@
+import { siteUrl } from "@config/index";
 import useSWR, { preload } from "swr";
 
 const fetchWithId = ([url, id]) =>
-  fetch(`${process.env.NEXT_PUBLIC_DOMAIN_URL}${url}?eventId=${id}`).then((r) =>
-    r.json()
-  );
+  fetch(`${siteUrl}${url}?eventId=${id}`).then((r) => r.json());
 
 export const useGetEvent = (props) => {
   const eventId = props.event.slug;

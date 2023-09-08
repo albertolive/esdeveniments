@@ -1,6 +1,7 @@
 import CheckCircleIcon from "@heroicons/react/solid/CheckCircleIcon";
 import ExclamationCircleIcon from "@heroicons/react/solid/ExclamationCircleIcon";
 import XIcon from "@heroicons/react/solid/XIcon";
+import { siteUrl } from "@config/index";
 
 export default function Notification({
   url,
@@ -29,11 +30,8 @@ export default function Notification({
               <p>
                 Et recomanem guardar el següent enllaç per si més endavant
                 necessites modificar-lo: <br />
-                <a
-                  className="font-bold"
-                  href={`https://www.esdeveniments.cat/${url}/edita`}
-                >
-                  {`https://www.esdeveniments.cat/${url}/edita`}
+                <a className="font-bold" href={`${siteUrl}/${url}/edita`}>
+                  {`${siteUrl}/${url}/edita`}
                 </a>
               </p>
             </div>
