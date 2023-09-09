@@ -98,7 +98,7 @@ export const normalizeEvents = (event, weatherInfo) => {
       ? cloudinaryUrl(imageId)
       : eventImage
       ? eventImage
-      : "/static/images/blur.png",
+      : null,
     description: event.description
       ? event.description
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",

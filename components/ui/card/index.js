@@ -1,13 +1,11 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import Image from "@components/ui/common/image";
+import { useRouter } from "next/router";
 import NextImage from "next/image";
+import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import { truncateString } from "@utils/helpers";
-import { useRouter } from "next/router";
-import Imagi from "next/image";
-import Imago from "public/static/images/imago-esdeveniments-fonsclar.png";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -42,15 +40,10 @@ export default function Card({ event }) {
       >
         {/* Title */}
         <div className="flex justify-between items-center gap-2 p-4 pl-7">
-          <Imagi
-            src={Imago}
-            alt="Imago Esdeveniments"
-            width={20}
-            height={20}
-            className=""
-          />
           <h2 className="w-3/4 block tracking-wide leading-6 font-semibold text-blackCorp cursor">
-            <a href={`/e/${event.slug}`}>{title}</a>
+            <Link href={`/e/${event.slug}`} passHref prefetch={false}>
+              <a>{title}</a>
+            </Link>
           </h2>
           {/* WeatherIcon */}
           <div className="">
@@ -72,6 +65,8 @@ export default function Card({ event }) {
             <Image
               className="object-fill max-h-full"
               title={event.title}
+              date={event.formattedStart}
+              location={event.location}
               image={event.imageUploaded}
               alt={event.title}
               layout="responsive"

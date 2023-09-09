@@ -22,9 +22,21 @@ if (typeof window !== "undefined") {
 
     function handleScroll() {
       if (window.scrollY > 0) {
-        navbar.classList.add('shadow-lg', 'shadow-darkCorp', 'transition-all', 'ease-in-out', 'duration-300');
+        navbar.classList.add(
+          "shadow-lg",
+          "shadow-darkCorp",
+          "transition-all",
+          "ease-in-out",
+          "duration-300"
+        );
       } else {
-        navbar.classList.remove('shadow-lg', 'shadow-darkCorp', 'transition-all', 'ease-in-out', 'duration300');
+        navbar.classList.remove(
+          "shadow-lg",
+          "shadow-darkCorp",
+          "transition-all",
+          "ease-in-out",
+          "duration300"
+        );
       }
     }
 
@@ -69,17 +81,22 @@ export default function Navbar() {
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
               <div className="flex justify-around items-center p-3">
                 {/* Logo */}
-                <div className="flex w-full md:w-1/2 justify-start items-center py-2 px-4 m-0 cursor-pointer"  onClick={handleLogoClick}>
+                <div
+                  className="flex w-full md:w-1/2 justify-start items-center py-2 px-4 m-0 cursor-pointer"
+                  onClick={handleLogoClick}
+                >
                   <Link href="/">
-                    <Image
-                      src={logo}
-                      className="block cursor-pointer bg-whiteCorp py-2 px-4"
-                      alt="Logo Esdeveniments.cat"
-                      width={220}
-                      height={18}
-                      layout="fixed"
-                      priority
-                    />
+                    <a>
+                      <Image
+                        src={logo}
+                        className="block cursor-pointer bg-whiteCorp py-2 px-4"
+                        alt="Logo Esdeveniments.cat"
+                        width={220}
+                        height={18}
+                        layout="fixed"
+                        priority
+                      />
+                    </a>
                   </Link>
                 </div>
                 {/* MenuIcon */}
@@ -87,7 +104,10 @@ export default function Navbar() {
                   <Disclosure.Button className="inline-flex items-center justify-center py-2 px-4 rounded-full focus:outline-none">
                     {/* <span className="sr-only">Obrir menú principal</span> */}
                     {open ? (
-                      <XIcon className="block h-7 w-7 text-primary" aria-hidden="true" />
+                      <XIcon
+                        className="block h-7 w-7 text-primary"
+                        aria-hidden="true"
+                      />
                     ) : (
                       <MenuIcon className="block h-7 w-7" aria-hidden="true" />
                     )}
@@ -110,7 +130,6 @@ export default function Navbar() {
               </div>
               {/* SecondBar - Search&Share&MenuIcon */}
               <div className="fixed h-[84px] bottom-0 left-0 right-0 bg-whiteCorp border-t border-darkCorp flex justify-center items-center gap-x-36">
-                    
                 {/* Search */}
                 <div className="flex justify-center items-center rounded-xlcursor-pointer">
                   <ActiveLink href="/cerca">
@@ -130,15 +149,11 @@ export default function Navbar() {
                       type="button"
                       className="flex items-center p-3 focus:outline-none cursor-pointer rounded-xl border-2 border-darkCorp"
                     >
-                      <PlusSmIcon
-                        className="h-8 w-8"
-                        aria-hidden="true"
-                      />
+                      <PlusSmIcon className="h-8 w-8" aria-hidden="true" />
                       <span className="hidden sm:visible">Publica</span>
                     </button>
                   </ActiveLink>
                 </div>
-
               </div>
             </div>
           </div>
@@ -147,9 +162,7 @@ export default function Navbar() {
             <div className="h-contain flex flex-col justify-evenly items-center gap-8 px-4 pb-6 pt-6 bg-whiteCorp border-t border-darkCorp">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
-                  <a className="text-base font-semibold px-8">
-                    {item.name}
-                  </a>
+                  <a className="text-base font-semibold px-8">{item.name}</a>
                 </ActiveLink>
               ))}
             </div>
