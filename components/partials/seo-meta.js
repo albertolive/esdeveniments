@@ -8,7 +8,7 @@ const Meta = (props) => {
     ? props.imageUploaded
     : props.image
     ? siteUrl + props.image
-    : `${siteUrl}/static/images/banners/cultura-cardedeu-banner-${getRandomImage}.jpeg`;
+    : `${siteUrl}/static/images/logo-esdeveniments-fonsclar.png`; // Improve with a proper default image
 
   return (
     <Head>

@@ -15,7 +15,8 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
 });
 
 const RenderButton = ({ value, label, goTo, byDate }) => {
-  const isActiveLink = byDate === value ? "bg-primary text-whiteCorp border-0" : "bg-whiteCorp";
+  const isActiveLink =
+    byDate === value ? "bg-primary text-whiteCorp border-0" : "bg-whiteCorp";
 
   return (
     <button
@@ -89,9 +90,9 @@ export default function SubMenu({
           ))}
         </div> */}
       </div>
-      {/* <div className="min-h-[325px] lg:min-h-[100px]">
+      <div className="min-h-[325px] lg:min-h-[100px]">
         <AdArticle slot="6387726014" />
-      </div> */}
+      </div>
     </>
   );
 }

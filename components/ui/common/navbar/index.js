@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
@@ -12,44 +13,32 @@ import { useRouter } from "next/router";
 const navigation = [
   { name: "Agenda", href: "/", current: true },
   { name: "Qui som", href: "/qui-som", current: false },
-  // { name: "Arxiu", href: "/sitemap", current: false },
 ];
 
-if (typeof window !== "undefined") {
-  // Esperamos a que el DOM esté completamente cargado
-  window.addEventListener("DOMContentLoaded", () => {
-    const navbar = document.querySelector(".navbar");
+export default function Navbar() {
+  const [hasShadow, setHasShadow] = useState(false);
+  const router = useRouter();
 
-    function handleScroll() {
+  useEffect(() => {
+    const handleScroll = () => {
       if (window.scrollY > 0) {
-        navbar.classList.add(
-          "shadow-lg",
-          "shadow-darkCorp",
-          "transition-all",
-          "ease-in-out",
-          "duration-300"
-        );
+        setHasShadow(true);
       } else {
-        navbar.classList.remove(
-          "shadow-lg",
-          "shadow-darkCorp",
-          "transition-all",
-          "ease-in-out",
-          "duration300"
-        );
+        setHasShadow(false);
       }
-    }
+    };
 
-    // Escuchamos el evento de scroll
+    // Run the function once to handle the initial scroll position
+    handleScroll();
+
+    // Add the event listener when the component mounts
     window.addEventListener("scroll", handleScroll);
 
-    // Ejecutamos la función al cargar la página
-    handleScroll();
-  });
-}
-
-export default function Navbar() {
-  const router = useRouter();
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); // Empty dependency array means this effect runs once on mount and cleanup on unmount
 
   const navigateToMainPage = () => {
     localStorage.removeItem("place");
@@ -73,7 +62,14 @@ export default function Navbar() {
   };
 
   return (
-    <Disclosure as="nav" className="navbar bg-whiteCorp sticky top-0 z-50">
+    <Disclosure
+      as="nav"
+      className={`navbar bg-whiteCorp sticky top-0 z-50 ${
+        hasShadow
+          ? "shadow-lg shadow-darkCorp transition-all ease-in-out duration-300"
+          : ""
+      }`}
+    >
       {({ open }) => (
         <>
           <div className="mx-auto py-2">

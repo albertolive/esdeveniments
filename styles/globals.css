@@ -12,35 +12,24 @@ body {
   -moz-font-smoothing: antialiased;
   -o-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100;8..144,200;8..144,300;8..144,400;8..144,500;8..144,600;8..144,700;8..144,800;8..144,900;8..144,1000&display=swap');
+  @import url("https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100;8..144,200;8..144,300;8..144,400;8..144,500;8..144,600;8..144,700;8..144,800;8..144,900;8..144,1000&display=swap");
   font-size: 15px;
-  color: #2B2B33;
+  color: #2b2b33;
   letter-spacing: 0.025rem;
   line-height: 1.062rem;
 }
-h1{
+h1 {
   font-size: 28px;
   letter-spacing: 0.025rem;
   line-height: 3.5rem;
 }
 
-h2{
+h2 {
   font-size: 21px;
   letter-spacing: 0.04rem;
   line-height: 1.062rem;
 }
-::-webkit-scrollbar {
-  background-color: transparent;
-  width: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background-color: #FFF219;
-  height: 16px;
-  border-radius: 6px; 
-}
-::-webkit-scrollbar-track {
-  background-color: transparent;
-}
+
 #map {
   height: 100%;
 }
