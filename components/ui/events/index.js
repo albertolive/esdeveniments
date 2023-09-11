@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
@@ -18,55 +18,58 @@ const NoEventsFound = dynamic(
   }
 );
 
+const LoadingSpinner = dynamic(() => import("@components/ui/common/loading"), {
+  loading: () => "",
+});
+
 export default function Events({ props, loadMore = true }) {
+  // Refs
+  const scrollPosition = useRef(0);
+
+  // Props destructuring
   const { place: placeProps, byDate: byDateProps } = props;
 
-  const sendGA = () => {
-    if (typeof window !== "undefined") {
-      window.gtag && window.gtag("event", "load-more-events");
-    }
-  };
-
-  const [scrollPosition, setScrollPosition] = useState(0);
-
-  const [page, setPage] = useState(() => {
-    const storedPage =
-      typeof window !== "undefined" &&
-      window.localStorage.getItem("currentPage");
-    return storedPage ? parseInt(storedPage) : 1;
-  });
-
-  const [place, setPlace] = useState(() => {
-    const storedPlace =
-      typeof window !== "undefined" && window.localStorage.getItem("place");
-    return storedPlace === "undefined" ? undefined : storedPlace || placeProps;
-  });
-
-  const [byDate, setByDate] = useState(() => {
-    const storedByDate =
-      typeof window !== "undefined" && window.localStorage.getItem("byDate");
-    return storedByDate === "undefined"
-      ? undefined
-      : storedByDate || byDateProps;
-  });
-
+  // State
+  const [page, setPage] = useState(getStoredPage);
+  const [place, setPlace] = useState(() => getStoredPlace(placeProps));
+  const [byDate, setByDate] = useState(() => getStoredByDate(byDateProps));
   const [open, setOpen] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
     isLoading,
-    isValidating,
   } = useGetEvents({
     props,
     pageIndex: dateFunctions[byDate] || "all",
     maxResults: page * 10,
     q: type === "town" ? `${label} ${regionLabel}` : label,
   });
-
   const jsonEvents = events.map((event) => generateJsonData(event));
 
+  // Event handlers
+  const handleLoadMore = () => {
+    scrollPosition.current = window.scrollY;
+    setIsLoadingMore(true);
+    setPage((prevPage) => prevPage + 1);
+    sendGA();
+  };
+  const toggleDropdown = () => {
+    setOpen(!open);
+  };
+
+  // Helper function
+  const resetPage = () => {
+    setPage(1);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("currentPage", "1");
+    }
+  };
+
+  // Effects
   useEffect(() => {
     localStorage.setItem("currentPage", page);
   }, [page]);
@@ -80,27 +83,26 @@ export default function Events({ props, loadMore = true }) {
   }, [byDate]);
 
   useEffect(() => {
-    // Only reset the page state and localStorage value if place or byDate has changed
     if (place !== placeProps || byDate !== byDateProps) {
-      setPage(1);
-
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("currentPage", "1");
-      }
+      resetPage();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [place, byDate]);
 
   useEffect(() => {
-    setScrollPosition(window.scrollY);
+    window.scrollTo(0, scrollPosition.current);
   }, [events]);
 
   useEffect(() => {
-    window.scrollTo(0, scrollPosition);
-  }, [scrollPosition]);
+    if (events.length > 0) {
+      setIsLoadingMore(false);
+    }
+  }, [events]);
 
-  if (error) return <div>failed to load</div>;
+  // Error handling
+  if (error) return <NoEventsFound title={notFoundText} />;
 
+  // Page data
   const {
     metaTitle,
     metaDescription,
@@ -115,10 +117,7 @@ export default function Events({ props, loadMore = true }) {
     byDate,
   });
 
-  const toggleDropdown = () => {
-    setOpen(!open);
-  };
-
+  // Render
   return (
     <>
       <Script
@@ -169,8 +168,13 @@ export default function Events({ props, loadMore = true }) {
         setByDate={setByDate}
       />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
+<<<<<<< HEAD
       {isLoading || isValidating ? (
         <div className="bg-blackCorp grid sm:flex-col md:flex-col gap-4 mb-5">
+=======
+      {isLoading && !isLoadingMore ? (
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+>>>>>>> 6149a0c88c341b1482c5a1a5da17fcf9b744c627
           {[...Array(10)].map((_, i) => (
             <CardLoading key={i} />
           ))}
@@ -180,15 +184,13 @@ export default function Events({ props, loadMore = true }) {
           {(event) => <Card key={event.id} event={event} />}
         </List>
       )}
+      {isLoadingMore && <LoadingSpinner />}
       {!noEventsFound && loadMore && events.length > 7 && (
         <div className="text-center">
           <button
             type="button"
             className="text-whiteCorp bg-primary rounded-xl py-3 px-3 ease-in-out duration-200 border border-whiteCorp focus:outline-none"
-            onClick={() => {
-              setPage((prevPage) => prevPage + 1);
-              sendGA();
-            }}
+            onClick={handleLoadMore}
           >
             <span className="text-white">Carregar més</span>
           </button>
@@ -196,4 +198,29 @@ export default function Events({ props, loadMore = true }) {
       )}
     </>
   );
+}
+
+// Helper functions
+function getStoredPage() {
+  const storedPage =
+    typeof window !== "undefined" && window.localStorage.getItem("currentPage");
+  return storedPage ? parseInt(storedPage) : 1;
+}
+
+function getStoredPlace(placeProps) {
+  const storedPlace =
+    typeof window !== "undefined" && window.localStorage.getItem("place");
+  return storedPlace === "undefined" ? undefined : storedPlace || placeProps;
+}
+
+function getStoredByDate(byDateProps) {
+  const storedByDate =
+    typeof window !== "undefined" && window.localStorage.getItem("byDate");
+  return storedByDate === "undefined" ? undefined : storedByDate || byDateProps;
+}
+
+function sendGA() {
+  if (typeof window !== "undefined") {
+    window.gtag && window.gtag("event", "load-more-events");
+  }
 }
