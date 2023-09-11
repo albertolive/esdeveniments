@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
@@ -18,7 +18,12 @@ const NoEventsFound = dynamic(
   }
 );
 
+const LoadingSpinner = dynamic(() => import("@components/ui/common/loading"), {
+  loading: () => "",
+});
+
 export default function Events({ props, loadMore = true }) {
+  const scrollPosition = useRef(0);
   const { place: placeProps, byDate: byDateProps } = props;
 
   const sendGA = () => {
@@ -26,8 +31,6 @@ export default function Events({ props, loadMore = true }) {
       window.gtag && window.gtag("event", "load-more-events");
     }
   };
-
-  const [scrollPosition, setScrollPosition] = useState(0);
 
   const [page, setPage] = useState(() => {
     const storedPage =
@@ -51,6 +54,8 @@ export default function Events({ props, loadMore = true }) {
   });
 
   const [open, setOpen] = useState(false);
+
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const {
@@ -92,14 +97,23 @@ export default function Events({ props, loadMore = true }) {
   }, [place, byDate]);
 
   useEffect(() => {
-    setScrollPosition(window.scrollY);
+    window.scrollTo(0, scrollPosition.current);
   }, [events]);
 
   useEffect(() => {
-    window.scrollTo(0, scrollPosition);
-  }, [scrollPosition]);
+    if (events.length > 0) {
+      setIsLoadingMore(false);
+    }
+  }, [events]);
 
   if (error) return <div>failed to load</div>;
+
+  const handleLoadMore = () => {
+    scrollPosition.current = window.scrollY;
+    setIsLoadingMore(true);
+    setPage((prevPage) => prevPage + 1);
+    sendGA();
+  };
 
   const {
     metaTitle,
@@ -170,7 +184,7 @@ export default function Events({ props, loadMore = true }) {
         setByDate={setByDate}
       />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
-      {isLoading || isValidating ? (
+      {isLoading && !isLoadingMore ? (
         <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mb-5">
           {[...Array(10)].map((_, i) => (
             <CardLoading key={i} />
@@ -181,15 +195,13 @@ export default function Events({ props, loadMore = true }) {
           {(event) => <Card key={event.id} event={event} />}
         </List>
       )}
+      {(isLoadingMore || isValidating) && <LoadingSpinner />}
       {!noEventsFound && loadMore && events.length > 7 && (
         <div className="text-center">
           <button
             type="button"
             className="text-whiteCorp bg-primary rounded-xl py-3 px-3 ease-in-out duration-200 border border-whiteCorp focus:outline-none"
-            onClick={() => {
-              setPage((prevPage) => prevPage + 1);
-              sendGA();
-            }}
+            onClick={handleLoadMore}
           >
             <span className="text-white">Carregar més</span>
           </button>
