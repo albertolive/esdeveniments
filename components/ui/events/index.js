@@ -189,13 +189,8 @@ export default function Events({ props, loadMore = true }) {
         setByDate={setByDate}
       />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
-<<<<<<< HEAD
-      {isLoading || isValidating ? (
-        <div className="bg-blackCorp grid sm:flex-col md:flex-col gap-4 mb-5">
-=======
       {isLoading && !isLoadingMore ? (
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mb-5">
->>>>>>> 6149a0c88c341b1482c5a1a5da17fcf9b744c627
+        <div className="bg-blackCorp grid sm:flex-col md:flex-col gap-4 mb-5">
           {[...Array(10)].map((_, i) => (
             <CardLoading key={i} />
           ))}
