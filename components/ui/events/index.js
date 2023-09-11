@@ -52,7 +52,9 @@ export default function Events({ props, loadMore = true }) {
 
   // Event handlers
   const handleLoadMore = () => {
-    scrollPosition.current = window.scrollY;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("scrollPosition", window.scrollY);
+    }
     setIsLoadingMore(true);
     setPage((prevPage) => prevPage + 1);
     sendGA();
@@ -90,7 +92,26 @@ export default function Events({ props, loadMore = true }) {
   }, [place, byDate]);
 
   useEffect(() => {
-    window.scrollTo(0, scrollPosition.current);
+    if (typeof window !== "undefined") {
+      if (window.performance.navigation.type === 1) {
+        window.localStorage.removeItem("scrollPosition");
+      } else {
+        const storedScrollPosition =
+          window.localStorage.getItem("scrollPosition");
+        if (storedScrollPosition) {
+          window.scrollTo(0, parseInt(storedScrollPosition));
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedScrollPosition =
+      typeof window !== "undefined" &&
+      window.localStorage.getItem("scrollPosition");
+    if (storedScrollPosition) {
+      window.scrollTo(0, parseInt(storedScrollPosition));
+    }
   }, [events]);
 
   useEffect(() => {
