@@ -201,7 +201,7 @@ export default function Events({ props, loadMore = true }) {
         </List>
       )}
       {isLoadingMore && <LoadingSpinner />}
-      {!noEventsFound && loadMore && events.length > 7 && (
+      {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
         <div className="text-center">
           <button
             type="button"
