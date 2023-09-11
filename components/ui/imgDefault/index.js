@@ -19,27 +19,27 @@ export default function ImgDefault({ title, date, location }) {
 
   return (
     <div
-      className="w-full h-full flex flex-col justify-center items-center gap-y-8 text-whiteCorp p-10"
+      className="flex flex-col justify-center items-center gap-y-8 text-whiteCorp px-16 pt-14 pb-16"
       style={{ background: background, height: "32rem" }}
     >
       <h1
-        className="drop-shadow text-center text-[54px] font-black tracking-wider"
+        className="drop-shadow text-[54px] font-bold"
         aria-label={title}
       >
         {title}
       </h1>
       <h2
-        className="drop-shadow text-center text-[39px] font-medium tracking-wider border-t-4 pt-6"
+        className="drop-shadow text-[39px] font-medium border-t-2 pt-6"
         aria-label={date}
       >
         {date}
       </h2>
-      <p
+      {/* <p
         className="drop-shadow text-center text-[21px] font-normal tracking-wider"
         aria-label={location}
       >
         {location}
-      </p>
+      </p> */}
     </div>
   );
 }

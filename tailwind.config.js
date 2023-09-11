@@ -7,9 +7,12 @@ module.exports = {
   ],
   theme: {
     screens: {
-      xs: "475px",
-      ...defaultTheme.screens,
-    },
+        xs: "360px",
+        sm: "576px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+      },
     extend: {
       boxShadow: {
         'lg': '0px 5px 50px 0px rgba(241, 241, 241, 0.05)',

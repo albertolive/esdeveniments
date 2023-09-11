@@ -26,14 +26,14 @@ export default function ImageComponent({
   date,
   location,
   image,
-  width = "100%",
+  width = "70%",
   height = "100%",
-  className = "relative w-full h-full",
+  className = "relative flex",
   layout = "responsive",
 }) {
   const { error } = useImage(image);
 
-  const imageClassName = `flex-1 h-full next-image-wrapper ${className}`;
+  const imageClassName = `flex-auto ${className}`;
 
   const srcSet = `${image} 1200w,
                   ${image}?w=200 200w,

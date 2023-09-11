@@ -135,8 +135,7 @@ export default function Events({ props, loadMore = true }) {
         <button
           onClick={toggleDropdown}
           className="w-content p-3 font-semibold text-blackCorp rounded-lg border border-darkCorp bg-whiteCorp focus:outline-none
-          transition-colors ${
-            open 
+          transition-colors ${open 
               ? 'bg-primary text-whiteCorp'
               : 'bg-whiteCorp text-blackCorp md:hover:bg-primary'
           }"
@@ -151,7 +150,7 @@ export default function Events({ props, loadMore = true }) {
               </h1>
             </div>
             <div
-              className="lg:m-full lg:mx-20 lg:flex lg:flex-row lg:justify-center lg:items-start lg:gap-x-8
+              className="lg:mx-20 lg:flex lg:flex-row lg:justify-center lg:items-start lg:gap-x-8
       mx-10 flex flex-col justify-center"
             >
               <p className="my-4 m-full text-center font-semibold lg:m-1/2">
@@ -171,7 +170,7 @@ export default function Events({ props, loadMore = true }) {
       />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
       {isLoading || isValidating ? (
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div className="bg-blackCorp grid sm:flex-col md:flex-col gap-4 mb-5">
           {[...Array(10)].map((_, i) => (
             <CardLoading key={i} />
           ))}
