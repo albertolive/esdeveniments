@@ -100,7 +100,7 @@ export default function Events({ props, loadMore = true }) {
   }, [events]);
 
   // Error handling
-  if (error) return <div>failed to load</div>;
+  if (error) return <NoEventsFound title={notFoundText} />;
 
   // Page data
   const {
