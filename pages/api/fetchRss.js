@@ -5,6 +5,8 @@ import * as cheerio from "cheerio";
 import Bottleneck from "bottleneck";
 import { CITIES_DATA } from "@utils/constants";
 
+const disableInserting = false;
+
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
 const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
@@ -151,6 +153,12 @@ async function cleanProcessedItems(processedItems, town) {
   await setProcessedItems(processedItems, town);
 }
 
+const hasEventImage = (description) => {
+  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
+  const hasEventImage = description && description.match(regex);
+  return hasEventImage && hasEventImage[0];
+};
+
 function replaceImageUrl(imageUrl, baseUrl) {
   if (imageUrl) {
     imageUrl = imageUrl.replace(/src="\/media/g, `src="${baseUrl}/media`);
@@ -178,6 +186,7 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
     const description =
       $(descriptionSelector).html()?.trim() ||
       "Cap descripció. Afegeix-ne una!";
+
     let image = $(imageSelector).prop("outerHTML")?.trim();
 
     // Remove styles and classes from the image
@@ -187,6 +196,9 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
       $img("*").removeAttr("class");
       image = $img("a").prop("outerHTML");
       image = replaceImageUrl(image, getBaseUrl(url));
+    } else {
+      image = hasEventImage(description);
+      image = `<a href="${image}">${image}</a>`;
     }
 
     const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
@@ -252,7 +264,15 @@ async function insertItemToCalendar(
   processedItems
 ) {
   if (!item) return;
-  const { pubDate, title, link, guid, location = "" } = item || {};
+  const {
+    pubDate,
+    title,
+    link,
+    guid,
+    location = "",
+    "content:encoded": locationExtra,
+  } = item || {};
+
   const dateTime = new Date(pubDate);
   const endDateTime = new Date(dateTime);
   endDateTime.setHours(endDateTime.getHours() + 1);
@@ -262,7 +282,7 @@ async function insertItemToCalendar(
 
   const scrapedLocation = await scrapeLocation(
     link,
-    location,
+    location || locationExtra,
     locationSelector
   );
 
@@ -283,21 +303,23 @@ async function insertItemToCalendar(
   };
 
   try {
-    const authToken = await auth.getClient();
+    if (!disableInserting) {
+      const authToken = await auth.getClient();
 
-    await calendar.events.insert({
-      auth: authToken,
-      calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
-      resource: event,
-    });
+      await calendar.events.insert({
+        auth: authToken,
+        calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
+        resource: event,
+      });
 
-    console.log("Inserted new item successfully: " + title);
+      console.log("Inserted new item successfully: " + title);
 
-    const now = Date.now();
-    processedItems.set(guid, now);
-    await setProcessedItems(processedItems, town); // Save the processed item immediately
-    console.log(`Added item ${guid} to processed items`);
-    return;
+      const now = Date.now();
+      processedItems.set(guid, now);
+      await setProcessedItems(processedItems, town); // Save the processed item immediately
+      console.log(`Added item ${guid} to processed items`);
+      return;
+    }
   } catch (error) {
     console.error("Error inserting item to calendar:", error);
     throw error;
@@ -388,11 +410,17 @@ export default async function handler(req, res) {
     const items = await fetchRSSFeed(rssFeed, town);
 
     // Read the database
-    const processedItems = await getProcessedItems(town);
-    await cleanProcessedItems(processedItems, town);
+    let processedItems = new Map();
+
+    if (!disableInserting) {
+      processedItems = await getProcessedItems(town);
+      await cleanProcessedItems(processedItems, town);
+    }
 
     // Filter out already fetched items
-    const newItems = items.filter((item) => !processedItems.has(item.guid));
+    const newItems = disableInserting
+      ? items
+      : items.filter((item) => !processedItems.has(item.guid));
 
     // If no new items, log a message
     if (newItems.length === 0) {
