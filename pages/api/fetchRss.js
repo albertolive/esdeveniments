@@ -236,19 +236,27 @@ async function scrapeLocation(url, location, locationSelector) {
     const html = await response.text();
     const $ = cheerio.load(html);
 
-    const locationElement = $(locationSelector)
-      .find("p, span")
-      .map((_, el) => $(el).text())
-      .get()
-      .join(" ");
-    const locationFromHtml =
-      locationElement && getLocationFromHtml(locationElement);
+    // TODO: Make it more generic. Now it works for La Garriga
+    let locationElement = $(locationSelector).find("p").first().text();
 
-    return locationFromHtml && locationFromHtml[0]
-      ? locationFromHtml[0].trim()
-      : location;
+    // If locationElement is an array, take the first element and split it if it's too long
+    if (Array.isArray(locationElement)) {
+      locationElement = locationElement.map((item) => {
+        if (item.length > 100) {
+          return item.split(",")[0];
+        }
+        return item;
+      })[0];
+    }
+
+    // If the location is too long, split it at the first comma
+    if (locationElement && locationElement.length > 100) {
+      locationElement = locationElement.split(",")[0];
+    }
+
+    return locationElement ? locationElement.trim() : location;
   } catch (error) {
-    console.error("Error occurred during scraping locataion:", url);
+    console.error("Error occurred during scraping location:", url);
     throw error;
   }
 }
@@ -324,6 +332,8 @@ async function insertItemToCalendar(
     console.error("Error inserting item to calendar:", error);
     throw error;
   }
+
+  return;
 }
 
 async function insertItemToCalendarWithRetry(
