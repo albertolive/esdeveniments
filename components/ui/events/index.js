@@ -219,7 +219,7 @@ export default function Events({ props, loadMore = true }) {
         <div className=" text-center py-10">
           <button
             type="button"
-            className="text-whiteCorp bg-primary rounded-xl py-3 px-3 ease-in-out duration-200 border border-whiteCorp focus:outline-none"
+            className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
             onClick={handleLoadMore}
           >
             <span className="text-white text-base font-semibold px-4">
