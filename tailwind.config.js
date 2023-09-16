@@ -6,6 +6,10 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily: {
+      'roboto': 'Roboto',
+      'barlow': 'Barlow Condensed',
+    },
     screens: {
         xs: "360px",
         sm: "576px",
@@ -29,12 +33,10 @@ module.exports = {
     colors: {
       primary: "#FF0037",
       primarySoft: "#FF4D73",
-      secondary: "#FFF219",
-      secondarySoft: "#FFE30D",
       whiteCorp: "#ffffff",
-      darkCorp: "#dbdbdb",
-      blackCorp: "#2B2B33",
-      pinkSoft: "#FFF1F2",
+      darkCorp: "#E8E8E8",
+      blackCorp: "#454545",
+      bColor: "#cccccc",
     },
   },
   variants: {

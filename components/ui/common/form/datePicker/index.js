@@ -41,31 +41,32 @@ export default function DatePickerComponent({
 
   return (
     <>
-      <div className="sm:col-span-3">
+      <div>
         <label
           htmlFor="first-name"
-          className="block text-sm font-medium text-gray-700"
+          className="text-blackCorp"
         >
           Inici *
         </label>
-        <div className="mt-1">
+        <div className="w-full p-2">
           <DateComponent
             selected={startDate}
             onChange={onChangeStart}
             selectsStart
             startDate={startDate}
             endDate={endDate}
+            className="w-full rounded-xl border-bColor focus:border-darkCorp"
           />
         </div>
       </div>
-      <div className="sm:col-span-3">
+      <div>
         <label
           htmlFor="first-name"
-          className="block text-sm font-medium text-gray-700"
+          className="text-blackCorp"
         >
           Final *
         </label>
-        <div className="mt-1">
+        <div className="w-full p-2">
           <DateComponent
             selected={endDate}
             onChange={onChangeEnd}
@@ -73,6 +74,7 @@ export default function DatePickerComponent({
             startDate={startDate}
             endDate={endDate}
             minDate={startDate}
+            className="w-full rounded-xl border-bColor focus:border-darkCorp"
           />
         </div>
       </div>
@@ -113,21 +115,21 @@ const DateComponent = ({
         prevMonthButtonDisabled,
         nextMonthButtonDisabled,
       }) => (
-        <div className="flex items-center justify-between px-2 py-2">
-          <span className="text-lg text-gray-700 capitalize">
+        <div className="flex justify-center items-center p-2">
+          <span className="w-1/2 text-blackCorp uppercase font-roboto">
             {format(date, "MMMM yyyy", { locale: ca })}
           </span>
 
-          <div className="space-x-2">
+          <div className="w-1/2 flex justify-evenly">
             <button
               onClick={decreaseMonth}
               disabled={prevMonthButtonDisabled}
               type="button"
               className={`${
                 prevMonthButtonDisabled && "cursor-not-allowed opacity-50"
-              }inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500`}
+              }flex p-1 text-sm text-blackCorp bg-whiteCorp border border-darkCorp rounded-xl focus:outline-none`}
             >
-              <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+              <ChevronLeftIcon className="w-5 h-5 text-blackCorp" />
             </button>
 
             <button
@@ -136,9 +138,9 @@ const DateComponent = ({
               type="button"
               className={`${
                 nextMonthButtonDisabled && "cursor-not-allowed opacity-50"
-              }inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500`}
+              }flex p-1 text-sm text-blackCorp bg-whiteCorp border border-darkCorp rounded-xl focus:outline-none`}
             >
-              <ChevronRightIcon className="w-5 h-5 text-gray-600" />
+              <ChevronRightIcon className="w-5 h-5 text-blackCorp" />
             </button>
           </div>
         </div>
@@ -153,7 +155,8 @@ const ButtonInput = forwardRef(({ value, onClick }, ref) => {
       onClick={onClick}
       ref={ref}
       type="button"
-      className="capitalize w-full mb-1 shadow-sm block p-2 sm:text-sm border border-gray-300 rounded-md focus:border-grey-300"
+      className="w-full p-2 border border-bColor rounded-xl text-blackCorp
+      sm:text-sm"
     >
       {value}
     </button>

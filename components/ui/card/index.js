@@ -6,6 +6,7 @@ import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import { truncateString } from "@utils/helpers";
+import Imago from "@public/static/images/imago-esdeveniments-fonsclar.png";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -27,85 +28,95 @@ export default function Card({ event }) {
     );
 
   const { description, icon } = event.weather || {};
-  const title = truncateString(event.title || "", 70);
-  const location = truncateString(event.location || "", 45);
+  const title = truncateString(event.title || "", 65);
+  const location = truncateString(event.location || "");
   const subLocation = truncateString(event.subLocation || "", 45);
 
   return (
     <Link href={`/e/${event.slug}`} passHref prefetch={false}>
       <div
-        className="bg-whiteCorp border-t border-darkCorp overflow-hidden cursor-pointer hover:shadow-dark"
+        className="bg-whiteCorp overflow-hidden cursor-pointer mb-10
+        md:border-t-0
+        "
         onMouseEnter={handlePrefetch}
         onClick={handlePrefetch}
       >
         {/* Title */}
-        <div className="flex justify-between items-center gap-2 p-4 pl-7">
-          <h2 className="w-3/4 block tracking-wide leading-6 font-semibold text-blackCorp cursor">
+        <div className="bg-whiteCorp h-24 flex justify-between items-center gap-2 gap-x-4">
+          <div
+            className="h-1/2 border-l-[6px] border-primary px-0 mx-0
+          sm:border-l-[10px]"
+          >
+            {/* Revisar Albert. Em surt la imatge del component ImgDefault */}
+            {/* <Image
+              src={Imago}
+              className="block"
+              alt="Logo Esdeveniments.cat"
+              width={8}
+              height={11}
+              layout="responsive"
+              priority
+            /> */}
+          </div>
+          {/* Title */}
+          <h2 className="w-10/12 uppercase font-semibold text-blackCorp italic text-[26px]">
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
               <a>{title}</a>
             </Link>
           </h2>
           {/* WeatherIcon */}
-          <div className="">
+          <div className="w-2/12 flex justify-center">
             {icon && (
-              <div className="pr-2">
+              <div>
                 <NextImage
                   alt={description}
                   src={icon}
-                  width="40px"
-                  height="40px"
+                  width="30px"
+                  height="30px"
                 />
               </div>
             )}
           </div>
         </div>
-        <div className="flex flex-col w-full">
-          {/* ImageEvent */}
-          <div className="flex h-full object-cover">
-            <Image
-              className="object-fill max-h-full"
-              title={event.title}
-              date={event.formattedStart}
-              location={event.location}
-              image={event.imageUploaded}
-              alt={event.title}
-              layout="responsive"
-            />
-          </div>
-          {/* InfoEvent */}
-          <div className="flex flex-col justify-center items-start p-4">
-            {/* Date */}
-            <div className="flex items-center text-blackCorp text-[19px] font-medium p-1 pt-2 pb-6">
-              {event.formattedEnd
-                ? `Del ${event.formattedStart} al ${event.formattedEnd}`
-                : `${event.nameDay}, ${event.formattedStart}`}
+        {/* ImageEvent */}
+        <div className="">
+          <Image
+            className=""
+            title={event.title}
+            date={event.formattedStart}
+            location={event.location}
+            image={event.imageUploaded}
+            alt={event.title}
+            layout="responsive"
+          />
+        </div>
+        {/* Info */}
+        {/* InfoEvent */}
+        <div className="flex flex-col px-4 pt-8 gap-4">
+          {/* Date */}
+          <h2 className="text-blackCorp font-roboto text-[21px] pl-1">
+            {event.formattedEnd
+              ? `Del ${event.formattedStart} al ${event.formattedEnd}`
+              : `${event.nameDay}, ${event.formattedStart}`}
+          </h2>
+          {/* Location */}
+          <div className="flex items-start h-full">
+            <div>
+              <LocationMarkerIcon className="h-6 w-6" />
             </div>
-
-            <div className="flex sm:text-base text-gray-900">
-              <div className="flex">
-                <LocationMarkerIcon className="h-7 w-7" />
-              </div>
-              <div className="flex flex-col items-start px-2">
-                <span className="">{location}</span>
-                <span className="">{subLocation}</span>
-              </div>
-            </div>
-            {event.tag && (
-              <span className="p-1 px-2 text-white bg-primary relative items-center border border-transparent shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 rounded-md">
-                {event.tag}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-start px-4">
-            <div className="pb-8">
-              <span className="flex justify-center items-center font-medium">
-                <ClockIcon className="h-6 w-6" />
-                <span className="ml-3 text-[19px]">
-                  {event.startTime} - {event.endTime}
-                </span>
-              </span>
+            <div className="h-full flex flex-col justify-center items-start px-2 gap-1">
+              <span className="">{location}</span>
+              <span className="">{subLocation}</span>
             </div>
           </div>
+          {/* hour */}
+          <div className="flex justify-start items-center">
+            <ClockIcon className="h-6 w-6" />
+            <p className="px-2">
+              {event.startTime} - {event.endTime}
+            </p>
+          </div>
+          {event.tag && <span>{event.tag}</span>}
         </div>
       </div>
     </Link>

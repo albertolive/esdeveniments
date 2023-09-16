@@ -10,6 +10,8 @@ import CardLoading from "@components/ui/cardLoading";
 import { SubMenu } from "@components/ui/common";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
+import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
+import XIcon from "@heroicons/react/outline/XIcon";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -151,33 +153,45 @@ export default function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="flex flex-col justify-center items-center">
+      <div className="p-2 flex flex-col justify-center items-center">
         <button
           onClick={toggleDropdown}
-          className="w-content p-3 font-semibold text-blackCorp rounded-lg border border-darkCorp bg-whiteCorp focus:outline-none
-          transition-colors ${open 
-              ? 'bg-primary text-whiteCorp'
-              : 'bg-whiteCorp text-blackCorp md:hover:bg-primary'
-          }"
+          className={`w-11/12 p-3 flex justify-center items-center gap-4 font-semibold text-blackCorp focus:outline-none`}
         >
-          {open ? "Tancar" : "Informació"}
+          {open ? <p className="w-24 text-center tracking-wide">Tancar</p> : <p className="w-24 text-center tracking-wide">Informació</p>}
+          {open ? (
+            <XIcon className="h-6 w-6" />
+          ) : (
+            <ChevronDownIcon className="h-6 w-6" />
+          )}
         </button>
         {open && (
-          <div className="mt-4">
+          <div className="flex flex-col pt-8 border-t border-darkCorp">
             <div className="mx-10">
-              <h1 className="mb-2 block leading-8 tracking-normal font font-semibold text-blackCorp text-center">
+              <h1
+                className="mb-2 leading-8 font-semibold text-blackCorp text-center
+              md:text-left"
+              >
                 {title}
               </h1>
             </div>
-            <div
-              className="lg:mx-20 lg:flex lg:flex-row lg:justify-center lg:items-start lg:gap-x-8
-      mx-10 flex flex-col justify-center"
-            >
-              <p className="my-4 m-full text-center font-semibold lg:m-1/2">
+            <div className="mx-10 flex flex-col justify-center items-center
+            lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
+              <p
+                className="my-4 m-full text-center
+              md:text-left
+              lg:w-1/2"
+              >
                 {subTitle}
               </p>
-              <div className="mx-40 border-b border-blackCorp lg:hidden"></div>
-              <p className="my-4 m-full text-center lg:m-1/2">{description}</p>
+              <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
+              <p
+                className="my-4 m-full text-center
+              md:text-left
+              lg:w-1/2"
+              >
+                {description}
+              </p>
             </div>
           </div>
         )}
@@ -190,7 +204,7 @@ export default function Events({ props, loadMore = true }) {
       />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
       {isLoading && !isLoadingMore ? (
-        <div className="bg-blackCorp grid sm:flex-col md:flex-col gap-4 mb-5">
+        <div>
           {[...Array(10)].map((_, i) => (
             <CardLoading key={i} />
           ))}
@@ -202,13 +216,15 @@ export default function Events({ props, loadMore = true }) {
       )}
       {isLoadingMore && <LoadingSpinner />}
       {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
-        <div className="text-center">
+        <div className=" text-center py-10">
           <button
             type="button"
             className="text-whiteCorp bg-primary rounded-xl py-3 px-3 ease-in-out duration-200 border border-whiteCorp focus:outline-none"
             onClick={handleLoadMore}
           >
-            <span className="text-white">Carregar més</span>
+            <span className="text-white text-base font-semibold px-4">
+              Carregar més
+            </span>
           </button>
         </div>
       )}

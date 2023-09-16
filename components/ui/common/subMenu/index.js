@@ -68,7 +68,7 @@ export default function SubMenu({
   return (
     <>
       <div className="flex flex-col justify-center items-center my-4">
-        <div className="w-8/12 p-2">
+        <div className="w-11/12 p-2">
           <Select
             id="options"
             options={regionsAndCitiesArray}

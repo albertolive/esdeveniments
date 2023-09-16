@@ -61,14 +61,14 @@ export default function SelectComponent({
   };
 
   return (
-    <div className="sm:col-span-6">
+    <div className="">
       <label
         htmlFor="first-name"
-        className="block font-medium text-gray-700"
+        className="text-blackCorp"
       >
         {title}
       </label>
-      <div className="mt-1 select-container">
+      <div className="p-2">
         <CreatableSelect
           id={id}
           instanceId={id}
