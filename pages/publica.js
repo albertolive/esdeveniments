@@ -255,9 +255,9 @@ export default function Publica() {
         canonical={`${siteUrl}/publica`}
       />
       <div
-        className="max-w-full mx-0 px-0 
+        className="max-w-full mx-0 px-4 
         sm:px-0 sm:max-w-[576px]
-        md:px-10 md:max-w-[768px] 
+        md:px-4 md:max-w-[768px] 
         lg:px-20 lg:max-w-[1024px]"
       >
         <div className="flex flex-col items-center gap-4">

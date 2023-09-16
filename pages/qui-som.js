@@ -12,7 +12,7 @@ export default function QuiSom() {
         canonical={`${siteUrl}/qui-som`}
       />
       <div
-        className="max-w-full h-full mx-0 px-0 flex flex-col gap-16 
+        className="max-w-full h-full mx-0 px-4 flex flex-col gap-16 
         sm:px-0 sm:max-w-[576px]
         md:px-10 md:max-w-[768px] 
         lg:px-20 lg:max-w-[1024px]"
