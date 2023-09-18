@@ -5,7 +5,7 @@ import { components } from "react-select";
 const customStyles = {
   container: (provided) => ({
     ...provided,
-    borderColor: "#D1D5DB !important",
+    borderColor: "#FFF !important",
   }),
   input: (provided, state) => ({
     ...provided,
@@ -22,6 +22,7 @@ const customStyles = {
   placeholder: (provided) => ({
     ...provided,
     fontSize: "14px",
+    color: "#BBB",
   }),
   option: (provided) => ({
     ...provided,
@@ -60,14 +61,14 @@ export default function SelectComponent({
   };
 
   return (
-    <div className="sm:col-span-6">
+    <div className="">
       <label
         htmlFor="first-name"
-        className="block text-sm font-medium text-gray-700"
+        className="text-blackCorp"
       >
         {title}
       </label>
-      <div className="mt-1 select-container">
+      <div className="p-2">
         <CreatableSelect
           id={id}
           instanceId={id}

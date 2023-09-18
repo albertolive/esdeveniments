@@ -14,7 +14,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
     return {
       title: `Agenda ${currentYear}`,
       subTitle: `Viu aquest ${month} com mai amb les millors activitats de la temporada: mercats, exposicions, descobriments, passejades, concerts, museus, teatre... 
-     No et quedis sense provar tots aquests plans imprescindibles per aprofitar-lo al màxim!`,
+      No et quedis sense provar tots aquests plans imprescindibles per aprofitar-lo al màxim!`,
       description:
         "Vols viure experiències úniques i emocionants? La cultura és el lloc on cal estar! Us oferim una gran varietat d'opcions perquè mai us avorriu i sempre tingueu alguna cosa interessant per fer. Descobriu tot el que passa a Catalunya i voltants, i deixeu-vos sorprendre per la seva riquesa cultural.",
       metaTitle: `Agenda ${currentYear} - Esdeveniments.cat`,

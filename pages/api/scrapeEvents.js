@@ -2,8 +2,8 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const RSS = require("rss");
 const { format } = require("date-fns");
-const { es } = require("date-fns/locale");
 const { utcToZonedTime } = require("date-fns-tz");
+const crypto = require("crypto");
 import { siteUrl } from "@config/index";
 
 const CITIES = {
@@ -86,8 +86,7 @@ function extractEventDetails(html, selectors) {
   const $ = cheerio.load(html);
   const events = [];
 
-  $(listSelector).each((index, element) => {
-    const id = index;
+  $(listSelector).each((_, element) => {
     const title = $(element).find(titleSelector).text().trim();
     const url = $(element).find(urlSelector).attr("href");
     const date = $(element).find(dateSelector).text().trim();
@@ -97,9 +96,13 @@ function extractEventDetails(html, selectors) {
     const rssDate = date && convertToRSSDate(date, dateRegex);
     const rssUrl = `${selectors.domain}${url}`;
     const rssImage = image && image.replace(selectors.urlImage, "/");
+    const hash = crypto
+      .createHash("md5")
+      .update(title + url + location + date)
+      .digest("hex");
 
     events.push({
-      id,
+      id: hash,
       url: rssUrl,
       title,
       location,

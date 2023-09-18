@@ -41,6 +41,7 @@
     "react-dom": "18.2.0",
     "react-quill": "^2.0.0",
     "react-select": "^5.7.0",
+    "react-social-icons": "^6.3.0",
     "rss": "^1.2.2",
     "swr": "^2.0.3",
     "tailwindcss": "^3.2.6"

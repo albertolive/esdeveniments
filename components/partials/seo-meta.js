@@ -8,7 +8,7 @@ const Meta = (props) => {
     ? props.imageUploaded
     : props.image
     ? siteUrl + props.image
-    : `${siteUrl}/static/images/banners/cultura-cardedeu-banner-${getRandomImage}.jpeg`;
+    : `${siteUrl}/static/images/logo-esdeveniments-fonsclar.png`; // Improve with a proper default image
 
   return (
     <Head>
@@ -57,7 +57,7 @@ const Meta = (props) => {
       <meta name="twitter:image:src" content={image} />
       <meta
         name="google-site-verification"
-        content="ujWqRwOYsTEmYofWVJcDeMp54QW4PGivj2yUaBRevls"
+        content={process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION}
       />
       <link rel="icon" type="image/png" href="/favicon.ico" />
       <link rel="apple-touch-icon" href="/favicon.ico" />

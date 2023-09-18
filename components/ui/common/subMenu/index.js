@@ -15,11 +15,12 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
 });
 
 const RenderButton = ({ value, label, goTo, byDate }) => {
-  const isActiveLink = byDate === value ? "bg-[#ECB84A]" : "bg-gray-800";
+  const isActiveLink =
+    byDate === value ? "bg-primary text-whiteCorp border-0" : "bg-whiteCorp";
 
   return (
     <button
-      className={`relative inline-flex items-center px-4 mx-1 py-2 border border-transparent shadow-md text-sm font-medium rounded-md text-white ${isActiveLink} lg:hover:bg-yellow-400 focus:outline-none`}
+      className={`w-full relative inline-flex justify-center items-center py-2 px-8 border border-primarySoft font-normal rounded-xl ${isActiveLink} focus:outline-none`}
       type="button"
       onClick={() => goTo(value)}
     >
@@ -66,18 +67,18 @@ export default function SubMenu({
 
   return (
     <>
-      <div className="flex justify-center my-4 flex-col">
-        <div className="w-full p-2">
+      <div className="flex flex-col justify-center items-center my-4">
+        <div className="w-11/12 p-2">
           <Select
             id="options"
             options={regionsAndCitiesArray}
             value={selectedOption}
             onChange={handlePlaceChange}
             isClearable
-            placeholder="una opció"
+            placeholder="una localitat"
           />
         </div>
-        <div className="flex justify-center my-4">
+        {/* <div className="flex flex-col justify-center items-start gap-4 my-4">
           {BYDATES.map(({ value, label }) => (
             <RenderButton
               key={value}
@@ -87,7 +88,7 @@ export default function SubMenu({
               byDate={byDate}
             />
           ))}
-        </div>
+        </div> */}
       </div>
       <div className="min-h-[325px] lg:min-h-[100px]">
         <AdArticle slot="6387726014" />
