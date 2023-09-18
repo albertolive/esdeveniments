@@ -9,6 +9,7 @@ import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import ArrowDownIcon from "@heroicons/react/outline/ArrowDownIcon";
 import ArrowUpIcon from "@heroicons/react/outline/ArrowUpIcon";
+import { siteUrl } from "@config/index";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -163,7 +164,12 @@ export default function Event(props) {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id, title, reason: reasonToDelete }),
+      body: JSON.stringify({
+        id,
+        title,
+        reason: reasonToDelete,
+        isProduction: process.env.NODE_ENV === "production",
+      }),
     });
 
     const { success } = await rawResponse.json();
@@ -225,7 +231,7 @@ export default function Event(props) {
           `${title} - ${nameDay} ${formattedStart} - ${location}`,
           description
         )}
-        canonical={`https://www.esdeveniments.cat/${slug}`}
+        canonical={`${siteUrl}/e/${slug}`}
         imageUploaded={imageUploaded || eventImage}
         preload="/static/images/gMaps.webp"
       />

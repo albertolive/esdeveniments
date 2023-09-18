@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Meta from "@components/partials/seo-meta";
 import Image from "next/image";
+import { siteUrl } from "@config/index";
 
 export default function QuiSom() {
   return (
@@ -8,10 +9,15 @@ export default function QuiSom() {
       <Meta
         title="Qui som - Esdeveniments.cat"
         description="Qui som? - Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a Catalunya."
-        canonical="https://www.esdeveniments.com/qui-som"
+        canonical={`${siteUrl}/qui-som`}
       />
-      <div className="relative py-16 bg-white overflow-hidden">
-        <div className="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
+      <div
+        className="max-w-full h-full mx-0 px-4 flex flex-col gap-16 
+        sm:px-0 sm:max-w-[576px]
+        md:px-10 md:max-w-[768px] 
+        lg:px-20 lg:max-w-[1024px]"
+      >
+        {/* <div className="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
           <div
             className="relative h-full text-lg max-w-prose mx-auto"
             aria-hidden="true"
@@ -113,81 +119,33 @@ export default function QuiSom() {
               />
             </svg>
           </div>
-        </div>
-        <div className="relative px-4 sm:px-6 lg:px-8">
-          <div className="text-lg max-w-prose mx-auto">
-            <h1>
-              <span className="block text-base text-center text-[#ECB84A] font-semibold tracking-wide uppercase">
-                Qui som?
-              </span>
-              <span className="mt-2 block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Esdeveniments.cat
-              </span>
+        </div> */}
+        <div className="w-full flex flex-col gap-4">
+          <div clas>
+            <h1 className="text-center text-primary italic uppercase font-semibold">
+              Qui som?
             </h1>
-            <p className="mt-8 prose prose-lg text-gray-500 leading-8">
-              Esdeveniments.cat és una iniciativa ciutadana per veure en un cop
-              d&apos;ull tots els actes culturals que es fan a tot arreu.
-            </p>
+            <h2 className="text-center text-blackCorp italic uppercase font-medium">
+              Esdeveniments
+            </h2>
           </div>
-          <div className="mt-6 prose prose-lg text-gray-500 mx-auto">
-            <p>
-              L&apos;agenda és col·laborativa, i cada persona que organitzi un
-              acte cultural podrà publicar-lo{" "}
-              <Link href="/publica" prefetch={false}>
-                <a className="font-medium text-black underline">aquí</a>
-              </Link>{" "}
-              pel seu compte.
-            </p>
-            <p className="mt-6 prose prose-lg text-gray-500 mx-auto">
-              Podreu seguir l&apos;agenda cultural en aquesta pàgina web i/o:
-            </p>
-            <ul role="list">
-              <div>
-                <span>🐦 Twitter: </span>
-                <a
-                  className="text-[#ECB84A]"
-                  href="https://twitter.com/esdeveniments"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  https://twitter.com/esdeveniments
-                </a>
-              </div>
-              <div>
-                <span>ғ Facebook: </span>
-                <a
-                  className="text-[#ECB84A]"
-                  href="https://www.facebook.com/agendaesdeveniments/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  https://www.facebook.com/agendaesdeveniments/
-                </a>
-              </div>
-              <div>
-                <span>ᴛ Telegram: </span>
-                <a
-                  className="text-[#ECB84A]"
-                  href="https://t.me/esdeveniments"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  https://t.me/esdeveniments
-                </a>
-              </div>
-              <div>
-                <span>📷 Instagram: </span>
-                <a
-                  className="text-[#ECB84A]"
-                  href="https://www.instagram.com/esdeveniments/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  https://www.instagram.com/esdeveniments/
-                </a>
-              </div>
-            </ul>
-          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <p className="">
+            Esdeveniments.cat és una iniciativa ciutadana per veure en un cop
+            d&apos;ull tots els actes culturals que es fan a tot arreu.
+          </p>
+          <p>
+            L&apos;agenda és col·laborativa, i cada persona que organitzi un
+            acte cultural podrà publicar-lo{" "}
+            <Link href="/publica" prefetch={false}>
+              <a className="italic uppercase font-barlow font-semibold text-primary underline">aquí</a>
+            </Link>{" "}
+            pel seu compte.
+          </p>
+          <p className="">
+            Podreu seguir l&apos;agenda cultural en aquesta pàgina web o seguir-nos a les xarxes socials:
+          </p>
         </div>
       </div>
     </>

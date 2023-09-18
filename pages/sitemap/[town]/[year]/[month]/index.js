@@ -4,6 +4,7 @@ import { generateJsonData } from "@utils/helpers";
 import Meta from "@components/partials/seo-meta";
 import Link from "next/link";
 import { MONTHS_URL } from "@utils/constants";
+import { siteUrl } from "@config/index";
 
 export default function Month({ events, town }) {
   const { query } = useRouter();
@@ -25,7 +26,7 @@ export default function Month({ events, town }) {
       <Meta
         title={`Arxiu del ${month} del ${year} - Esdeveniments.cat`}
         description={`Descobreix què va passar a ${town} el ${month} del ${year}. Teatre, cinema, música, art i altres excuses per no parar de descobrir ${town} - Arxiu - Esdeveniments.cat`}
-        canonical={`https://www.esdeveniments.cat/sitemap/${year}/${month}`}
+        canonical={`${siteUrl}/sitemap/${year}/${month}`}
       />
       <div className="reset-this mb-2">
         <h1>

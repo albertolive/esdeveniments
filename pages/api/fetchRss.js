@@ -5,6 +5,8 @@ import * as cheerio from "cheerio";
 import Bottleneck from "bottleneck";
 import { CITIES_DATA } from "@utils/constants";
 
+const disableInserting = false;
+
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
 const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
@@ -25,6 +27,11 @@ const PROCESSED_ITEMS_KEY = "processedItems";
 const RSS_FEED_CACHE_KEY = "rssFeedCache";
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
 const RSS_FEED_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
+const env =
+  process.env.NODE_ENV !== "production" &&
+  process.env.VERCEL_ENV !== "production"
+    ? "dev"
+    : "prod";
 
 // Custom error class for RSS feed errors
 class RSSFeedError extends Error {
@@ -48,7 +55,7 @@ function isCacheValid(cachedData) {
 async function fetchRSSFeed(rssFeed, town) {
   try {
     // Check if the data is cached
-    const cachedData = await kv.get(`${town}_${RSS_FEED_CACHE_KEY}`);
+    const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
 
     if (isCacheValid(cachedData)) {
       console.log(`Returning cached data for ${town}`);
@@ -81,7 +88,7 @@ async function fetchRSSFeed(rssFeed, town) {
 
     // Cache the data
     try {
-      await kv.set(`${town}_${RSS_FEED_CACHE_KEY}`, {
+      await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
         timestamp: Date.now(),
         data,
       });
@@ -102,7 +109,7 @@ async function fetchRSSFeed(rssFeed, town) {
 async function getProcessedItems(town) {
   let processedItems;
   try {
-    processedItems = await kv.get(`${town}_${PROCESSED_ITEMS_KEY}`);
+    processedItems = await kv.get(`${env}_${town}_${PROCESSED_ITEMS_KEY}`);
   } catch (err) {
     console.error(`An error occurred while getting processed items: ${err}`);
     throw new Error(`Failed to get processed items: ${err}`);
@@ -113,7 +120,7 @@ async function getProcessedItems(town) {
 async function setProcessedItems(processedItems, town) {
   try {
     console.log(`Setting processed items for ${town}`);
-    await kv.set(`${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
+    await kv.set(`${env}_${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
   } catch (err) {
     console.error(`An error occurred while setting processed items: ${err}`);
     throw new Error(`Failed to set processed items: ${err}`);
@@ -146,6 +153,12 @@ async function cleanProcessedItems(processedItems, town) {
   await setProcessedItems(processedItems, town);
 }
 
+const hasEventImage = (description) => {
+  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
+  const hasEventImage = description && description.match(regex);
+  return hasEventImage && hasEventImage[0];
+};
+
 function replaceImageUrl(imageUrl, baseUrl) {
   if (imageUrl) {
     imageUrl = imageUrl.replace(/src="\/media/g, `src="${baseUrl}/media`);
@@ -173,6 +186,7 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
     const description =
       $(descriptionSelector).html()?.trim() ||
       "Cap descripció. Afegeix-ne una!";
+
     let image = $(imageSelector).prop("outerHTML")?.trim();
 
     // Remove styles and classes from the image
@@ -182,6 +196,9 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
       $img("*").removeAttr("class");
       image = $img("a").prop("outerHTML");
       image = replaceImageUrl(image, getBaseUrl(url));
+    } else {
+      image = hasEventImage(description);
+      image = `<a href="${image}">${image}</a>`;
     }
 
     const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
@@ -219,19 +236,27 @@ async function scrapeLocation(url, location, locationSelector) {
     const html = await response.text();
     const $ = cheerio.load(html);
 
-    const locationElement = $(locationSelector)
-      .find("p, span")
-      .map((_, el) => $(el).text())
-      .get()
-      .join(" ");
-    const locationFromHtml =
-      locationElement && getLocationFromHtml(locationElement);
+    // TODO: Make it more generic. Now it works for La Garriga
+    let locationElement = $(locationSelector).find("p").first().text();
 
-    return locationFromHtml && locationFromHtml[0]
-      ? locationFromHtml[0].trim()
-      : location;
+    // If locationElement is an array, take the first element and split it if it's too long
+    if (Array.isArray(locationElement)) {
+      locationElement = locationElement.map((item) => {
+        if (item.length > 100) {
+          return item.split(",")[0];
+        }
+        return item;
+      })[0];
+    }
+
+    // If the location is too long, split it at the first comma
+    if (locationElement && locationElement.length > 100) {
+      locationElement = locationElement.split(",")[0];
+    }
+
+    return locationElement ? locationElement.trim() : location;
   } catch (error) {
-    console.error("Error occurred during scraping locataion:", url);
+    console.error("Error occurred during scraping location:", url);
     throw error;
   }
 }
@@ -247,7 +272,15 @@ async function insertItemToCalendar(
   processedItems
 ) {
   if (!item) return;
-  const { pubDate, title, link, guid, location = "" } = item || {};
+  const {
+    pubDate,
+    title,
+    link,
+    guid,
+    location = "",
+    "content:encoded": locationExtra,
+  } = item || {};
+
   const dateTime = new Date(pubDate);
   const endDateTime = new Date(dateTime);
   endDateTime.setHours(endDateTime.getHours() + 1);
@@ -257,7 +290,7 @@ async function insertItemToCalendar(
 
   const scrapedLocation = await scrapeLocation(
     link,
-    location,
+    location || locationExtra,
     locationSelector
   );
 
@@ -278,25 +311,29 @@ async function insertItemToCalendar(
   };
 
   try {
-    const authToken = await auth.getClient();
+    if (!disableInserting) {
+      const authToken = await auth.getClient();
 
-    await calendar.events.insert({
-      auth: authToken,
-      calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
-      resource: event,
-    });
+      await calendar.events.insert({
+        auth: authToken,
+        calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
+        resource: event,
+      });
 
-    console.log("Inserted new item successfully: " + title);
+      console.log("Inserted new item successfully: " + title);
 
-    const now = Date.now();
-    processedItems.set(guid, now);
-    await setProcessedItems(processedItems, town); // Save the processed item immediately
-    console.log(`Added item ${guid} to processed items`);
-    return;
+      const now = Date.now();
+      processedItems.set(guid, now);
+      await setProcessedItems(processedItems, town); // Save the processed item immediately
+      console.log(`Added item ${guid} to processed items`);
+      return;
+    }
   } catch (error) {
     console.error("Error inserting item to calendar:", error);
     throw error;
   }
+
+  return;
 }
 
 async function insertItemToCalendarWithRetry(
@@ -383,11 +420,17 @@ export default async function handler(req, res) {
     const items = await fetchRSSFeed(rssFeed, town);
 
     // Read the database
-    const processedItems = await getProcessedItems(town);
-    await cleanProcessedItems(processedItems, town);
+    let processedItems = new Map();
+
+    if (!disableInserting) {
+      processedItems = await getProcessedItems(town);
+      await cleanProcessedItems(processedItems, town);
+    }
 
     // Filter out already fetched items
-    const newItems = items.filter((item) => !processedItems.has(item.guid));
+    const newItems = disableInserting
+      ? items
+      : items.filter((item) => !processedItems.has(item.guid));
 
     // If no new items, log a message
     if (newItems.length === 0) {

@@ -1,25 +1,53 @@
-import { useState } from "react";
-import Image from "next/image";
-import defaultImage from "@public/static/images/locations/cardedeu/1.jpeg";
+import { useState, useEffect } from "react";
+import NextImage from "next/image";
 import Head from "next/head";
+import ImgDefault from "@components/ui/imgDefault";
+
+const useImage = (url) => {
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (url) {
+      const img = new Image();
+      img.src = url;
+      img.onerror = () => {
+        setError(true);
+      };
+    } else {
+      setError(true);
+    }
+  }, [url]);
+
+  return { error };
+};
 
 export default function ImageComponent({
   title,
-  image = defaultImage,
-  width = 200,
-  height = 230,
-  className = "",
+  date,
+  location,
+  image,
+  width = "100%",
+  height = "100%",
+  className = "max-h-[100%] max-w-[100%]",
   layout = "responsive",
 }) {
-  const [src, setSrc] = useState(image);
-  const [error, setError] = useState(false);
+  const { error } = useImage(image);
 
-  const onError = () => {
-    setError(true);
-    setSrc(defaultImage);
-  };
+  const imageClassName = `${className}`;
 
-  if (error) return null;
+  const srcSet = `${image} 1200w,
+                  ${image}?w=200 200w,
+                  ${image}?w=400 400w, 
+                  ${image}?w=800 800w, 
+                  ${image}?w=1024 1024w`;
+
+  if (error || !image) {
+    return (
+      <div className={imageClassName}>
+        <ImgDefault title={title} date={date} location={location} />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -29,29 +57,21 @@ export default function ImageComponent({
           href={image}
           as="image"
           crossOrigin="true"
-          imageSrcSet={`${image} 1200w,
-     ${image}?w=200 200w, 
-     ${image}?w=400 400w, 
-     ${image}?w=800 800w, 
-     ${image}?w=1024 1024w`}
+          imagesrcset={srcSet}
+          imagesizes="100vw"
         />
       </Head>
-      <div className={`flex-1 h-full next-image-wrapper ${className}`}>
-        <Image
-          className="object-cover"
-          src={src}
-          srcSet={`${src} 1200w, 
-             ${src}?w=200 200w,
-             ${src}?w=400 400w, 
-             ${src}?w=800 800w, 
-             ${src}?w=1024 1024w`}
+      <div className={imageClassName}>
+        <NextImage
+          className="object-contain"
+          src={image}
+          srcSet={srcSet}
           layout={layout}
           width={width}
           height={height}
           alt={title}
-          placeholder="blur"
-          blurDataURL="/static/images/blur.png"
-          onError={onError}
+          placeholder="empty"
+          blurDataURL="public/static/images/imago-esdeveniments-fonsclar.png"
         />
       </div>
     </>

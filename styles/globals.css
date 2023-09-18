@@ -4,7 +4,7 @@
 
 html,
 body {
-  height: 100%;
+  height: 100vh;
   margin: 0;
   padding: 0;
   text-rendering: optimizeLegibility;
@@ -12,6 +12,26 @@ body {
   -moz-font-smoothing: antialiased;
   -o-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @import url("https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100;8..144,200;8..144,300;8..144,400;8..144,500;8..144,600;8..144,700;8..144,800;8..144,900;8..144,1000&display=swap");
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #454545;
+  letter-spacing: 0.038rem;
+  line-height: 1.2rem;
+}
+h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.05rem;
+  line-height: 2.1rem;
+}
+
+h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.38rem;
+  letter-spacing: 0.05rem;
+  line-height: 1.62rem;
 }
 
 #map {
@@ -39,21 +59,21 @@ body {
 }
 
 .ql-toolbar {
-  -webkit-border-top-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
-  -moz-border-radius-topleft: 6px;
-  -moz-border-radius-topright: 6px;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
+  -webkit-border-top-left-radius: 12px;
+  -webkit-border-top-right-radius: 12px;
+  -moz-border-radius-topleft: 12px;
+  -moz-border-radius-topright: 12px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 .ql-container {
-  -webkit-border-bottom-right-radius: 6px;
-  -webkit-border-bottom-left-radius: 6px;
-  -moz-border-radius-bottomright: 6px;
-  -moz-border-radius-bottomleft: 6px;
-  border-bottom-right-radius: 6px;
-  border-bottom-left-radius: 6px;
+  -webkit-border-bottom-right-radius: 12px;
+  -webkit-border-bottom-left-radius: 12px;
+  -moz-border-radius-bottomright: 12px;
+  -moz-border-radius-bottomleft: 12px;
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 12px;
 }
 
 [type="text"]:focus {

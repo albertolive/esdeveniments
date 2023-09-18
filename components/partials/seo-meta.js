@@ -1,6 +1,5 @@
 import Head from "next/head";
-
-const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
+import { siteUrl } from "@config/index";
 
 const getRandomImage = Math.floor(Math.random() * 9);
 
@@ -9,13 +8,16 @@ const Meta = (props) => {
     ? props.imageUploaded
     : props.image
     ? siteUrl + props.image
-    : `${siteUrl}/static/images/banners/cultura-cardedeu-banner-${getRandomImage}.jpeg`;
+    : `${siteUrl}/static/images/logo-esdeveniments-fonsclar.png`; // Improve with a proper default image
 
   return (
     <Head>
       <title>{props.title}</title>
       <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"
+      />
       <meta
         name="robots"
         content={
@@ -55,7 +57,7 @@ const Meta = (props) => {
       <meta name="twitter:image:src" content={image} />
       <meta
         name="google-site-verification"
-        content="ujWqRwOYsTEmYofWVJcDeMp54QW4PGivj2yUaBRevls"
+        content={process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION}
       />
       <link rel="icon" type="image/png" href="/favicon.ico" />
       <link rel="apple-touch-icon" href="/favicon.ico" />

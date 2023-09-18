@@ -1,21 +1,46 @@
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
-import PlusSmIcon from "@heroicons/react/solid/PlusSmIcon";
-import SearchIcon from "@heroicons/react/solid/SearchIcon";
+import PlusSmIcon from "@heroicons/react/outline/PlusSmIcon";
+import HomeIcon from "@heroicons/react/outline/HomeIcon";
+import InformationCircleIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
-import logo from "@public/static/images/logo-cultura-cardedeu.png";
+import logo from "@public/static/images/logo-esdeveniments-fonsclar.png";
 import { useRouter } from "next/router";
 
 const navigation = [
   { name: "Agenda", href: "/", current: true },
   { name: "Qui som", href: "/qui-som", current: false },
-  { name: "Arxiu", href: "/sitemap", current: false },
+  { name: "Publicar", href: "/publica", current: true },
 ];
 
 export default function Navbar() {
+  const [hasShadow, setHasShadow] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setHasShadow(true);
+      } else {
+        setHasShadow(false);
+      }
+    };
+
+    // Run the function once to handle the initial scroll position
+    handleScroll();
+
+    // Add the event listener when the component mounts
+    window.addEventListener("scroll", handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); // Empty dependency array means this effect runs once on mount and cleanup on unmount
 
   const navigateToMainPage = () => {
     localStorage.removeItem("place");
@@ -34,85 +59,125 @@ export default function Navbar() {
   };
 
   const handleLogoClick = () => {
-    navigateToMainPage();
-    reloadPage();
+    // navigateToMainPage();
+    // reloadPage();
   };
 
   return (
-    <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50">
+    <Disclosure
+      as="nav"
+      className={`navbar bg-whiteCorp sticky top-0 z-50 ${
+        hasShadow
+          ? "shadow-lg shadow-darkCorp transition-all ease-in-out duration-300"
+          : ""
+      }`}
+    >
       {({ open }) => (
         <>
-          <div className="mx-auto px-4 sm:px-6 lg:px-6">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <div className="-ml-2 mr-2 flex items-center md:hidden">
-                  {/* Mobile menu button */}
-                  <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none">
-                    <span className="sr-only">Obrir menú principal</span>
-                    {open ? (
-                      <XIcon className="block h-6 w-6" aria-hidden="true" />
-                    ) : (
-                      <MenuIcon className="block h-6 w-6" aria-hidden="true" />
-                    )}
-                  </Disclosure.Button>
-                </div>
-                <div className="flex items-center">
-                  <ActiveLink href="/">
-                    <a className="flex" onClick={handleLogoClick}>
+          <div className="bg-whiteCorp mx-auto h-24
+          px-0 py-4
+          lg:max-w-[1024px]
+          xl:max-w-[1280px]">
+            <div className="flex flex-col justify-center h-full">
+              {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
+              <div className="h-[36px] flex justify-around items-center px-4">
+                {/* Logo */}
+                <div
+                  className="flex w-full md:w-1/2 justify-start items-center py-2 px-4 cursor-pointer"
+                  onClick={handleLogoClick}
+                >
+                  <Link href="/">
+                    <a>
                       <Image
                         src={logo}
-                        className="block h-8 cursor-pointer"
+                        className="block cursor-pointer bg-whiteCorp py-2 px-4"
                         alt="Logo Esdeveniments.cat"
-                        width={120}
-                        height={60}
+                        width={187}
+                        height={24}
                         layout="fixed"
                         priority
                       />
                     </a>
-                  </ActiveLink>
+                  </Link>
+                </div>
+                {/* MenuIcon */}
+                <div className="flex items-center md:hidden">
+                  <Disclosure.Button className="inline-flex items-center justify-center py-2 px-4 rounded-full focus:outline-none">
+                    {/* <span className="sr-only">Obrir menú principal</span> */}
+                    {open ? (
+                      <XIcon className="h-6 w-6" aria-hidden="true"
+                      />
+                    ) : (
+                      <MenuIcon className="h-6 w-6" aria-hidden="true" />
+                    )}
+                  </Disclosure.Button>
+                </div>
+                {/* LaptopMenu */}
+                <div className="md:w-1/2 flex justify-end items-center">
+                  <div className="hidden md:flex md:items-center gap-x-4">
+                    {navigation.map((item) => (
+                      <ActiveLink
+                        href={item.href}
+                        key={item.name}
+                        className="focus:outline-none cursor-pointer"
+                      >
+                        <a className="text-center text-base font-semibold px-4 w-24 font-barlow italic uppercase">{item.name}</a>
+                      </ActiveLink>
+                    ))}
+                  </div>
                 </div>
               </div>
-
-              <div className="flex items-center">
-                <div className="hidden md:flex md:items-center text-white">
-                  {navigation.map((item) => (
-                    <ActiveLink href={item.href} key={item.name}>
-                      <a className="font-medium mr-4 hover:text-stone-200">
-                        {item.name}
-                      </a>
-                    </ActiveLink>
-                  ))}
-                </div>
-                <div className="flex-shrink-0 cursor-pointer">
-                  <ActiveLink href="/cerca">
-                    <SearchIcon className="-ml-1 mr-6 h-6 w-6 text-white" />
-                  </ActiveLink>
-                </div>
-                <div className="flex-shrink-0">
-                  <ActiveLink href="/publica">
+              {/* SecondBar - Search&Share&MenuIcon */}
+              <div className="fixed h-content bottom-0 left-0 right-0 py-4 px-4 bg-whiteCorp flex justify-evenly items-center gap-x-16
+              md:hidden
+              ">
+                {/* Home */}
+                <div className="flex justify-center items-center rounded-xl cursor-pointer" onClick={handleLogoClick}>
+                  <ActiveLink href="/">
                     <button
                       type="button"
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-[#ECB84A] hover:bg-yellow-400 focus:outline-none"
+                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl border border-darkCorp"
                     >
-                      <PlusSmIcon
-                        className="-ml-1 mr-2 h-5 w-5 text-white"
-                        aria-hidden="true"
-                      />
-                      <span className="text-white">Publica</span>
+                      <HomeIcon className="h-6 w-6" />
                     </button>
                   </ActiveLink>
                 </div>
+                
+
+                {/* Share */}
+                <div className="flex justify-center items-center rounded-xl cursor-pointer">
+                  <ActiveLink href="/publica">
+                    <button
+                      type="button"
+                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl border border-darkCorp"
+                    >
+                      <PlusSmIcon className="h-6 w-6" aria-hidden="true" />
+                      <span className="hidden sm:visible">Publica</span>
+                    </button>
+                  </ActiveLink>
+                </div>
+
+                {/* WhoAreWe */}
+                <div className="flex justify-center items-center rounded-xl cursor-pointer">
+                  <ActiveLink href="/qui-som">
+                    <button
+                      type="button"
+                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl border border-darkCorp"
+                    >
+                      <InformationCircleIcon className="h-6 w-6" />
+                    </button>
+                  </ActiveLink>
+                </div>
+
               </div>
             </div>
           </div>
-
+          {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <div className="h-56 flex flex-col justify-center items-center gap-4 px-4 pb-6 pt-2 bg-whiteCorp">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
-                  <a className="font-medium mr-4 text-white hover:text-stone-200">
-                    {item.name}
-                  </a>
+                  <a className="flex justify-center items-center font-semibold px-6 py-2 font-barlow italic uppercase">{item.name}</a>
                 </ActiveLink>
               ))}
             </div>

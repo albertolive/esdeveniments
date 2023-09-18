@@ -1,9 +1,9 @@
+import { siteUrl } from "@config/index";
 import { monthsName } from "@utils/helpers";
 import { addArticleToMonth, fixArticles } from "@utils/normalize";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
 import Link from "next/link";
 
-const siteUrl = process.env.NEXT_PUBLIC_DOMAIN_URL;
 const month = monthsName[new Date().getMonth()];
 const normalizedMonth = addArticleToMonth(month);
 
@@ -14,7 +14,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
     return {
       title: `Agenda ${currentYear}`,
       subTitle: `Viu aquest ${month} com mai amb les millors activitats de la temporada: mercats, exposicions, descobriments, passejades, concerts, museus, teatre... 
-     No et quedis sense provar tots aquests plans imprescindibles per aprofitar-lo al màxim!`,
+      No et quedis sense provar tots aquests plans imprescindibles per aprofitar-lo al màxim!`,
       description:
         "Vols viure experiències úniques i emocionants? La cultura és el lloc on cal estar! Us oferim una gran varietat d'opcions perquè mai us avorriu i sempre tingueu alguna cosa interessant per fer. Descobriu tot el que passa a Catalunya i voltants, i deixeu-vos sorprendre per la seva riquesa cultural.",
       metaTitle: `Agenda ${currentYear} - Esdeveniments.cat`,

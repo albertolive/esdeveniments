@@ -1,3 +1,5 @@
+import { siteUrl } from "@config/index";
+
 export const DAYS = [
   "Diumenge",
   "Dilluns",
@@ -71,10 +73,10 @@ export const CITIES_DATA = new Map([
           "cardedeu",
           {
             label: "Cardedeu",
-            rssFeed: "https://www.cardedeu.cat/rss/12/0",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
-            locationSelector: "ddbbtext",
+            rssFeed: "https://www.culturacardedeu.com/rss.xml",
+            descriptionSelector: "#description",
+            imageSelector: "#image",
+            locationSelector: "#location a",
             postalCode: "08440",
           },
         ],
@@ -133,7 +135,7 @@ export const CITIES_DATA = new Map([
           "granollers",
           {
             label: "Granollers",
-            rssFeed: `${process.env.NEXT_PUBLIC_DOMAIN_URL}/api/scrapeEvents?city=granollers`,
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=granollers`,
             descriptionSelector: ".body-text",
             imageSelector: ".foto a",
             postalCode: "08400",

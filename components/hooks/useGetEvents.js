@@ -1,8 +1,9 @@
+import { siteUrl } from "@config/index";
 import useSWR, { preload } from "swr";
 
 const fetcher = ([url, pageIndex, q, maxResults]) =>
   fetch(
-    `${process.env.NEXT_PUBLIC_DOMAIN_URL}${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}`
+    `${siteUrl}${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}`
   ).then((res) => res.json());
 
 export const useGetEvents = ({

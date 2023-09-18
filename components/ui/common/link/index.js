@@ -8,7 +8,7 @@ export default function ActiveLink({ children, activeLinkClass, ...props }) {
 
   if (pathname === props.href)
     className = `${
-      activeLinkClass ? activeLinkClass : "text-[#ECB84A]"
+      activeLinkClass ? activeLinkClass : "text-whiteCorp bg-primary rounded-xl py-2 px-2 ease-in-out duration-200 border border-whiteCorp"
     } ${className}`;
 
   return (

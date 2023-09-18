@@ -6,11 +6,21 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    screens: {
-      xs: "475px",
-      ...defaultTheme.screens,
+    fontFamily: {
+      'roboto': 'Roboto',
+      'barlow': 'Barlow Condensed',
     },
+    screens: {
+        xs: "360px",
+        sm: "576px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+      },
     extend: {
+      boxShadow: {
+        'lg': '0px 5px 50px 0px rgba(241, 241, 241, 0.05)',
+      },
       flex: {
         2: "2 2 0%",
         3: "3 3 0%",
@@ -20,9 +30,14 @@ module.exports = {
         "8xl": "1920px",
       },
     },
-    // colors: {
-    //   cultura: "#ECB84A",
-    // },
+    colors: {
+      primary: "#FF0037",
+      primarySoft: "#FF4D73",
+      whiteCorp: "#ffffff",
+      darkCorp: "#E8E8E8",
+      blackCorp: "#454545",
+      bColor: "#cccccc",
+    },
   },
   variants: {
     extend: {

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
+import PlusSmIcon from "@heroicons/react/outline/PlusSmIcon";
 
 export default function ImageUploader({ value, onUpload, progress }) {
   const fileSelect = useRef(null);
@@ -40,16 +41,16 @@ export default function ImageUploader({ value, onUpload, progress }) {
   };
 
   return (
-    <div className="sm:col-span-6">
+    <div className="text-blackCorp">
       <label
         htmlFor="first-name"
-        className="block text-sm font-medium text-gray-700"
+        className="text-blackCorp"
       >
         Imatge *
       </label>
 
       <div
-        className={`mt-1 border-2 border-dashed rounded-lg p-2 cursor-pointer ${
+        className={`m-2 p-4 border border-bColor rounded-lg cursor-pointer ${
           dragOver ? "border-green-600" : "border-gray-300"
         }`}
         onDragOver={(e) => {
@@ -62,17 +63,17 @@ export default function ImageUploader({ value, onUpload, progress }) {
       >
         <form className="flex justify-center items-center h-full">
           {progress === 0 ? (
-            <div className="text-gray-700 text-center">
+            <div className="text-center">
               <button
-                className="bg-gray-800 hover:bg-[#ECB84A] text-white font-bold px-4 py-2 rounded block m-auto"
+                className="bg-whiteCorp hover:bg-primary font-bold px-2 py-2 rounded-xl"
                 onClick={handleImageUpload}
                 type="button"
               >
-                Navega
+                <PlusSmIcon className="w-6 h-6 text-blackCorp hover:text-whiteCorp" />
               </button>
             </div>
           ) : (
-            <span className="text-gray-700">{progress}%</span>
+            <span className="text-blackCorp">{progress}%</span>
           )}
 
           <input
@@ -85,21 +86,14 @@ export default function ImageUploader({ value, onUpload, progress }) {
         </form>
       </div>
       {imgData && (
-        <div className="next-image-wrapper mt-2 relative">
-          <Image
-            alt="Imatge"
-            height="100"
-            width="150"
-            className="object-contain rounded-lg"
-            src={imgData}
-          />
+        <div className="flex justigy-center items-start p-4">
           <button
             onClick={() => setImgData(null)}
-            className="absolute top-0 left-0  bg-white rounded-full p-1 hover:bg-red-500"
+            className=" bg-white rounded-full p-1 hover:bg-red-500"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 text-red-500 hover:text-white"
+              className="h-6 w-6 text-blackCorp hover:text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -112,6 +106,13 @@ export default function ImageUploader({ value, onUpload, progress }) {
               />
             </svg>
           </button>
+          <Image
+            alt="Imatge"
+            height="100%"
+            width="100%"
+            className="object-contain"
+            src={imgData}
+          />
         </div>
       )}
     </div>
