@@ -202,11 +202,6 @@ export default function Events({ props, loadMore = true }) {
         byDate={byDate}
         setByDate={setByDate}
       />
-      <div>
-        {[...Array(10)].map((_, i) => (
-          <CardLoading key={i} />
-        ))}
-      </div>
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
       {isLoading && !isLoadingMore ? (
         <div>
