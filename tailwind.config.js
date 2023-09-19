@@ -6,6 +6,7 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    extend: {
     fontFamily: {
       'roboto': 'Roboto',
       'barlow': 'Barlow Condensed',
@@ -17,7 +18,15 @@ module.exports = {
         lg: "1024px",
         xl: "1280px",
       },
-    extend: {
+      animation: {
+        'fast-pulse': 'fast-pulse 900ms cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      keyframes: {
+        'fast-pulse': {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: .5 },
+        },
+      },
       boxShadow: {
         'lg': '0px 5px 50px 0px rgba(241, 241, 241, 0.05)',
       },
@@ -25,9 +34,6 @@ module.exports = {
         2: "2 2 0%",
         3: "3 3 0%",
         4: "4 4 0%",
-      },
-      maxWidth: {
-        "8xl": "1920px",
       },
     },
     colors: {

@@ -23,14 +23,14 @@ export default function ImgDefault({ title, date, location }) {
       style={{ background: background }}
     >
       <h1
-        className="drop-shadow text-[54px] leading-none tracking-wide font-black px-10 pt-14"
+        className="drop-shadow text-[54px] leading-none font-bold px-10 pt-14"
         aria-label={title}
       >
         {title}
       </h1>
       <div className="border-t-4 w-full mr-32"></div>
       <h2
-        className="drop-shadow text-[28px] font-medium px-10 pb-16 font-roboto"
+        className="drop-shadow text-[28px] px-10 pb-16 font-normal"
         aria-label={date}
       >
         {date}

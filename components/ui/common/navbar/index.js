@@ -8,7 +8,7 @@ import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import InformationCircleIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
-import logo from "@public/static/images/logo-esdeveniments-fonsclar.png";
+import logo from "@public/static/images/logo-esdeveniments-cat.png";
 import { useRouter } from "next/router";
 
 const navigation = [
@@ -92,7 +92,7 @@ export default function Navbar() {
                         src={logo}
                         className="block cursor-pointer bg-whiteCorp py-2 px-4"
                         alt="Logo Esdeveniments.cat"
-                        width={187}
+                        width={228}
                         height={24}
                         layout="fixed"
                         priority

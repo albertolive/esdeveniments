@@ -26,10 +26,7 @@ export default function ImageComponent({
   date,
   location,
   image,
-  width = "100%",
-  height = "100%",
-  className = "max-h-[100%] max-w-[100%]",
-  layout = "responsive",
+  className = "h-full",
 }) {
   const { error } = useImage(image);
 
@@ -61,14 +58,13 @@ export default function ImageComponent({
           imagesizes="100vw"
         />
       </Head>
-      <div className={imageClassName}>
+      <div className={imageClassName} style={{ position: 'relative', width: '100%', height: '60vh' }}>
         <NextImage
-          className="object-contain"
+          className="object-cover"
           src={image}
           srcSet={srcSet}
-          layout={layout}
-          width={width}
-          height={height}
+          layout="fill"
+          objectFit="contain"
           alt={title}
           placeholder="empty"
           blurDataURL="public/static/images/imago-esdeveniments-fonsclar.png"

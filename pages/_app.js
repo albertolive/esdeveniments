@@ -1,4 +1,5 @@
 import "@styles/globals.css";
+import "@styles/fonts.css";
 
 import { useEffect, useCallback, memo, Suspense } from "react";
 import Script from "next/script";

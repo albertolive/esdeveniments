@@ -178,7 +178,7 @@ export default function Events({ props, loadMore = true }) {
             <div className="mx-10 flex flex-col justify-center items-center
             lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
               <p
-                className="my-4 m-full text-center
+                className="my-4 w-full text-center
               md:text-left
               lg:w-1/2"
               >
@@ -186,7 +186,7 @@ export default function Events({ props, loadMore = true }) {
               </p>
               <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
               <p
-                className="my-4 m-full text-center
+                className="my-4 w-full text-center
               md:text-left
               lg:w-1/2"
               >
@@ -202,6 +202,11 @@ export default function Events({ props, loadMore = true }) {
         byDate={byDate}
         setByDate={setByDate}
       />
+      <div>
+        {[...Array(10)].map((_, i) => (
+          <CardLoading key={i} />
+        ))}
+      </div>
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
       {isLoading && !isLoadingMore ? (
         <div>

@@ -6,7 +6,6 @@ import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import { truncateString } from "@utils/helpers";
-import Imago from "@public/static/images/imago-esdeveniments-fonsclar.png";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -35,7 +34,7 @@ export default function Card({ event }) {
   return (
     <Link href={`/e/${event.slug}`} passHref prefetch={false}>
       <div
-        className="bg-whiteCorp overflow-hidden cursor-pointer mb-10
+        className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10
         md:border-t-0
         "
         onMouseEnter={handlePrefetch}
@@ -47,16 +46,6 @@ export default function Card({ event }) {
             className="h-1/2 border-l-[6px] border-primary px-0 mx-0
           sm:border-l-[10px]"
           >
-            {/* Revisar Albert. Em surt la imatge del component ImgDefault */}
-            {/* <Image
-              src={Imago}
-              className="block"
-              alt="Logo Esdeveniments.cat"
-              width={8}
-              height={11}
-              layout="responsive"
-              priority
-            /> */}
           </div>
           {/* Title */}
           <h2 className="w-10/12 uppercase font-semibold text-blackCorp italic text-[26px]">
