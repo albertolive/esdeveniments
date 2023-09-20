@@ -5,7 +5,7 @@ import * as cheerio from "cheerio";
 import Bottleneck from "bottleneck";
 import { CITIES_DATA } from "@utils/constants";
 
-const disableInserting = false;
+const enableInserting = true;
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -54,14 +54,15 @@ function isCacheValid(cachedData) {
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town) {
   try {
-    // Check if the data is cached
-    const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
+    if (enableInserting) {
+      // Check if the data is cached
+      const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
 
-    if (isCacheValid(cachedData)) {
-      console.log(`Returning cached data for ${town}`);
-      return cachedData.data;
+      if (isCacheValid(cachedData)) {
+        console.log(`Returning cached data for ${town}`);
+        return cachedData.data;
+      }
     }
-
     // Fetch the data
     const response = await axios.get(rssFeed);
 
@@ -153,12 +154,11 @@ async function cleanProcessedItems(processedItems, town) {
   await setProcessedItems(processedItems, town);
 }
 
-const hasEventImage = (description) => {
+const getEventImageUrl = (description) => {
   const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
-  const hasEventImage = description && description.match(regex);
-  return hasEventImage && hasEventImage[0];
+  const match = description && description.match(regex);
+  return match && match[0];
 };
-
 function replaceImageUrl(imageUrl, baseUrl) {
   if (imageUrl) {
     imageUrl = imageUrl.replace(/src="\/media/g, `src="${baseUrl}/media`);
@@ -187,18 +187,26 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
       $(descriptionSelector).html()?.trim() ||
       "Cap descripció. Afegeix-ne una!";
 
-    let image = $(imageSelector).prop("outerHTML")?.trim();
+    let rawImage = $(imageSelector).prop("outerHTML")?.trim();
+    let image;
+    const regex = /(https?:\/\/[^"\s]+)/g;
 
-    // Remove styles and classes from the image
-    if (image) {
-      let $img = cheerio.load(image);
-      $img("*").removeAttr("style");
-      $img("*").removeAttr("class");
-      image = $img("a").prop("outerHTML");
-      image = replaceImageUrl(image, getBaseUrl(url));
+    if (rawImage) {
+      let $img = cheerio.load(rawImage);
+      let img = $img("img");
+      img.removeAttr("style");
+      img.removeAttr("class");
+      let imgOuterHtml = $img("a").prop("outerHTML");
+      image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
     } else {
-      image = hasEventImage(description);
-      image = `<a href="${image}">${image}</a>`;
+      image = getEventImageUrl(description);
+    }
+
+    const result = image && image.match(regex);
+    image = result && result[0];
+
+    if (!image) {
+      console.error("No image URL found");
     }
 
     const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
@@ -311,7 +319,7 @@ async function insertItemToCalendar(
   };
 
   try {
-    if (!disableInserting) {
+    if (enableInserting) {
       const authToken = await auth.getClient();
 
       await calendar.events.insert({
@@ -327,6 +335,8 @@ async function insertItemToCalendar(
       await setProcessedItems(processedItems, town); // Save the processed item immediately
       console.log(`Added item ${guid} to processed items`);
       return;
+    } else {
+      console.log("event", event);
     }
   } catch (error) {
     console.error("Error inserting item to calendar:", error);
@@ -422,15 +432,15 @@ export default async function handler(req, res) {
     // Read the database
     let processedItems = new Map();
 
-    if (!disableInserting) {
+    if (enableInserting) {
       processedItems = await getProcessedItems(town);
       await cleanProcessedItems(processedItems, town);
     }
 
     // Filter out already fetched items
-    const newItems = disableInserting
-      ? items
-      : items.filter((item) => !processedItems.has(item.guid));
+    const newItems = enableInserting
+      ? items.filter((item) => !processedItems.has(item.guid))
+      : items;
 
     // If no new items, log a message
     if (newItems.length === 0) {
