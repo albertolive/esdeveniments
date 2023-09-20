@@ -45,9 +45,18 @@ export const normalizeWeather = (startDate, weatherInfo) => {
 };
 
 const hasEventImage = (description) => {
-  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG|PNG)/g;
-  const hasEventImage = description && description.match(regex);
-  return hasEventImage && hasEventImage[0];
+  const regexTraditional =
+    /(http(s?):)([\/|.|\w|\s|-])*\.(?!html|css|js)(?:jpg|jpeg|gif|png|JPG|PNG)/g;
+  const regexCloudinary = /https?:\/\/[^"<>]+(?=\/upload\/)/g;
+
+  const hasTraditionalImage =
+    description && description.match(regexTraditional);
+  const hasCloudinaryImage = description && description.match(regexCloudinary);
+
+  return (
+    (hasTraditionalImage && hasTraditionalImage[0]) ||
+    (hasCloudinaryImage && hasCloudinaryImage[0])
+  );
 };
 
 export const normalizeEvents = (event, weatherInfo) => {
