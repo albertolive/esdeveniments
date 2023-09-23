@@ -152,6 +152,12 @@ export default function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
+      <SubMenu
+        place={place}
+        setPlace={setPlace}
+        byDate={byDate}
+        setByDate={setByDate}
+      />
       <div className="p-2 flex flex-col justify-center items-center">
         <button
           onClick={toggleDropdown}
@@ -201,12 +207,6 @@ export default function Events({ props, loadMore = true }) {
           </div>
         )}
       </div>
-      <SubMenu
-        place={place}
-        setPlace={setPlace}
-        byDate={byDate}
-        setByDate={setByDate}
-      />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
       <List events={events}>
         {(event) => <Card key={event.id} event={event} isLoading={isLoading} />}
