@@ -32,12 +32,13 @@ export default function BaseLayout({ children }) {
       </Head>
       <Navbar />
       {/* <Notify /> */}
-      <div className="flex justify-center bg-whiteCorp mx-auto pb-18">
-        <div className="max-w-full mx-0 px-0 
+      <div className=" bg-whiteCorp mx-auto pb-18">
+        <div
+          className="max-w-full mx-0 px-0 
         sm:px-10 sm:max-w-[576px]
         md:px-20 md:max-w-[768px] 
-        lg:px-40 lg:max-w-[1024px]
-        ">
+        lg:px-40 lg:max-w-[1024px]"
+        >
           {memoizedChildren}
         </div>
       </div>

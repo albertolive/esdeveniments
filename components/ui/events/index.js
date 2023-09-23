@@ -6,7 +6,6 @@ import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
 import { generateJsonData, getPlaceTypeAndLabel } from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
-import CardLoading from "@components/ui/cardLoading";
 import { SubMenu } from "@components/ui/common";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
@@ -158,7 +157,11 @@ export default function Events({ props, loadMore = true }) {
           onClick={toggleDropdown}
           className={`w-11/12 p-3 flex justify-center items-center gap-4 font-semibold text-blackCorp focus:outline-none`}
         >
-          {open ? <p className="w-24 text-center tracking-wide">Tancar</p> : <p className="w-24 text-center tracking-wide">Informació</p>}
+          {open ? (
+            <p className="w-24 text-center tracking-wide">Tancar</p>
+          ) : (
+            <p className="w-24 text-center tracking-wide">Informació</p>
+          )}
           {open ? (
             <XIcon className="h-6 w-6" />
           ) : (
@@ -175,8 +178,10 @@ export default function Events({ props, loadMore = true }) {
                 {title}
               </h1>
             </div>
-            <div className="mx-10 flex flex-col justify-center items-center
-            lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
+            <div
+              className="mx-10 flex flex-col justify-center items-center
+            lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row"
+            >
               <p
                 className="my-4 w-full text-center
               md:text-left
@@ -203,17 +208,9 @@ export default function Events({ props, loadMore = true }) {
         setByDate={setByDate}
       />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
-      {isLoading && !isLoadingMore ? (
-        <div>
-          {[...Array(10)].map((_, i) => (
-            <CardLoading key={i} />
-          ))}
-        </div>
-      ) : (
-        <List events={events}>
-          {(event) => <Card key={event.id} event={event} />}
-        </List>
-      )}
+      <List events={events}>
+        {(event) => <Card key={event.id} event={event} isLoading={isLoading} />}
+      </List>
       {isLoadingMore && <LoadingSpinner />}
       {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
         <div className=" text-center py-10">

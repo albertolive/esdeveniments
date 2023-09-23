@@ -2,9 +2,7 @@ import React from "react";
 
 export default function CardLoading() {
   return (
-    <div
-      className="min-w-full flex flex-col content-center bg-whiteCorp mb-10"
-    >
+    <div className="min-w-full w-full flex flex-col content-center bg-whiteCorp mb-10">
       {/* Title */}
       <div className="bg-whiteCorp h-24 flex justify-between items-center gap-2 gap-x-4">
         <div
