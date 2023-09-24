@@ -304,7 +304,7 @@ export default function Event(props) {
                 </h1>
               </div>
               <div className="mt-6 space-y-10 min-h-[325px] lg:min-h-[100px] h-full">
-                <AdArticle slot="1256471228" />
+                <AdArticle slot="1510301521" />
               </div>
               <dl className="mt-6 space-y-10">
                 <div>
@@ -432,7 +432,7 @@ export default function Event(props) {
                 </dl>
               )}
               <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
-                <AdArticle slot="8822317665" />
+                <AdArticle slot="9643657007" />
               </div>
             </div>
           </div>

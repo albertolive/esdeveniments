@@ -91,7 +91,7 @@ export default function SubMenu({
         </div> */}
       </div>
       {/* <div className="min-h-[325px] lg:min-h-[100px]">
-        <AdArticle slot="6387726014" />
+        <AdArticle slot="6571056515" />
       </div> */}
     </>
   );
