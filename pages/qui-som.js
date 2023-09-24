@@ -17,7 +17,7 @@ export default function QuiSom() {
         lg:px-20 lg:max-w-[1024px]"
       >
         <div className="w-full flex flex-col gap-4">
-          <div className="pt-16">
+          <div className="w-full flex flex-col gap-4">
             <h1 className="text-center text-primary italic uppercase font-semibold">
               Qui som?
             </h1>
@@ -41,9 +41,7 @@ export default function QuiSom() {
               <a className="italic uppercase font-barlow font-semibold text-primary underline">
                 aquí
               </a>
-              <a className="italic uppercase font-barlow font-semibold text-primary underline">
-                aquí
-              </a>
+              
             </Link>{" "}
             pel seu compte.
           </p>

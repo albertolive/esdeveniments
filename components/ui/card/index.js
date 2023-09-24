@@ -85,11 +85,11 @@ export default function Card({ event, isLoading }) {
         {/* InfoEvent */}
         <div className="flex flex-col px-4 pt-8 gap-4">
           {/* Date */}
-          <h2 className="text-blackCorp font-roboto text-[21px] pl-1">
+          <h3 className="text-blackCorp text-[21px] pl-1">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}
-          </h2>
+          </h3>
           {/* Location */}
           <div className="flex items-start h-full">
             <div>

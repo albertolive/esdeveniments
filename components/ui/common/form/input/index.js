@@ -1,6 +1,6 @@
 export default function Input({ id, title, subtitle, value, onChange }) {
   return (
-    <div>
+    <div className="w-full">
       <label
         htmlFor="first-name"
         className="text-blackCorp"
@@ -9,7 +9,7 @@ export default function Input({ id, title, subtitle, value, onChange }) {
       </label>
       <div className="p-2">
         {subtitle ? (
-          <p>{subtitle}</p>
+          <p className="text-[12px] p-2">{subtitle}</p>
         ) : null}
         <input
           value={value}

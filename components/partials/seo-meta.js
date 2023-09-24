@@ -59,9 +59,9 @@ const Meta = (props) => {
         name="google-site-verification"
         content={process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION}
       />
-      <link rel="icon" type="image/png" href="/favicon.ico" />
-      <link rel="apple-touch-icon" href="/favicon.ico" />
-      <link rel="shortcut icon" href="/favicon.ico" />
+      <link rel="icon" type="image/png" href="/favicon.png" />
+      <link rel="apple-touch-icon" href="/favicon.png" />
+      <link rel="shortcut icon" href="/favicon.png" />
       {props.preload && (
         <link
           rel="prefetch"

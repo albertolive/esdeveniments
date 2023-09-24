@@ -284,157 +284,149 @@ export default function Event(props) {
       </nav> */}
       {/* General */}
       <div className="bg-whiteCorp">
-        <div className="w-full px-4 flex flex-col gap-4 justify-center items-center
+        <div
+          className="w-full px-4 flex flex-col gap-4 justify-center items-center
         sm:px-0 sm:max-w-[576px]
         md:px-10 md:max-w-[768px] 
-        lg:px-20 lg:max-w-[1024px]">
-            <div className="max-w-prose">
-              {isEventFinished && (
-                <div className="">
-                  <span className="font-bold text-black">
-                    Esdeveniment finalitzat
-                  </span>
-                </div>
-              )}
-              <div className="border-b border-gray-200">
-                <h2 className="font-bold text-[#ECB84A]">
-                  {formattedEnd
-                    ? `Del ${formattedStart} al ${formattedEnd}`
-                    : `${nameDay}, ${formattedStart}`}
-                </h2>
-                <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl break-words">
-                  {title}
-                </h1>
-              </div>
-              <div className="mt-6 space-y-10 min-h-[325px] lg:min-h-[100px] h-full">
-                <AdArticle slot="1510301521" />
-              </div>
-              <dl className="mt-6 space-y-10">
-                <div>
-                  <div className="flex items-center">
-                    <dt className="text-md font-bold text-gray-900">
-                      Descripció
-                    </dt>
-                    <div className="ml-auto">
-                      <button
-                        onClick={() => {
-                          setOpenModal(true);
-                          sendGoogleEvent("open-change-modal");
-                        }}
-                        type="button"
-                        className="relative inline-flex items-center px-4 py-2 border border-slate-200  text-xs font-medium rounded-full text-gray-800 bg-white hover:border-[#ECB84A] focus:outline-none"
-                      >
-                        <PencilIcon
-                          className="-ml-1 mr-2 h-5 w-5 text-[#ECB84A] text-xs"
-                          aria-hidden="true"
-                        />
-                        <span className="text-gray-800">Suggerir un canvi</span>
-                      </button>
-                    </div>
-                  </div>
-                  <Weather startDate={startDate} />
-                  <div className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500 break-words">
-                    <div
-                      dangerouslySetInnerHTML={{ __html: descriptionHTML }}
-                    />
-                  </div>
-                </div>
-              </dl>
-
-              {imageUploaded && (
-                <dl className="mt-6 space-y-10">
-                  <div className="sm:w-80 w-full">
-                    <div className="rounded-lg bg-gray-100 overflow-hidden">
-                      <a
-                        href={imageUploaded}
-                        className="pointer"
-                        target="_blank"
-                        rel="image_src noreferrer"
-                      >
-                        <Image
-                          alt={location}
-                          title={location}
-                          height={250}
-                          width={250}
-                          image={imageUploaded}
-                          className="w-full h-full object-center object-cover"
-                        />
-                      </a>
-                    </div>
-                  </div>
-                </dl>
-              )}
-
-              <dl className="mt-6 space-y-10">
-                <div>
-                  <dt className="text-md font-bold text-gray-900">Hora</dt>
-                  <dd className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500">
-                    {startTime} - {endTime}
-                  </dd>
-                </div>
-              </dl>
-
-              <dl className="mt-6 space-y-10">
-                <div>
-                  <dt className="text-md font-bold text-gray-900">Lloc</dt>
-                  <dd className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500">
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${location}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {location}
-                    </a>
-                  </dd>
-                </div>
-              </dl>
-              <div
-                className="flex items-center text-sm text-gray-500 cursor-pointer mt-2"
-                onClick={handleShowMap}
+        lg:px-20 lg:max-w-[1024px]"
+        >
+          <div className="flex flex-col gap-4">
+            <h1 className="font-bold break-words uppercase">{title}</h1>
+            <h2 className="font-medium">
+              {formattedEnd
+                ? `Del ${formattedStart} al ${formattedEnd}`
+                : `${nameDay}, ${formattedStart}`}
+            </h2>
+            <Weather startDate={startDate} />
+          </div>
+          {isEventFinished && (
+            <div className="w-full">
+              <p className="font-medium text-primary">
+                Aquest esdeveniment ha finalitzat
+              </p>
+            </div>
+          )}
+          <div
+            className="mt-6 space-y-10 min-h-[325px] h-full
+          lg:min-h-[100px]"
+          >
+            <AdArticle slot="1510301521" />
+          </div>
+          {imageUploaded && (
+            <div className="w-full">
+              <a
+                href={imageUploaded}
+                className="pointer"
+                target="_blank"
+                rel="image_src noreferrer"
               >
-                <p className="whitespace-nowrap">
-                  {showMap ? "Ocultar mapa" : "Mostrar mapa"}
-                </p>
-                {showMap ? (
-                  <ArrowUpIcon
-                    className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <ArrowDownIcon
-                    className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
-                    aria-hidden="true"
-                  />
-                )}
+                <Image
+                  alt={location}
+                  title={location}
+                  height="100%"
+                  width="100%"
+                  image={imageUploaded}
+                  className="w-full h-full object-center object-cover"
+                />
+              </a>
+            </div>
+          )}
+            <div>
+              <div className="flex flex-col justify-center items-center">
+                <dt className="">Descripció</dt>
               </div>
-
-              {showMap && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <div className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden">
-                    <Maps location={location} />
-                  </div>
-                </div>
-              )}
-
-              {tag && (
-                <dl className="mt-6 space-y-10">
-                  <div>
-                    <dt className="text-md font-bold text-gray-900">Tags</dt>
-                    <dd className="mt-3 text-sm text-gray-500">{tag}</dd>
-                  </div>
-                </dl>
-              )}
-
-              {social && (
-                <dl className="mt-6">
-                  <dt className="text-md font-bold text-gray-900">Enllaços</dt>
-                  <Social links={social} />
-                </dl>
-              )}
-              <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
-                <AdArticle slot="9643657007" />
+              <div className="p-4 text-center break-words">
+                <div dangerouslySetInnerHTML={{ __html: descriptionHTML }} />
               </div>
             </div>
+          <div className="p-4">
+            <button
+              onClick={() => {
+                setOpenModal(true);
+                sendGoogleEvent("open-change-modal");
+              }}
+              type="button"
+              className="flex justify-center items-center gap-2 text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none">
+              <PencilIcon className="w-5 h-5" aria-hidden="true" />
+              <p
+                className="font-barlow hidden
+                    sm:block
+                    "
+              >
+                Editar
+              </p>
+            </button>
+          </div>
+
+          <dl className="mt-6 space-y-10">
+            <div>
+              <dt className="text-md font-bold text-gray-900">Hora</dt>
+              <dd className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500">
+                {startTime} - {endTime}
+              </dd>
+            </div>
+          </dl>
+
+          <dl className="mt-6 space-y-10">
+            <div>
+              <dt className="text-md font-bold text-gray-900">Lloc</dt>
+              <dd className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${location}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {location}
+                </a>
+              </dd>
+            </div>
+          </dl>
+          <div
+            className="flex items-center text-sm text-gray-500 cursor-pointer mt-2"
+            onClick={handleShowMap}
+          >
+            <p className="whitespace-nowrap">
+              {showMap ? "Ocultar mapa" : "Mostrar mapa"}
+            </p>
+            {showMap ? (
+              <ArrowUpIcon
+                className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
+                aria-hidden="true"
+              />
+            ) : (
+              <ArrowDownIcon
+                className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
+                aria-hidden="true"
+              />
+            )}
+          </div>
+
+          {showMap && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden">
+                <Maps location={location} />
+              </div>
+            </div>
+          )}
+
+          {tag && (
+            <dl className="mt-6 space-y-10">
+              <div>
+                <dt className="text-md font-bold text-gray-900">Tags</dt>
+                <dd className="mt-3 text-sm text-gray-500">{tag}</dd>
+              </div>
+            </dl>
+          )}
+
+          {social && (
+            <dl className="mt-6">
+              <dt className="text-md font-bold text-gray-900">Enllaços</dt>
+              <Social links={social} />
+            </dl>
+          )}
+          <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
+            <AdArticle slot="9643657007" />
+          </div>
         </div>
       </div>
       {openModal || openDeleteReasonModal ? (

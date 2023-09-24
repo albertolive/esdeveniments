@@ -255,19 +255,19 @@ export default function Publica() {
         canonical={`${siteUrl}/publica`}
       />
       <div
-        className="max-w-full h-screen mx-0 px-4 
+        className="max-w-full mx-0 px-4 
         sm:px-0 sm:max-w-[576px]
         md:px-4 md:max-w-[768px] 
         lg:px-20 lg:max-w-[1024px]"
       >
-        <div className="flex flex-col items-center gap-4 pt-16">
+        <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-center text-primary italic uppercase font-semibold">
               Publica un esdeveniment
             </h1>
             <p className="text-center">* camps obligatoris</p>
           </div>
-          <div className="pt-4 flex flex-col gap-y-4">
+          <div className="w-full flex flex-col justify-center items-center gap-y-4 pt-4">
             <Input
               id="title"
               title="Títol *"
@@ -332,7 +332,7 @@ export default function Publica() {
             <button
               disabled={isLoading}
               onClick={onSubmit}
-              className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
+              className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold tracking-wide"
             >
               {isLoading ? (
                 <>
@@ -352,7 +352,7 @@ export default function Publica() {
                       fill="#FF0037"
                     />
                   </svg>
-                  Publicant ...
+                  Publicant...
                 </>
               ) : (
                 "Publicar"
