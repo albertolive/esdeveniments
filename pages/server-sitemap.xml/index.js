@@ -22,7 +22,7 @@ export const getServerSideProps = async (ctx) => {
   const fields = normalizedEvents
     ?.filter((event) => !event.isAd)
     .map((data) => ({
-      loc: `${siteUrl}/${data.slug}`,
+      loc: `${siteUrl}/e/${data.slug}`,
       lastmod: new Date().toISOString(),
       changefreq: "daily",
       "image:image": `

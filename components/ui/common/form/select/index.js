@@ -58,14 +58,16 @@ export default function SelectComponent({
   const handleChange = (value) => {
     setSelectedOption(value);
     onChange(value || "");
+
+    if (value === null) {
+      localStorage.removeItem("currentPage");
+      localStorage.removeItem("scrollPosition");
+    }
   };
 
   return (
     <div className="">
-      <label
-        htmlFor="first-name"
-        className="text-blackCorp"
-      >
+      <label htmlFor="first-name" className="text-blackCorp">
         {title}
       </label>
       <div className="p-2">

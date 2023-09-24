@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Meta from "@components/partials/seo-meta";
-import Image from "next/image";
 import { siteUrl } from "@config/index";
 
 export default function QuiSom() {
@@ -39,6 +38,9 @@ export default function QuiSom() {
             L&apos;agenda és col·laborativa, i cada persona que organitzi un
             acte cultural podrà publicar-lo{" "}
             <Link href="/publica" prefetch={false}>
+              <a className="italic uppercase font-barlow font-semibold text-primary underline">
+                aquí
+              </a>
               <a className="italic uppercase font-barlow font-semibold text-primary underline">
                 aquí
               </a>

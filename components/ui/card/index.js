@@ -6,22 +6,25 @@ import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import { truncateString } from "@utils/helpers";
+import CardLoading from "@components/ui/cardLoading";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
   noSSR: false,
 });
 
-export default function Card({ event }) {
+export default function Card({ event, isLoading }) {
   const { prefetch } = useRouter();
 
   const handlePrefetch = () => {
     prefetch(`/e/${event.slug}`);
   };
 
+  if (isLoading) return <CardLoading />;
+
   if (event.isAd)
     return (
-      <div className="bg-whiteCorp drop-shadow-lg overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 block visible md:hidden md:invisible">
+      <div className=" bg-whiteCorp overflow-hidden cursor-pointer mb-10 md:border-t-0 block visible md:hidden md:invisible">
         <AdCard event={event} />
       </div>
     );
@@ -45,8 +48,7 @@ export default function Card({ event }) {
           <div
             className="h-1/2 border-l-[6px] border-primary px-0 mx-0
           sm:border-l-[10px]"
-          >
-          </div>
+          ></div>
           {/* Title */}
           <h2 className="w-10/12 uppercase font-semibold text-blackCorp italic text-[26px]">
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
