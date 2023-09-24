@@ -47,8 +47,7 @@ export default function Navbar() {
     localStorage.removeItem("byDate");
     localStorage.removeItem("currentPage");
     localStorage.removeItem("searchTerm");
-
-    router.push("/");
+    localStorage.removeItem("scrollPosition");
   };
 
   const reloadPage = () => {
@@ -59,7 +58,7 @@ export default function Navbar() {
   };
 
   const handleLogoClick = () => {
-    // navigateToMainPage();
+    navigateToMainPage();
     // reloadPage();
   };
 
@@ -74,10 +73,12 @@ export default function Navbar() {
     >
       {({ open }) => (
         <>
-          <div className="bg-whiteCorp mx-auto h-24
+          <div
+            className="bg-whiteCorp mx-auto h-24
           px-0 py-4
           lg:max-w-[1024px]
-          xl:max-w-[1280px]">
+          xl:max-w-[1280px]"
+          >
             <div className="flex flex-col justify-center h-full">
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
               <div className="h-[36px] flex justify-around items-center px-4">
@@ -105,8 +106,7 @@ export default function Navbar() {
                   <Disclosure.Button className="inline-flex items-center justify-center py-2 px-4 rounded-full focus:outline-none">
                     {/* <span className="sr-only">Obrir menú principal</span> */}
                     {open ? (
-                      <XIcon className="h-6 w-6" aria-hidden="true"
-                      />
+                      <XIcon className="h-6 w-6" aria-hidden="true" />
                     ) : (
                       <MenuIcon className="h-6 w-6" aria-hidden="true" />
                     )}
@@ -121,18 +121,25 @@ export default function Navbar() {
                         key={item.name}
                         className="focus:outline-none cursor-pointer"
                       >
-                        <a className="text-center text-base font-semibold px-4 w-24 font-barlow italic uppercase">{item.name}</a>
+                        <a className="text-center text-base font-semibold px-4 w-24 font-barlow italic uppercase">
+                          {item.name}
+                        </a>
                       </ActiveLink>
                     ))}
                   </div>
                 </div>
               </div>
               {/* SecondBar - Search&Share&MenuIcon */}
-              <div className="fixed h-content bottom-0 left-0 right-0 py-4 px-4 bg-whiteCorp flex justify-evenly items-center gap-x-16
+              <div
+                className="fixed h-content bottom-0 left-0 right-0 py-4 px-4 bg-whiteCorp flex justify-evenly items-center gap-x-16
               md:hidden
-              ">
+              "
+              >
                 {/* Home */}
-                <div className="flex justify-center items-center rounded-xl cursor-pointer" onClick={handleLogoClick}>
+                <div
+                  className="flex justify-center items-center rounded-xl cursor-pointer"
+                  onClick={handleLogoClick}
+                >
                   <ActiveLink href="/">
                     <button
                       type="button"
@@ -142,7 +149,6 @@ export default function Navbar() {
                     </button>
                   </ActiveLink>
                 </div>
-                
 
                 {/* Share */}
                 <div className="flex justify-center items-center rounded-xl cursor-pointer">
@@ -168,7 +174,6 @@ export default function Navbar() {
                     </button>
                   </ActiveLink>
                 </div>
-
               </div>
             </div>
           </div>
@@ -177,7 +182,9 @@ export default function Navbar() {
             <div className="h-56 flex flex-col justify-center items-center gap-4 px-4 pb-6 pt-2 bg-whiteCorp">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
-                  <a className="flex justify-center items-center font-semibold px-6 py-2 font-barlow italic uppercase">{item.name}</a>
+                  <a className="flex justify-center items-center font-semibold px-6 py-2 font-barlow italic uppercase">
+                    {item.name}
+                  </a>
                 </ActiveLink>
               ))}
             </div>

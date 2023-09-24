@@ -59,6 +59,9 @@ export default function SubMenu({
   const handlePlaceChange = ({ value }) => {
     setPlace(value);
     setSelectedOption(value);
+
+    localStorage.removeItem("currentPage");
+    localStorage.removeItem("scrollPosition");
   };
 
   const handleByDateChange = (value) => {

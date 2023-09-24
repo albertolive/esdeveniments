@@ -24,7 +24,7 @@ export default function Card({ event, isLoading }) {
 
   if (event.isAd)
     return (
-      <div className="bg-whiteCorp drop-shadow-lg overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 block visible md:hidden md:invisible">
+      <div className=" bg-whiteCorp overflow-hidden cursor-pointer mb-10 md:border-t-0 block visible md:hidden md:invisible">
         <AdCard event={event} />
       </div>
     );
