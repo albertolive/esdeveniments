@@ -64,6 +64,7 @@ export default function Navbar() {
 
   return (
     <Disclosure
+      key={router.asPath}
       as="nav"
       className={`navbar bg-whiteCorp sticky top-0 z-50 ${
         hasShadow

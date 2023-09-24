@@ -19,10 +19,6 @@ const NoEventsFound = dynamic(
   }
 );
 
-const LoadingSpinner = dynamic(() => import("@components/ui/common/loading"), {
-  loading: () => "",
-});
-
 export default function Events({ props, loadMore = true }) {
   // Refs
   const scrollPosition = useRef(0);
@@ -211,7 +207,6 @@ export default function Events({ props, loadMore = true }) {
       <List events={events}>
         {(event) => <Card key={event.id} event={event} isLoading={isLoading} />}
       </List>
-      {isLoadingMore && <LoadingSpinner />}
       {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
         <div className=" text-center py-10">
           <button

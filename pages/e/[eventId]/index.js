@@ -389,22 +389,19 @@ export default function Event(props) {
                 className="flex items-center text-sm text-gray-500 cursor-pointer mt-2"
                 onClick={handleShowMap}
               >
+                <p className="whitespace-nowrap">
+                  {showMap ? "Ocultar mapa" : "Mostrar mapa"}
+                </p>
                 {showMap ? (
-                  <div className="flex ">
-                    <p className="whitespace-nowrap">Ocultar mapa</p>
-                    <ArrowUpIcon
-                      className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
-                      aria-hidden="true"
-                    />
-                  </div>
+                  <ArrowUpIcon
+                    className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
+                    aria-hidden="true"
+                  />
                 ) : (
-                  <div className="flex items-center">
-                    <p className="whitespace-nowrap">Mostrar mapa</p>
-                    <ArrowDownIcon
-                      className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
-                      aria-hidden="true"
-                    />
-                  </div>
+                  <ArrowDownIcon
+                    className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
+                    aria-hidden="true"
+                  />
                 )}
               </div>
 
