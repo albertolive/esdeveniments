@@ -244,7 +244,7 @@ export default function Event(props) {
           title="Gràcies per contribuir a millorar el contingut de Esdeveniments.cat! En menys de 24 hores estarà disponible el canvi."
         />
       )}
-      <nav className="flex" aria-label="Breadcrumb">
+      {/* <nav className="flex" aria-label="Breadcrumb">
         <ol className="inline-flex items-center space-x-1 md:space-x-3">
           <li className="inline-flex items-center">
             <Link href="/" prefetch={false}>
@@ -281,14 +281,17 @@ export default function Event(props) {
             </div>
           </li>
         </ol>
-      </nav>
-      <div className="bg-white">
-        <div className="max-w-2xl mx-auto px-4 md:px-0 lg:max-w-7xl">
-          <div className="grid items-center grid-cols-1 gap-y-16 gap-x-8">
-            <div className="prose prose-lg max-w-none">
+      </nav> */}
+      {/* General */}
+      <div className="bg-whiteCorp">
+        <div className="w-full px-4 flex flex-col gap-4 justify-center items-center
+        sm:px-0 sm:max-w-[576px]
+        md:px-10 md:max-w-[768px] 
+        lg:px-20 lg:max-w-[1024px]">
+            <div className="max-w-prose">
               {isEventFinished && (
-                <div className="-mb-8 lg:-mb-4 mt-8">
-                  <span className="font-bold text-black rounded-full p-2 px-4 bg-[#ECB84A] text-sm">
+                <div className="">
+                  <span className="font-bold text-black">
                     Esdeveniment finalitzat
                   </span>
                 </div>
@@ -435,7 +438,6 @@ export default function Event(props) {
                 <AdArticle slot="8822317665" />
               </div>
             </div>
-          </div>
         </div>
       </div>
       {openModal || openDeleteReasonModal ? (

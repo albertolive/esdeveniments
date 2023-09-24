@@ -255,12 +255,12 @@ export default function Publica() {
         canonical={`${siteUrl}/publica`}
       />
       <div
-        className="max-w-full mx-0 px-4 
+        className="max-w-full h-screen mx-0 px-4 
         sm:px-0 sm:max-w-[576px]
         md:px-4 md:max-w-[768px] 
         lg:px-20 lg:max-w-[1024px]"
       >
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4 pt-16">
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-center text-primary italic uppercase font-semibold">
               Publica un esdeveniment

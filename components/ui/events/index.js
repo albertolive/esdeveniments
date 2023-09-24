@@ -214,7 +214,7 @@ export default function Events({ props, loadMore = true }) {
           {(event) => <Card key={event.id} event={event} />}
         </List>
       )}
-      {isLoadingMore && <LoadingSpinner />}
+      {isLoadingMore && <CardLoading />}
       {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
         <div className=" text-center py-10">
           <button
