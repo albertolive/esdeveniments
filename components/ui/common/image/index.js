@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import NextImage from "next/image";
 import Head from "next/head";
 import ImgDefault from "@components/ui/imgDefault";
@@ -34,7 +34,8 @@ function getRandomBackground() {
 
   return gradients[randomIndex];
 }
-export default function ImageComponent({
+
+function ImageComponent({
   title,
   date,
   location,
@@ -89,3 +90,5 @@ export default function ImageComponent({
     </>
   );
 }
+
+export default memo(ImageComponent);
