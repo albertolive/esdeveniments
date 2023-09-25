@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
 import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
-import ArrowDownIcon from "@heroicons/react/outline/ArrowDownIcon";
-import ArrowUpIcon from "@heroicons/react/outline/ArrowUpIcon";
+import MapIcon from "@heroicons/react/outline/MapIcon";
+import XIcon from "@heroicons/react/outline/XIcon";
+
 import { siteUrl } from "@config/index";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
@@ -244,44 +244,6 @@ export default function Event(props) {
           title="Gràcies per contribuir a millorar el contingut de Esdeveniments.cat! En menys de 24 hores estarà disponible el canvi."
         />
       )}
-      {/* <nav className="flex" aria-label="Breadcrumb">
-        <ol className="inline-flex items-center space-x-1 md:space-x-3">
-          <li className="inline-flex items-center">
-            <Link href="/" prefetch={false}>
-              <a className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-yellow-400 dark:text-gray-400 dark:hover:text-white">
-                <svg
-                  className="mr-2 w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                </svg>
-                Agenda
-              </a>
-            </Link>
-          </li>
-          <li aria-current="page">
-            <div className="flex items-center">
-              <svg
-                className="w-6 h-6 text-gray-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-              <span className="ml-1 text-sm font-medium text-gray-400 md:ml-2 dark:text-gray-500">
-                {title}
-              </span>
-            </div>
-          </li>
-        </ol>
-      </nav> */}
       {/* General */}
       <div className="bg-whiteCorp">
         <div
@@ -331,14 +293,14 @@ export default function Event(props) {
               </a>
             </div>
           )}
-            <div>
-              <div className="flex flex-col justify-center items-center">
-                <dt className="">Descripció</dt>
-              </div>
-              <div className="p-4 text-center break-words">
-                <div dangerouslySetInnerHTML={{ __html: descriptionHTML }} />
-              </div>
+          <div>
+            <div className="flex flex-col justify-center items-center">
+              <dt className="">Descripció</dt>
             </div>
+            <div className="text-center break-words">
+              <div dangerouslySetInnerHTML={{ __html: descriptionHTML }} />
+            </div>
+          </div>
           <div className="p-4">
             <button
               onClick={() => {
@@ -346,7 +308,8 @@ export default function Event(props) {
                 sendGoogleEvent("open-change-modal");
               }}
               type="button"
-              className="flex justify-center items-center gap-2 text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none">
+              className="flex justify-center items-center gap-2 text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none"
+            >
               <PencilIcon className="w-5 h-5" aria-hidden="true" />
               <p
                 className="font-barlow hidden
@@ -358,91 +321,82 @@ export default function Event(props) {
             </button>
           </div>
 
-          <dl className="mt-6 space-y-10">
-            <div>
-              <dt className="text-md font-bold text-gray-900">Hora</dt>
-              <dd className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500">
+          <div className="w-full flex flex-col justify-center items-center gap-4">
+            <div className="flex flex-col items-center gap-4">
+              <h2 className="font-semibold">Hora</h2>
+              <p>
                 {startTime} - {endTime}
-              </dd>
+              </p>
             </div>
-          </dl>
-
-          <dl className="mt-6 space-y-10">
-            <div>
-              <dt className="text-md font-bold text-gray-900">Lloc</dt>
-              <dd className="mt-3 xs:text-sm md:text-md lg:text-sm text-gray-500">
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${location}`}
-                  target="_blank"
-                  rel="noreferrer"
+            <div className="flex flex-col items-center gap-4">
+              <h2 className="font-semibold">Localització</h2>
+              <p>{location}</p>
+              <div className="flex items-center cursor-pointer">
+                <button
+                  onClick={handleShowMap}
+                  type="button"
+                  className="flex justify-center items-center gap-2 text-whiteCorp bg-primary rounded-xl mt-4 py-3 px-6 ease-in-out duration-300 border border-whiteCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none"
                 >
-                  {location}
-                </a>
-              </dd>
-            </div>
-          </dl>
-          <div
-            className="flex items-center text-sm text-gray-500 cursor-pointer mt-2"
-            onClick={handleShowMap}
-          >
-            <p className="whitespace-nowrap">
-              {showMap ? "Ocultar mapa" : "Mostrar mapa"}
-            </p>
-            {showMap ? (
-              <ArrowUpIcon
-                className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
-                aria-hidden="true"
-              />
-            ) : (
-              <ArrowDownIcon
-                className="ml-1 h-5 w-5 text-[#ECB84A] text-xs"
-                aria-hidden="true"
-              />
-            )}
-          </div>
+                  <p className="hidden sm:block">
+                    {showMap ? "Ocultar mapa" : "Mostrar mapa"}
+                  </p>
+                  {showMap ? (
+                    <XIcon
+                      className="h-6 w-6 text-whiteCorp"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <MapIcon
+                      className="h-6 w-6 text-whiteCorp"
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+              </div>
+              {showMap && (
+                <div className="flex flex-col gap-4">
+                  <div className="aspect-w-1 aspect-h-1 bg-gray-100 overflow-hidden">
+                    <Maps location={location} />
+                  </div>
+                </div>
+              )}
 
-          {showMap && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden">
-                <Maps location={location} />
+              {tag && (
+                <dl className="mt-6 space-y-10">
+                  <div>
+                    <dt className="text-md font-bold text-gray-900">Tags</dt>
+                    <dd className="mt-3 text-sm text-gray-500">{tag}</dd>
+                  </div>
+                </dl>
+              )}
+
+              {social && (
+                <dl className="mt-6">
+                  <dt className="text-md font-bold text-gray-900">Enllaços</dt>
+                  <Social links={social} />
+                </dl>
+              )}
+              <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
+                <AdArticle slot="9643657007" />
               </div>
             </div>
-          )}
-
-          {tag && (
-            <dl className="mt-6 space-y-10">
-              <div>
-                <dt className="text-md font-bold text-gray-900">Tags</dt>
-                <dd className="mt-3 text-sm text-gray-500">{tag}</dd>
-              </div>
-            </dl>
-          )}
-
-          {social && (
-            <dl className="mt-6">
-              <dt className="text-md font-bold text-gray-900">Enllaços</dt>
-              <Social links={social} />
-            </dl>
-          )}
-          <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
-            <AdArticle slot="9643657007" />
           </div>
+          {openModal || openDeleteReasonModal ? (
+            <EditModal
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              slug={slug}
+              setOpenModalDeleteReasonModal={setOpenModalDeleteReasonModal}
+              sendGoogleEvent={sendGoogleEvent}
+              openDeleteReasonModal={openDeleteReasonModal}
+              setReasonToDelete={setReasonToDelete}
+              reasonToDelete={reasonToDelete}
+              onSendDeleteReason={onSendDeleteReason}
+              onRemove={onRemove}
+            />
+          ) : null}
         </div>
       </div>
-      {openModal || openDeleteReasonModal ? (
-        <EditModal
-          openModal={openModal}
-          setOpenModal={setOpenModal}
-          slug={slug}
-          setOpenModalDeleteReasonModal={setOpenModalDeleteReasonModal}
-          sendGoogleEvent={sendGoogleEvent}
-          openDeleteReasonModal={openDeleteReasonModal}
-          setReasonToDelete={setReasonToDelete}
-          reasonToDelete={reasonToDelete}
-          onSendDeleteReason={onSendDeleteReason}
-          onRemove={onRemove}
-        />
-      ) : null}
     </>
   );
 }
