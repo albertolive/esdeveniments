@@ -6,23 +6,25 @@ import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import { truncateString } from "@utils/helpers";
-import Imago from "@public/static/images/imago-esdeveniments-fonsclar.png";
+import CardLoading from "@components/ui/cardLoading";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
   noSSR: false,
 });
 
-export default function Card({ event }) {
+export default function Card({ event, isLoading }) {
   const { prefetch } = useRouter();
 
   const handlePrefetch = () => {
     prefetch(`/e/${event.slug}`);
   };
 
+  if (isLoading) return <CardLoading />;
+
   if (event.isAd)
     return (
-      <div className="bg-whiteCorp drop-shadow-lg overflow-hidden lg:max-w-2xl cursor-pointer hover:shadow-gray-500/40 block visible md:hidden md:invisible">
+      <div className=" bg-whiteCorp overflow-hidden cursor-pointer mb-10 md:border-t-0 block visible md:hidden md:invisible">
         <AdCard event={event} />
       </div>
     );
@@ -35,7 +37,7 @@ export default function Card({ event }) {
   return (
     <Link href={`/e/${event.slug}`} passHref prefetch={false}>
       <div
-        className="bg-whiteCorp overflow-hidden cursor-pointer mb-10
+        className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10
         md:border-t-0
         "
         onMouseEnter={handlePrefetch}
@@ -46,18 +48,7 @@ export default function Card({ event }) {
           <div
             className="h-1/2 border-l-[6px] border-primary px-0 mx-0
           sm:border-l-[10px]"
-          >
-            {/* Revisar Albert. Em surt la imatge del component ImgDefault */}
-            {/* <Image
-              src={Imago}
-              className="block"
-              alt="Logo Esdeveniments.cat"
-              width={8}
-              height={11}
-              layout="responsive"
-              priority
-            /> */}
-          </div>
+          ></div>
           {/* Title */}
           <h2 className="w-10/12 uppercase font-semibold text-blackCorp italic text-[26px]">
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
@@ -94,11 +85,11 @@ export default function Card({ event }) {
         {/* InfoEvent */}
         <div className="flex flex-col px-4 pt-8 gap-4">
           {/* Date */}
-          <h2 className="text-blackCorp font-roboto text-[21px] pl-1">
+          <h3 className="text-blackCorp text-[21px] pl-1">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}
-          </h2>
+          </h3>
           {/* Location */}
           <div className="flex items-start h-full">
             <div>

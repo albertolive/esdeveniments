@@ -6,12 +6,12 @@ import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
 import { generateJsonData, getPlaceTypeAndLabel } from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
-import CardLoading from "@components/ui/cardLoading";
 import { SubMenu } from "@components/ui/common";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
 import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
+import CardLoading from "@components/ui/cardLoading";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -19,10 +19,6 @@ const NoEventsFound = dynamic(
     loading: () => "",
   }
 );
-
-const LoadingSpinner = dynamic(() => import("@components/ui/common/loading"), {
-  loading: () => "",
-});
 
 export default function Events({ props, loadMore = true }) {
   // Refs
@@ -153,12 +149,22 @@ export default function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
+      <SubMenu
+        place={place}
+        setPlace={setPlace}
+        byDate={byDate}
+        setByDate={setByDate}
+      />
       <div className="p-2 flex flex-col justify-center items-center">
         <button
           onClick={toggleDropdown}
           className={`w-11/12 p-3 flex justify-center items-center gap-4 font-semibold text-blackCorp focus:outline-none`}
         >
-          {open ? <p className="w-24 text-center tracking-wide">Tancar</p> : <p className="w-24 text-center tracking-wide">Informació</p>}
+          {open ? (
+            <p className="w-24 text-center tracking-wide">Tancar</p>
+          ) : (
+            <p className="w-24 text-center tracking-wide">Informació</p>
+          )}
           {open ? (
             <XIcon className="h-6 w-6" />
           ) : (
@@ -175,10 +181,12 @@ export default function Events({ props, loadMore = true }) {
                 {title}
               </h1>
             </div>
-            <div className="mx-10 flex flex-col justify-center items-center
-            lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
+            <div
+              className="mx-10 flex flex-col justify-center items-center
+            lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row"
+            >
               <p
-                className="my-4 m-full text-center
+                className="my-4 w-full text-center
               md:text-left
               lg:w-1/2"
               >
@@ -186,7 +194,7 @@ export default function Events({ props, loadMore = true }) {
               </p>
               <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
               <p
-                className="my-4 m-full text-center
+                className="my-4 w-full text-center
               md:text-left
               lg:w-1/2"
               >
@@ -196,12 +204,6 @@ export default function Events({ props, loadMore = true }) {
           </div>
         )}
       </div>
-      <SubMenu
-        place={place}
-        setPlace={setPlace}
-        byDate={byDate}
-        setByDate={setByDate}
-      />
       {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
       {isLoading && !isLoadingMore ? (
         <div>
@@ -214,7 +216,7 @@ export default function Events({ props, loadMore = true }) {
           {(event) => <Card key={event.id} event={event} />}
         </List>
       )}
-      {isLoadingMore && <LoadingSpinner />}
+      {isLoadingMore && <CardLoading />}
       {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
         <div className=" text-center py-10">
           <button

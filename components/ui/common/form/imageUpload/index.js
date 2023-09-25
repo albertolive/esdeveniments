@@ -41,7 +41,7 @@ export default function ImageUploader({ value, onUpload, progress }) {
   };
 
   return (
-    <div className="text-blackCorp">
+    <div className="w-full text-blackCorp">
       <label
         htmlFor="first-name"
         className="text-blackCorp"
@@ -50,7 +50,7 @@ export default function ImageUploader({ value, onUpload, progress }) {
       </label>
 
       <div
-        className={`m-2 p-4 border border-bColor rounded-lg cursor-pointer ${
+        className={`m-2 p-4 border border-bColor rounded-xl cursor-pointer ${
           dragOver ? "border-green-600" : "border-gray-300"
         }`}
         onDragOver={(e) => {

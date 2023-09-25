@@ -1,13 +1,14 @@
-Disallow: /
+# *
 User-agent: *
 Disallow: /404
 
+# *
 User-agent: *
 Allow: /
 
 # Host
-Host: https://www.esdeveniments.cat
+Host: http://localhost:3000
 
 # Sitemaps
-Sitemap: https://www.esdeveniments.cat/sitemap.xml
-Sitemap: https://www.esdeveniments.cat/server-sitemap.xml
+Sitemap: http://localhost:3000/sitemap.xml
+Sitemap: http://localhost:3000/server-sitemap.xml

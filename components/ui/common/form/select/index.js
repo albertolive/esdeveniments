@@ -9,28 +9,29 @@ const customStyles = {
   }),
   input: (provided, state) => ({
     ...provided,
-    fontSize: "14px",
-    borderColor: state.isSelected ? "#D1D5DB !important" : "#D1D5DB !important",
-    borderColor: state.isFocused ? "#D1D5DB !important" : "#D1D5DB !important",
+    fontSize: "16px",
+    borderColor: state.isSelected ? "#CCC !important" : "#CCC !important",
+    borderColor: state.isFocused ? "#CCC !important" : "#CCC !important",
   }),
   control: (provided, state) => ({
     ...provided,
-    borderColor: state.isSelected ? "#D1D5DB !important" : "#D1D5DB !important",
-    borderColor: state.isFocused ? "#D1D5DB !important" : "#D1D5DB !important",
-    boxShadow: state.isFocused ? "#D1D5DB !important" : "#D1D5DB !important",
+    borderColor: state.isSelected ? "#CCC !important" : "#CCC !important",
+    borderColor: state.isFocused ? "#CCC !important" : "#CCC !important",
+    boxShadow: state.isFocused ? "#000 !important" : "#CCC !important",
+    borderRadius: "12px",
   }),
   placeholder: (provided) => ({
     ...provided,
-    fontSize: "14px",
-    color: "#BBB",
+    fontSize: "16px",
+    color: "#CCC",
   }),
   option: (provided) => ({
     ...provided,
-    fontSize: "14px",
+    fontSize: "16px",
   }),
   singleValue: (provided) => ({
     ...provided,
-    fontSize: "14px",
+    fontSize: "16px",
   }),
 };
 
@@ -58,14 +59,16 @@ export default function SelectComponent({
   const handleChange = (value) => {
     setSelectedOption(value);
     onChange(value || "");
+
+    if (value === null) {
+      localStorage.removeItem("currentPage");
+      localStorage.removeItem("scrollPosition");
+    }
   };
 
   return (
-    <div className="">
-      <label
-        htmlFor="first-name"
-        className="text-blackCorp"
-      >
+    <div className="w-full">
+      <label htmlFor="first-name" className="text-blackCorp">
         {title}
       </label>
       <div className="p-2">

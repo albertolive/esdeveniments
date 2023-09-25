@@ -59,6 +59,9 @@ export default function SubMenu({
   const handlePlaceChange = ({ value }) => {
     setPlace(value);
     setSelectedOption(value);
+
+    localStorage.removeItem("currentPage");
+    localStorage.removeItem("scrollPosition");
   };
 
   const handleByDateChange = (value) => {
@@ -90,9 +93,9 @@ export default function SubMenu({
           ))}
         </div> */}
       </div>
-      <div className="min-h-[325px] lg:min-h-[100px]">
-        <AdArticle slot="6387726014" />
-      </div>
+      {/* <div className="min-h-[325px] lg:min-h-[100px]">
+        <AdArticle slot="6571056515" />
+      </div> */}
     </>
   );
 }

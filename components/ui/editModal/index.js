@@ -21,20 +21,20 @@ export default function EditModal({
         setOpen={setOpenModal}
         title="Suggereix una edició"
       >
-        <ul role="list" className="divide-y divide-gray-200 text-left">
-          <li key="edit" className="py-4 flex">
+        <ul role="list" className="divide-y divide-darkCorp text-left">
+          <li key="edit" className="p-4 flex">
             <Link href={`/e/${slug}/edita`} prefetch={false}>
               <a>
-                <div className="flex items-center">
+                <div className="flex justify-center items-start gap-4">
                   <PencilIcon
-                    className="h-7 w-7 text-[#ECB84A] text-xs"
+                    className="h-6 w-6 text-primary"
                     aria-hidden="true"
                   />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-900">
+                  <div className="flex flex-col">
+                    <p className="font-medium">
                       Canvia el títol o altres detalls
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm">
                       Edita el títol, la ubicació, l&apos;horari, etc.
                     </p>
                   </div>
@@ -42,16 +42,16 @@ export default function EditModal({
               </a>
             </Link>
           </li>
-          <li key="remove" className="py-4 flex">
+          <li key="remove" className="p-4 flex">
             <div className="cursor-pointer" as="button" onClick={onRemove}>
-              <div className="flex items-center">
+              <div className="flex justify-center items-start gap-4">
                 <XCircleIcon
-                  className="h-7 w-7 text-[#ECB84A] text-xs"
+                  className="h-6 w-6 text-primary"
                   aria-hidden="true"
                 />
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-900">Eliminar</p>
-                  <p className="text-sm text-gray-500">
+                <div className="flex flex-col">
+                  <p className="font-medium">Eliminar</p>
+                  <p className="text-sm">
                     L&apos;esdeveniment no existeix, està duplicat, etc.
                   </p>
                 </div>
@@ -66,13 +66,13 @@ export default function EditModal({
         title="Suggereix una el·liminació"
       >
         <>
-          <div className="text-sm font-medium text-gray-900">
-            Motiu de l&apos;el·liminació suggerida
+          <div className="text-left text-sm px-4">
+            <p>Motiu de l&apos;el·liminació suggerida</p>
           </div>
-          <fieldset className="space-y-5">
+          <fieldset className="flex flex-col gap-4 py-4">
             <legend className="sr-only">Sol·licitud d&apos;eliminació</legend>
-            <div className="relative flex items-start">
-              <div className="flex items-center h-5">
+            <div className="flex justify-start items-center">
+              <div className="p-2">
                 <input
                   id="not-exist"
                   checked={reasonToDelete === "not-exist"}
@@ -80,20 +80,20 @@ export default function EditModal({
                   aria-describedby="not-exist-description"
                   name="not-exist"
                   type="checkbox"
-                  className="focus:outline-none h-4 w-4 text-[#ECB84A] border-gray-300 rounded"
+                  className="h-5 w-5 text-primarySoft border-darkCorp rounded-xl focus:outline-none"
                 />
               </div>
-              <div className="ml-3 text-sm">
+              <div className="p-2">
                 <label
                   htmlFor="not-exist"
-                  className="font-medium text-gray-700"
+                  className="text-blackCorp"
                 >
                   No existeix
                 </label>
               </div>
             </div>
-            <div className="relative flex items-start">
-              <div className="flex items-center h-5">
+            <div className="flex justify-start items-center">
+              <div className="p-2">
                 <input
                   id="duplicated"
                   checked={reasonToDelete === "duplicated"}
@@ -101,20 +101,20 @@ export default function EditModal({
                   aria-describedby="duplicated-description"
                   name="duplicated"
                   type="checkbox"
-                  className="focus:outline-none h-4 w-4 text-[#ECB84A] border-gray-300 rounded"
+                  className="h-5 w-5 text-primarySoft border-darkCorp rounded-xl focus:outline-none"
                 />
               </div>
-              <div className="ml-3 text-sm">
+              <div className="p-2">
                 <label
                   htmlFor="duplicated"
-                  className="font-medium text-gray-700"
+                  className="text-blackCorp"
                 >
                   Duplicat
                 </label>
               </div>
             </div>
-            <div className="relative flex items-start">
-              <div className="flex items-center h-5">
+            <div className="flex justify-start items-center">
+              <div className="p-2">
                 <input
                   id="offensive"
                   checked={reasonToDelete === "offensive"}
@@ -122,20 +122,20 @@ export default function EditModal({
                   aria-describedby="offensive-description"
                   name="offensive"
                   type="checkbox"
-                  className="focus:outline-none h-4 w-4 text-[#ECB84A] border-gray-300 rounded"
+                  className="h-5 w-5 text-primarySoft border-darkCorp rounded-xl focus:outline-none"
                 />
               </div>
-              <div className="ml-3 text-sm">
+              <div className="p-2">
                 <label
                   htmlFor="offensive"
-                  className="font-medium text-gray-700"
+                  className="text-blackCorp"
                 >
                   Ofensiu, nociu o enganyós
                 </label>
               </div>
             </div>
-            <div className="relative flex items-start text-left">
-              <div className="flex items-center h-5">
+            <div className="flex justify-start items-start text-left">
+              <div className="p-2">
                 <input
                   id="others"
                   checked={reasonToDelete === "others"}
@@ -143,17 +143,17 @@ export default function EditModal({
                   aria-describedby="others-description"
                   name="others"
                   type="checkbox"
-                  className="focus:outline-none h-4 w-4 text-[#ECB84A] border-gray-300 rounded"
+                  className="h-5 w-5 text-primarySoft border-darkCorp rounded-xl focus:outline-none"
                 />
               </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="others" className="font-medium text-gray-700">
+              <div className="p-2">
+                <label htmlFor="others" className="text-blackCorp">
                   Altres
                 </label>
-                <p id="offers-description" className="text-gray-500">
+                <p id="offers-description" className="text-sm">
                   Envieu un correu amb el motiu a:{" "}
                   <a
-                    className="hover:text-[#ECB84A]"
+                    className="hover:text-primary"
                     href="mailto:hola@esdeveniments.cat"
                   >
                     hola@esdeveniments.cat
@@ -162,11 +162,11 @@ export default function EditModal({
               </div>
             </div>
           </fieldset>
-          <div className="flex mt-3 justify-end">
+          <div className="flex justify-center py-4">
             <button
               disabled={!reasonToDelete}
               onClick={onSendDeleteReason}
-              className="disabled:opacity-50 disabled:cursor-default disabled:hover:bg-[#ECB84A] ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#ECB84A] hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer"
+              className="disabled:opacity-50 disabled:cursor-default disabled:hover:bg-primary text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold tracking-wide"
             >
               Enviar
             </button>

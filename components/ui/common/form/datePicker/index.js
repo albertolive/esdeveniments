@@ -41,10 +41,10 @@ export default function DatePickerComponent({
 
   return (
     <>
-      <div>
+      <div className="w-full">
         <label
           htmlFor="first-name"
-          className="text-blackCorp"
+          className="w-full text-blackCorp"
         >
           Inici *
         </label>
@@ -59,10 +59,10 @@ export default function DatePickerComponent({
           />
         </div>
       </div>
-      <div>
+      <div className="w-full">
         <label
           htmlFor="first-name"
-          className="text-blackCorp"
+          className="w-full text-blackCorp"
         >
           Final *
         </label>
@@ -116,7 +116,7 @@ const DateComponent = ({
         nextMonthButtonDisabled,
       }) => (
         <div className="flex justify-center items-center p-2">
-          <span className="w-1/2 text-blackCorp uppercase font-roboto">
+          <span className="w-1/2 text-blackCorp uppercase">
             {format(date, "MMMM yyyy", { locale: ca })}
           </span>
 
@@ -127,7 +127,7 @@ const DateComponent = ({
               type="button"
               className={`${
                 prevMonthButtonDisabled && "cursor-not-allowed opacity-50"
-              }flex p-1 text-sm text-blackCorp bg-whiteCorp border border-darkCorp rounded-xl focus:outline-none`}
+              }flex p-1 text-blackCorp bg-whiteCorp border border-darkCorp rounded-xl focus:outline-none`}
             >
               <ChevronLeftIcon className="w-5 h-5 text-blackCorp" />
             </button>
@@ -138,7 +138,7 @@ const DateComponent = ({
               type="button"
               className={`${
                 nextMonthButtonDisabled && "cursor-not-allowed opacity-50"
-              }flex p-1 text-sm text-blackCorp bg-whiteCorp border border-darkCorp rounded-xl focus:outline-none`}
+              }flex p-1 text-blackCorp bg-whiteCorp border border-darkCorp rounded-xl focus:outline-none`}
             >
               <ChevronRightIcon className="w-5 h-5 text-blackCorp" />
             </button>

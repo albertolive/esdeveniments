@@ -267,7 +267,7 @@ export default function Publica() {
             </h1>
             <p className="text-center">* camps obligatoris</p>
           </div>
-          <div className="pt-4 flex flex-col gap-y-4">
+          <div className="w-full flex flex-col justify-center items-center gap-y-4 pt-4">
             <Input
               id="title"
               title="Títol *"
@@ -332,7 +332,7 @@ export default function Publica() {
             <button
               disabled={isLoading}
               onClick={onSubmit}
-              className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
+              className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold tracking-wide"
             >
               {isLoading ? (
                 <>
@@ -352,7 +352,7 @@ export default function Publica() {
                       fill="#FF0037"
                     />
                   </svg>
-                  Publicant ...
+                  Publicant...
                 </>
               ) : (
                 "Publicar"

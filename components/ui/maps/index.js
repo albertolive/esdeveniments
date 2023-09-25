@@ -23,7 +23,7 @@ export default function Maps({ location }) {
 
   return (
     <div
-      className="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden"
+      className="aspect-w-1 aspect-h-1 bg-darkCorp overflow-hidden"
       data-src={`https://www.google.com/maps/embed/v1/place?q=${location}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS}`}
       id="mymap"
       ref={mapRef}
