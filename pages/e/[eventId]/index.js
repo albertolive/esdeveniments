@@ -243,27 +243,25 @@ export default function Event(props) {
           title="Gràcies per contribuir a millorar el contingut de Esdeveniments.cat! En menys de 24 hores estarà disponible el canvi."
         />
       )}
-      <nav className="flex" aria-label="Breadcrumb">
-        <ol className="inline-flex items-center w-full px-4 gap-4 justify-center sm:px-0 sm:max-w-[576px] md:px-10 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
-          <li className="inline-flex items-center">
+      <nav className="flex w-full pb-6" aria-label="Breadcrumb">
+        <ol className="flex justify-start items-center gap-1 w-full px-3 xs:px-4 xs:max-w-full sm:px-0 sm:max-w-[576px] md:px-10 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
+          <li className="flex justify-center items-end gap-1">
             <Link href="/" prefetch={false}>
-              <a className="inline-flex items-center text-[10px] font-medium text-gray-700 hover:text-yellow-400 dark:text-gray-400 dark:hover:text-white">
+              <a className="flex justify-center items-center gap-2 hover:text-primary">
                 <svg
-                  className="mr-2 w-4 h-4"
+                  className=" w-4 h-4"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                 </svg>
-                Agenda
+                <p className="font-semibold font-barlow">Agenda</p>
               </a>
             </Link>
-          </li>
-          <li aria-current="page">
-            <div className="flex items-center">
+            <div>
               <svg
-                className="w-6 h-6 text-gray-400"
+                className="w-4 h-4 text-blackCorp"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -274,23 +272,20 @@ export default function Event(props) {
                   clipRule="evenodd"
                 ></path>
               </svg>
-              <span className="ml-1 text-[10px] font-medium text-gray-400 md:ml-2 dark:text-gray-500">
-                {title}
-              </span>
             </div>
+          </li>
+          <li className="flex justify-center items-start" aria-current="page">
+            <span className="text-[10px] whitespace-normal break-words pt-1">
+              {title}
+            </span>
           </li>
         </ol>
       </nav>
       {/* General */}
       <div className="bg-whiteCorp">
-        <div
-          className="w-full px-4 flex flex-col gap-4 justify-center items-center
-        sm:px-0 sm:max-w-[576px]
-        md:px-10 md:max-w-[768px] 
-        lg:px-20 lg:max-w-[1024px]"
-        >
+        <div className="w-full px-4 flex flex-col gap-4 justify-center items-center sm:px-0 sm:max-w-[576px] md:px-10 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
           <div className="flex flex-col gap-4">
-            <h1 className="font-bold break-words uppercase">{title}</h1>
+            <h1 className="font-semibold uppercase">{title}</h1>
             <h2 className="font-medium">
               {formattedEnd
                 ? `Del ${formattedStart} al ${formattedEnd}`
@@ -299,17 +294,25 @@ export default function Event(props) {
             <Weather startDate={startDate} />
           </div>
           {isEventFinished && (
-            <div className="w-full">
-              <p className="font-medium text-primary">
-                Aquest esdeveniment ha finalitzat
-              </p>
-            </div>
+            <p className="w-full font-medium text-primary">
+              Aquest esdeveniment ha finalitzat
+            </p>
           )}
-          <div
-            className="mt-6 space-y-10 min-h-[325px] h-full
-          lg:min-h-[100px]"
-          >
+          <div className="mt-6 space-y-10 min-h-[325px] h-full lg:min-h-[100px]">
             <AdArticle slot="1510301521" />
+          </div>
+          <div className="w-full flex justify-end items-center cursor-pointer">
+            <button
+              onClick={() => {
+                setOpenModal(true);
+                sendGoogleEvent("open-change-modal");
+              }}
+              type="button"
+              className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-3 px-6 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+            >
+              <PencilIcon className="w-5 h-5" aria-hidden="true" />
+              <p className="font-barlow hidden sm:block ">Editar</p>
+            </button>
           </div>
           {imageUploaded && (
             <div className="w-full">
@@ -330,31 +333,18 @@ export default function Event(props) {
               </a>
             </div>
           )}
-          <div className="w-full flex flex-col justify-center items-center gap-4">
-            <div className="flex flex-col items-center gap-4">
+          <div className="w-full flex flex-col gap-4">
+            <div className="w-full overflow-hidden">
               <h2 className="font-semibold">Descripció</h2>
             </div>
-            <div className="text-center overflow-wrap break-words">
-              <div
-                className="overflow-wrap break-words"
+            <div className="w-full overflow-hidden">
+              <p
+                className="break-words"
                 dangerouslySetInnerHTML={{ __html: descriptionHTML }}
-              />
+              ></p>
+              <div />
             </div>
           </div>
-          <div className="p-4">
-            <button
-              onClick={() => {
-                setOpenModal(true);
-                sendGoogleEvent("open-change-modal");
-              }}
-              type="button"
-              className="flex justify-center items-center gap-2 text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none"
-            >
-              <PencilIcon className="w-5 h-5" aria-hidden="true" />
-              <p className="font-barlow hidden sm:block ">Editar</p>
-            </button>
-          </div>
-
           <div className="w-full flex flex-col justify-center items-center gap-4">
             <div className="flex flex-col items-center gap-4">
               <h2 className="font-semibold">Hora</h2>
@@ -365,26 +355,28 @@ export default function Event(props) {
             <div className="flex flex-col items-center gap-4">
               <h2 className="font-semibold">Localització</h2>
               <p>{location}</p>
-              <div className="flex items-center cursor-pointer">
+            </div>
+            <div className="flex flex-col justify-center items-center gap-4 md:flex-row ">
+              <div className="p-4 cursor-pointer">
                 <button
                   onClick={handleShowMap}
                   type="button"
-                  className="flex justify-center items-center gap-2 text-whiteCorp bg-primary rounded-xl mt-4 py-3 px-6 ease-in-out duration-300 border border-whiteCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none"
+                  className="flex justify-center items-center gap-2 text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none"
                 >
-                  <p className="hidden sm:block">
-                    {showMap ? "Ocultar mapa" : "Mostrar mapa"}
-                  </p>
                   {showMap ? (
                     <XIcon
-                      className="h-6 w-6 text-whiteCorp"
+                      className="h-5 w-5 text-whiteCorp"
                       aria-hidden="true"
                     />
                   ) : (
                     <MapIcon
-                      className="h-6 w-6 text-whiteCorp"
+                      className="h-5 w-5 text-whiteCorp"
                       aria-hidden="true"
                     />
                   )}
+                  <p className="hidden sm:block">
+                    {showMap ? "Ocultar mapa" : "Mostrar mapa"}
+                  </p>
                 </button>
               </div>
               {showMap && (
