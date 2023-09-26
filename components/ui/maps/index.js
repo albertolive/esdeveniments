@@ -26,7 +26,7 @@ export default function Maps({ location }) {
 
   return (
     <div
-      className="rounded-lg bg-gray-100 overflow-hidden"
+      className="rounded-lg bg-darkCorp overflow-hidden"
       data-src={`https://www.google.com/maps/embed/v1/place?q=${location}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS}`}
       id="mymap"
       ref={mapRef}
