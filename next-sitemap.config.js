@@ -30,6 +30,7 @@ module.exports = {
     "[place]",
   ],
   generateRobotsTxt: true,
+  sitemapSize: 7000,
   robotsTxtOptions: {
     policies: [
       {
