@@ -12,7 +12,7 @@
     "start:staging": "env-cmd -f .env.staging next start",
     "build:production": "NODE_ENV=production env-cmd -f .env.production next build",
     "start:production": "NODE_ENV=production env-cmd -f .env.production next start",
-    "postbuild": "next-sitemap --config next-sitemap.config.js",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint"
   },
@@ -20,6 +20,7 @@
     "@headlessui/react": "^1.7.10",
     "@heroicons/react": "^1.0.6",
     "@sentry/nextjs": "^7.67.0",
+    "@sentry/tracing": "^7.71.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",

@@ -1,12 +1,16 @@
-const { withSentryConfig } = require("@sentry/nextjs");
+// const { withSentryConfig } = require("@sentry/nextjs");
 
-const sentryWebpackPluginOptions = {
-  silent: true,
-};
+// const sentryWebpackPluginOptions = {
+//   silent: true,
+// };
 
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
-});
+const siteUrl =
+  process.env.NODE_ENV !== "production"
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
+      process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
+    ? "https://esdeveniments.vercel.app"
+    : "https://www.esdeveniments.cat";
 
 const nextConfig = {
   experimental: {
@@ -34,6 +38,33 @@ const nextConfig = {
       "www.santantonidevilamajor.cat",
     ],
   },
+  sitemap: {
+    baseUrl: siteUrl,
+    pages: [],
+    exclude: [
+      "/api/*",
+      "/sitemap.xml",
+      "/server-sitemap.xml",
+      "/rss.xml",
+      "/e/[eventId]",
+      "/[place]",
+    ],
+    trailingSlash: false,
+    sitemapSize: 7000,
+    robotsTxtOptions: {
+      policies: [
+        {
+          userAgent: "*",
+          disallow: ["/404"],
+          allow: ["/"],
+        },
+      ],
+      additionalSitemaps: [
+        `${siteUrl}/sitemap.xml`,
+        `${siteUrl}/server-sitemap.xml`,
+      ],
+    },
+  },
   async headers() {
     return [
       {
@@ -52,15 +83,28 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: "/server-sitemap.xml",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/xml",
+          },
+        ],
+      },
     ];
   },
   async redirects() {
     return [];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/server-sitemap.xml",
+        destination: "/api/sitemap",
+      },
+    ];
+  },
 };
 
-module.exports = withBundleAnalyzer(
-  withSentryConfig(nextConfig, sentryWebpackPluginOptions)
-);
-
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = nextConfig;
