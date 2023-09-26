@@ -389,7 +389,7 @@ export default function Event(props) {
               </div>
               {showMap && (
                 <div className="flex flex-col gap-4">
-                  <div className="aspect-w-1 aspect-h-1 bg-gray-100 overflow-hidden">
+                  <div className=" bg-gray-100 overflow-hidden">
                     <Maps location={location} />
                   </div>
                 </div>
