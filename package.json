@@ -12,7 +12,7 @@
     "start:staging": "env-cmd -f .env.staging next start",
     "build:production": "NODE_ENV=production env-cmd -f .env.production next build",
     "start:production": "NODE_ENV=production env-cmd -f .env.production next start",
-    "postbuild": "next-sitemap",
+    "postbuild": "next-sitemap --config next-sitemap.config.js",
     "start": "next start",
     "lint": "next lint"
   },
