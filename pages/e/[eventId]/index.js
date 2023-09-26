@@ -8,6 +8,7 @@ import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import MapIcon from "@heroicons/react/outline/MapIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
+import ReactHtmlParser from "react-html-parser";
 
 import { siteUrl } from "@config/index";
 import Link from "next/link";
@@ -209,9 +210,6 @@ export default function Event(props) {
     isEventFinished,
     eventImage,
   } = data.event;
-  const descriptionHTML = isHTML(description)
-    ? description
-    : replaceURLs(description);
 
   const jsonData = generateJsonData({ ...data.event, imageUploaded });
 
@@ -338,11 +336,7 @@ export default function Event(props) {
               <h2 className="font-semibold">Descripció</h2>
             </div>
             <div className="w-full overflow-hidden">
-              <p
-                className="break-words"
-                dangerouslySetInnerHTML={{ __html: descriptionHTML }}
-              ></p>
-              <div />
+              <div className="break-words">{ReactHtmlParser(description)}</div>
             </div>
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-4">
@@ -449,6 +443,10 @@ export async function getStaticProps({ params }) {
       notFound: true,
     };
   }
+
+  event.description = isHTML(event.description)
+    ? event.description
+    : replaceURLs(event.description);
 
   return {
     props: { event },
