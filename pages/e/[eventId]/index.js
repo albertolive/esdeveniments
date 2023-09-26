@@ -296,7 +296,7 @@ export default function Event(props) {
               Aquest esdeveniment ha finalitzat
             </p>
           )}
-          <div className="mt-6 space-y-10 min-h-[325px] h-full lg:min-h-[100px]">
+          <div className="p-3 h-full min-h-[325px] lg:min-h-[100px]">
             <AdArticle slot="1510301521" />
           </div>
           <div className="w-full flex justify-end items-center cursor-pointer">
@@ -326,7 +326,7 @@ export default function Event(props) {
                   height="100%"
                   width="100%"
                   image={imageUploaded}
-                  className="w-full h-full object-center object-cover"
+                  className="h-full object-center object-cover"
                 />
               </a>
             </div>

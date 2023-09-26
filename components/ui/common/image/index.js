@@ -23,11 +23,11 @@ const useImage = (url) => {
 
 function getRandomBackground() {
   const gradients = [
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIxMCUiIHkxPSIxMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgxNDUpIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNiNjkyZmU7IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNFQTU0NTU7IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIgLz4KPC9zdmc+Cg==",
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIxMCUiIHkxPSIxMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgxNDUpIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRkY2Qjc7IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNGNjQxNkM7IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIgLz4KPC9zdmc+Cg==",
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIxMCUiIHkxPSIxMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgxNDUpIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM0M0NCRkY7IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM5NzA4Q0M7IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIgLz4KPC9zdmc+Cg==",
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIxMCUiIHkxPSIxMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgxNDUpIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM3OUYxQTQ7IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwRTVDQUQ7IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIgLz4KPC9zdmc+Cg==",
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIxMCUiIHkxPSIxMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgxNDUpIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRkY3MjA7IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMzQ0Q1MDA7IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIgLz4KPC9zdmc+Cg==",
+    "linear-gradient( 145deg, #b692fe 10%, #EA5455 100%)",
+    "linear-gradient( 145deg, #FFF6B7 10%, #F6416C 100%)",
+    "linear-gradient( 145deg, #FF9A8B 10%, #FF6A88 100%)",
+    "linear-gradient( 145deg, #FFD8CB 10%, #FF3CAC 100%)",
+    "linear-gradient( 145deg, #FCCF31 10%, #F55555 100%)",
   ];
 
   const randomIndex = Math.floor(Math.random() * gradients.length);
@@ -74,7 +74,7 @@ function ImageComponent({
       </Head>
       <div
         className={imageClassName}
-        style={{ position: "relative", width: "100%", height: "60vh" }}
+        style={{ position: "relative", width: "100%", height: "41vh" }}
       >
         <NextImage
           className="object-cover"
