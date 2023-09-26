@@ -4,6 +4,7 @@ import { google } from "googleapis";
 import * as cheerio from "cheerio";
 import Bottleneck from "bottleneck";
 import { CITIES_DATA } from "@utils/constants";
+const { DateTime } = require("luxon");
 
 const enableInserting = true;
 
@@ -289,9 +290,11 @@ async function insertItemToCalendar(
     "content:encoded": locationExtra,
   } = item || {};
 
-  const dateTime = new Date(pubDate);
-  const endDateTime = new Date(dateTime);
-  endDateTime.setHours(endDateTime.getHours() + 1);
+  const dateTime = DateTime.fromJSDate(new Date(pubDate), {
+    zone: "Europe/Madrid",
+  });
+  const endDateTime = dateTime.plus({ hours: 1 });
+
   const description = link
     ? await scrapeDescription(link, descriptionSelector, imageSelector)
     : null;
@@ -309,11 +312,11 @@ async function insertItemToCalendar(
       ? `${scrapedLocation}, ${townLabel}, ${regionLabel}`
       : `${townLabel}, ${regionLabel}`,
     start: {
-      dateTime: dateTime.toISOString(),
+      dateTime: dateTime.toISO(),
       timeZone: "Europe/Madrid",
     },
     end: {
-      dateTime: endDateTime.toISOString(),
+      dateTime: endDateTime.toISO(),
       timeZone: "Europe/Madrid",
     },
   };
