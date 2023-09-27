@@ -215,10 +215,10 @@ async function scrapeDescription(
       console.error("No image URL found");
     }
 
-    const appendUrl = `<br><br><b>Més informació a:</b> <a href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+    const appendUrl = `<br><br><b>Més informació a:</b>&nbsp<a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
 
     return `
-    <div>${description}</div>\n\n
+    <div>${description}</div>
     ${image ? `<div class="hidden">${image}</div>` : ""}
     <div>${appendUrl}</div>`;
   } catch (error) {
