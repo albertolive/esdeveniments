@@ -1,8 +1,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const RSS = require("rss");
-const { format } = require("date-fns");
-const { utcToZonedTime } = require("date-fns-tz");
+const { DateTime } = require("luxon");
 const crypto = require("crypto");
 import { siteUrl } from "@config/index";
 
@@ -24,18 +23,18 @@ const CITIES = {
 
 function convertToRSSDate(dateString, dateRegex) {
   const monthMap = {
-    gen: "Jan",
-    feb: "Feb",
-    març: "Mar",
-    abr: "Apr",
-    maig: "May",
-    juny: "Jun",
-    jul: "Jul",
-    ag: "Aug",
-    set: "Sep",
-    oct: "Oct",
-    nov: "Nov",
-    des: "Dec",
+    gen: "01",
+    feb: "02",
+    març: "03",
+    abr: "04",
+    maig: "05",
+    juny: "06",
+    jul: "07",
+    ag: "08",
+    set: "09",
+    oct: "10",
+    nov: "11",
+    des: "12",
   };
 
   const match = dateString.match(dateRegex);
@@ -47,20 +46,23 @@ function convertToRSSDate(dateString, dateRegex) {
     const hour = parseInt(match[4], 10);
     const minute = parseInt(match[5], 10);
 
-    const monthEnglish = monthMap[month.toLowerCase()];
+    const monthNumber = monthMap[month.toLowerCase()];
 
-    if (!monthEnglish) {
+    if (!monthNumber) {
       console.error(`Invalid month value: ${month}`);
       return null;
     }
 
-    const date = new Date(
-      `${day} ${monthEnglish} ${year} ${hour}:${minute}:00 GMT`
-    );
-    const madridDate = utcToZonedTime(date, "Europe/Madrid");
-    const formattedDate = format(madridDate, "EEE, dd MMM yyyy HH:mm:ss xx", {
-      timeZone: "Europe/Madrid",
-    });
+    const date = DateTime.fromObject({
+      day: day,
+      month: parseInt(monthNumber),
+      year: year,
+      hour: hour,
+      minute: minute,
+    }).setZone("Europe/Madrid");
+
+    const formattedDate = date.toFormat("EEE, dd LLL yyyy HH:mm:ss ZZZZ");
+
     return formattedDate;
   }
 

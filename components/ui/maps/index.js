@@ -9,8 +9,11 @@ export default function Maps({ location }) {
 
     const frame = document.createElement("iframe");
     frame.src = map.getAttribute("data-src");
+    frame.style.width = "100%";
+    frame.style.height = "500px";
+    frame.style.border = "0";
+    frame.allowFullscreen = true;
     const onLoad = () => {
-      // Remove the event listener to prevent memory leaks
       frame.removeEventListener("load", onLoad);
     };
     frame.addEventListener("load", onLoad);
@@ -23,7 +26,7 @@ export default function Maps({ location }) {
 
   return (
     <div
-      className="aspect-w-1 aspect-h-1 bg-darkCorp overflow-hidden"
+      className="rounded-lg bg-darkCorp overflow-hidden"
       data-src={`https://www.google.com/maps/embed/v1/place?q=${location}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS}`}
       id="mymap"
       ref={mapRef}

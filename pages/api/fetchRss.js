@@ -4,6 +4,7 @@ import { google } from "googleapis";
 import * as cheerio from "cheerio";
 import Bottleneck from "bottleneck";
 import { CITIES_DATA } from "@utils/constants";
+const { DateTime } = require("luxon");
 
 const enableInserting = true;
 
@@ -176,7 +177,12 @@ function getBaseUrl(url) {
   return `${urlObject.protocol}//${urlObject.host}`;
 }
 
-async function scrapeDescription(url, descriptionSelector, imageSelector) {
+async function scrapeDescription(
+  title,
+  url,
+  descriptionSelector,
+  imageSelector
+) {
   try {
     const sanitizeUrl = url.replace(/\.html$/, "");
     const response = await fetch(sanitizeUrl);
@@ -209,7 +215,7 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
       console.error("No image URL found");
     }
 
-    const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
+    const appendUrl = `<br><br><b>Més informació a:</b> <a href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
 
     return `
     <div>${description}</div>\n\n
@@ -289,11 +295,13 @@ async function insertItemToCalendar(
     "content:encoded": locationExtra,
   } = item || {};
 
-  const dateTime = new Date(pubDate);
-  const endDateTime = new Date(dateTime);
-  endDateTime.setHours(endDateTime.getHours() + 1);
+  const dateTime = DateTime.fromJSDate(new Date(pubDate), {
+    zone: "Europe/Madrid",
+  });
+  const endDateTime = dateTime.plus({ hours: 1 });
+
   const description = link
-    ? await scrapeDescription(link, descriptionSelector, imageSelector)
+    ? await scrapeDescription(title, link, descriptionSelector, imageSelector)
     : null;
 
   const scrapedLocation = await scrapeLocation(
@@ -309,11 +317,11 @@ async function insertItemToCalendar(
       ? `${scrapedLocation}, ${townLabel}, ${regionLabel}`
       : `${townLabel}, ${regionLabel}`,
     start: {
-      dateTime: dateTime.toISOString(),
+      dateTime: dateTime.toISO(),
       timeZone: "Europe/Madrid",
     },
     end: {
-      dateTime: endDateTime.toISOString(),
+      dateTime: endDateTime.toISO(),
       timeZone: "Europe/Madrid",
     },
   };

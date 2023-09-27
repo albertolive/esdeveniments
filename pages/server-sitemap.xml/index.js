@@ -21,17 +21,22 @@ export const getServerSideProps = async (ctx) => {
 
   const fields = normalizedEvents
     ?.filter((event) => !event.isAd)
-    .map((data) => ({
-      loc: `${siteUrl}/e/${data.slug}`,
-      lastmod: new Date().toISOString(),
-      changefreq: "daily",
-      "image:image": `
-    <image:loc>${
-      data.imageUploaded ? data.imageUploaded : undefined
-    }</image:loc>
-    <image:title>${sanitize(data.title)}</image:title>
-  `,
-    }));
+    .map((data) => {
+      let field = {
+        loc: `${siteUrl}/e/${data.slug}`,
+        lastmod: new Date().toISOString(),
+        changefreq: "daily",
+      };
+
+      if (data.imageUploaded) {
+        field["image:image"] = `
+          <image:loc>${data.imageUploaded}</image:loc>
+          <image:title>${sanitize(data.title)}</image:title>
+        `;
+      }
+
+      return field;
+    });
 
   return getServerSideSitemap(ctx, fields);
 };
