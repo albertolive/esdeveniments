@@ -6,7 +6,7 @@ export default function CardLoading() {
       {/* Title */}
       <div className="bg-whiteCorp h-24 flex justify-between items-center gap-2 gap-x-4">
         <div
-          className="h-1/2 border-l-[6px] border-primary px-0 mx-0
+          className="h-1/3 border-l-[6px] border-primary px-0 mx-0
           sm:border-l-[10px]"
         ></div>
         {/* Title */}

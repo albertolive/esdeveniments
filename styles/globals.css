@@ -12,24 +12,31 @@ body {
   -moz-font-smoothing: antialiased;
   -o-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto Flex", sans-serif;
   font-size: 16px;
   color: #454545;
-  letter-spacing: 0.038rem;
+  letter-spacing: 0.034rem;
   line-height: 1.2rem;
 }
 h1 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.8rem;
-  letter-spacing: 0.05rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.7rem;
+  letter-spacing: 0.03rem;
   line-height: 2.1rem;
 }
 
 h2 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.38rem;
-  letter-spacing: 0.05rem;
-  line-height: 1.62rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.01rem;
+  line-height: 1.6rem;
+}
+h3 {
+  font-family: "Roboto Flex", sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.02rem;
+  line-height: 1.65rem;
+  font-weight: 390;
 }
 
 #map {
