@@ -8,7 +8,7 @@ import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import InformationCircleIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
-import logo from "@public/static/images/logo-esdeveniments-cat.png";
+import logo from "@public/static/images/logo-esdeveniments.png";
 import { useRouter } from "next/router";
 
 const navigation = [
@@ -68,21 +68,16 @@ export default function Navbar() {
       as="nav"
       className={`navbar bg-whiteCorp sticky top-0 z-50 ${
         hasShadow
-          ? "shadow-lg shadow-darkCorp transition-all ease-in-out duration-300"
+          ? "shadow-sm shadow-darkCorp transition-all ease-in-out duration-300"
           : ""
       }`}
     >
       {({ open }) => (
         <>
-          <div
-            className="bg-whiteCorp mx-auto h-24
-          px-0 py-4
-          lg:max-w-[1024px]
-          xl:max-w-[1280px]"
-          >
+          <div className="bg-whiteCorp mx-auto h-18 px-0 py-4 lg:max-w-[1024px] xl:max-w-[1280px]">
             <div className="flex flex-col justify-center h-full">
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
-              <div className="h-[36px] flex justify-around items-center px-4">
+              <div className="flex justify-around items-center px-4">
                 {/* Logo */}
                 <div
                   className="flex w-full md:w-1/2 justify-start items-center py-2 px-4 cursor-pointer"
@@ -94,8 +89,8 @@ export default function Navbar() {
                         src={logo}
                         className="block cursor-pointer bg-whiteCorp py-2 px-4"
                         alt="Logo Esdeveniments.cat"
-                        width={228}
-                        height={24}
+                        width={168}
+                        height={20}
                         layout="fixed"
                         priority
                       />

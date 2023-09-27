@@ -17,8 +17,8 @@ function getRandomBackground() {
     "linear-gradient( 145deg, #E2B0FF 10%, #9F44D3 100%)",
     "linear-gradient( 145deg, #F97794 10%, #623AA2 100%)",
     "linear-gradient( 145deg, #FCCF31 10%, #F55555 100%)",
-    "linear-gradient(145deg, #4facfe 10%, #00f2fe 100%)",
-    "linear-gradient(145deg, #43e97b 10%, #38f9d7 100%)",
+    "linear-gradient( 145deg, #4facfe 10%, #00f2fe 100%)",
+    "linear-gradient( 145deg, #43e97b 10%, #38f9d7 100%)",
   ];
 
   let randomIndex;

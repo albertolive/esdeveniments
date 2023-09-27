@@ -80,14 +80,11 @@ export default function EditModal({
                   aria-describedby="not-exist-description"
                   name="not-exist"
                   type="checkbox"
-                  className="h-5 w-5 text-primarySoft border-darkCorp rounded-xl focus:outline-none"
+                  className="h-5 w-5 text-primarydark border-darkCorp rounded-xl focus:outline-none"
                 />
               </div>
               <div className="p-2">
-                <label
-                  htmlFor="not-exist"
-                  className="text-blackCorp"
-                >
+                <label htmlFor="not-exist" className="text-blackCorp">
                   No existeix
                 </label>
               </div>
@@ -101,14 +98,11 @@ export default function EditModal({
                   aria-describedby="duplicated-description"
                   name="duplicated"
                   type="checkbox"
-                  className="h-5 w-5 text-primarySoft border-darkCorp rounded-xl focus:outline-none"
+                  className="h-5 w-5 text-primarydark border-darkCorp rounded-xl focus:outline-none"
                 />
               </div>
               <div className="p-2">
-                <label
-                  htmlFor="duplicated"
-                  className="text-blackCorp"
-                >
+                <label htmlFor="duplicated" className="text-blackCorp">
                   Duplicat
                 </label>
               </div>
@@ -122,14 +116,11 @@ export default function EditModal({
                   aria-describedby="offensive-description"
                   name="offensive"
                   type="checkbox"
-                  className="h-5 w-5 text-primarySoft border-darkCorp rounded-xl focus:outline-none"
+                  className="h-5 w-5 text-primarydark border-darkCorp rounded-xl focus:outline-none"
                 />
               </div>
               <div className="p-2">
-                <label
-                  htmlFor="offensive"
-                  className="text-blackCorp"
-                >
+                <label htmlFor="offensive" className="text-blackCorp">
                   Ofensiu, nociu o enganyós
                 </label>
               </div>
@@ -143,7 +134,7 @@ export default function EditModal({
                   aria-describedby="others-description"
                   name="others"
                   type="checkbox"
-                  className="h-5 w-5 text-primarySoft border-darkCorp rounded-xl focus:outline-none"
+                  className="h-5 w-5 text-primarydark border-darkCorp rounded-xl focus:outline-none"
                 />
               </div>
               <div className="p-2">

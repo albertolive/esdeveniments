@@ -158,46 +158,36 @@ export default function Events({ props, loadMore = true }) {
       <div className="p-2 flex flex-col justify-center items-center">
         <button
           onClick={toggleDropdown}
-          className={`w-11/12 p-3 flex justify-center items-center gap-4 font-semibold text-blackCorp focus:outline-none`}
+          className={`w-11/12 p-3 flex justify-center items-center gap-2 text-blackCorp focus:outline-none`}
         >
           {open ? (
-            <p className="w-24 text-center tracking-wide">Tancar</p>
+            <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
+              Tancar
+            </h2>
           ) : (
-            <p className="w-24 text-center tracking-wide">Informació</p>
+            <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
+              Informació
+            </h2>
           )}
           {open ? (
-            <XIcon className="h-6 w-6" />
+            <XIcon className="h-5 w-5" />
           ) : (
-            <ChevronDownIcon className="h-6 w-6" />
+            <ChevronDownIcon className="h-5 w-5" />
           )}
         </button>
         {open && (
-          <div className="flex flex-col pt-8 border-t border-darkCorp">
-            <div className="mx-10">
-              <h1
-                className="mb-2 leading-8 font-semibold text-blackCorp text-center
-              md:text-left"
-              >
+          <div className="flex flex-col gap-4 py-4 border-t border-darkCorp">
+            <div>
+              <h1 className="leading-8 font-semibold text-blackCorp text-center md:text-left uppercase italic">
                 {title}
               </h1>
             </div>
-            <div
-              className="mx-10 flex flex-col justify-center items-center
-            lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row"
-            >
-              <p
-                className="my-4 w-full text-center
-              md:text-left
-              lg:w-1/2"
-              >
+            <div className="px-2 flex flex-col justify-center items-center gap-4 lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
+              <p className="w-full text-center md:text-left lg:w-1/2">
                 {subTitle}
               </p>
               <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
-              <p
-                className="my-4 w-full text-center
-              md:text-left
-              lg:w-1/2"
-              >
+              <p className="w-full text-center md:text-left lg:w-1/2">
                 {description}
               </p>
             </div>
