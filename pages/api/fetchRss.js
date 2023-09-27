@@ -177,7 +177,12 @@ function getBaseUrl(url) {
   return `${urlObject.protocol}//${urlObject.host}`;
 }
 
-async function scrapeDescription(url, descriptionSelector, imageSelector) {
+async function scrapeDescription(
+  title,
+  url,
+  descriptionSelector,
+  imageSelector
+) {
   try {
     const sanitizeUrl = url.replace(/\.html$/, "");
     const response = await fetch(sanitizeUrl);
@@ -210,7 +215,7 @@ async function scrapeDescription(url, descriptionSelector, imageSelector) {
       console.error("No image URL found");
     }
 
-    const appendUrl = `\n\nMés informació a:\n\n<a href="${url}">${url}</a>`;
+    const appendUrl = `<br><br><b>Més informació a:</b> <a href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
 
     return `
     <div>${description}</div>\n\n
@@ -296,7 +301,7 @@ async function insertItemToCalendar(
   const endDateTime = dateTime.plus({ hours: 1 });
 
   const description = link
-    ? await scrapeDescription(link, descriptionSelector, imageSelector)
+    ? await scrapeDescription(title, link, descriptionSelector, imageSelector)
     : null;
 
   const scrapedLocation = await scrapeLocation(
