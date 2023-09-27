@@ -3,6 +3,9 @@ import NextImage from "next/image";
 import Head from "next/head";
 import ImgDefault from "@components/ui/imgDefault";
 
+const blurDataURL =
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIxMCUiIHkxPSIxMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgxNDUpIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNDQ0NDQ0M7IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNDQ0NDQ0M7IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIgLz4KPC9zdmc+Cg==";
+
 const useImage = (url) => {
   const [error, setError] = useState(false);
 
@@ -20,20 +23,6 @@ const useImage = (url) => {
 
   return { error };
 };
-
-function getRandomBackground() {
-  const gradients = [
-    "linear-gradient( 145deg, #b692fe 10%, #EA5455 100%)",
-    "linear-gradient( 145deg, #FFF6B7 10%, #F6416C 100%)",
-    "linear-gradient( 145deg, #FF9A8B 10%, #FF6A88 100%)",
-    "linear-gradient( 145deg, #FFD8CB 10%, #FF3CAC 100%)",
-    "linear-gradient( 145deg, #FCCF31 10%, #F55555 100%)",
-  ];
-
-  const randomIndex = Math.floor(Math.random() * gradients.length);
-
-  return gradients[randomIndex];
-}
 
 function ImageComponent({
   title,
@@ -84,7 +73,7 @@ function ImageComponent({
           objectFit="contain"
           alt={title}
           placeholder="blur"
-          blurDataURL={getRandomBackground()}
+          blurDataURL={blurDataURL}
         />
       </div>
     </>
