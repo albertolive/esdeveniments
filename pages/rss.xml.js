@@ -49,7 +49,7 @@ const buildFeed = (items) => {
     feed.addItem({
       id: item.id,
       title: item.title,
-      link: `${hostUrl}/${item.slug}`,
+      link: `${siteUrl}/${item.slug}`,
       description,
       content: item.location,
       date: new Date(item.startDate),
