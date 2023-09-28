@@ -41,7 +41,7 @@ const buildFeed = (items) => {
     );
 
   removedDuplicatedItems.forEach((item) => {
-    const description = `${item.title}\n\n🗓️ ${item.nameDay} ${item.formattedStart}\n\n🏡 ${item.location} \n\nℹ️ Més informació a l'enllaç de la nostra bio!`;
+    const description = `${item.title}\n\n🗓️ ${item.nameDay} ${item.formattedStart}\n\n🏡 ${item.location}, ${item.town}, ${item.region} \n\nℹ️ Més informació disponible a la nostra pàgina web!`;
     const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
     const hasEventImage = item.description.match(regex);
     const eventImage = hasEventImage && hasEventImage[0];
@@ -51,7 +51,7 @@ const buildFeed = (items) => {
       title: item.title,
       link: `${siteUrl}/${item.slug}`,
       description,
-      content: item.location,
+      content: item.mapsLocation,
       date: new Date(item.startDate),
       image: item.imageUploaded
         ? item.imageUploaded
