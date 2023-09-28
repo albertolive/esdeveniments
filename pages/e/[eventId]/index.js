@@ -199,6 +199,7 @@ export default function Event(props) {
     id,
     description,
     location,
+    mapsLocation,
     startDate,
     startTime,
     endTime,
@@ -321,8 +322,8 @@ export default function Event(props) {
                 rel="image_src noreferrer"
               >
                 <Image
-                  alt={location}
-                  title={location}
+                  alt={title}
+                  title={title}
                   height="100%"
                   width="100%"
                   image={imageUploaded}
@@ -376,7 +377,7 @@ export default function Event(props) {
               {showMap && (
                 <div className="flex flex-col gap-4">
                   <div className=" bg-gray-100 overflow-hidden">
-                    <Maps location={location} />
+                    <Maps location={mapsLocation} />
                   </div>
                 </div>
               )}

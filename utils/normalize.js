@@ -145,18 +145,21 @@ export const normalizeEvent = (event) => {
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
   const eventImage = hasEventImage(event.description);
+  const mapsLocation = `${location}, ${town}${
+    town && region ? ", " : ""
+  }${region}, ${postalCode}`;
 
   return {
     id: event.id,
     title,
     startTime,
     endTime,
-    location: event.location,
     label,
     location,
     town,
     region,
     postalCode,
+    mapsLocation,
     formattedStart,
     formattedEnd,
     nameDay,

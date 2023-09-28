@@ -61,9 +61,7 @@ function convertToRSSDate(dateString, dateRegex) {
       minute: minute,
     }).setZone("Europe/Madrid");
 
-    const formattedDate = date.toFormat("EEE, dd LLL yyyy HH:mm:ss ZZZZ");
-
-    return formattedDate;
+    return date;
   }
 
   return null;

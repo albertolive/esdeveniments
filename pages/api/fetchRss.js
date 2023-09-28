@@ -215,7 +215,7 @@ async function scrapeDescription(
       console.error("No image URL found");
     }
 
-    const appendUrl = `<br><br><b>Més informació a:</b>&nbsp<a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+    const appendUrl = `<br><br><b>Més informació:</b><br><a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
 
     return `
     <div>${description}</div>
@@ -295,9 +295,7 @@ async function insertItemToCalendar(
     "content:encoded": locationExtra,
   } = item || {};
 
-  const dateTime = DateTime.fromJSDate(new Date(pubDate), {
-    zone: "Europe/Madrid",
-  });
+  const dateTime = DateTime.fromRFC2822(pubDate, { zone: "Europe/Madrid" });
   const endDateTime = dateTime.plus({ hours: 1 });
 
   const description = link
@@ -317,11 +315,11 @@ async function insertItemToCalendar(
       ? `${scrapedLocation}, ${townLabel}, ${regionLabel}`
       : `${townLabel}, ${regionLabel}`,
     start: {
-      dateTime: dateTime.toISO(),
+      dateTime: dateTime.toJSDate(),
       timeZone: "Europe/Madrid",
     },
     end: {
-      dateTime: endDateTime.toISO(),
+      dateTime: endDateTime.toJSDate(),
       timeZone: "Europe/Madrid",
     },
   };
