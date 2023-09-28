@@ -38,3 +38,6 @@ sitemap.xml
 sitemap-0.xml
 # Sentry
 .sentryclirc
+
+# Sentry Auth Token
+.sentryclirc

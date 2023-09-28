@@ -1,12 +1,13 @@
 const { withSentryConfig } = require("@sentry/nextjs");
-
-const sentryWebpackPluginOptions = {
-  silent: true,
-};
-
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
+
+const sentryWebpackPluginOptions = {
+  silent: true,
+  org: "esdeveniments",
+  project: "javascript-nextjs",
+};
 
 const nextConfig = {
   experimental: {
@@ -60,7 +61,20 @@ const nextConfig = {
 };
 
 module.exports = withBundleAnalyzer(
-  withSentryConfig(nextConfig, sentryWebpackPluginOptions)
-);
+  withSentryConfig(nextConfig, sentryWebpackPluginOptions, {
+    // Upload a larger set of source maps for prettier stack traces (increases build time)
+    widenClientFileUpload: true,
 
-module.exports = withBundleAnalyzer(nextConfig);
+    // Transpiles SDK to be compatible with IE11 (increases bundle size)
+    transpileClientSDK: true,
+
+    // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+    // tunnelRoute: "/monitoring",
+
+    // Hides source maps from generated client bundles
+    hideSourceMaps: true,
+
+    // Automatically tree-shake Sentry logger statements to reduce bundle size
+    disableLogger: true,
+  })
+);

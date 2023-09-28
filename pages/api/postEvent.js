@@ -1,4 +1,3 @@
-import { withSentry } from "@sentry/nextjs";
 import { google } from "googleapis";
 
 const calendar = google.calendar("v3");
@@ -14,7 +13,8 @@ const auth = new google.auth.GoogleAuth({
 
 const handler = async (req, res) => {
   try {
-    const { title, description, location, startDate, endDate, imageUploaded } = req.body;
+    const { title, description, location, startDate, endDate, imageUploaded } =
+      req.body;
     const event = {
       summary: title,
       description,
@@ -51,4 +51,4 @@ const handler = async (req, res) => {
   }
 };
 
-export default withSentry(handler);
+export default handler;

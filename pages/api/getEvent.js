@@ -1,11 +1,10 @@
-import { withSentry } from "@sentry/nextjs";
 import { getCalendarEvent } from "@lib/helpers";
 
 const handler = async (req, res) => {
   try {
     const event = await getCalendarEvent(req.query.eventId);
 
-    res.setHeader('Cache-Control', 'max-age=1800');
+    res.setHeader("Cache-Control", "max-age=1800");
     res.setHeader("Content-Type", "application/json");
     res.status(200).json(event);
   } catch (error) {
@@ -14,4 +13,4 @@ const handler = async (req, res) => {
   }
 };
 
-export default withSentry(handler);
+export default handler;

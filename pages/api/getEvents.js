@@ -1,5 +1,3 @@
-import { withSentry } from "@sentry/nextjs";
-
 import { today, week, weekend, twoWeeksDefault } from "@lib/dates";
 import { getCalendarEvents } from "@lib/helpers";
 
@@ -87,4 +85,4 @@ const handler = async (req, res) => {
   }
 };
 
-export default withSentry(handler);
+export default handler;
