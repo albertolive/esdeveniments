@@ -59,7 +59,8 @@ function convertToRSSDate(dateString, dateRegex) {
       year: year,
       hour: hour,
       minute: minute,
-    }).setZone("Europe/Madrid");
+      zone: "Europe/Madrid",
+    });
 
     return date;
   }
