@@ -1,33 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { BYDATES } from "@utils/constants";
+import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
-
-const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
-  loading: () => "",
-  noSSR: false,
-});
+import FiltersModal from "@components/ui/filtersModal";
 
 const Select = dynamic(() => import("@components/ui/common/form/select"), {
   loading: () => "",
   noSSR: false,
 });
-
-const RenderButton = ({ value, label, goTo, byDate }) => {
-  const isActiveLink =
-    byDate === value ? "bg-primary text-whiteCorp border-0" : "bg-whiteCorp";
-
-  return (
-    <button
-      className={`w-full relative inline-flex justify-center items-center py-2 px-8 border border-primarydark font-normal rounded-xl ${isActiveLink} focus:outline-none`}
-      type="button"
-      onClick={() => goTo(value)}
-    >
-      {label}
-    </button>
-  );
-};
 
 export default function SubMenu({
   place: placeProps,
@@ -36,6 +17,7 @@ export default function SubMenu({
   setByDate,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const {
     query: { place: placeQuery, byDate: byDateQuery },
   } = useRouter();
@@ -81,21 +63,22 @@ export default function SubMenu({
             placeholder="una localitat"
           />
         </div>
-        {/* <div className="flex flex-col justify-center items-start gap-4 my-4">
-          {BYDATES.map(({ value, label }) => (
-            <RenderButton
-              key={value}
-              value={value}
-              label={label}
-              goTo={handleByDateChange}
-              byDate={byDate}
-            />
-          ))}
-        </div> */}
+        <div className="w-full flex justify-end items-center cursor-pointer">
+          <button
+            onClick={() => {
+              setOpenModal(true);
+            }}
+            type="button"
+            className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-3 px-6 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+          >
+            <AdjustmentsIcon className="w-5 h-5" aria-hidden="true" />
+            <p className="font-barlow hidden sm:block ">Editar</p>
+          </button>
+        </div>
+        {openModal && (
+          <FiltersModal openModal={openModal} setOpenModal={setOpenModal} />
+        )}
       </div>
-      {/* <div className="min-h-[325px] lg:min-h-[100px]">
-        <AdArticle slot="6571056515" />
-      </div> */}
     </>
   );
 }

@@ -9,57 +9,57 @@ export default function Modal({ open, setOpen, title, children }) {
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-50"
+        className="fixed inset-0 z-50 overflow-y-auto"
         initialFocus={cancelButtonRef}
         onClose={setOpen}
+        static
       >
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-300"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-whiteCorp" />
-        </Transition.Child>
-        <div className="fixed z-50 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-full p-4 text-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative bg-white rounded-xl overflow-hidden border border-darkCorp transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
-                <div className="absolute top-0 right-0 p-4">
-                  <button
-                    type="button"
-                    className="bg-white focus:outline-none"
-                    onClick={() => setOpen(false)}
-                  >
-                    <span className="sr-only">Close</span>
-                    <XIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </div>
-                <div className="w-full flex flex-col gap-4 bg-whiteCorp p-4">
-                  <div className="">
-                    <Dialog.Title
-                      as="h1"
-                      className="font-semibold uppercase text-left p-4"
-                    >
-                      {title}
-                    </Dialog.Title>
-                    {children}
+        <div className="flex items-center justify-center min-h-screen z-50">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-300"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-whiteCorp" />
+          </Transition.Child>
+
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+          >
+            {/* la prop fixed fa que el contingut estigui a dalt */}
+            <div className="bg-whiteCorp w-full h-full overflow-auto z-50 fixed">
+              <div className="px-4 pt-2 pb-4">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg leading-6 font-medium text-gray-900 flex flex-col"
+                >
+                  <div className="justify-between flex-row items-center flex">
+                    <h2>{title}</h2>
+                    <div className="justify-end pt-2 pr-2">
+                      <button
+                        ref={cancelButtonRef}
+                        onClick={() => setOpen(false)}
+                        className="focus:outline-none"
+                      >
+                        <XIcon className="h-6 w-6" aria-hidden="true" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+                </Dialog.Title>
+                <div className="mt-2">{children}</div>
+              </div>
+            </div>
+          </Transition.Child>
         </div>
       </Dialog>
     </Transition.Root>

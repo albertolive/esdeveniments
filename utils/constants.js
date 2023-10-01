@@ -40,18 +40,33 @@ export const MONTHS_URL = [
   "desembre",
 ];
 
-export const TAGS = [
-  "Familiar",
-  "Tertúlia Literària",
-  "Vermut",
-  "Cinema",
-  "Concert",
-  "Teatre",
-  "Exposició",
-];
+export const CATEGORIES = {
+  "Què fer": [],
+  Restaurants: [],
+  "Bars i pubs": [],
+  Cine: [],
+  Teatre: [],
+  Música: ["Concert", "Cançons", "etc"],
+  Art: [],
+  "Locals de nit": [],
+  Botigues: [],
+  "Salut i bellesa": [],
+  "Llocs d'interès": [],
+  "Museus i institucions": [],
+  Hotels: [],
+  Nens: [],
+  "Sales de cinema": [],
+  Clubs: [],
+  Comèdia: [],
+  Esports: [],
+  Dansa: [],
+  "Gai i lèsbic": [],
+  "Sexe i cites": [],
+  Viatge: [],
+  "Casa i llar": [],
+};
 
 export const BYDATES = [
-  // Replace it with a dynamic data source
   { value: "avui", label: "Avui" },
   { value: "setmana", label: "Aquesta setmana" },
   { value: "cap-de-setmana", label: "Cap de setmana" },

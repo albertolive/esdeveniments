@@ -381,14 +381,14 @@ export default function Event(props) {
                   </div>
                 </div>
               )}
-              {tag && (
+              {/* {tag && (
                 <dl className="mt-6 space-y-10">
                   <div>
                     <dt className="text-md font-bold text-gray-900">Tags</dt>
                     <dd className="mt-3 text-sm text-gray-500">{tag}</dd>
                   </div>
                 </dl>
-              )}
+              )} */}
               <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
                 <AdArticle slot="9643657007" />
               </div>

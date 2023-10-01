@@ -1,12 +1,12 @@
 import axios from "axios";
 import { kv } from "@vercel/kv";
 import { google } from "googleapis";
-import * as cheerio from "cheerio";
+import { load } from "cheerio";
 import Bottleneck from "bottleneck";
+import DateTime from "luxon";
 import { CITIES_DATA } from "@utils/constants";
-const { DateTime } = require("luxon");
 
-const enableInserting = true;
+const enableInserting = false;
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -187,7 +187,7 @@ async function scrapeDescription(
     const sanitizeUrl = url.replace(/\.html$/, "");
     const response = await fetch(sanitizeUrl);
     const html = await response.text();
-    const $ = cheerio.load(html);
+    const $ = load(html);
 
     const description =
       $(descriptionSelector).html()?.trim() ||
@@ -198,7 +198,7 @@ async function scrapeDescription(
     const regex = /(https?:\/\/[^"\s]+)/g;
 
     if (rawImage) {
-      let $img = cheerio.load(rawImage);
+      let $img = load(rawImage);
       let img = $img("img");
       img.removeAttr("style");
       img.removeAttr("class");
@@ -248,7 +248,7 @@ async function scrapeLocation(url, location, locationSelector) {
     const sanitizeUrl = url.replace(/\.html$/, "");
     const response = await fetch(sanitizeUrl);
     const html = await response.text();
-    const $ = cheerio.load(html);
+    const $ = load(html);
 
     // TODO: Make it more generic. Now it works for La Garriga
     let locationElement = $(locationSelector).find("p").first().text();
