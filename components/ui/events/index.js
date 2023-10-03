@@ -140,7 +140,7 @@ export default function Events({ props, loadMore = true }) {
     place,
     byDate,
   });
-  console.log("searchTerm", searchTerm);
+
   // Render
   return (
     <>

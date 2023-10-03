@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import SearchIcon from "@heroicons/react/solid/SearchIcon";
+
+const SEARCH_TERM_KEY = "searchTerm";
 
 function debounce(func, wait, immediate) {
   let timeout;
@@ -36,15 +38,7 @@ const sendSearchTermGA = (searchTerm) => {
 };
 
 export default function Search({ searchTerm, setSearchTerm }) {
-  const searchTermRef = useRef(searchTerm);
-
-  useEffect(() => {
-    searchTermRef.current = searchTerm;
-  }, [searchTerm]);
-
-  const searchEvents = useCallback((searchInLocalStorage) => {
-    const term = searchInLocalStorage || searchTermRef.current;
-
+  const searchEvents = useCallback((term) => {
     if (term && term.length > 0) {
       sendSearchTermGA(term);
     }
@@ -52,12 +46,12 @@ export default function Search({ searchTerm, setSearchTerm }) {
 
   useEffect(() => {
     if (searchTerm.length > 0) {
-      localStorage.setItem("searchTerm", JSON.stringify(searchTerm));
+      localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(searchTerm));
     }
   }, [searchTerm]);
 
   useEffect(() => {
-    let storedTerm = localStorage.getItem("searchTerm");
+    let storedTerm = localStorage.getItem(SEARCH_TERM_KEY);
     try {
       storedTerm = JSON.parse(storedTerm);
     } catch (e) {
@@ -72,31 +66,31 @@ export default function Search({ searchTerm, setSearchTerm }) {
 
   const handleKeyPress = useCallback(
     (e) => {
-      if (e.key === "Enter") searchEvents();
-    },
-    [searchEvents]
-  );
-
-  const debouncedChangeHandler = useRef(
-    debounce((e) => {
-      const value = e.target.value;
-
-      if (value.length === 0) {
-        setSearchTerm("");
-        localStorage.setItem("searchTerm", JSON.stringify(""));
-      } else {
+      if (e.key === "Enter") {
+        const value = e.target.value;
         sendSearchTermGA(value);
         setSearchTerm(value);
       }
-    }, 1500)
+    },
+    [setSearchTerm]
   );
 
+  const debouncedChangeHandler = debounce((value) => {
+    if (value.length === 0) {
+      setSearchTerm("");
+      localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(""));
+    } else {
+      sendSearchTermGA(value);
+      setSearchTerm(value);
+    }
+  }, 1500);
+
   const handleChangeWithDebounce = (e) => {
-    debouncedChangeHandler.current(e);
+    debouncedChangeHandler(e.target.value);
   };
 
   const onFocus = (e) => {
-    let val = localStorage.getItem("searchTerm");
+    let val = localStorage.getItem(SEARCH_TERM_KEY);
     try {
       val = JSON.parse(val);
     } catch (e) {
@@ -122,7 +116,7 @@ export default function Search({ searchTerm, setSearchTerm }) {
           <div className="absolute top-2 right-2 cursor-pointer">
             <SearchIcon
               className="h-6 w-6 text-gray-400"
-              onClick={searchEvents}
+              onClick={() => searchEvents(searchTerm)}
               aria-label="Search"
             />
           </div>
