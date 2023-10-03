@@ -10,11 +10,11 @@ export default function FiltersModal({
   setCategory,
 }) {
   const handleByDateChange = (value) => {
-    setByDate(value);
+    setByDate((prevValue) => (prevValue === value ? "" : value));
   };
 
   const handleCategoryChange = (value) => {
-    setCategory(value);
+    setCategory((prevValue) => (prevValue === value ? "" : value));
   };
 
   return (
@@ -33,7 +33,7 @@ export default function FiltersModal({
                       type="radio"
                       className="form-radio h-5 w-5"
                       checked={byDate === value}
-                      onChange={() => handleByDateChange(value)}
+                      onClick={() => handleByDateChange(value)}
                     />
                     <label htmlFor={value} className="ml-3 text-sm">
                       {label}
@@ -55,7 +55,7 @@ export default function FiltersModal({
                       type="radio"
                       className="form-radio h-5 w-5"
                       checked={category === value}
-                      onChange={() => handleCategoryChange(value)}
+                      onClick={() => handleCategoryChange(value)}
                     />
                     <label htmlFor={value} className="ml-3 text-sm">
                       {value}
