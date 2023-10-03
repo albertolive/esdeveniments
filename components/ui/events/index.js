@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
@@ -12,6 +12,7 @@ import Card from "@components/ui/card";
 import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
+import { CATEGORIES } from "@utils/constants";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -21,9 +22,6 @@ const NoEventsFound = dynamic(
 );
 
 export default function Events({ props, loadMore = true }) {
-  // Refs
-  const scrollPosition = useRef(0);
-
   // Props destructuring
   const { place: placeProps, byDate: byDateProps } = props;
 
@@ -31,11 +29,13 @@ export default function Events({ props, loadMore = true }) {
   const [page, setPage] = useState(getStoredPage);
   const [place, setPlace] = useState(() => getStoredPlace(placeProps));
   const [byDate, setByDate] = useState(() => getStoredByDate(byDateProps));
+  const [category, setCategory] = useState("");
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
+  const categoryQuery = category ? CATEGORIES[category] : "";
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
@@ -44,9 +44,15 @@ export default function Events({ props, loadMore = true }) {
     props,
     pageIndex: dateFunctions[byDate] || "all",
     maxResults: page * 10,
-    q: type === "town" ? `${label} ${regionLabel}` : label,
+    q:
+      type === "town"
+        ? `${categoryQuery} ${label} ${regionLabel}`
+        : `${categoryQuery} ${label}`,
   });
-  const jsonEvents = events.map((event) => generateJsonData(event));
+
+  const jsonEvents = events
+    .filter(({ isAd }) => !isAd)
+    .map((event) => generateJsonData(event));
 
   // Event handlers
   const handleLoadMore = () => {
@@ -154,6 +160,8 @@ export default function Events({ props, loadMore = true }) {
         setPlace={setPlace}
         byDate={byDate}
         setByDate={setByDate}
+        category={category}
+        setCategory={setCategory}
       />
       <div className="p-2 flex flex-col justify-center items-center">
         <button

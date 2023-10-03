@@ -41,29 +41,12 @@ export const MONTHS_URL = [
 ];
 
 export const CATEGORIES = {
-  "Què fer": [],
-  Restaurants: [],
-  "Bars i pubs": [],
-  Cine: [],
-  Teatre: [],
-  Música: ["Concert", "Cançons", "etc"],
-  Art: [],
-  "Locals de nit": [],
-  Botigues: [],
-  "Salut i bellesa": [],
-  "Llocs d'interès": [],
-  "Museus i institucions": [],
-  Hotels: [],
-  Nens: [],
-  "Sales de cinema": [],
-  Clubs: [],
-  Comèdia: [],
-  Esports: [],
-  Dansa: [],
-  "Gai i lèsbic": [],
-  "Sexe i cites": [],
-  Viatge: [],
-  "Casa i llar": [],
+  Cine: "Cinema",
+  Teatre: "Teatre",
+  Música: "Concert",
+  Art: "Art",
+  Museus: "Museu",
+  Nens: "Familiar",
 };
 
 export const BYDATES = [

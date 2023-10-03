@@ -3,14 +3,24 @@ import Link from "next/link";
 import Modal from "@components/ui/common/modal";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import XCircleIcon from "@heroicons/react/outline/XCircleIcon";
-import { BYDATES } from "@utils/constants";
+import { BYDATES, CATEGORIES } from "@utils/constants";
 
-export default function FiltersModal({ openModal, setOpenModal, slug }) {
-  const [followedOrgs, setFollowedOrgs] = useState(false);
-  const [onlineEvents, setOnlineEvents] = useState(false);
-  const [date, setDate] = useState("today");
-  const [price, setPrice] = useState("free");
-  const [category, setCategory] = useState("business");
+export default function FiltersModal({
+  openModal,
+  setOpenModal,
+  byDate,
+  setByDate,
+  category,
+  setCategory,
+}) {
+  const handleByDateChange = (value) => {
+    setByDate(value);
+  };
+
+  const handleCategoryChange = (value) => {
+    setCategory(value);
+  };
+
   return (
     <>
       <Modal open={openModal} setOpen={setOpenModal} title="Filtres">
@@ -22,14 +32,14 @@ export default function FiltersModal({ openModal, setOpenModal, slug }) {
                 {BYDATES.map(({ value, label }) => (
                   <div key={value} className="flex pb-4">
                     <input
-                      id="dateToday"
+                      id={value}
                       name="date"
                       type="radio"
                       className="form-radio h-5 w-5"
-                      checked={date === value}
-                      onChange={() => setDate(value)}
+                      checked={byDate === value}
+                      onChange={() => handleByDateChange(value)}
                     />
-                    <label htmlFor="dateToday" className="ml-3 text-sm">
+                    <label htmlFor={value} className="ml-3 text-sm">
                       {label}
                     </label>
                   </div>
@@ -37,30 +47,28 @@ export default function FiltersModal({ openModal, setOpenModal, slug }) {
               </div>
             </div>
           </fieldset>
-
           <fieldset className="pt-4 pb-2">
             <legend className="text-sm font-medium">Categories</legend>
-
             <div className="mt-3 space-y-3">
-              <div className="flex items-center">
-                <input
-                  id="categoryBusiness"
-                  name="category"
-                  type="radio"
-                  className="form-radio h-5 w-5"
-                  checked={category === "business"}
-                  onChange={() => setCategory("business")}
-                />
-                <label htmlFor="categoryBusiness" className="ml-3 text-sm">
-                  Business
-                </label>
+              <div className="flex flex-col">
+                {Object.entries(CATEGORIES).map(([value]) => (
+                  <div key={value} className="flex pb-4">
+                    <input
+                      id={value}
+                      name="category"
+                      type="radio"
+                      className="form-radio h-5 w-5"
+                      checked={category === value}
+                      onChange={() => handleCategoryChange(value)}
+                    />
+                    <label htmlFor={value} className="ml-3 text-sm">
+                      {value}
+                    </label>
+                  </div>
+                ))}
               </div>
-
-              {/* more options */}
             </div>
           </fieldset>
-
-          {/* More filters */}
         </div>
       </Modal>
     </>

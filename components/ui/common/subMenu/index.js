@@ -15,6 +15,8 @@ export default function SubMenu({
   setPlace,
   byDate: byDateProps,
   setByDate,
+  category,
+  setCategory,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -46,10 +48,6 @@ export default function SubMenu({
     localStorage.removeItem("scrollPosition");
   };
 
-  const handleByDateChange = (value) => {
-    setByDate(value);
-  };
-
   return (
     <>
       <div className="flex flex-col justify-center items-center my-4">
@@ -76,7 +74,14 @@ export default function SubMenu({
           </button>
         </div>
         {openModal && (
-          <FiltersModal openModal={openModal} setOpenModal={setOpenModal} />
+          <FiltersModal
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            byDate={byDate}
+            setByDate={setByDate}
+            category={category}
+            setCategory={setCategory}
+          />
         )}
       </div>
     </>
