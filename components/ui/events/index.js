@@ -30,12 +30,14 @@ export default function Events({ props, loadMore = true }) {
   const [place, setPlace] = useState(() => getStoredPlace(placeProps));
   const [byDate, setByDate] = useState(() => getStoredByDate(byDateProps));
   const [category, setCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const categoryQuery = category ? CATEGORIES[category] : "";
+  const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
@@ -44,10 +46,7 @@ export default function Events({ props, loadMore = true }) {
     props,
     pageIndex: dateFunctions[byDate] || "all",
     maxResults: page * 10,
-    q:
-      type === "town"
-        ? `${categoryQuery} ${label} ${regionLabel}`
-        : `${categoryQuery} ${label}`,
+    q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
   });
 
   const jsonEvents = events
@@ -141,7 +140,7 @@ export default function Events({ props, loadMore = true }) {
     place,
     byDate,
   });
-
+  console.log("searchTerm", searchTerm);
   // Render
   return (
     <>
@@ -162,6 +161,8 @@ export default function Events({ props, loadMore = true }) {
         setByDate={setByDate}
         category={category}
         setCategory={setCategory}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
       />
       <div className="p-2 flex flex-col justify-center items-center">
         <button

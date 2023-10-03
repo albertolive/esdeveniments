@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import FiltersModal from "@components/ui/filtersModal";
+import Search from "@components/ui/search";
 
 const Select = dynamic(() => import("@components/ui/common/form/select"), {
   loading: () => "",
@@ -17,6 +18,8 @@ export default function SubMenu({
   setByDate,
   category,
   setCategory,
+  searchTerm,
+  setSearchTerm,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -51,6 +54,7 @@ export default function SubMenu({
   return (
     <>
       <div className="flex flex-col justify-center items-center my-4">
+        <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <div className="w-11/12 p-2">
           <Select
             id="options"
@@ -81,6 +85,8 @@ export default function SubMenu({
             setByDate={setByDate}
             category={category}
             setCategory={setCategory}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
           />
         )}
       </div>

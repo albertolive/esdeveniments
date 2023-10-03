@@ -1,8 +1,4 @@
-import { useState } from "react";
-import Link from "next/link";
 import Modal from "@components/ui/common/modal";
-import PencilIcon from "@heroicons/react/outline/PencilIcon";
-import XCircleIcon from "@heroicons/react/outline/XCircleIcon";
 import { BYDATES, CATEGORIES } from "@utils/constants";
 
 export default function FiltersModal({
