@@ -1,4 +1,5 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import XIcon from "@heroicons/react/solid/XIcon";
 import SearchIcon from "@heroicons/react/solid/SearchIcon";
 
 const SEARCH_TERM_KEY = "searchTerm";
@@ -38,6 +39,7 @@ const sendSearchTermGA = (searchTerm) => {
 };
 
 export default function Search({ searchTerm, setSearchTerm }) {
+  const [inputValue, setInputValue] = useState(searchTerm);
   const searchEvents = useCallback((term) => {
     if (term && term.length > 0) {
       sendSearchTermGA(term);
@@ -75,18 +77,30 @@ export default function Search({ searchTerm, setSearchTerm }) {
     [setSearchTerm]
   );
 
-  const debouncedChangeHandler = debounce((value) => {
-    if (value.length === 0) {
-      setSearchTerm("");
-      localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(""));
-    } else {
-      sendSearchTermGA(value);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedChangeHandler = useCallback(
+    debounce((value) => {
       setSearchTerm(value);
-    }
-  }, 1500);
+      if (value.length === 0) {
+        localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(""));
+      } else {
+        sendSearchTermGA(value);
+        localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(value));
+      }
+    }, 1500),
+    [setSearchTerm, sendSearchTermGA]
+  );
 
-  const handleChangeWithDebounce = (e) => {
-    debouncedChangeHandler(e.target.value);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+    debouncedChangeHandler(value);
+  };
+
+  const clearSearchTerm = () => {
+    setSearchTerm("");
+    setInputValue("");
+    localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(""));
   };
 
   const onFocus = (e) => {
@@ -106,19 +120,26 @@ export default function Search({ searchTerm, setSearchTerm }) {
           <input
             type="text"
             className="shadow-sm focus:ring-gray-300 focus:border-gray-300 block w-full sm:text-sm border-gray-300 rounded-md"
-            placeholder="Cerca..."
-            defaultValue={searchTerm}
+            placeholder="Cerca qualevol cosa"
+            value={inputValue}
             onKeyDown={handleKeyPress}
-            onChange={handleChangeWithDebounce}
+            onChange={handleChange}
             autoFocus
             onFocus={onFocus}
           />
           <div className="absolute top-2 right-2 cursor-pointer">
-            <SearchIcon
-              className="h-6 w-6 text-gray-400"
-              onClick={() => searchEvents(searchTerm)}
-              aria-label="Search"
-            />
+            {inputValue.length ? (
+              <XIcon
+                className="h-6 w-6 text-gray-400"
+                onClick={clearSearchTerm}
+              />
+            ) : (
+              <SearchIcon
+                className="h-6 w-6 text-gray-400"
+                onClick={() => searchEvents(searchTerm)}
+                aria-label="Search"
+              />
+            )}
           </div>
         </div>
       </div>
