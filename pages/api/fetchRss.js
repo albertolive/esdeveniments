@@ -6,7 +6,7 @@ import Bottleneck from "bottleneck";
 import { CITIES_DATA } from "@utils/constants";
 const { DateTime } = require("luxon");
 
-const enableInserting = false;
+const enableInserting = true;
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
