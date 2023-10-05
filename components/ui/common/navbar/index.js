@@ -5,6 +5,7 @@ import MenuIcon from "@heroicons/react/outline/MenuIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import PlusSmIcon from "@heroicons/react/outline/PlusSmIcon";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
+import SearchIcon from "@heroicons/react/outline/SearchIcon";
 import InformationCircleIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
@@ -13,8 +14,8 @@ import { useRouter } from "next/router";
 
 const navigation = [
   { name: "Agenda", href: "/", current: true },
+  { name: "Publicar", href: "/publica", current: false },
   { name: "Qui som", href: "/qui-som", current: false },
-  { name: "Publicar", href: "/publica", current: true },
 ];
 
 export default function Navbar() {
