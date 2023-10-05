@@ -1,17 +1,18 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, memo, useCallback } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import FiltersModal from "@components/ui/filtersModal";
 import Search from "@components/ui/search";
+import Filters from "@components/ui/filters";
 
 const Select = dynamic(() => import("@components/ui/common/form/select"), {
   loading: () => "",
   noSSR: false,
 });
 
-export default function SubMenu({
+function SubMenu({
   place: placeProps,
   setPlace,
   byDate: byDateProps,
@@ -43,13 +44,16 @@ export default function SubMenu({
     }
   }, [place, regionsAndCitiesArray]);
 
-  const handlePlaceChange = ({ value }) => {
-    setPlace(value);
-    setSelectedOption(value);
+  const handlePlaceChange = useCallback(
+    ({ value }) => {
+      setPlace(value);
+      setSelectedOption(value);
 
-    localStorage.removeItem("currentPage");
-    localStorage.removeItem("scrollPosition");
-  };
+      localStorage.removeItem("currentPage");
+      localStorage.removeItem("scrollPosition");
+    },
+    [setPlace]
+  );
 
   return (
     <>
@@ -90,6 +94,14 @@ export default function SubMenu({
           />
         )}
       </div>
+      <Filters
+        byDate={byDate}
+        setByDate={setByDate}
+        category={category}
+        setCategory={setCategory}
+      />
     </>
   );
 }
+
+export default memo(SubMenu);

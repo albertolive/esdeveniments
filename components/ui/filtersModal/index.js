@@ -1,7 +1,8 @@
+import { memo, useCallback } from "react";
 import Modal from "@components/ui/common/modal";
 import { BYDATES, CATEGORIES } from "@utils/constants";
 
-export default function FiltersModal({
+function FiltersModal({
   openModal,
   setOpenModal,
   byDate,
@@ -9,13 +10,23 @@ export default function FiltersModal({
   category,
   setCategory,
 }) {
-  const handleByDateChange = (value) => {
-    setByDate((prevValue) => (prevValue === value ? "" : value));
-  };
+  const handleStateChange = useCallback((setState, value) => {
+    setState((prevValue) => (prevValue === value ? "" : value));
+  }, []);
 
-  const handleCategoryChange = (value) => {
-    setCategory((prevValue) => (prevValue === value ? "" : value));
-  };
+  const handleByDateChange = useCallback(
+    (value) => {
+      handleStateChange(setByDate, value);
+    },
+    [handleStateChange, setByDate]
+  );
+
+  const handleCategoryChange = useCallback(
+    (value) => {
+      handleStateChange(setCategory, value);
+    },
+    [handleStateChange, setCategory]
+  );
 
   return (
     <>
@@ -34,6 +45,7 @@ export default function FiltersModal({
                       className="form-radio h-5 w-5"
                       checked={byDate === value}
                       onClick={() => handleByDateChange(value)}
+                      readOnly
                     />
                     <label htmlFor={value} className="ml-3 text-sm">
                       {label}
@@ -56,6 +68,7 @@ export default function FiltersModal({
                       className="form-radio h-5 w-5"
                       checked={category === value}
                       onClick={() => handleCategoryChange(value)}
+                      readOnly
                     />
                     <label htmlFor={value} className="ml-3 text-sm">
                       {value}
@@ -70,3 +83,5 @@ export default function FiltersModal({
     </>
   );
 }
+
+export default memo(FiltersModal);

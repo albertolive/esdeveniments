@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState, useCallback } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
@@ -18,10 +18,11 @@ const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
   {
     loading: () => "",
+    ssr: false,
   }
 );
 
-export default function Events({ props, loadMore = true }) {
+function Events({ props, loadMore = true }) {
   // Props destructuring
   const { place: placeProps, byDate: byDateProps } = props;
 
@@ -54,17 +55,18 @@ export default function Events({ props, loadMore = true }) {
     .map((event) => generateJsonData(event));
 
   // Event handlers
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("scrollPosition", window.scrollY);
     }
     setIsLoadingMore(true);
     setPage((prevPage) => prevPage + 1);
     sendGA();
-  };
-  const toggleDropdown = () => {
+  }, []);
+
+  const toggleDropdown = useCallback(() => {
     setOpen(!open);
-  };
+  }, [open]);
 
   // Helper function
   const resetPage = () => {
@@ -115,7 +117,7 @@ export default function Events({ props, loadMore = true }) {
     if (storedScrollPosition) {
       window.scrollTo(0, parseInt(storedScrollPosition));
     }
-  }, [events]);
+  }, [events.length]);
 
   useEffect(() => {
     if (events.length > 0) {
@@ -232,6 +234,8 @@ export default function Events({ props, loadMore = true }) {
     </>
   );
 }
+
+export default memo(Events);
 
 // Helper functions
 function getStoredPage() {
