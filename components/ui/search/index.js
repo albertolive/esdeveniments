@@ -124,7 +124,6 @@ export default function Search({ searchTerm, setSearchTerm }) {
             value={inputValue}
             onKeyDown={handleKeyPress}
             onChange={handleChange}
-            autoFocus
             onFocus={onFocus}
           />
           <div className="absolute top-2 right-2 cursor-pointer">
