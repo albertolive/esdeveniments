@@ -46,7 +46,9 @@ export default function Events({ props, loadMore = true }) {
     maxResults: page * 10,
     q: type === "town" ? `${label} ${regionLabel}` : label,
   });
-  const jsonEvents = events.map((event) => generateJsonData(event));
+  const jsonEvents = events
+    .filter(({ isAd }) => !isAd)
+    .map((event) => generateJsonData(event));
 
   // Event handlers
   const handleLoadMore = () => {

@@ -53,14 +53,18 @@ function convertToRSSDate(dateString, dateRegex) {
       return null;
     }
 
-    const date = DateTime.fromObject({
-      day: day,
-      month: parseInt(monthNumber),
-      year: year,
-      hour: hour,
-      minute: minute,
-      zone: "Europe/Madrid",
-    });
+    const date = DateTime.fromObject(
+      {
+        day: day,
+        month: parseInt(monthNumber),
+        year: year,
+        hour: hour,
+        minute: minute,
+      },
+      {
+        zone: "Europe/Madrid",
+      }
+    );
 
     return date;
   }
