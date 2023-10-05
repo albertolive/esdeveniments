@@ -154,5 +154,23 @@ export const CITIES_DATA = new Map([
       ]),
     },
   ],
+  [
+    "valles-occidental",
+    {
+      label: "Vallès Occidental",
+      towns: new Map([
+        [
+          "martorelles",
+          {
+            label: "Martorelles",
+            rssFeed: "https://www.martorelles.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08107",
+          },
+        ],
+      ]),
+    },
+  ],
   // Add more regions with their respective towns and data
 ]);

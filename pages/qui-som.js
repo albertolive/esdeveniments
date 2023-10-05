@@ -26,13 +26,15 @@ export default function QuiSom() {
             </h2>
           </div>
         </div>
-        <div className="w-full h-[40vh] flex flex-col justify-start gap-4
+        <div
+          className="w-full h-[40vh] flex flex-col justify-start gap-4
         xs:h-[45vh] xs:w-2/3
         md:h-[60vh]
-        ">
+        "
+        >
           <p className="text-center">
-            Esdeveniments.cat és una iniciativa ciutadana per veure en un cop
-            d&apos;ull tots els actes culturals que es fan a tot arreu.
+            Esdeveniments.cat és una iniciativa ciutadana per veure de manera
+            fàcil i ràpida tots els actes culturals que es fan a Catalunya.
           </p>
           <p className="text-center">
             L&apos;agenda és col·laborativa, i cada persona que organitzi un
@@ -41,7 +43,6 @@ export default function QuiSom() {
               <a className="italic uppercase font-barlow font-semibold text-primary underline">
                 aquí
               </a>
-              
             </Link>{" "}
             pel seu compte.
           </p>

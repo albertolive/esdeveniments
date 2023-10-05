@@ -38,15 +38,13 @@ function Card({ event, isLoading }) {
   return (
     <Link href={`/e/${event.slug}`} passHref prefetch={false}>
       <div
-        className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10
-        md:border-t-0
-        "
+        className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10 md:border-t-0"
         onMouseEnter={handlePrefetch}
         onClick={handlePrefetch}
       >
         {/* Title */}
         <div className="bg-whiteCorp h-24 flex justify-between items-center gap-2 gap-x-4">
-          <div className="w-[6px] h-1/3 bg-gradient-to-r from-primary to-primarydark px-0 mx-0"></div>
+          <div className="w-2 h-1/3 bg-gradient-to-r from-primary to-primarydark px-0 mx-0"></div>
           {/* Title */}
           <h2 className="w-10/12 uppercase font-semibold text-blackCorp italic">
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
@@ -83,7 +81,7 @@ function Card({ event, isLoading }) {
         {/* InfoEvent */}
         <div className="flex flex-col px-4 pt-8 gap-4">
           {/* Date */}
-          <h3 className="text-blackCorp pl-1">
+          <h3 className="text-blackCorp font-barlow font-medium uppercase italic pl-1">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}
