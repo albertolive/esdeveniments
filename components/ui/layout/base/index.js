@@ -22,7 +22,7 @@ export default function BaseLayout({ children }) {
       <Head>
         <title>Esdeveniments</title>
         <meta name="description" content="Esdeveniments.cat" />
-        <link rel="icon" href="/favicon.png" />
+        <link rel="icon" href="/favicon.ico" />
         <link
           rel="alternative"
           title="RSS Feed Esdeveniments.cat"
@@ -33,10 +33,7 @@ export default function BaseLayout({ children }) {
       <Navbar />
       {/* <Notify /> */}
       <div className="bg-whiteCorp">
-        <div className="max-w-full mx-auto px-0 pt-4
-        sm:px-10 sm:max-w-[576px] 
-        md:px-20 md:max-w-[768px] 
-        lg:px-40 lg:max-w-[1024px]">
+        <div className="max-w-full mx-auto p-0 sm:px-10 sm:max-w-[576px] md:px-20 md:max-w-[768px] lg:px-40 lg:max-w-[1024px]">
           {memoizedChildren}
         </div>
       </div>

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import { generateJsonData } from "@utils/helpers";
-import SearchIcon from "@heroicons/react/solid/SearchIcon";
+import SearchIcon from "@heroicons/react/outline/SearchIcon";
 import XIcon from "@heroicons/react/solid/XIcon";
 import { useGetEvents } from "@components/hooks/useGetEvents";
 import Card from "@components/ui/card";
@@ -160,34 +160,32 @@ export default function Search() {
         description="Cerca esdeveniments. Cultura i esdeveniments. Esdeveniments.cat"
         canonical={`${siteUrl}/cerca`}
       />
-      <div className="flex justify-center items-start h-full">
-        <div className="">
-          <div className="flex justify-center z-10 fixed top-26 left-4 w-2/3">
-            <input
-              type="text"
-              className="shadow-sm focus:ring-gray-300 focus:border-gray-300 w-full sm:text-sm border-gray-300 rounded-xl"
-              placeholder="Cerca..."
-              defaultValue={searchTerm}
-              onChange={startFetching ? handleChangeWithDebounce : handleChange}
-              onKeyPress={handleKeyPress}
-              autoFocus
-              onFocus={onFocus}
-            />
+      <div className="flex justify-center items-center sticky top-24 z-10">
+        <div className="flex justify-center w-full md:w-2/3">
+          <input
+            type="text"
+            className="w-full border-0 border-b border-b-darkCorp focus:outline-none focus:border-b-primarydark"
+            placeholder="Cerca..."
+            defaultValue={searchTerm}
+            onChange={startFetching ? handleChangeWithDebounce : handleChange}
+            onKeyPress={handleKeyPress}
+            autoFocus
+            onFocus={onFocus}
+          />
 
-            {false && (
-              <div className="absolute top-3 right-10 cursor-pointer">
-                <XIcon
-                  className="h-4 w-4 text-gray-400"
-                  onClick={clearSearchTerm}
-                />
-              </div>
-            )}
-            <div className="absolute top-2 right-2 cursor-pointer">
-              <SearchIcon
-                className="h-6 w-6 text-gray-400"
-                onClick={searchEvents}
+          {false && (
+            <div className="absolute top-3 right-10 cursor-pointer">
+              <XIcon
+                className="h-4 w-4 text-gray-400"
+                onClick={clearSearchTerm}
               />
             </div>
+          )}
+          <div className="absolute top-2 right-2 cursor-pointer">
+            <SearchIcon
+              className="h-6 w-6 text-gray-400"
+              onClick={searchEvents}
+            />
           </div>
         </div>
       </div>

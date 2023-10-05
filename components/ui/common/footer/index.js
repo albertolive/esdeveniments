@@ -15,42 +15,13 @@ export default function Footer() {
   };
 
   return (
-    <footer className="m-auto px-4 xs:px-4 xs:max-w-full sm:px-4 sm:max-w-[576px] md:px-10 md:max-w-[768px] lg:px-20 lg:max-w-[1024px] bg-whiteCorp flex flex-col justify-center items-center gap-8 pt-4 pb-24">
+    <footer className="md:sticky bottom-0 w-full flex flex-col justify-center items-center gap-4 bg-whiteCorp pb-24 pt-4 px-4 md:pb-8 md:pt-4 md:px-4">
       <Social links={links} />
-      {/* <div className="flex flex-col md:flex-row justify-evenly items-center w-full h-full text-[13px] gap-4">
-        <div className="flex justify-center items-center gap-x-8">
-          <SocialIcon
-            url="https://twitter.com"
-            target="_blanc"
-            bgColor="#FFF"
-            fgColor="#FF0037"
-            style={{ height: 50, width: 50 }}
-          />
-          <SocialIcon
-            url="https://facebook.com"
-            target="_blanc"
-            bgColor="#FFF"
-            fgColor="#FF0037"
-            style={{ height: 50, width: 50 }}
-          />
-          <SocialIcon
-            url="https://instagram.com"
-            target="_blanc"
-            bgColor="#FFF"
-            fgColor="#FF0037"
-            style={{ height: 50, width: 50 }}
-          />
-          <SocialIcon
-            url="https://web.telegram.org/k/"
-            target="_blanc"
-            bgColor="#FFF"
-            fgColor="#FF0037"
-            style={{ height: 50, width: 50 }}
-          />
-        </div>
-      </div> */}
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-2 text-xs">
-        <a className="hover:text-primary" href="mailto:hola@esdeveniments.cat">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-6 text-xs">
+        <a
+          className="hover:text-primary underline"
+          href="mailto:hola@esdeveniments.cat"
+        >
           hola@esdeveniments.cat
         </a>
         <a>© {new Date().getFullYear()} Esdeveniments.cat</a>
