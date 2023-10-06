@@ -19,23 +19,16 @@ const Filters = ({
   setByDate,
   category,
   setCategory,
-  userLocation,
-  setUserLocation,
+  distance,
+  setDistance,
 }) => {
   const foundByDate = byDate && BYDATES.find((item) => item.value === byDate);
 
   const handleByDateClick = useCallback(() => setByDate(""), [setByDate]);
   const handleCategoryClick = useCallback(() => setCategory(""), [setCategory]);
-  const handleUserLocationClick = useCallback(
-    () => setUserLocation(""),
-    [setUserLocation]
-  );
+  const handleDistanceClick = useCallback(() => setDistance(""), [setDistance]);
 
-  if (
-    !foundByDate &&
-    !category &&
-    !(userLocation && Object.keys(userLocation).length)
-  ) {
+  if (!foundByDate && !category && !distance) {
     return null;
   }
 
@@ -44,9 +37,7 @@ const Filters = ({
       <div className="flex space-x-2">
         {foundByDate && renderButton(foundByDate.label, handleByDateClick)}
         {category && renderButton(category, handleCategoryClick)}
-        {userLocation &&
-          Object.keys(userLocation).length &&
-          renderButton("A prop meu", handleUserLocationClick)}
+        {distance && renderButton(distance + " km", handleDistanceClick)}
       </div>
     </div>
   );

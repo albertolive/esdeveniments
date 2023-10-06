@@ -1,6 +1,7 @@
 import { memo, useCallback, useState } from "react";
 import Modal from "@components/ui/common/modal";
-import { BYDATES, CATEGORIES } from "@utils/constants";
+import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
+import GlobeIcon from "@heroicons/react/solid/GlobeIcon";
 
 function FiltersModal({
   openModal,
@@ -11,6 +12,8 @@ function FiltersModal({
   setCategory,
   userLocation,
   setUserLocation,
+  distance,
+  setDistance,
 }) {
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const [userLocationError, setUserLocationError] = useState("");
@@ -32,7 +35,14 @@ function FiltersModal({
     [handleStateChange, setCategory]
   );
 
-  const handleUserLocation = () => {
+  const handleDistanceChange = useCallback(
+    (value) => {
+      handleStateChange(setDistance, value);
+    },
+    [handleStateChange, setDistance]
+  );
+
+  const handleUserLocation = useCallback(() => {
     if (userLocation) {
       setUserLocation(null);
       return;
@@ -54,16 +64,44 @@ function FiltersModal({
         },
         function (error) {
           console.log("Error occurred. Error code: " + error.code);
-          setUserLocationError("Error occurred. Error code: " + error.code);
+          switch (error.code) {
+            case 1:
+              setUserLocationError(
+                "Permís denegat. L'usuari no ha permès la sol·licitud de geolocalització."
+              );
+              break;
+            case 2:
+              setUserLocationError(
+                "Posició no disponible. No s'ha pogut obtenir la informació de la ubicació."
+              );
+              break;
+            case 3:
+              setUserLocationError(
+                "Temps d'espera esgotat. La sol·licitud per obtenir la ubicació de l'usuari ha superat el temps d'espera."
+              );
+              break;
+            default:
+              setUserLocationError("S'ha produït un error desconegut.");
+          }
           setUserLocationLoading(false);
         }
       );
     } else {
       console.log("Geolocation is not supported by this browser.");
-      setUserLocationError("Geolocation is not supported by this browser.");
+      setUserLocationError(
+        "La geolocalització no és compatible amb aquest navegador."
+      );
       setUserLocationLoading(false);
     }
-  };
+  }, [
+    userLocation,
+    setUserLocation,
+    setUserLocationLoading,
+    setUserLocationError,
+  ]);
+
+  const disableDistance =
+    !userLocation || userLocationLoading || userLocationError;
 
   return (
     <>
@@ -76,29 +114,52 @@ function FiltersModal({
             <div className="mt-3 space-y-3">
               <div className="flex flex-col">
                 <div className="flex pb-4">
-                  <input
+                  <button
+                    type="button"
                     id="user-location"
                     name="date"
-                    type="radio"
-                    className="form-radio h-5 w-5"
-                    checked={!!userLocation}
+                    className="flex px-2 py-1 text-blackCorp focus:outline-none rounded border-2 border-blackCorp"
                     onClick={handleUserLocation}
-                    readOnly
-                  />
-                  <label htmlFor="user-location" className="ml-3 text-sm">
-                    La meva ubicació actual
-                  </label>
+                  >
+                    <GlobeIcon className="h-5 w-5 mr-1" />
+                    {userLocation ? "Desactivar" : "Activar"} localització
+                  </button>
                 </div>
                 {userLocationLoading && (
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-blackCorp">
                     Carregant localització...
                   </div>
                 )}
                 {userLocationError && (
-                  <div className="text-sm text-red-500">
+                  <div className="text-sm text-primary">
                     {userLocationError}
                   </div>
                 )}
+              </div>
+            </div>
+            <div className="mt-3 space-y-3">
+              <div
+                className={`flex flex-col ${
+                  disableDistance ? "opacity-30" : ""
+                }`}
+              >
+                {DISTANCES.map((value) => (
+                  <div key={value} className="flex pb-4">
+                    <input
+                      id={value}
+                      name="distances"
+                      type="radio"
+                      className="form-radio h-5 w-5"
+                      checked={distance === value}
+                      onClick={() => handleDistanceChange(value)}
+                      readOnly
+                      disabled={disableDistance}
+                    />
+                    <label htmlFor={value} className="ml-3 text-sm">
+                      {value} km
+                    </label>
+                  </div>
+                ))}
               </div>
             </div>
           </fieldset>

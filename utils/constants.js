@@ -61,6 +61,8 @@ export const dateFunctions = {
   "cap-de-setmana": "weekend",
 };
 
+export const DISTANCES = [1, 5, 10, 30, 50, 100];
+
 export const CITIES_DATA = new Map([
   [
     "valles-oriental",

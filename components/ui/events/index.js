@@ -37,6 +37,7 @@ function Events({ props, loadMore = true }) {
   const [category, setCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [userLocation, setUserLocation] = useState(null);
+  const [distance, setDistance] = useState(0);
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState(props.events);
@@ -73,6 +74,21 @@ function Events({ props, loadMore = true }) {
   const toggleDropdown = useCallback(() => {
     setOpen(!open);
   }, [open]);
+
+  const filterEventsByDistance = useCallback(
+    (events, userLocation) => {
+      if (!userLocation) return events;
+
+      return events.filter((event) => {
+        if (event.isAd || !event.coords) {
+          return true;
+        }
+        const eventDistance = getDistance(userLocation, event.coords);
+        return eventDistance <= distance;
+      });
+    },
+    [distance]
+  );
 
   // Helper function
   const resetPage = () => {
@@ -127,19 +143,7 @@ function Events({ props, loadMore = true }) {
 
   useEffect(() => {
     setFilteredEvents(filterEventsByDistance(events, userLocation));
-  }, [userLocation, events]);
-
-  function filterEventsByDistance(events, userLocation) {
-    if (!userLocation) return events;
-
-    return events.filter((event) => {
-      if (event.isAd || !event.coords) {
-        return true;
-      }
-      const distance = getDistance(userLocation, event.coords);
-      return distance <= 5;
-    });
-  }
+  }, [userLocation, events, filterEventsByDistance]);
 
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
@@ -183,6 +187,8 @@ function Events({ props, loadMore = true }) {
         setSearchTerm={setSearchTerm}
         userLocation={userLocation}
         setUserLocation={setUserLocation}
+        distance={distance}
+        setDistance={setDistance}
       />
       <div className="p-2 flex flex-col justify-center items-center">
         <button
