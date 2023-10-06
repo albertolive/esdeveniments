@@ -79,13 +79,17 @@ function Events({ props, loadMore = true }) {
     (events, userLocation) => {
       localStorage.setItem("distance", distance);
       if (distance === "" || isNaN(distance)) return events;
-
+      localStorage.setItem("here", "im here");
       return events.filter((event) => {
+        localStorage.setItem("isAd", event.isAd);
+        localStorage.setItem("coords", event.coords);
+        localStorage.setItem("userLocation", userLocation);
         if (event.isAd || !event.coords || !userLocation) {
           return true;
         }
-        const eventDistance = getDistance(userLocation, event.coords);
 
+        const eventDistance = getDistance(userLocation, event.coords);
+        localStorage.setItem("eventDistance", eventDistance);
         return eventDistance <= distance;
       });
     },
