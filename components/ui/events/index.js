@@ -84,6 +84,7 @@ function Events({ props, loadMore = true }) {
         localStorage.setItem("isAd", event.isAd);
         localStorage.setItem("coords", JSON.stringify(event.coords));
         localStorage.setItem("userLocation", JSON.stringify(userLocation));
+        localStorage.setItem(`${event.id} event`, JSON.stringify(event));
         localStorage.setItem(
           `${event.id} lat`,
           event.coords && event.coords.lat
