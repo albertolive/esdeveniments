@@ -84,6 +84,7 @@ function Events({ props, loadMore = true }) {
         localStorage.setItem("isAd", event.isAd);
         localStorage.setItem("coords", event.coords);
         localStorage.setItem("userLocation", userLocation);
+        localStorage.setItem(`${event.id}`, event);
         if (event.isAd || !event.coords || !userLocation) {
           return true;
         }
