@@ -133,7 +133,10 @@ function Events({ props, loadMore = true }) {
     if (!userLocation) return events;
 
     return events.filter((event) => {
-      const distance = !event.isAd && getDistance(userLocation, event.coords);
+      if (event.isAd || !event.coords) {
+        return true;
+      }
+      const distance = getDistance(userLocation, event.coords);
       return distance <= 5;
     });
   }

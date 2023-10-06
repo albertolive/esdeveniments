@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import Modal from "@components/ui/common/modal";
 import { BYDATES, CATEGORIES } from "@utils/constants";
 
@@ -12,6 +12,8 @@ function FiltersModal({
   userLocation,
   setUserLocation,
 }) {
+  const [userLocationLoading, setUserLocationLoading] = useState(false);
+  const [userLocationError, setUserLocationError] = useState("");
   const handleStateChange = useCallback((setState, value) => {
     setState((prevValue) => (prevValue === value ? "" : value));
   }, []);
@@ -31,21 +33,35 @@ function FiltersModal({
   );
 
   const handleUserLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        const location = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        console.log(location);
-        setUserLocation(location);
-      });
-    } else {
-      console.log("Geolocation is not supported by this browser.");
-    }
-
     if (userLocation) {
       setUserLocation(null);
+      return;
+    }
+
+    setUserLocationLoading(true);
+    setUserLocationError(null);
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          console.log(location);
+          setUserLocation(location);
+          setUserLocationLoading(false);
+        },
+        function (error) {
+          console.log("Error occurred. Error code: " + error.code);
+          setUserLocationError("Error occurred. Error code: " + error.code);
+          setUserLocationLoading(false);
+        }
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+      setUserLocationError("Geolocation is not supported by this browser.");
+      setUserLocationLoading(false);
     }
   };
 
@@ -73,6 +89,16 @@ function FiltersModal({
                     La meva ubicació actual
                   </label>
                 </div>
+                {userLocationLoading && (
+                  <div className="text-sm text-gray-500">
+                    Carregant localització...
+                  </div>
+                )}
+                {userLocationError && (
+                  <div className="text-sm text-red-500">
+                    {userLocationError}
+                  </div>
+                )}
               </div>
             </div>
           </fieldset>
