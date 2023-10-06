@@ -58,7 +58,7 @@ function FiltersModal({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          console.log(location);
+
           setUserLocation(location);
           setUserLocationLoading(false);
         },
