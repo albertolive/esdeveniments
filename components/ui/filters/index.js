@@ -31,7 +31,11 @@ const Filters = ({
     [setUserLocation]
   );
 
-  if (!foundByDate && !category && !Object.keys(userLocation).length) {
+  if (
+    !foundByDate &&
+    !category &&
+    !(userLocation && Object.keys(userLocation).length)
+  ) {
     return null;
   }
 
@@ -40,7 +44,8 @@ const Filters = ({
       <div className="flex space-x-2">
         {foundByDate && renderButton(foundByDate.label, handleByDateClick)}
         {category && renderButton(category, handleCategoryClick)}
-        {Object.keys(userLocation).length &&
+        {userLocation &&
+          Object.keys(userLocation).length &&
           renderButton("A prop meu", handleUserLocationClick)}
       </div>
     </div>
