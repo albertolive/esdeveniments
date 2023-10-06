@@ -4,7 +4,11 @@ import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import { generateJsonData, getPlaceTypeAndLabel } from "@utils/helpers";
+import {
+  generateJsonData,
+  getDistance,
+  getPlaceTypeAndLabel,
+} from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
 import { SubMenu } from "@components/ui/common";
 import List from "@components/ui/list";
@@ -32,8 +36,10 @@ function Events({ props, loadMore = true }) {
   const [byDate, setByDate] = useState(() => getStoredByDate(byDateProps));
   const [category, setCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [userLocation, setUserLocation] = useState(null);
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [filteredEvents, setFilteredEvents] = useState(props.events);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
@@ -79,15 +85,9 @@ function Events({ props, loadMore = true }) {
   // Effects
   useEffect(() => {
     localStorage.setItem("currentPage", page);
-  }, [page]);
-
-  useEffect(() => {
     localStorage.setItem("place", place);
-  }, [place]);
-
-  useEffect(() => {
     localStorage.setItem("byDate", byDate);
-  }, [byDate]);
+  }, [page, place, byDate]);
 
   useEffect(() => {
     if (place !== placeProps || byDate !== byDateProps) {
@@ -124,6 +124,19 @@ function Events({ props, loadMore = true }) {
       setIsLoadingMore(false);
     }
   }, [events]);
+
+  useEffect(() => {
+    setFilteredEvents(filterEventsByDistance(events, userLocation));
+  }, [userLocation, events]);
+
+  function filterEventsByDistance(events, userLocation) {
+    if (!userLocation) return events;
+
+    return events.filter((event) => {
+      const distance = !event.isAd && getDistance(userLocation, event.coords);
+      return distance <= 5;
+    });
+  }
 
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
@@ -165,6 +178,8 @@ function Events({ props, loadMore = true }) {
         setCategory={setCategory}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        userLocation={userLocation}
+        setUserLocation={setUserLocation}
       />
       <div className="p-2 flex flex-col justify-center items-center">
         <button
@@ -213,24 +228,27 @@ function Events({ props, loadMore = true }) {
           ))}
         </div>
       ) : (
-        <List events={events}>
+        <List events={filteredEvents}>
           {(event) => <Card key={event.id} event={event} />}
         </List>
       )}
       {isLoadingMore && <CardLoading />}
-      {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
-        <div className=" text-center py-10">
-          <button
-            type="button"
-            className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
-            onClick={handleLoadMore}
-          >
-            <span className="text-white text-base font-semibold px-4">
-              Carregar més
-            </span>
-          </button>
-        </div>
-      )}
+      {!noEventsFound &&
+        loadMore &&
+        filteredEvents.length > 7 &&
+        !isLoadingMore && (
+          <div className=" text-center py-10">
+            <button
+              type="button"
+              className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
+              onClick={handleLoadMore}
+            >
+              <span className="text-white text-base font-semibold px-4">
+                Carregar més
+              </span>
+            </button>
+          </div>
+        )}
     </>
   );
 }

@@ -76,6 +76,7 @@ export const CITIES_DATA = new Map([
             imageSelector: "#image",
             locationSelector: "#location a",
             postalCode: "08440",
+            coords: { lat: 41.6398, lng: 2.3574 },
           },
         ],
         [
@@ -86,6 +87,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08450",
+            coords: { lat: 41.640555555556, lng: 2.4022222222222 },
           },
         ],
         [
@@ -96,6 +98,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08445",
+            coords: { lat: 41.693778, lng: 2.349269 },
           },
         ],
         [
@@ -106,6 +109,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08185",
+            coords: { lat: 41.583186, lng: 2.239658 },
           },
         ],
         [
@@ -116,17 +120,18 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08459",
+            coords: { lat: 41.672559, lng: 2.399991 },
           },
         ],
         [
           "la-garriga",
           {
             label: "La Garriga",
-            rssFeed: "http://lagarriga.webmunicipal.diba.cat/rss/12/0",
-            descriptionSelector: ".text-maquetat",
-            imageSelector: ".justified-gallery",
-            locationSelector: ".td_justificat",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=granollers`,
+            descriptionSelector: ".body-text",
+            imageSelector: ".foto a",
             postalCode: "08530",
+            coords: { lat: 41.680381, lng: 2.28334 },
           },
         ],
         [
@@ -137,20 +142,9 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".body-text",
             imageSelector: ".foto a",
             postalCode: "08400",
+            coords: { lat: 41.60619270000001, lng: 2.287088899999958 },
           },
         ],
-        // [
-        //   "turisme-valles",
-        //   {
-        //     hide: true,
-        //     label: "Turisme Vallès",
-        //     rssFeed: "https://www.turismevalles.com/events/feed/",
-        //     descriptionSelector: ".mec-event-content",
-        //     imageSelector: ".mec-events-event-image",
-        //     postalCode: "",
-        //   },
-        // ],
-        // Add more towns with their respective RSS feed URLs
       ]),
     },
   ],
@@ -167,10 +161,10 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08107",
+            coords: { lat: 41.5321, lng: 0.236 },
           },
         ],
       ]),
     },
   ],
-  // Add more regions with their respective towns and data
 ]);

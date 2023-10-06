@@ -84,6 +84,7 @@ export const normalizeEvents = (event, weatherInfo) => {
   const location = locationParts.length > 2 ? locationParts[0].trim() : town;
   let title = event.summary ? sanitizeText(event.summary) : "";
   const tag = null; //CATEGORIES.find((v) => title.includes(v)) || null;
+  const { coords } = getTownOptionsWithLabel(town);
 
   if (tag) title = title.replace(`${tag}:`, "").trim();
 
@@ -113,6 +114,7 @@ export const normalizeEvents = (event, weatherInfo) => {
       ? event.description
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
     weather: weatherObject,
+    coords,
   };
 };
 

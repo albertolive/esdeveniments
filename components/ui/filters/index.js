@@ -14,13 +14,24 @@ const renderButton = (value, onClick) => (
   </div>
 );
 
-const Filters = ({ byDate, setByDate, category, setCategory }) => {
+const Filters = ({
+  byDate,
+  setByDate,
+  category,
+  setCategory,
+  userLocation,
+  setUserLocation,
+}) => {
   const foundByDate = byDate && BYDATES.find((item) => item.value === byDate);
 
   const handleByDateClick = useCallback(() => setByDate(""), [setByDate]);
   const handleCategoryClick = useCallback(() => setCategory(""), [setCategory]);
+  const handleUserLocationClick = useCallback(
+    () => setUserLocation(""),
+    [setUserLocation]
+  );
 
-  if (!foundByDate && !category) {
+  if (!foundByDate && !category && !Object.keys(userLocation).length) {
     return null;
   }
 
@@ -29,6 +40,8 @@ const Filters = ({ byDate, setByDate, category, setCategory }) => {
       <div className="flex space-x-2">
         {foundByDate && renderButton(foundByDate.label, handleByDateClick)}
         {category && renderButton(category, handleCategoryClick)}
+        {Object.keys(userLocation).length &&
+          renderButton("A prop meu", handleUserLocationClick)}
       </div>
     </div>
   );

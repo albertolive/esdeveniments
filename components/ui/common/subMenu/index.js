@@ -21,6 +21,8 @@ function SubMenu({
   setCategory,
   searchTerm,
   setSearchTerm,
+  userLocation,
+  setUserLocation,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -91,6 +93,8 @@ function SubMenu({
             setCategory={setCategory}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
+            userLocation={userLocation}
+            setUserLocation={setUserLocation}
           />
         )}
       </div>
@@ -99,6 +103,8 @@ function SubMenu({
         setByDate={setByDate}
         category={category}
         setCategory={setCategory}
+        userLocation={userLocation}
+        setUserLocation={setUserLocation}
       />
     </>
   );
