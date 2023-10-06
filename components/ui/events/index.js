@@ -40,7 +40,7 @@ function Events({ props, loadMore = true }) {
   const [distance, setDistance] = useState("");
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [filteredEvents, setFilteredEvents] = useState(props.events);
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
