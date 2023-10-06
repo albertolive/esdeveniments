@@ -84,7 +84,8 @@ function Events({ props, loadMore = true }) {
           return true;
         }
         const eventDistance = getDistance(userLocation, event.coords);
-        console.log(eventDistance, distance);
+        localStorage.setItem(`${event.id}`, eventDistance);
+        localStorage.setItem("distance", distance);
         return eventDistance <= distance;
       });
     },
