@@ -37,7 +37,7 @@ function Events({ props, loadMore = true }) {
   const [category, setCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [userLocation, setUserLocation] = useState(null);
-  const [distance, setDistance] = useState(0);
+  const [distance, setDistance] = useState("");
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState(props.events);
@@ -77,13 +77,14 @@ function Events({ props, loadMore = true }) {
 
   const filterEventsByDistance = useCallback(
     (events, userLocation) => {
-      if (!userLocation) return events;
+      if (distance === "" || isNaN(distance)) return events;
 
       return events.filter((event) => {
-        if (event.isAd || !event.coords) {
+        if (event.isAd || !event.coords || !userLocation) {
           return true;
         }
         const eventDistance = getDistance(userLocation, event.coords);
+
         return eventDistance <= distance;
       });
     },

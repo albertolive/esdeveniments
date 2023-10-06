@@ -71,7 +71,7 @@ function SubMenu({
             onChange={handlePlaceChange}
             isClearable
             placeholder="una localitat"
-            isDisabled={distance !== 0}
+            isDisabled={isNaN(distance)}
           />
         </div>
         <div className="w-full flex justify-end items-center cursor-pointer">

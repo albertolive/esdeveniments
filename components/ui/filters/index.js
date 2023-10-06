@@ -26,7 +26,7 @@ const Filters = ({
 
   const handleByDateClick = useCallback(() => setByDate(""), [setByDate]);
   const handleCategoryClick = useCallback(() => setCategory(""), [setCategory]);
-  const handleDistanceClick = useCallback(() => setDistance(0), [setDistance]);
+  const handleDistanceClick = useCallback(() => setDistance(""), [setDistance]);
 
   if (!foundByDate && !category && !distance) {
     return null;
