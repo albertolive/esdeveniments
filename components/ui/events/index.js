@@ -77,6 +77,7 @@ function Events({ props, loadMore = true }) {
 
   const filterEventsByDistance = useCallback(
     (events, userLocation) => {
+      localStorage.setItem("distance", distance);
       if (distance === "" || isNaN(distance)) return events;
 
       return events.filter((event) => {
@@ -84,8 +85,7 @@ function Events({ props, loadMore = true }) {
           return true;
         }
         const eventDistance = getDistance(userLocation, event.coords);
-        localStorage.setItem(`${event.id}`, eventDistance);
-        localStorage.setItem("distance", distance);
+
         return eventDistance <= distance;
       });
     },
