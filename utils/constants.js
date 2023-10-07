@@ -159,6 +159,39 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "parets-del-valles",
+          {
+            label: "Parets del Vallès",
+            rssFeed: "https://www.parets.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08150",
+            coords: { lat: 41.57481, lng: 2.23306 },
+          },
+        ],
+        [
+          "sant-feliu-de-codines",
+          {
+            label: "Sant Feliu de Codines",
+            rssFeed: "https://www.santfeliudecodines.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08182",
+            coords: { lat: 41.69, lng: 2.165 },
+          },
+        ],
+        [
+          "caldes-de-montbui",
+          {
+            label: "Caldes de Montbui",
+            rssFeed: "https://www.caldesdemontbui.cat/rss/28/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08140",
+            coords: { lat: 41.63111, lng: 2.16867 },
+          },
+        ],
+        [
           "la-garriga",
           {
             label: "La Garriga",
