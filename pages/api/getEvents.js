@@ -70,7 +70,7 @@ const handler = async (req, res) => {
   }
 
   try {
-    res.setHeader("Cache-Control", "max-age=1800");
+    res.setHeader("Cache-Control", "public, max-age=1800, must-revalidate");
     res.setHeader("Content-Type", "application/json");
     res.status(200).json({
       ...events,

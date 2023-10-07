@@ -387,6 +387,7 @@ export function truncateString(text, maxLength) {
     : text;
 }
 
+
 export function getDistance(location1, location2) {
   var R = 6371;
   var dLat = deg2rad(location2.lat - location1.lat);
@@ -404,4 +405,18 @@ export function getDistance(location1, location2) {
 
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
+}
+
+export function generateTownUrls() {
+  const baseUrl = `${siteUrl}/api/fetchRss`;
+  let urls = [];
+
+  for (let [region, regionData] of CITIES_DATA) {
+    for (let town of regionData.towns.keys()) {
+      let url = `${baseUrl}?region=${region}&town=${town}`;
+      urls.push(url);
+    }
+  }
+
+  return urls;
 }

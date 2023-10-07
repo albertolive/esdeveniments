@@ -126,6 +126,36 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "sant-pere-vilamajor",
+          {
+            label: "Sant Pere de Vilamajor",
+            rssFeed: "https://www.vilamajor.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08458",
+          },
+        ],
+        [
+          "santa-maria-palautordera",
+          {
+            label: "Santa Maria de Palautordera",
+            rssFeed: "https://www.smpalautordera.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08460",
+          },
+        ],
+        [
+          "sant-esteve-palautordera",
+          {
+            label: "Sant Esteve de Palautordera",
+            rssFeed: "https://www.santestevedepalautordera.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08461",
+          },
+        ],
+        [
           "la-garriga",
           {
             label: "La Garriga",
