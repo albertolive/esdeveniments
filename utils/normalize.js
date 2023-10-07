@@ -114,7 +114,7 @@ export const normalizeEvents = (event, weatherInfo) => {
       ? event.description
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
     weather: weatherObject,
-    coords: { lat: "41.6398", lng: "2.3574" },
+    coords,
   };
 };
 

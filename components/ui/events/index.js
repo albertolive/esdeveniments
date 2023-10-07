@@ -77,28 +77,14 @@ function Events({ props, loadMore = true }) {
 
   const filterEventsByDistance = useCallback(
     (events, userLocation) => {
-      localStorage.setItem("distance", distance);
       if (distance === "" || isNaN(distance)) return events;
-      localStorage.setItem("here", "im here");
+
       return events.filter((event) => {
-        localStorage.setItem("isAd", event.isAd);
-        localStorage.setItem("coords", JSON.stringify(event.coords));
-        localStorage.setItem("userLocation", JSON.stringify(userLocation));
-        localStorage.setItem(`${event.id} event`, JSON.stringify(event));
-        localStorage.setItem(
-          `${event.id} lat`,
-          event.coords && event.coords.lat
-        );
-        localStorage.setItem(
-          `${event.id} lng`,
-          event.coords && event.coords.lng
-        );
         if (event.isAd || !event.coords || !userLocation) {
           return true;
         }
 
         const eventDistance = getDistance(userLocation, event.coords);
-        localStorage.setItem(event.id, eventDistance);
         return eventDistance <= distance;
       });
     },
