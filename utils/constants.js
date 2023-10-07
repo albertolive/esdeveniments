@@ -133,6 +133,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08458",
+            coords: { lat: 41.68556, lng: 2.390001 },
           },
         ],
         [
@@ -143,6 +144,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08460",
+            coords: { lat: 41.69528, lng: 2.445832 },
           },
         ],
         [
@@ -153,6 +155,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08461",
+            coords: { lat: 41.70528, lng: 2.435833 },
           },
         ],
         [
