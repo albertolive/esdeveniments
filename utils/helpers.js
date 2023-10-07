@@ -385,3 +385,17 @@ export function truncateString(text, maxLength) {
     ? text.substring(0, maxLength - 3) + "..."
     : text;
 }
+
+export function generateTownUrls() {
+  const baseUrl = `${siteUrl}/api/fetchRss`;
+  let urls = [];
+
+  for (let [region, regionData] of CITIES_DATA) {
+    for (let town of regionData.towns.keys()) {
+      let url = `${baseUrl}?region=${region}&town=${town}`;
+      urls.push(url);
+    }
+  }
+
+  return urls;
+}
