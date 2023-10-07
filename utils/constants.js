@@ -78,6 +78,7 @@ export const CITIES_DATA = new Map([
             imageSelector: "#image",
             locationSelector: "#location a",
             postalCode: "08440",
+            coords: { lat: 41.6398, lng: 2.3574 },
           },
         ],
         [
@@ -88,6 +89,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08450",
+            coords: { lat: 41.640555555556, lng: 2.4022222222222 },
           },
         ],
         [
@@ -98,6 +100,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08445",
+            coords: { lat: 41.693778, lng: 2.349269 },
           },
         ],
         [
@@ -108,6 +111,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08185",
+            coords: { lat: 41.583186, lng: 2.239658 },
           },
         ],
         [
@@ -118,6 +122,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08459",
+            coords: { lat: 41.672559, lng: 2.399991 },
           },
         ],
         [
@@ -128,6 +133,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08458",
+            coords: { lat: 41.68556, lng: 2.390001 },
           },
         ],
         [
@@ -138,6 +144,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08460",
+            coords: { lat: 41.69528, lng: 2.445832 },
           },
         ],
         [
@@ -148,6 +155,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08461",
+            coords: { lat: 41.70528, lng: 2.435833 },
           },
         ],
         [
@@ -159,6 +167,7 @@ export const CITIES_DATA = new Map([
             imageSelector: ".justified-gallery",
             locationSelector: ".td_justificat",
             postalCode: "08530",
+            coords: { lat: 41.680381, lng: 2.28334 },
           },
         ],
         [
@@ -169,6 +178,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".body-text",
             imageSelector: ".foto a",
             postalCode: "08400",
+            coords: { lat: 41.60619270000001, lng: 2.287088899999958 },
           },
         ],
       ]),
@@ -187,6 +197,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08107",
+            coords: { lat: 41.5321, lng: 0.236 },
           },
         ],
       ]),
