@@ -152,8 +152,11 @@ export default function Event(props) {
   useEffect(() => {
     if (newEvent || edit_suggested) return;
 
-    if (title !== "CANCELLED" && slug && asPath !== `/e/${slug}`)
-      push(slug, undefined, { shallow: true });
+    if (title !== "CANCELLED" && slug && asPath !== `/e/${slug}`) {
+      // push(slug, undefined, { shallow: true });
+      localStorage.setItem("e slug", `/e/${slug}`);
+      localStorage.setItem("asPath", asPath);
+    }
   }, [asPath, data, edit_suggested, newEvent, push, slug, title]);
 
   const onSendDeleteReason = async () => {
