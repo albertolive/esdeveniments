@@ -1,7 +1,6 @@
 import { useMemo, useState, useEffect, memo, useCallback } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import FiltersModal from "@components/ui/filtersModal";
 import Search from "@components/ui/search";
@@ -76,18 +75,6 @@ function SubMenu({
             isDisabled={isDistance}
           />
         </div>
-        <div className="w-full flex justify-end items-center cursor-pointer">
-          <button
-            onClick={() => {
-              setOpenModal(true);
-            }}
-            type="button"
-            className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-3 px-6 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-          >
-            <AdjustmentsIcon className="w-5 h-5" aria-hidden="true" />
-            <p className="font-barlow hidden sm:block ">Editar</p>
-          </button>
-        </div>
         {openModal && (
           <FiltersModal
             openModal={openModal}
@@ -106,6 +93,8 @@ function SubMenu({
         )}
       </div>
       <Filters
+        openModal={openModal}
+        setOpenModal={setOpenModal}
         byDate={byDate}
         setByDate={setByDate}
         category={category}

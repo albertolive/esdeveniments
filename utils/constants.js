@@ -41,7 +41,7 @@ export const MONTHS_URL = [
 ];
 
 export const CATEGORIES = {
-  Familiar: "Familiar Família Nens Nenes Infantil",
+  Familiar: "Familiar",
   "Festes Majors": "Festes Majors",
   Cinema: "Cinema",
   Teatre: "Teatre",
