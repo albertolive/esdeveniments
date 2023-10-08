@@ -37,6 +37,9 @@ const nextConfig = {
       "www.santestevedepalautordera.cat",
       "www.smpalautordera.cat",
       "www.vilamajor.cat",
+      "www.parets.cat",
+      "www.santfeliudecodines.cat",
+      "www.caldesdemontbui.cat",
     ],
   },
   async headers() {
