@@ -2,46 +2,40 @@ import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import XIcon from "@heroicons/react/outline/XIcon";
 
-export default function Modal({ open, setOpen, title, children }) {
+export default function Modal({
+  open,
+  setOpen,
+  title,
+  children,
+  actionButton,
+}) {
   const cancelButtonRef = useRef(null);
 
   return (
-    <Transition.Root show={open} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 z-50 overflow-y-auto"
-        initialFocus={cancelButtonRef}
-        onClose={setOpen}
-        static
-      >
-        <div className="flex items-center justify-center min-h-screen z-50">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-300"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-whiteCorp" />
-          </Transition.Child>
-
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            {/* la prop fixed fa que el contingut estigui a dalt */}
-            <div className="bg-whiteCorp w-full h-full overflow-auto z-50 fixed">
-              <div className="px-4 pt-2 pb-4">
+    <Dialog
+      open={open}
+      onClose={() => setOpen(false)}
+      className="fixed inset-0 z-50 overflow-y-auto"
+      initialFocus={cancelButtonRef}
+    >
+      <div className="fixed inset-0 bg-whiteCorp" aria-hidden="true" />
+      <div className="fixed inset-0 w-screen overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center">
+          <Transition.Root show={open} as={Fragment}>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Panel className="mx-auto w-full max-w-full rounded bg-white">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg leading-6 font-medium text-gray-900 flex flex-col"
+                  className="bg-whiteCorp text-lg leading-6 font-medium text-gray-900 flex flex-col sticky top-0 bg-white p-2 ml-2"
+                  style={{ position: "sticky", top: 0 }}
                 >
                   <div className="justify-between flex-row items-center flex">
                     <h2>{title}</h2>
@@ -56,12 +50,27 @@ export default function Modal({ open, setOpen, title, children }) {
                     </div>
                   </div>
                 </Dialog.Title>
-                <div className="mt-2">{children}</div>
-              </div>
-            </div>
-          </Transition.Child>
+                <div className="m-4 overflow-auto">{children}</div>
+                {actionButton && (
+                  <div className="sticky bottom-0 bg-whiteCorp p-2">
+                    <div
+                      className="p-2 bg-primary rounded-md"
+                      style={{ position: "sticky", bottom: 0 }}
+                    >
+                      <button
+                        onClick={() => setOpen(false)}
+                        className="w-full px-4 bg-blue-500 text-white font-bold  text-whiteCorp"
+                      >
+                        {actionButton}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </Dialog.Panel>
+            </Transition.Child>
+          </Transition.Root>
         </div>
-      </Dialog>
-    </Transition.Root>
+      </div>
+    </Dialog>
   );
 }

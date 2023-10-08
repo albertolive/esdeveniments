@@ -41,12 +41,12 @@ export const MONTHS_URL = [
 ];
 
 export const CATEGORIES = {
-  Cine: "Cinema",
+  Familiar: "Familiar Família Nens Nenes Infantil",
+  "Festes Majors": "Festes Majors",
+  Cinema: "Cinema",
   Teatre: "Teatre",
   Música: "Concert",
-  Art: "Art",
-  Museus: "Museu",
-  Nens: "Familiar",
+  Exposicions: "Art Museu Exposició",
 };
 
 export const BYDATES = [
@@ -61,7 +61,7 @@ export const dateFunctions = {
   "cap-de-setmana": "weekend",
 };
 
-export const DISTANCES = [1, 5, 10, 30, 50, 100];
+export const DISTANCES = [1, 5, 10, 30, 50];
 
 export const CITIES_DATA = new Map([
   [
