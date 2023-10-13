@@ -18,7 +18,10 @@ const handler = async (_, res) => {
       3;
     const cacheSeconds = cacheExpiry * 60 * 60;
 
-    res.setHeader("Cache-Control", `max-age=${cacheSeconds}, must-revalidate`);
+    res.setHeader(
+      "Cache-Control",
+      `public, max-age=${cacheSeconds}, must-revalidate`
+    );
     res.setHeader("Content-Type", "application/json");
     res.status(200).json(weather);
   } catch (error) {

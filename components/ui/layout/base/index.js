@@ -32,7 +32,7 @@ export default function BaseLayout({ children }) {
       </Head>
       <Navbar />
       {/* <Notify /> */}
-      <div className="bg-whiteCorp">
+      <div className="bg-whiteCorp overflow-hidden">
         <div className="max-w-full mx-auto p-0 sm:px-10 sm:max-w-[576px] md:px-20 md:max-w-[768px] lg:px-40 lg:max-w-[1024px]">
           {memoizedChildren}
         </div>

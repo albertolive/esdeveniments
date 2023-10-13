@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -13,7 +14,7 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
   noSSR: false,
 });
 
-export default function Card({ event, isLoading }) {
+function Card({ event, isLoading }) {
   const { prefetch } = useRouter();
 
   const handlePrefetch = () => {
@@ -108,3 +109,5 @@ export default function Card({ event, isLoading }) {
     </Link>
   );
 }
+
+export default memo(Card);

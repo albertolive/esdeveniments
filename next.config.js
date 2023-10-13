@@ -34,6 +34,12 @@ const nextConfig = {
       "www.llissadevall.cat",
       "www.santantonidevilamajor.cat",
       "www.martorelles.cat",
+      "www.santestevedepalautordera.cat",
+      "www.smpalautordera.cat",
+      "www.vilamajor.cat",
+      "www.parets.cat",
+      "www.santfeliudecodines.cat",
+      "www.caldesdemontbui.cat",
     ],
   },
   async headers() {

@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useState, useCallback } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import { generateJsonData, getPlaceTypeAndLabel } from "@utils/helpers";
+import {
+  generateJsonData,
+  getDistance,
+  getPlaceTypeAndLabel,
+} from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
 import { SubMenu } from "@components/ui/common";
 import List from "@components/ui/list";
@@ -12,18 +16,17 @@ import Card from "@components/ui/card";
 import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
+import { CATEGORIES } from "@utils/constants";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
   {
     loading: () => "",
+    ssr: false,
   }
 );
 
-export default function Events({ props, loadMore = true }) {
-  // Refs
-  const scrollPosition = useRef(0);
-
+function Events({ props, loadMore = true }) {
   // Props destructuring
   const { place: placeProps, byDate: byDateProps } = props;
 
@@ -31,11 +34,18 @@ export default function Events({ props, loadMore = true }) {
   const [page, setPage] = useState(getStoredPage);
   const [place, setPlace] = useState(() => getStoredPlace(placeProps));
   const [byDate, setByDate] = useState(() => getStoredByDate(byDateProps));
+  const [category, setCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [userLocation, setUserLocation] = useState(null);
+  const [distance, setDistance] = useState("");
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
+  const categoryQuery = category ? CATEGORIES[category] : "";
+  const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
@@ -44,24 +54,42 @@ export default function Events({ props, loadMore = true }) {
     props,
     pageIndex: dateFunctions[byDate] || "all",
     maxResults: page * 10,
-    q: type === "town" ? `${label} ${regionLabel}` : label,
+    q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
   });
+
   const jsonEvents = events
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));
 
   // Event handlers
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("scrollPosition", window.scrollY);
     }
     setIsLoadingMore(true);
     setPage((prevPage) => prevPage + 1);
     sendGA();
-  };
-  const toggleDropdown = () => {
+  }, []);
+
+  const toggleDropdown = useCallback(() => {
     setOpen(!open);
-  };
+  }, [open]);
+
+  const filterEventsByDistance = useCallback(
+    (events, userLocation) => {
+      if (distance === "" || isNaN(distance)) return events;
+
+      return events.filter((event) => {
+        if (event.isAd || !event.coords || !userLocation) {
+          return true;
+        }
+
+        const eventDistance = getDistance(userLocation, event.coords);
+        return eventDistance <= distance;
+      });
+    },
+    [distance]
+  );
 
   // Helper function
   const resetPage = () => {
@@ -74,15 +102,9 @@ export default function Events({ props, loadMore = true }) {
   // Effects
   useEffect(() => {
     localStorage.setItem("currentPage", page);
-  }, [page]);
-
-  useEffect(() => {
     localStorage.setItem("place", place);
-  }, [place]);
-
-  useEffect(() => {
     localStorage.setItem("byDate", byDate);
-  }, [byDate]);
+  }, [page, place, byDate]);
 
   useEffect(() => {
     if (place !== placeProps || byDate !== byDateProps) {
@@ -112,13 +134,17 @@ export default function Events({ props, loadMore = true }) {
     if (storedScrollPosition) {
       window.scrollTo(0, parseInt(storedScrollPosition));
     }
-  }, [events]);
+  }, [events.length]);
 
   useEffect(() => {
     if (events.length > 0) {
       setIsLoadingMore(false);
     }
   }, [events]);
+
+  useEffect(() => {
+    setFilteredEvents(filterEventsByDistance(events, userLocation));
+  }, [userLocation, events, filterEventsByDistance]);
 
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
@@ -156,6 +182,14 @@ export default function Events({ props, loadMore = true }) {
         setPlace={setPlace}
         byDate={byDate}
         setByDate={setByDate}
+        category={category}
+        setCategory={setCategory}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        userLocation={userLocation}
+        setUserLocation={setUserLocation}
+        distance={distance}
+        setDistance={setDistance}
       />
       <div className="p-2 flex flex-col justify-center items-center">
         <button
@@ -204,27 +238,32 @@ export default function Events({ props, loadMore = true }) {
           ))}
         </div>
       ) : (
-        <List events={events}>
+        <List events={filteredEvents}>
           {(event) => <Card key={event.id} event={event} />}
         </List>
       )}
       {isLoadingMore && <CardLoading />}
-      {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
-        <div className=" text-center py-10">
-          <button
-            type="button"
-            className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
-            onClick={handleLoadMore}
-          >
-            <span className="text-white text-base font-semibold px-4">
-              Carregar més
-            </span>
-          </button>
-        </div>
-      )}
+      {!noEventsFound &&
+        loadMore &&
+        filteredEvents.length > 7 &&
+        !isLoadingMore && (
+          <div className=" text-center py-10">
+            <button
+              type="button"
+              className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
+              onClick={handleLoadMore}
+            >
+              <span className="text-white text-base font-semibold px-4">
+                Carregar més
+              </span>
+            </button>
+          </div>
+        )}
     </>
   );
 }
+
+export default memo(Events);
 
 // Helper functions
 function getStoredPage() {

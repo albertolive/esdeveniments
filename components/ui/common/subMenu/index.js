@@ -1,41 +1,32 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, memo, useCallback } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { BYDATES } from "@utils/constants";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
-
-const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
-  loading: () => "",
-  noSSR: false,
-});
+import FiltersModal from "@components/ui/filtersModal";
+import Search from "@components/ui/search";
+import Filters from "@components/ui/filters";
 
 const Select = dynamic(() => import("@components/ui/common/form/select"), {
   loading: () => "",
   noSSR: false,
 });
 
-const RenderButton = ({ value, label, goTo, byDate }) => {
-  const isActiveLink =
-    byDate === value ? "bg-primary text-whiteCorp border-0" : "bg-whiteCorp";
-
-  return (
-    <button
-      className={`w-full relative inline-flex justify-center items-center py-2 px-8 border border-primarydark font-normal rounded-xl ${isActiveLink} focus:outline-none`}
-      type="button"
-      onClick={() => goTo(value)}
-    >
-      {label}
-    </button>
-  );
-};
-
-export default function SubMenu({
+function SubMenu({
   place: placeProps,
   setPlace,
   byDate: byDateProps,
   setByDate,
+  category,
+  setCategory,
+  searchTerm,
+  setSearchTerm,
+  userLocation,
+  setUserLocation,
+  distance,
+  setDistance,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const {
     query: { place: placeQuery, byDate: byDateQuery },
   } = useRouter();
@@ -56,21 +47,23 @@ export default function SubMenu({
     }
   }, [place, regionsAndCitiesArray]);
 
-  const handlePlaceChange = ({ value }) => {
-    setPlace(value);
-    setSelectedOption(value);
+  const handlePlaceChange = useCallback(
+    ({ value }) => {
+      setPlace(value);
+      setSelectedOption(value);
 
-    localStorage.removeItem("currentPage");
-    localStorage.removeItem("scrollPosition");
-  };
+      localStorage.removeItem("currentPage");
+      localStorage.removeItem("scrollPosition");
+    },
+    [setPlace]
+  );
 
-  const handleByDateChange = (value) => {
-    setByDate(value);
-  };
+  const isDistance = distance !== "" || isNaN(distance);
 
   return (
     <>
       <div className="flex flex-col justify-center items-center my-4">
+        <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <div className="w-11/12 p-2">
           <Select
             id="options"
@@ -79,23 +72,38 @@ export default function SubMenu({
             onChange={handlePlaceChange}
             isClearable
             placeholder="una localitat"
+            isDisabled={isDistance}
           />
         </div>
-        {/* <div className="flex flex-col justify-center items-start gap-4 my-4">
-          {BYDATES.map(({ value, label }) => (
-            <RenderButton
-              key={value}
-              value={value}
-              label={label}
-              goTo={handleByDateChange}
-              byDate={byDate}
-            />
-          ))}
-        </div> */}
+        {openModal && (
+          <FiltersModal
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            byDate={byDate}
+            setByDate={setByDate}
+            category={category}
+            setCategory={setCategory}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            userLocation={userLocation}
+            setUserLocation={setUserLocation}
+            distance={distance}
+            setDistance={setDistance}
+          />
+        )}
       </div>
-      {/* <div className="min-h-[325px] lg:min-h-[100px]">
-        <AdArticle slot="6571056515" />
-      </div> */}
+      <Filters
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        byDate={byDate}
+        setByDate={setByDate}
+        category={category}
+        setCategory={setCategory}
+        distance={distance}
+        setDistance={setDistance}
+      />
     </>
   );
 }
+
+export default memo(SubMenu);

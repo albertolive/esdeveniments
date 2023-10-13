@@ -1,6 +1,6 @@
-import React from "react";
+import { memo } from "react";
 
-export default function CardLoading() {
+function CardLoading() {
   return (
     <div className="min-w-full w-full flex flex-col content-center bg-whiteCorp mb-10">
       {/* Title */}
@@ -36,3 +36,5 @@ export default function CardLoading() {
     </div>
   );
 }
+
+export default memo(CardLoading);

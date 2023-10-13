@@ -40,18 +40,16 @@ export const MONTHS_URL = [
   "desembre",
 ];
 
-export const TAGS = [
-  "Familiar",
-  "Tertúlia Literària",
-  "Vermut",
-  "Cinema",
-  "Concert",
-  "Teatre",
-  "Exposició",
-];
+export const CATEGORIES = {
+  Familiar: "Familiar",
+  "Festes Majors": "Festes Majors",
+  Cinema: "Cinema",
+  Teatre: "Teatre",
+  Música: "Concert",
+  Exposicions: "Art Museu Exposició",
+};
 
 export const BYDATES = [
-  // Replace it with a dynamic data source
   { value: "avui", label: "Avui" },
   { value: "setmana", label: "Aquesta setmana" },
   { value: "cap-de-setmana", label: "Cap de setmana" },
@@ -62,6 +60,8 @@ export const dateFunctions = {
   setmana: "week",
   "cap-de-setmana": "weekend",
 };
+
+export const DISTANCES = [1, 5, 10, 30, 50];
 
 export const CITIES_DATA = new Map([
   [
@@ -78,6 +78,7 @@ export const CITIES_DATA = new Map([
             imageSelector: "#image",
             locationSelector: "#location a",
             postalCode: "08440",
+            coords: { lat: 41.6398, lng: 2.3574 },
           },
         ],
         [
@@ -88,6 +89,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08450",
+            coords: { lat: 41.640555555556, lng: 2.4022222222222 },
           },
         ],
         [
@@ -98,6 +100,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08445",
+            coords: { lat: 41.693778, lng: 2.349269 },
           },
         ],
         [
@@ -108,6 +111,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08185",
+            coords: { lat: 41.583186, lng: 2.239658 },
           },
         ],
         [
@@ -118,17 +122,84 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08459",
+            coords: { lat: 41.672559, lng: 2.399991 },
+          },
+        ],
+        [
+          "sant-pere-vilamajor",
+          {
+            label: "Sant Pere de Vilamajor",
+            rssFeed: "https://www.vilamajor.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08458",
+            coords: { lat: 41.68556, lng: 2.390001 },
+          },
+        ],
+        [
+          "santa-maria-palautordera",
+          {
+            label: "Santa Maria de Palautordera",
+            rssFeed: "https://www.smpalautordera.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08460",
+            coords: { lat: 41.69528, lng: 2.445832 },
+          },
+        ],
+        [
+          "sant-esteve-palautordera",
+          {
+            label: "Sant Esteve de Palautordera",
+            rssFeed: "https://www.santestevedepalautordera.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08461",
+            coords: { lat: 41.70528, lng: 2.435833 },
+          },
+        ],
+        [
+          "parets-del-valles",
+          {
+            label: "Parets del Vallès",
+            rssFeed: "https://www.parets.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08150",
+            coords: { lat: 41.57481, lng: 2.23306 },
+          },
+        ],
+        [
+          "sant-feliu-de-codines",
+          {
+            label: "Sant Feliu de Codines",
+            rssFeed: "https://www.santfeliudecodines.cat/rss/12/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08182",
+            coords: { lat: 41.69, lng: 2.165 },
+          },
+        ],
+        [
+          "caldes-de-montbui",
+          {
+            label: "Caldes de Montbui",
+            rssFeed: "https://www.caldesdemontbui.cat/rss/28/0/",
+            descriptionSelector: ".ddbbtext",
+            imageSelector: ".first-image",
+            postalCode: "08140",
+            coords: { lat: 41.63111, lng: 2.16867 },
           },
         ],
         [
           "la-garriga",
           {
             label: "La Garriga",
-            rssFeed: "http://lagarriga.webmunicipal.diba.cat/rss/12/0",
-            descriptionSelector: ".text-maquetat",
-            imageSelector: ".justified-gallery",
-            locationSelector: ".td_justificat",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=granollers`,
+            descriptionSelector: ".body-text",
+            imageSelector: ".foto a",
             postalCode: "08530",
+            coords: { lat: 41.680381, lng: 2.28334 },
           },
         ],
         [
@@ -139,20 +210,9 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".body-text",
             imageSelector: ".foto a",
             postalCode: "08400",
+            coords: { lat: 41.60619270000001, lng: 2.287088899999958 },
           },
         ],
-        // [
-        //   "turisme-valles",
-        //   {
-        //     hide: true,
-        //     label: "Turisme Vallès",
-        //     rssFeed: "https://www.turismevalles.com/events/feed/",
-        //     descriptionSelector: ".mec-event-content",
-        //     imageSelector: ".mec-events-event-image",
-        //     postalCode: "",
-        //   },
-        // ],
-        // Add more towns with their respective RSS feed URLs
       ]),
     },
   ],
@@ -169,10 +229,10 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".ddbbtext",
             imageSelector: ".first-image",
             postalCode: "08107",
+            coords: { lat: 41.5321, lng: 0.236 },
           },
         ],
       ]),
     },
   ],
-  // Add more regions with their respective towns and data
 ]);
