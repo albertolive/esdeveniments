@@ -17,6 +17,7 @@ import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
+import Search from "@components/ui/search";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -177,88 +178,93 @@ function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <SubMenu
-        place={place}
-        setPlace={setPlace}
-        byDate={byDate}
-        setByDate={setByDate}
-        category={category}
-        setCategory={setCategory}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        userLocation={userLocation}
-        setUserLocation={setUserLocation}
-        distance={distance}
-        setDistance={setDistance}
-      />
-      <div className="p-2 flex flex-col justify-center items-center">
-        <button
-          onClick={toggleDropdown}
-          className={`w-11/12 p-3 flex justify-center items-center gap-2 text-blackCorp focus:outline-none`}
-        >
-          {open ? (
-            <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
-              Tancar
-            </h2>
-          ) : (
-            <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
-              Informació
-            </h2>
-          )}
-          {open ? (
-            <XIcon className="h-5 w-5" />
-          ) : (
-            <ChevronDownIcon className="h-5 w-5" />
-          )}
-        </button>
-        {open && (
-          <div className="flex flex-col gap-4 py-4 border-t border-darkCorp">
-            <div>
-              <h1 className="leading-8 font-semibold text-blackCorp text-center md:text-left uppercase italic">
-                {title}
-              </h1>
-            </div>
-            <div className="px-2 flex flex-col justify-center items-center gap-4 lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
-              <p className="w-full text-center md:text-left lg:w-1/2">
-                {subTitle}
-              </p>
-              <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
-              <p className="w-full text-center md:text-left lg:w-1/2">
-                {description}
-              </p>
-            </div>
-          </div>
-        )}
+      <div className="w-full fixed top-18 z-50 bg-whiteCorp">
+        <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
-      {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
-      {isLoading && !isLoadingMore ? (
-        <div>
-          {[...Array(10)].map((_, i) => (
-            <CardLoading key={i} />
-          ))}
+      <div className="pt-14">
+        <SubMenu
+          place={place}
+          setPlace={setPlace}
+          byDate={byDate}
+          setByDate={setByDate}
+          category={category}
+          setCategory={setCategory}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          userLocation={userLocation}
+          setUserLocation={setUserLocation}
+          distance={distance}
+          setDistance={setDistance}
+        />
+        <div className="p-2 flex flex-col justify-center items-center">
+          <button
+            onClick={toggleDropdown}
+            className={`w-11/12 p-3 flex justify-center items-center gap-2 text-blackCorp focus:outline-none`}
+          >
+            {open ? (
+              <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
+                Tancar
+              </h2>
+            ) : (
+              <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
+                Informació
+              </h2>
+            )}
+            {open ? (
+              <XIcon className="h-5 w-5" />
+            ) : (
+              <ChevronDownIcon className="h-5 w-5" />
+            )}
+          </button>
+          {open && (
+            <div className="flex flex-col gap-4 py-4 border-t border-darkCorp">
+              <div>
+                <h1 className="leading-8 font-semibold text-blackCorp text-center md:text-left uppercase italic">
+                  {title}
+                </h1>
+              </div>
+              <div className="px-2 flex flex-col justify-center items-center gap-4 lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
+                <p className="w-full text-center md:text-left lg:w-1/2">
+                  {subTitle}
+                </p>
+                <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
+                <p className="w-full text-center md:text-left lg:w-1/2">
+                  {description}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
-      ) : (
-        <List events={filteredEvents}>
-          {(event) => <Card key={event.id} event={event} />}
-        </List>
-      )}
-      {isLoadingMore && <CardLoading />}
-      {!noEventsFound &&
-        loadMore &&
-        filteredEvents.length > 7 &&
-        !isLoadingMore && (
-          <div className=" text-center py-10">
-            <button
-              type="button"
-              className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
-              onClick={handleLoadMore}
-            >
-              <span className="text-white text-base font-semibold px-4">
-                Carregar més
-              </span>
-            </button>
+        {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
+        {isLoading && !isLoadingMore ? (
+          <div>
+            {[...Array(10)].map((_, i) => (
+              <CardLoading key={i} />
+            ))}
           </div>
+        ) : (
+          <List events={filteredEvents}>
+            {(event) => <Card key={event.id} event={event} />}
+          </List>
         )}
+        {isLoadingMore && <CardLoading />}
+        {!noEventsFound &&
+          loadMore &&
+          filteredEvents.length > 7 &&
+          !isLoadingMore && (
+            <div className=" text-center py-10">
+              <button
+                type="button"
+                className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
+                onClick={handleLoadMore}
+              >
+                <span className="text-white text-base font-semibold px-4">
+                  Carregar més
+                </span>
+              </button>
+            </div>
+          )}
+      </div>
     </>
   );
 }

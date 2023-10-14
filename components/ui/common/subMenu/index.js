@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import FiltersModal from "@components/ui/filtersModal";
-import Search from "@components/ui/search";
 import Filters from "@components/ui/filters";
 
 const Select = dynamic(() => import("@components/ui/common/form/select"), {
@@ -62,9 +61,8 @@ function SubMenu({
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center my-4">
-        <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <div className="w-11/12 p-2">
+      <div className="flex flex-col justify-center items-center gap-4">
+        {/* <div className="w-11/12 p-2">
           <Select
             id="options"
             options={regionsAndCitiesArray}
@@ -74,7 +72,7 @@ function SubMenu({
             placeholder="una localitat"
             isDisabled={isDistance}
           />
-        </div>
+        </div> */}
         {openModal && (
           <FiltersModal
             openModal={openModal}

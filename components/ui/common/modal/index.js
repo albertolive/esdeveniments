@@ -1,6 +1,6 @@
 import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import XIcon from "@heroicons/react/outline/XIcon";
+import ArrowLeftIcon from "@heroicons/react/outline/ArrowLeftIcon";
 
 export default function Modal({
   open,
@@ -20,7 +20,7 @@ export default function Modal({
     >
       <div className="fixed inset-0 bg-whiteCorp" aria-hidden="true" />
       <div className="fixed inset-0 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center">
+        <div className="h-full flex items-center justify-center">
           <Transition.Root show={open} as={Fragment}>
             <Transition.Child
               as={Fragment}
@@ -31,35 +31,34 @@ export default function Modal({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel className="mx-auto w-full max-w-full rounded bg-white">
+              <Dialog.Panel className="w-full h-full flex flex-col justify-center items-center p-2">
                 <Dialog.Title
                   as="h3"
-                  className="bg-whiteCorp text-lg leading-6 font-medium text-gray-900 flex flex-col sticky top-0 bg-white p-2 ml-2"
-                  style={{ position: "sticky", top: 0 }}
+                  className="w-full bg-whiteCorp flex fixed top-0 bg-white p-6 font-semibold"
                 >
-                  <div className="justify-between flex-row items-center flex">
-                    <h2>{title}</h2>
-                    <div className="justify-end pt-2 pr-2">
-                      <button
-                        ref={cancelButtonRef}
-                        onClick={() => setOpen(false)}
-                        className="focus:outline-none"
-                      >
-                        <XIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
+                  <div className="w-full flex justify-between items-center">
+                    <button
+                      ref={cancelButtonRef}
+                      onClick={() => setOpen(false)}
+                      className="w-1/12 focus:outline-none"
+                    >
+                      <ArrowLeftIcon className="h-6 w-6" aria-hidden="true" />
+                    </button>
+                    <div className="w-11/12 pr-11">
+                      <h2 className="text-center uppercase italic">{title}</h2>
                     </div>
                   </div>
                 </Dialog.Title>
-                <div className="m-4 overflow-auto">{children}</div>
+                <div className="w-full p-4 overflow-auto">{children}</div>
                 {actionButton && (
-                  <div className="sticky bottom-0 bg-whiteCorp p-2">
+                  <div className="w-full bg-whiteCorp fixed bottom-0 left-0 p-6">
                     <div
-                      className="p-2 bg-primary rounded-md"
+                      className="flex justify-center"
                       style={{ position: "sticky", bottom: 0 }}
                     >
                       <button
                         onClick={() => setOpen(false)}
-                        className="w-full px-4 bg-blue-500 text-white font-bold  text-whiteCorp"
+                        className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold tracking-wide"
                       >
                         {actionButton}
                       </button>

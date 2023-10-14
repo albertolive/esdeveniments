@@ -114,67 +114,68 @@ function FiltersModal({
         open={openModal}
         setOpen={setOpenModal}
         title="Filtres"
-        actionButton="Veure resultats"
+        actionButton="Aplicar filtres"
       >
-        <div className="space-y-2">
-          <fieldset className="pt-2 pb-2">
-            <legend className="text-sm font-medium">Categories</legend>
-            <div className="mt-3 space-y-3">
-              <div className="flex flex-col">
-                {Object.entries(CATEGORIES).map(([value]) => (
-                  <RadioInput
-                    key={value}
-                    id={value}
-                    name="category"
-                    value={value}
-                    checkedValue={category}
-                    onChange={handleCategoryChange}
-                    label={value}
-                  />
-                ))}
-              </div>
+        <div className="flex flex-col gap-16 px-2 pt-12 pb-16">
+          <fieldset className="flex justify-start items-start gap-4">
+            <div className="w-1/3 text-bColor font-medium font-barlow pt-[5px]">
+              Categories
+            </div>
+            <div className="w-2/3 flex flex-col px-4 pt-2 border-l border-bColor">
+              {Object.entries(CATEGORIES).map(([value]) => (
+                <RadioInput
+                  key={value}
+                  id={value}
+                  name="category"
+                  value={value}
+                  checkedValue={category}
+                  onChange={handleCategoryChange}
+                  label={value}
+                />
+              ))}
             </div>
           </fieldset>
-          <fieldset className="pt-2 pb-2">
-            <legend className="text-sm font-medium">Data</legend>
-            <div className="mt-3 space-y-3">
-              <div className="flex flex-col">
-                {BYDATES.map(({ value, label }) => (
-                  <RadioInput
-                    key={value}
-                    id={value}
-                    name="date"
-                    value={value}
-                    checkedValue={byDate}
-                    onChange={handleByDateChange}
-                    label={label}
-                  />
-                ))}
-              </div>
+          <fieldset className="flex justify-start items-start gap-4">
+            <div className="w-1/3 text-bColor font-medium font-barlow pt-[5px]">
+              Data
+            </div>
+            <div className="w-2/3 flex flex-col px-4 pt-2 border-l border-bColor">
+              {BYDATES.map(({ value, label }) => (
+                <RadioInput
+                  key={value}
+                  id={value}
+                  name="date"
+                  value={value}
+                  checkedValue={byDate}
+                  onChange={handleByDateChange}
+                  label={label}
+                />
+              ))}
             </div>
           </fieldset>
-          <fieldset className="pt-2 pb-2">
-            <legend className="text-sm font-medium">
-              Esdeveniments a prop meu
-            </legend>
-            {(userLocationLoading || userLocationError) && (
-              <div className="mt-3 space-y-3">
-                <div className="flex flex-col">
-                  {userLocationLoading && (
-                    <div className="text-sm text-blackCorp">
-                      Carregant localització...
-                    </div>
-                  )}
-                  {userLocationError && (
-                    <div className="text-sm text-primary">
-                      {userLocationError}
-                    </div>
-                  )}
+          <fieldset className="flex justify-start items-start gap-4">
+            <div className="w-1/3 flex flex-col justify-center items-center gap-2">
+              <div className="text-bColor font-medium font-barlow pt-[5px]  pb-2">
+                Esdeveniments a prop meu:
+              </div>
+              {(userLocationLoading || userLocationError) && (
+                <div className="border-t border-bColor py-2">
+                  <div className="flex flex-col">
+                    {userLocationLoading && (
+                      <div className="text-sm text-bColor">
+                        Carregant localització...
+                      </div>
+                    )}
+                    {userLocationError && (
+                      <div className="text-sm text-primary">
+                        {userLocationError}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-
-            <div className="mt-3 space-y-3">
+              )}
+            </div>
+            <div className="w-2/3 flex flex-col px-4 pt-2 border-l border-bColor">
               <div
                 className={`flex flex-col ${
                   disableDistance ? "opacity-30" : ""

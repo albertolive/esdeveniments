@@ -114,32 +114,30 @@ export default function Search({ searchTerm, setSearchTerm }) {
   };
 
   return (
-    <div className="space-y-8 divide-y divide-gray-200 max-w-3xl mx-auto mb-4">
-      <div className="space-y-8 divide-y divide-gray-200">
-        <div className="relative">
-          <input
-            type="text"
-            className="shadow-sm focus:ring-gray-300 focus:border-gray-300 block w-full sm:text-sm border-gray-300 rounded-md"
-            placeholder="Cerca qualevol cosa"
-            value={inputValue}
-            onKeyDown={handleKeyPress}
-            onChange={handleChange}
-            onFocus={onFocus}
-          />
-          <div className="absolute top-2 right-2 cursor-pointer">
-            {inputValue.length ? (
-              <XIcon
-                className="h-6 w-6 text-gray-400"
-                onClick={clearSearchTerm}
-              />
-            ) : (
-              <SearchIcon
-                className="h-6 w-6 text-gray-400"
-                onClick={() => searchEvents(searchTerm)}
-                aria-label="Search"
-              />
-            )}
-          </div>
+    <div className="w-full border-t border-bColor p-2">
+      <div className="w-full flex justify-evenly items-center gap-2">
+        <input
+          type="text"
+          className="w-full h-10 border-0 placeholder:text-bColor placeholder:text-sm px-5"
+          placeholder="Cerca qualevol cosa"
+          value={inputValue}
+          onKeyDown={handleKeyPress}
+          onChange={handleChange}
+          onFocus={onFocus}
+        />
+        <div className="flex justify-center items-center w-1/4 cursor-pointer">
+          {inputValue.length ? (
+            <XIcon
+              className="h-5 w-5 text-blackCorp"
+              onClick={clearSearchTerm}
+            />
+          ) : (
+            <SearchIcon
+              className="h-5 w-5 text-bColor"
+              onClick={() => searchEvents(searchTerm)}
+              aria-label="Search"
+            />
+          )}
         </div>
       </div>
     </div>
