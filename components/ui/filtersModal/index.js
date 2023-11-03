@@ -1,12 +1,22 @@
-import { memo, useCallback, useState } from "react";
+import { useMemo, memo, useCallback, useState, useEffect } from "react";
 import Modal from "@components/ui/common/modal";
 import RadioInput from "@components/ui/common/form/radioInput";
 import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import { generateRegionsAndTownsOptions } from "@utils/helpers";
+
+const Select = dynamic(() => import("@components/ui/common/form/select"), {
+  loading: () => "",
+  noSSR: false,
+});
 
 function FiltersModal({
+  place: placeProps,
+  setPlace,
   openModal,
   setOpenModal,
-  byDate,
+  byDate: byDateProps,
   setByDate,
   category,
   setCategory,
@@ -15,11 +25,23 @@ function FiltersModal({
   distance,
   setDistance,
 }) {
+  const [selectedOption, setSelectedOption] = useState(null);
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const [userLocationError, setUserLocationError] = useState("");
   const handleStateChange = useCallback((setState, value) => {
     setState((prevValue) => (prevValue === value ? "" : value));
   }, []);
+
+  const {
+    query: { place: placeQuery, byDate: byDateQuery },
+  } = useRouter();
+  const place = placeProps || placeQuery;
+  const byDate = byDateProps || byDateQuery;
+
+  const regionsAndCitiesArray = useMemo(
+    () => generateRegionsAndTownsOptions(),
+    []
+  );
 
   const handleByDateChange = useCallback(
     (value) => {
@@ -41,6 +63,28 @@ function FiltersModal({
     },
     [handleUserLocation]
   );
+
+  useEffect(() => {
+    if (place) {
+      const regionOption = regionsAndCitiesArray
+        .flatMap((group) => group.options)
+        .find((option) => option.value === place);
+      setSelectedOption(regionOption || null);
+    }
+  }, [place, regionsAndCitiesArray]);
+
+  const handlePlaceChange = useCallback(
+    ({ value }) => {
+      setPlace(value);
+      setSelectedOption(value);
+
+      localStorage.removeItem("currentPage");
+      localStorage.removeItem("scrollPosition");
+    },
+    [setPlace]
+  );
+
+  const isDistance = distance !== "" || isNaN(distance);
 
   const handleUserLocation = useCallback(
     (value) => {
@@ -116,7 +160,18 @@ function FiltersModal({
         title="Filtres"
         actionButton="Aplicar filtres"
       >
-        <div className="flex flex-col gap-16 px-2 pt-12 pb-16">
+        <div className="w-full flex flex-col gap-10 pt-12 pb-16">
+          <div className="w-full">
+            <Select
+              id="options"
+              options={regionsAndCitiesArray}
+              value={selectedOption}
+              onChange={handlePlaceChange}
+              isClearable
+              placeholder="una localitat"
+              isDisabled={isDistance}
+            />
+          </div>
           <fieldset className="flex justify-start items-start gap-4">
             <div className="w-1/3 text-bColor font-medium font-barlow pt-[5px]">
               Categories

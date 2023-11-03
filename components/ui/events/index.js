@@ -178,7 +178,7 @@ function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="w-full fixed top-18 z-50 bg-whiteCorp">
+      <div className="w-full display flex justify-center items-center fixed top-18 z-10 bg-whiteCorp mx-auto px-0 sm:px-0 sm:w-[576px] md:px-4 md:w-[768px] lg:px-20 lg:w-[1024px]">
         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
       <div className="pt-14">

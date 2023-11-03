@@ -245,7 +245,7 @@ export default function Event(props) {
           title="Gràcies per contribuir a millorar el contingut de Esdeveniments.cat! En menys de 24 hores estarà disponible el canvi."
         />
       )}
-      <nav className="flex w-full pb-6" aria-label="Breadcrumb">
+      <nav className="flex w-full" aria-label="Breadcrumb">
         <ol className="flex justify-start items-center gap-1 w-full px-3 xs:px-4 xs:max-w-full sm:px-0 sm:max-w-[576px] md:px-10 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
           <li className="flex justify-center items-end gap-1">
             <Link href="/" prefetch={false}>
@@ -286,6 +286,19 @@ export default function Event(props) {
       {/* General */}
       <div className="bg-whiteCorp">
         <div className="w-full px-4 flex flex-col gap-4 justify-center items-center sm:px-0 sm:max-w-[576px] md:px-10 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
+          <div className="w-full pr-2 flex justify-end items-center cursor-pointer">
+            <button
+              onClick={() => {
+                setOpenModal(true);
+                sendGoogleEvent("open-change-modal");
+              }}
+              type="button"
+              className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-2 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+            >
+              <PencilIcon className="w-5 h-5" aria-hidden="true" />
+              <p className="font-barlow hidden sm:block ">Editar</p>
+            </button>
+          </div>
           <div className="flex flex-col gap-4">
             <h1 className="font-semibold uppercase">{title}</h1>
             <h2 className="font-medium">
@@ -300,21 +313,8 @@ export default function Event(props) {
               Aquest esdeveniment ha finalitzat
             </p>
           )}
-          <div className="p-3 h-full min-h-[325px] lg:min-h-[100px]">
+          <div className="px-3 h-full min-h-[325px] lg:min-h-[100px]">
             <AdArticle slot="1510301521" />
-          </div>
-          <div className="w-full flex justify-end items-center cursor-pointer">
-            <button
-              onClick={() => {
-                setOpenModal(true);
-                sendGoogleEvent("open-change-modal");
-              }}
-              type="button"
-              className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-3 px-6 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-            >
-              <PencilIcon className="w-5 h-5" aria-hidden="true" />
-              <p className="font-barlow hidden sm:block ">Editar</p>
-            </button>
           </div>
           {imageUploaded && (
             <div className="w-full">
