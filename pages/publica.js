@@ -126,9 +126,9 @@ export default function Publica() {
 
   const handleChangeDate = (name, value) => handleFormChange(name, value);
 
-  const handleRegionChange = ({ value }) => {
-    setRegion(value);
-    handleFormChange("region", value);
+  const handleRegionChange = (region) => {
+    setRegion(region.value);
+    handleFormChange("region", region);
   };
 
   const handleImageChange = (value) => {
@@ -136,7 +136,7 @@ export default function Publica() {
     handleFormChange("imageUploaded", value);
   };
 
-  const handleTownChange = ({ value }) => handleFormChange("town", value);
+  const handleTownChange = (town) => handleFormChange("town", town);
 
   const goToEventPage = (url) => ({
     pathname: `${url}`,
