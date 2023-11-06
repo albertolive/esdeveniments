@@ -10,7 +10,7 @@ import {
   getPlaceTypeAndLabel,
 } from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
-import { SubMenu } from "@components/ui/common";
+import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
 import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";

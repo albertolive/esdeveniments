@@ -1,14 +1,8 @@
 import { useMemo, useState, useEffect, memo, useCallback } from "react";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import FiltersModal from "@components/ui/filtersModal";
 import Filters from "@components/ui/filters";
-
-const Select = dynamic(() => import("@components/ui/common/form/select"), {
-  loading: () => "",
-  noSSR: false,
-});
 
 function SubMenu({
   place: placeProps,
@@ -43,40 +37,20 @@ function SubMenu({
         .flatMap((group) => group.options)
         .find((option) => option.value === place);
       setSelectedOption(regionOption || null);
+    } else {
+      setSelectedOption(null);
     }
   }, [place, regionsAndCitiesArray]);
-
-  const handlePlaceChange = useCallback(
-    ({ value }) => {
-      setPlace(value);
-      setSelectedOption(value);
-
-      localStorage.removeItem("currentPage");
-      localStorage.removeItem("scrollPosition");
-    },
-    [setPlace]
-  );
-
-  const isDistance = distance !== "" || isNaN(distance);
 
   return (
     <>
       <div className="flex flex-col justify-center items-center gap-4">
-        {/* <div className="w-11/12 p-2">
-          <Select
-            id="options"
-            options={regionsAndCitiesArray}
-            value={selectedOption}
-            onChange={handlePlaceChange}
-            isClearable
-            placeholder="una localitat"
-            isDisabled={isDistance}
-          />
-        </div> */}
         {openModal && (
           <FiltersModal
             openModal={openModal}
             setOpenModal={setOpenModal}
+            place={place}
+            setPlace={setPlace}
             byDate={byDate}
             setByDate={setByDate}
             category={category}
@@ -87,12 +61,15 @@ function SubMenu({
             setUserLocation={setUserLocation}
             distance={distance}
             setDistance={setDistance}
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
           />
         )}
       </div>
       <Filters
-        openModal={openModal}
         setOpenModal={setOpenModal}
+        place={place}
+        setPlace={setPlace}
         byDate={byDate}
         setByDate={setByDate}
         category={category}
