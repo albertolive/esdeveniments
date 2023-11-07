@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, memo, useCallback } from "react";
+import { useMemo, useState, useEffect, memo } from "react";
 import { useRouter } from "next/router";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import FiltersModal from "@components/ui/filtersModal";
@@ -38,7 +38,7 @@ function SubMenu({
         .find((option) => option.value === place);
       setSelectedOption(regionOption || null);
     } else {
-      setSelectedOption(null);
+      setSelectedOption(undefined);
     }
   }, [place, regionsAndCitiesArray]);
 
@@ -76,6 +76,7 @@ function SubMenu({
         setCategory={setCategory}
         distance={distance}
         setDistance={setDistance}
+        setSelectedOption={setSelectedOption}
       />
     </>
   );

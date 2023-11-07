@@ -37,11 +37,11 @@ const Filters = ({
   setCategory,
   distance,
   setDistance,
+  setSelectedOption,
 }) => {
   const getText = (value, defaultValue) => (value ? value : defaultValue);
   const foundByDate = BYDATES.find((item) => item.value === byDate);
-  const handleReset = useCallback((setter) => () => setter(""), []);
-  const handlePlaceClick = handleReset(setPlace);
+  const handleReset = useCallback((setter) => () => setter(undefined), []);
   const handleByDateClick = handleReset(setByDate);
   const handleCategoryClick = handleReset(setCategory);
   const handleDistanceClick = handleReset(setDistance);
@@ -50,6 +50,15 @@ const Filters = ({
     [setOpenModal]
   );
   const handleOpenModal = useCallback(() => setOpenModal(true), [setOpenModal]);
+
+  const handlePlaceClick = useCallback(() => {
+    if (place) {
+      setPlace(undefined);
+      setSelectedOption(undefined);
+    } else {
+      setOpenModal(true);
+    }
+  }, [place, setPlace, setSelectedOption, setOpenModal]);
 
   return (
     <div className="flex justify-center items-center p-4">
@@ -66,7 +75,7 @@ const Filters = ({
           {renderButton({
             text: getText(place, "Població"),
             enabled: place,
-            onClick: handleOnClick(place, handlePlaceClick),
+            onClick: handlePlaceClick,
             handleOpenModal,
           })}
           {renderButton({
