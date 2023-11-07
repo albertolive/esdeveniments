@@ -1,13 +1,12 @@
 import { useMemo, useState, useEffect, memo } from "react";
-import { useRouter } from "next/router";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import FiltersModal from "@components/ui/filtersModal";
 import Filters from "@components/ui/filters";
 
 function SubMenu({
-  place: placeProps,
+  place,
   setPlace,
-  byDate: byDateProps,
+  byDate,
   setByDate,
   category,
   setCategory,
@@ -20,11 +19,6 @@ function SubMenu({
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const {
-    query: { place: placeQuery, byDate: byDateQuery },
-  } = useRouter();
-  const place = placeProps || placeQuery;
-  const byDate = byDateProps || byDateQuery;
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
