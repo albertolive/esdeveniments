@@ -68,19 +68,19 @@ export default function Navbar() {
       as="nav"
       className={`navbar bg-whiteCorp sticky top-0 z-50 ${
         hasShadow
-          ? "shadow-sm shadow-darkCorp transition-all ease-in-out duration-300"
+          ? "shadow-sm shadow-whiteCorp transition-all ease-in-out duration-300"
           : ""
       }`}
     >
       {({ open }) => (
         <>
-          <div className="bg-whiteCorp mx-auto h-18 px-0 py-4 lg:max-w-[1024px] xl:max-w-[1280px]">
+          <div className="bg-whiteCorp mx-auto h-18 p-3 lg:max-w-[1024px] xl:max-w-[1280px]">
             <div className="flex flex-col justify-center h-full">
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
-              <div className="flex justify-around items-center px-4">
+              <div className="flex justify-around items-center">
                 {/* Logo */}
                 <div
-                  className="flex w-full md:w-1/2 justify-start items-center py-2 px-4 cursor-pointer"
+                  className="flex w-full md:w-1/2 justify-start items-center py-2 px-3 cursor-pointer"
                   onClick={handleLogoClick}
                 >
                   <Link href="/">
@@ -99,7 +99,7 @@ export default function Navbar() {
                 </div>
                 {/* MenuIcon */}
                 <div className="flex items-center md:hidden">
-                  <Disclosure.Button className="inline-flex items-center justify-center py-2 px-4 rounded-full focus:outline-none">
+                  <Disclosure.Button className="inline-flex items-center justify-center py-2 px-3 focus:outline-none">
                     {/* <span className="sr-only">Obrir menú principal</span> */}
                     {open ? (
                       <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -127,7 +127,7 @@ export default function Navbar() {
               </div>
               {/* SecondBar - Search&Share&MenuIcon */}
               <div
-                className="fixed h-content bottom-0 left-0 right-0 py-4 px-4 bg-whiteCorp flex justify-evenly items-center gap-x-16
+                className="fixed h-content bottom-0 left-0 right-0 p-2 bg-whiteCorp flex justify-evenly items-center gap-x-16
               md:hidden
               "
               >
@@ -175,7 +175,7 @@ export default function Navbar() {
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="h-56 flex flex-col justify-center items-center gap-4 px-4 pb-6 pt-2 bg-whiteCorp">
+            <div className="h-fit flex justify-center items-center gap-4 px-4 pb-4 pt-2 bg-whiteCorp">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
                   <a className="flex justify-center items-center font-semibold px-6 py-2 font-barlow italic uppercase">

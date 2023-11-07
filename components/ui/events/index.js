@@ -178,10 +178,8 @@ function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="w-full display flex justify-center items-center fixed top-18 z-10 bg-whiteCorp mx-auto px-0 sm:px-0 sm:w-[576px] md:px-4 md:w-[768px] lg:px-20 lg:w-[1024px]">
+      <div className="fixed w-full flex-col justify-center items-center top-18 left-0 right-0 z-10 bg-whiteCorp mx-auto px-0 pb-3 sm:px-10 sm:max-w-[576px] md:px-20 md:max-w-[768px] lg:px-40 lg:max-w-[1024px]">
         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      </div>
-      <div className="pt-14">
         <SubMenu
           place={place}
           setPlace={setPlace}
@@ -196,6 +194,8 @@ function Events({ props, loadMore = true }) {
           distance={distance}
           setDistance={setDistance}
         />
+      </div>
+      <div className="pt-28">
         <div className="p-2 flex flex-col justify-center items-center">
           <button
             onClick={toggleDropdown}

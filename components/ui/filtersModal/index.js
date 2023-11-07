@@ -223,7 +223,7 @@ function FiltersModal({
                     value={value}
                     checkedValue={distance}
                     onChange={handleDistanceChange}
-                    label={`${value} km`}
+                    label={`${value} km${value > 1 ? "s" : ""}`}
                     disabled={disableDistance}
                   />
                 ))}
