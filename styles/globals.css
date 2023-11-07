@@ -18,6 +18,7 @@ body {
   letter-spacing: 0.034rem;
   line-height: 1.2rem;
 }
+
 h1 {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.7rem;
@@ -38,6 +39,15 @@ h3 {
   line-height: 1.65rem;
   font-weight: 390;
 }
+
+/* Filter classes */
+
+.nowrap {
+  white-space: nowrap;
+  overflow-wrap: break-word;
+}
+
+::-webkit-scrollbar-track
 
 #map {
   height: 100%;

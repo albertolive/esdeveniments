@@ -5,17 +5,17 @@ import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { BYDATES } from "@utils/constants";
 
 const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
-  <div key={text} className="flex justify-center items-center py-4">
+  <div key={text} className="w-full flex justify-center items-center py-4 nowrap">
     <div
-      className={`flex justify-evenly items-center gap-1 bg-whiteCorp py-0 px-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
-        enabled ? "border-primary border-l-[3px] text-blackCorp font-medium" : "text-bColor"
+      className={`w-full flex justify-evenly items-center gap-1 bg-whiteCorp py-0 px-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+        enabled ? "border-primary border-l-[3px] text-blackCorp font-medium" : "border-whiteCorp border-l-[3px] text-bColor"
       }`}
     >
-      <span onClick={handleOpenModal} className="uppercase tracking-wider">
+      <span onClick={handleOpenModal} className="w-full uppercase tracking-wider">
         {text}
       </span>
       {enabled ? (
-        <XIcon className="h-4 w-4" aria-hidden="true" onClick={onClick} />
+        <XIcon className="h-5 w-5" aria-hidden="true" onClick={onClick} />
       ) : (
         <ChevronDownIcon
           className="h-4 w-4 hidden"
@@ -71,7 +71,7 @@ const Filters = ({
           <AdjustmentsIcon className="w-6 h-6" aria-hidden="true" />
           <p className="font-barlow hidden md:block">Filtres</p>
         </div>
-        <div className="w-fit flex justify-between items-center gap-2 px-3 overflow-x-auto">
+        <div className="w-full flex justify-between items-center gap-2 px-3 overflow-x-auto">
           {renderButton({
             text: getText(place, "Població"),
             enabled: place,
