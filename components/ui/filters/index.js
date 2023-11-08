@@ -5,13 +5,13 @@ import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { BYDATES } from "@utils/constants";
 
 const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
-  <div key={text} className="w-full flex justify-center items-center py-4 nowrap">
+  <div key={text} className="w-1/1 flex justify-center items-center py-4 nowrap">
     <div
-      className={`w-full flex justify-evenly items-center gap-1 bg-whiteCorp py-0 px-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
-        enabled ? "border-primary border-l-[3px] text-blackCorp font-medium" : "border-whiteCorp border-l-[3px] text-bColor"
+      className={`w-1/1 h-3 flex justify-evenly items-center gap-1 bg-whiteCorp py-0 pl-1 pr-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+        enabled ? "border-primary border-l-[5px] text-blackCorp font-semibold" : "border-whiteCorp border-l-[3px] text-bColor"
       }`}
     >
-      <span onClick={handleOpenModal} className="w-full uppercase tracking-wider">
+      <span onClick={handleOpenModal} className="w-full text-center uppercase tracking-wide">
         {text}
       </span>
       {enabled ? (
@@ -61,7 +61,7 @@ const Filters = ({
   }, [place, setPlace, setSelectedOption, setOpenModal]);
 
   return (
-    <div className="bg-whiteCorp flex justify-center items-center px-4">
+    <div className="bg-whiteCorp flex justify-center items-center pl-4 pr-6">
       <div className="w-full flex justify-center items-center cursor-pointer gap-1">
         <div
           onClick={handleOpenModal}
@@ -71,7 +71,7 @@ const Filters = ({
           <AdjustmentsIcon className="w-6 h-6" aria-hidden="true" />
           <p className="font-barlow hidden md:block">Filtres</p>
         </div>
-        <div className="w-full flex justify-between items-center gap-2 px-3 overflow-x-auto">
+        <div className="w-full flex justify-start items-center gap-2 overflow-x-auto">
           {renderButton({
             text: getText(place, "Població"),
             enabled: place,

@@ -195,25 +195,25 @@ function Events({ props, loadMore = true }) {
           setDistance={setDistance}
         />
       </div>
-      <div className="pt-28">
+      <div className="pt-[88px]">
         <div className="p-2 flex flex-col justify-center items-center">
           <button
             onClick={toggleDropdown}
-            className={`w-11/12 p-3 flex justify-center items-center gap-2 text-blackCorp focus:outline-none`}
+            className={`w-11/12 py-4 flex justify-start items-center gap-1 text-blackCorp focus:outline-none`}
           >
             {open ? (
-              <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
+              <p className="w-24 text-center">
                 Tancar
-              </h2>
+              </p>
             ) : (
-              <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
+              <p className="w-24 text-center">
                 Informació
-              </h2>
+              </p>
             )}
             {open ? (
-              <XIcon className="h-5 w-5" />
+              <XIcon className="h-4 w-4" />
             ) : (
-              <ChevronDownIcon className="h-5 w-5" />
+              <ChevronDownIcon className="h-4 w-4" />
             )}
           </button>
           {open && (

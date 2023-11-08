@@ -3,16 +3,10 @@ import Link from "next/link";
 export default function NoEventsFound({ title }) {
   return (
     <>
-      <div className="py-8">
-        <div className="w-full border-t border-gray-100"></div>
-      </div>
-      <div className="text-center mb-4">
-        <div className="flex justify-center content-center items-center	">
-          <h2 className=" block text-md leading-8 font-extrabold tracking-tight text-gray-900 xs:text-xl">
-            {title}
-          </h2>
-          <div className="flex-shrink-0 ml-4 w-20 h-20 item self-center">
-            <svg viewBox="0 0 120 122">
+      <div className="flex flex-col items-center gap-6 py-6">
+        <div className="flex flex-col justify-center items-center gap-6 px-6">
+          <div className="w-full flex justify-center">
+            <svg viewBox="0 0 120 122" className="w-1/3">
               <path
                 d="M61.515 121.165c32.247 0 58.388-26.141 58.388-58.388S93.763 4.389 61.515 4.389C29.27 4.39 3.128 30.53 3.128 62.777s26.14 58.388 58.387 58.388z"
                 fill="#EEEDF2"
@@ -107,11 +101,14 @@ export default function NoEventsFound({ title }) {
               ></path>
             </svg>
           </div>
+          <h3 className="text-center">
+            {title}
+          </h3>
         </div>
-        <div className="ml-3 text-sm italic mt-0 lg:-mt-4 mr-20 text-left md:text-center">
+        <div className="w-full text-center p-6 ">
           Trobes a faltar algun esdeveniment? Fes clic{" "}
           <Link href="/publica" prefetch={false}>
-            <a className="font-bold text-black hover:underline">aquí</a>
+            <a className="uppercase font-barlow italic font-bold text-primary hover:underline">aquí</a>
           </Link>{" "}
           per afegir-lo!
         </div>

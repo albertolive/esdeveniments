@@ -19,6 +19,20 @@ body {
   line-height: 1.2rem;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #fff;
+  border-radius: 20px;
+}
+
 h1 {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.7rem;
@@ -28,16 +42,17 @@ h1 {
 
 h2 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.4rem;
-  letter-spacing: 0.01rem;
+  font-size: 1.62rem;
+  letter-spacing: 0.005rem;
   line-height: 1.6rem;
+  font-weight: 530;
 }
 h3 {
-  font-family: "Roboto Flex", sans-serif;
-  font-size: 1.3rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.38rem;
   letter-spacing: 0.02rem;
   line-height: 1.65rem;
-  font-weight: 390;
+  font-weight: 430;
 }
 
 /* Filter classes */
@@ -47,7 +62,13 @@ h3 {
   overflow-wrap: break-word;
 }
 
-::-webkit-scrollbar-track
+.triangle-down {
+	width: 0;
+	height: 0;
+	border-left: 0px solid transparent;
+	border-right: 3px solid transparent;
+	border-top: 24px solid #C8033F;
+}
 
 #map {
   height: 100%;

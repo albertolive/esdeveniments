@@ -5,11 +5,13 @@ function CardLoading() {
     <div className="min-w-full w-full flex flex-col content-center bg-whiteCorp mb-10">
       {/* Title */}
       <div className="bg-whiteCorp h-24 flex justify-between items-center gap-2 gap-x-4">
-        <div className="w-2 h-1/3 bg-gradient-to-r from-primary to-primarydark px-0 mx-0"></div>
+      <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
+            <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
+            <div className="triangle-down px-0 mx-0"></div>
+          </div>
         {/* Title */}
         <div className="w-10/12 flex flex-col gap-4 h-18 animate-fast-pulse">
           <div className="w-4/5 bg-darkCorp h-4 rounded-xl"></div>
-          <div className="w-3/4 bg-darkCorp h-4 rounded-xl"></div>
         </div>
         {/* WeatherIcon */}
         <div className="w-2/12 flex justify-center">

@@ -34,7 +34,7 @@ export default function Modal({
               <Dialog.Panel className="w-full h-full flex flex-col justify-center items-center p-2">
                 <Dialog.Title
                   as="h3"
-                  className="w-full bg-whiteCorp flex fixed top-0 bg-white p-6 font-semibold"
+                  className="w-full bg-whiteCorp flex fixed top-0 p-6 font-semibold"
                 >
                   <div className="w-full flex justify-between items-center">
                     <button
@@ -45,13 +45,13 @@ export default function Modal({
                       <ArrowLeftIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                     <div className="w-11/12 pr-11">
-                      <h2 className="text-center uppercase italic">{title}</h2>
+                      <h3 className="text-center uppercase italic">{title}</h3>
                     </div>
                   </div>
                 </Dialog.Title>
                 <div className="w-full p-4 overflow-auto">{children}</div>
                 {actionButton && (
-                  <div className="w-full bg-whiteCorp fixed bottom-0 left-0 p-6">
+                  <div className="w-full bg-whiteCorp fixed bottom-0 left-0 p-3">
                     <div
                       className="flex justify-center"
                       style={{ position: "sticky", bottom: 0 }}
