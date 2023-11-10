@@ -100,7 +100,7 @@ export default function Card({ event, isLoading }) {
             <ClockIcon className="h-6 w-6" />
             <p className="px-2">
               {event.isFullDayEvent
-                ? "Tot el dia"
+                ? "Consultar horaris"
                 : `${event.startTime} - ${event.endTime}`}
             </p>
           </div>

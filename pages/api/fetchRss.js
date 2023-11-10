@@ -310,9 +310,10 @@ async function insertItemToCalendar(
   const dateTime = DateTime.fromRFC2822(pubDate || date.from, {
     zone: "Europe/Madrid",
   });
-  const endDateTime = date
-    ? DateTime.fromRFC2822(date.to, { zone: "Europe/Madrid" })
-    : dateTime.plus({ hours: 1 });
+  const endDateTime =
+    date && date.to
+      ? DateTime.fromRFC2822(date.to, { zone: "Europe/Madrid" })
+      : dateTime.plus({ hours: 1 });
 
   const isFullDayEvent = dateTime.toFormat("HH:mm:ss") === "00:00:00";
 

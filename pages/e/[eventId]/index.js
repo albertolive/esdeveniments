@@ -348,7 +348,9 @@ export default function Event(props) {
             <div className="flex flex-col items-center gap-4">
               <h2 className="font-semibold">Hora</h2>
               <p>
-                {isFullDayEvent ? "Tot el dia" : `${startTime} - ${endTime}`}
+                {isFullDayEvent
+                  ? "Consultar horaris"
+                  : `${startTime} - ${endTime}`}
               </p>
             </div>
             <div className="flex flex-col items-center gap-4">
