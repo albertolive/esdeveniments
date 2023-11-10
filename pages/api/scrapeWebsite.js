@@ -2,20 +2,16 @@ const axios = require("axios");
 const { DateTime } = require("luxon");
 const crypto = require("crypto");
 
-const API_URL =
-  "https://api.browse.ai/v2/robots/fe4f7bf3-e349-4949-a1f5-ef3ccaa65bb6/tasks";
-const AUTH_TOKEN =
-  "Bearer 30f32826-c140-480e-be00-572887bdbb0a:1205aef5-5326-43ac-94e8-599e54a5968a";
 const DATE_FORMAT = "dd/MM/yyyy";
 const TIME_ZONE = "Europe/Madrid";
 
 async function fetchData() {
   const options = {
     method: "get",
-    url: API_URL,
+    url: `https://api.browse.ai/v2/robots/${process.env.NEXT_PUBLIC_BROWSE_ROBOT_ID}/tasks`,
     params: { page: "1", sort: "-finishedAt" },
     headers: {
-      Authorization: AUTH_TOKEN,
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_BROWSE_BEARER}`,
     },
   };
 
@@ -25,7 +21,7 @@ async function fetchData() {
       "Agenda barcelona"
     ];
   } catch (error) {
-    console.error(`Error fetching data from ${API_URL}:`, error);
+    console.error(`Error fetching data from BrowseAi:`, error);
     throw error;
   }
 }
