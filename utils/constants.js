@@ -65,6 +65,25 @@ export const dateFunctions = {
 
 export const CITIES_DATA = new Map([
   [
+    "barcelones",
+    {
+      label: "Barcelonès",
+      towns: new Map([
+        [
+          "barcelona",
+          {
+            label: "Barcelona",
+            rssFeed: `${siteUrl}/api/scrapeWebsite`,
+            descriptionSelector: ".cos",
+            imageSelector: ".img-destacada",
+            postalCode: "08001",
+            coords: { lat: 41.390205, lng: 2.154007 },
+          },
+        ],
+      ]),
+    },
+  ],
+  [
     "valles-oriental",
     {
       label: "Vallès Oriental",

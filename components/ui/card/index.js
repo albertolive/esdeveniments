@@ -99,7 +99,9 @@ export default function Card({ event, isLoading }) {
           <div className="flex justify-start items-center">
             <ClockIcon className="h-6 w-6" />
             <p className="px-2">
-              {event.startTime} - {event.endTime}
+              {event.isFullDayEvent
+                ? "Tot el dia"
+                : `${event.startTime} - ${event.endTime}`}
             </p>
           </div>
           {event.tag && <span>{event.tag}</span>}
