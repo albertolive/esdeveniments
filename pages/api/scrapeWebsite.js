@@ -58,25 +58,27 @@ function convertDateToRSS(date) {
 
 function normalizeData(events) {
   return events
-    .map(({ title, description, url, location, date, imageUrl }) => {
-      if (!title) return null;
+    .map(
+      ({ title, description, url, location = "Barcelona", date, imageUrl }) => {
+        if (!title) return null;
 
-      const formattedDate = convertDateToRSS(date);
-      const hash = crypto
-        .createHash("md5")
-        .update(`${title}${url}${location}${date}`)
-        .digest("hex");
+        const formattedDate = convertDateToRSS(date);
+        const hash = crypto
+          .createHash("md5")
+          .update(`${title}${url}${location}${date}`)
+          .digest("hex");
 
-      return {
-        guid: hash,
-        title,
-        description,
-        link: url,
-        date: formattedDate,
-        imageUrl,
-        location,
-      };
-    })
+        return {
+          guid: hash,
+          title,
+          description,
+          link: url,
+          date: formattedDate,
+          imageUrl,
+          location,
+        };
+      }
+    )
     .filter(Boolean);
 }
 
