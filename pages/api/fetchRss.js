@@ -78,7 +78,7 @@ async function fetchRSSFeed(rssFeed, town) {
 
     // If response.data is not an array means that is an rss feed
     if (!Array.isArray(data)) {
-      const json = parser.parse(response.data);
+      const json = parser.parse(data);
 
       // Validate the data
       if (
