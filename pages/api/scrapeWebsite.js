@@ -95,7 +95,9 @@ async function scrapeEvents() {
 export default async function handler(_, res) {
   try {
     const rssXml = await scrapeEvents();
-    res.status(200).send(rssXml);
+    res.setHeader("Cache-Control", "public, max-age=86400, must-revalidate");
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(rssXml);
   } catch (error) {
     res
       .status(500)
