@@ -25,7 +25,7 @@ function Card({ event, isLoading }) {
 
   if (event.isAd)
     return (
-      <div className=" bg-whiteCorp overflow-hidden cursor-pointer mb-10 md:border-t-0 block visible md:hidden md:invisible">
+      <div className=" bg-whiteCorp overflow-hidden cursor-pointer mb-2 md:border-t-0 block visible md:hidden md:invisible">
         <AdCard event={event} />
       </div>
     );
@@ -43,9 +43,9 @@ function Card({ event, isLoading }) {
         onClick={handlePrefetch}
       >
         {/* Title */}
-        <div className="bg-whiteCorp h-24 flex justify-between items-start gap-2">
+        <div className="bg-whiteCorp h-24 flex justify-between items-start gap-3">
           <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
-            <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
+            <div className="w-1 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             <div className="triangle-down px-0 mx-0"></div>
           </div>
           {/* Title */}
@@ -82,7 +82,7 @@ function Card({ event, isLoading }) {
         </div>
         {/* Info */}
         {/* InfoEvent */}
-        <div className="flex flex-col px-4 pt-8 gap-4">
+        <div className="flex flex-col px-4 pt-4 gap-4">
           {/* Date */}
           <h3 className="text-blackCorp uppercase italic pl-1">
             {event.formattedEnd

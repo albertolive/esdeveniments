@@ -7,8 +7,8 @@ import { BYDATES } from "@utils/constants";
 const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
   <div key={text} className="w-1/1 flex justify-center items-center py-4 nowrap">
     <div
-      className={`w-1/1 h-3 flex justify-evenly items-center gap-1 bg-whiteCorp py-0 pl-1 pr-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
-        enabled ? "border-primary border-l-[5px] text-blackCorp font-semibold" : "border-whiteCorp border-l-[3px] text-bColor"
+      className={`w-1/1 flex justify-evenly items-center gap-1 bg-whiteCorp py-1 px-2 rounded-lg ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+        enabled ? "border-primary border-[1px] text-primary font-semibold" : "border-whiteCorp border-[1px] text-bColor"
       }`}
     >
       <span onClick={handleOpenModal} className="w-full text-center uppercase tracking-wide">
@@ -39,6 +39,7 @@ const Filters = ({
   setDistance,
   setSelectedOption,
 }) => {
+  const isAnyFilterSelected = () => place || byDate || category || distance ;
   const getText = (value, defaultValue) => (value ? value : defaultValue);
   const foundByDate = BYDATES.find((item) => item.value === byDate);
   const handleReset = useCallback((setter) => () => setter(undefined), []);
@@ -66,9 +67,13 @@ const Filters = ({
         <div
           onClick={handleOpenModal}
           type="button"
-          className="w-fit flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl p-3 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase font-semibold"
+          className="w-fit flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl px-2 py-1 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase font-semibold"
         >
-          <AdjustmentsIcon className="w-6 h-6" aria-hidden="true" />
+          <AdjustmentsIcon className={
+          isAnyFilterSelected()
+            ? "w-6 h-6 text-primary"
+            : "w-6 h-6 text-blackCorp"
+        } aria-hidden="true"/>
           <p className="font-barlow hidden md:block">Filtres</p>
         </div>
         <div className="w-full flex justify-start items-center gap-2 overflow-x-auto">
