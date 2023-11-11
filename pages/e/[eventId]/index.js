@@ -206,6 +206,7 @@ export default function Event(props) {
     startDate,
     startTime,
     endTime,
+    isFullDayEvent,
     nameDay,
     formattedStart,
     formattedEnd,
@@ -347,15 +348,17 @@ export default function Event(props) {
             <div className="flex flex-col items-center gap-4">
               <h2 className="font-semibold">Hora</h2>
               <p>
-                {startTime} - {endTime}
+                {isFullDayEvent
+                  ? "Consultar horaris"
+                  : `${startTime} - ${endTime}`}
               </p>
             </div>
             <div className="flex flex-col items-center gap-4">
               <h2 className="font-semibold">Localització</h2>
               <p>{location}</p>
             </div>
-            <div className="flex flex-col justify-center items-center gap-4 md:flex-row ">
-              <div className="p-4 cursor-pointer">
+            <div className="flex flex-col justify-center items-center gap-4">
+              <div className="p-4 cursor-pointer flex flex-col">
                 <button
                   onClick={handleShowMap}
                   type="button"

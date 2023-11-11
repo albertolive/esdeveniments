@@ -40,6 +40,7 @@ const nextConfig = {
       "www.parets.cat",
       "www.santfeliudecodines.cat",
       "www.caldesdemontbui.cat",
+      "estatics-nasia.dtibcn.cat",
     ],
   },
   async headers() {

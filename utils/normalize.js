@@ -67,6 +67,7 @@ export const normalizeEvents = (event, weatherInfo) => {
     formattedEnd,
     startTime,
     endTime,
+    isFullDayEvent,
     nameDay,
     startDate,
   } = getFormattedDate(event.start, event.end);
@@ -98,6 +99,7 @@ export const normalizeEvents = (event, weatherInfo) => {
     title,
     startTime,
     endTime,
+    isFullDayEvent,
     location,
     subLocation: `${town}${town && region ? ", " : ""}${region}`,
     formattedStart,
@@ -130,6 +132,7 @@ export const normalizeEvent = (event) => {
     startTime,
     endTime,
     nameDay,
+    isFullDayEvent,
   } = getFormattedDate(event.start, event.end);
 
   let title = event.summary ? sanitizeText(event.summary) : "";
@@ -158,6 +161,7 @@ export const normalizeEvent = (event) => {
     title,
     startTime,
     endTime,
+    isFullDayEvent,
     label,
     location,
     town,
@@ -172,8 +176,8 @@ export const normalizeEvent = (event) => {
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
     tag,
     slug: slug(title, originalFormattedStart, event.id),
-    startDate: event.start && event.start.dateTime,
-    endDate: event.end && event.end.dateTime,
+    startDate: (event.start && event.start.dateTime) || null,
+    endDate: (event.end && event.end.dateTime) || null,
     imageUploaded: imageUploaded
       ? cloudinaryUrl(imageId)
       : eventImage

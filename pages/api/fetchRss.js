@@ -3,10 +3,10 @@ import { kv } from "@vercel/kv";
 import { google } from "googleapis";
 import { load } from "cheerio";
 import Bottleneck from "bottleneck";
-import DateTime from "luxon";
+import { DateTime } from "luxon";
 import { CITIES_DATA } from "@utils/constants";
 
-const enableInserting = false;
+const debugMode = false;
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -55,7 +55,7 @@ function isCacheValid(cachedData) {
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town) {
   try {
-    if (enableInserting) {
+    if (!debugMode) {
       // Check if the data is cached
       const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
 
@@ -74,19 +74,24 @@ async function fetchRSSFeed(rssFeed, town) {
       );
     }
 
-    const json = parser.parse(response.data);
+    let data = response.data;
 
-    // Validate the data
-    if (
-      !json ||
-      !json.rss ||
-      !json.rss.channel ||
-      !Array.isArray(json.rss.channel.item)
-    ) {
-      throw new Error("Invalid data format");
+    // If response.data is not an array means that is an rss feed
+    if (!Array.isArray(data)) {
+      const json = parser.parse(data);
+
+      // Validate the data
+      if (
+        !json ||
+        !json.rss ||
+        !json.rss.channel ||
+        !Array.isArray(json.rss.channel.item)
+      ) {
+        throw new Error("Invalid data format");
+      }
+
+      data = json.rss.channel.item;
     }
-
-    const data = json.rss.channel.item;
 
     // Cache the data
     try {
@@ -181,17 +186,18 @@ async function scrapeDescription(
   title,
   url,
   descriptionSelector,
-  imageSelector
+  imageSelector,
+  sanitizeUrl = true
 ) {
   try {
-    const sanitizeUrl = url.replace(/\.html$/, "");
-    const response = await fetch(sanitizeUrl);
+    const sanitizedUrl = sanitizeUrl ? url.replace(/\.html$/, "") : url;
+    const response = await fetch(sanitizedUrl);
     const html = await response.text();
     const $ = load(html);
 
     const description =
       $(descriptionSelector).html()?.trim() ||
-      "Cap descripció. Afegeix-ne una!";
+      "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
 
     let rawImage = $(imageSelector).prop("outerHTML")?.trim();
     let image;
@@ -202,7 +208,12 @@ async function scrapeDescription(
       let img = $img("img");
       img.removeAttr("style");
       img.removeAttr("class");
-      let imgOuterHtml = $img("a").prop("outerHTML");
+      let imgOuterHtml;
+      if ($img("a").length) {
+        imgOuterHtml = $img("a").prop("outerHTML");
+      } else {
+        imgOuterHtml = $img("img").prop("outerHTML");
+      }
       image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
     } else {
       image = getEventImageUrl(description);
@@ -293,13 +304,27 @@ async function insertItemToCalendar(
     guid,
     location = "",
     "content:encoded": locationExtra,
+    date,
   } = item || {};
 
-  const dateTime = DateTime.fromRFC2822(pubDate, { zone: "Europe/Madrid" });
-  const endDateTime = dateTime.plus({ hours: 1 });
+  const dateTime = DateTime.fromRFC2822(pubDate || date.from, {
+    zone: "Europe/Madrid",
+  });
+  const endDateTime =
+    date && date.to
+      ? DateTime.fromRFC2822(date.to, { zone: "Europe/Madrid" })
+      : dateTime.plus({ hours: 1 });
+
+  const isFullDayEvent = dateTime.toFormat("HH:mm:ss") === "00:00:00";
 
   const description = link
-    ? await scrapeDescription(title, link, descriptionSelector, imageSelector)
+    ? await scrapeDescription(
+        title,
+        link,
+        descriptionSelector,
+        imageSelector,
+        town !== "barcelona"
+      )
     : null;
 
   const scrapedLocation = await scrapeLocation(
@@ -314,18 +339,16 @@ async function insertItemToCalendar(
     location: scrapedLocation
       ? `${scrapedLocation}, ${townLabel}, ${regionLabel}`
       : `${townLabel}, ${regionLabel}`,
-    start: {
-      dateTime: dateTime.toJSDate(),
-      timeZone: "Europe/Madrid",
-    },
-    end: {
-      dateTime: endDateTime.toJSDate(),
-      timeZone: "Europe/Madrid",
-    },
+    start: isFullDayEvent
+      ? { date: dateTime.toFormat("yyyy-MM-dd") }
+      : { dateTime: dateTime.toJSDate(), timeZone: "Europe/Madrid" },
+    end: isFullDayEvent
+      ? { date: endDateTime.toFormat("yyyy-MM-dd") }
+      : { dateTime: endDateTime.toJSDate(), timeZone: "Europe/Madrid" },
   };
 
   try {
-    if (enableInserting) {
+    if (!debugMode) {
       const authToken = await auth.getClient();
 
       await calendar.events.insert({
@@ -438,15 +461,15 @@ export default async function handler(req, res) {
     // Read the database
     let processedItems = new Map();
 
-    if (enableInserting) {
+    if (!debugMode) {
       processedItems = await getProcessedItems(town);
       await cleanProcessedItems(processedItems, town);
     }
 
     // Filter out already fetched items
-    const newItems = enableInserting
-      ? items.filter((item) => !processedItems.has(item.guid))
-      : items;
+    const newItems = debugMode
+      ? items
+      : items.filter((item) => !processedItems.has(item.guid));
 
     // If no new items, log a message
     if (newItems.length === 0) {
