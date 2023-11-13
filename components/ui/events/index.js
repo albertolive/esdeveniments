@@ -214,11 +214,12 @@ function Events({ props, loadMore = true }) {
     description,
     canonical,
     notFoundText,
-  } = generatePagesData({
-    currentYear,
-    place,
-    byDate,
-  });
+  } =
+    generatePagesData({
+      currentYear,
+      place,
+      byDate,
+    }) || {};
 
   // Render
   return (
