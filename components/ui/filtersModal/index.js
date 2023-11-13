@@ -187,10 +187,10 @@ function FiltersModal({
               ))}
             </div>
           </fieldset>
-          <fieldset className="flex justify-start items-start gap-4">
-            <div className="w-1/3 flex flex-col justify-center items-center gap-2">
+          <fieldset className="flex justify-center items-start gap-4">
+            <div className="w-1/3 flex flex-col justify-center items-start gap-2">
               <div className="text-bColor font-medium font-barlow pt-[5px]  pb-2">
-                Esdeveniments a prop meu:
+                A prop meu:
               </div>
               {(userLocationLoading || userLocationError) && (
                 <div className="border-t border-bColor py-2">
