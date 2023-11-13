@@ -34,9 +34,11 @@ function FiltersModal({
 
   const handleByDateChange = useCallback(
     (value) => {
+      if (value === byDate) window.localStorage.removeItem("byDate");
+
       handleStateChange(setByDate, value);
     },
-    [handleStateChange, setByDate]
+    [handleStateChange, setByDate, byDate]
   );
 
   const handleCategoryChange = useCallback(
@@ -55,6 +57,8 @@ function FiltersModal({
 
   const handlePlaceChange = useCallback(
     ({ value }) => {
+      if (!value) window.localStorage.removeItem("place");
+
       setPlace(value);
       setSelectedOption(value);
 
@@ -127,8 +131,9 @@ function FiltersModal({
       setDistance,
     ]
   );
-
-  const disableDistance = userLocationLoading || userLocationError;
+  const disablePlace =
+    distance === undefined || distance !== "" || isNaN(Number(distance));
+  const disableDistance = place || userLocationLoading || userLocationError;
 
   return (
     <>
@@ -147,6 +152,7 @@ function FiltersModal({
               onChange={handlePlaceChange}
               isClearable
               placeholder="una localitat"
+              isDisabled={disablePlace}
             />
           </div>
           <fieldset className="flex justify-start items-start gap-4">

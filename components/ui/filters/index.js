@@ -52,7 +52,14 @@ const Filters = ({
   const getText = (value, defaultValue) => (value ? value : defaultValue);
   const foundByDate = BYDATES.find((item) => item.value === byDate);
 
-  const handleByDateClick = useCallback(() => setByDate(""), [setByDate]);
+  const handleByDateClick = useCallback(() => {
+    if (byDate) {
+      setByDate("");
+      window.localStorage.removeItem("byDate");
+    } else {
+      setOpenModal(true);
+    }
+  }, [byDate, setByDate, setOpenModal]);
   const handleCategoryClick = useCallback(() => setCategory(""), [setCategory]);
   const handleDistanceClick = useCallback(() => setDistance(""), [setDistance]);
 
@@ -64,8 +71,9 @@ const Filters = ({
 
   const handlePlaceClick = useCallback(() => {
     if (place) {
-      setPlace(undefined);
+      setPlace("");
       setSelectedOption(undefined);
+      window.localStorage.removeItem("place");
     } else {
       setOpenModal(true);
     }
@@ -109,7 +117,7 @@ const Filters = ({
             handleOpenModal,
           })}
           {renderButton({
-            text: getText(distance ? `${distance}km` : null, "Distància"),
+            text: getText(distance ? `${distance} km` : null, "Distància"),
             enabled: distance,
             onClick: handleOnClick(distance, handleDistanceClick),
             handleOpenModal,

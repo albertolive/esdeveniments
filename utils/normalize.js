@@ -155,7 +155,7 @@ export const normalizeEvent = (event) => {
   const mapsLocation = `${location}, ${town}${
     town && region ? ", " : ""
   }${region}, ${postalCode}`;
-  console.log(event);
+
   return {
     id: event.id,
     title,

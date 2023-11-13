@@ -103,34 +103,35 @@ function Events({ props, loadMore = true }) {
   // Effects
   useEffect(() => {
     const storedCategory = window.localStorage.getItem("category");
-    setCategory(storedCategory || "");
-  }, []);
-
-  useEffect(() => {
     const storedPlace = window.localStorage.getItem("place");
-    setPlace(storedPlace || "");
-  }, []);
-
-  useEffect(() => {
     const storedByDate = window.localStorage.getItem("byDate");
-    setByDate(storedByDate || "");
-  }, []);
-
-  useEffect(() => {
     const storedDistance = window.localStorage.getItem("distance");
+
+    setCategory(storedCategory || "");
+    setPlace(storedPlace || "");
+    setByDate(storedByDate || "");
     setDistance(Number(storedDistance) || "");
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("currentPage", page);
-    localStorage.setItem("place", place);
-    localStorage.setItem(
-      "byDate",
-      byDate || window.localStorage.getItem("byDate")
-    );
-    localStorage.setItem("category", category);
-    localStorage.setItem("distance", distance);
-  }, [page, place, byDate, category, distance]);
+    window.localStorage.setItem("currentPage", page);
+  }, [page]);
+
+  useEffect(() => {
+    place && window.localStorage.setItem("place", place);
+  }, [place]);
+
+  useEffect(() => {
+    byDate && window.localStorage.setItem("byDate", byDate);
+  }, [byDate]);
+
+  useEffect(() => {
+    window.localStorage.setItem("category", category);
+  }, [category]);
+
+  useEffect(() => {
+    window.localStorage.setItem("distance", distance);
+  }, [distance]);
 
   useEffect(() => {
     if (place !== placeProps || byDate !== byDateProps) {

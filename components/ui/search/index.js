@@ -78,6 +78,10 @@ export default function Search({ searchTerm, setSearchTerm }) {
     [setSearchTerm]
   );
 
+  useEffect(() => {
+    setInputValue(searchTerm);
+  }, [searchTerm]);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedChangeHandler = useCallback(
     debounce((value) => {
