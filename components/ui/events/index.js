@@ -251,8 +251,8 @@ function Events({ props, loadMore = true }) {
           setDistance={setDistance}
         />
       </div>
-      <div className="pt-[88px]">
-        <div className="p-2 flex flex-col justify-center items-center">
+      <div className="pt-[120px]">
+        <div className="p-2 flex flex-col justify-center items-center invisible">
           <button
             onClick={toggleDropdown}
             className={`w-11/12 py-4 flex justify-start items-center gap-1 text-blackCorp focus:outline-none`}
