@@ -42,11 +42,13 @@ export const MONTHS_URL = [
 
 export const CATEGORIES = {
   Familiar: "Familiar",
-  "Festes Majors": "Festes Majors",
+  Música: "Música",
   Cinema: "Cinema",
   Teatre: "Teatre",
-  Música: "Concert",
-  Exposicions: "Art Museu Exposició",
+  Exposicions: "Exposició",
+  Fires: "Fira",
+  Espectacles: "Espectacles",
+  "Festa Major": "Festa Major",
 };
 
 export const BYDATES = [
