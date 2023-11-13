@@ -128,7 +128,6 @@ function FiltersModal({
     ]
   );
 
-  const isDistance = distance !== "" || isNaN(distance);
   const disableDistance = userLocationLoading || userLocationError;
 
   return (
@@ -148,7 +147,6 @@ function FiltersModal({
               onChange={handlePlaceChange}
               isClearable
               placeholder="una localitat"
-              isDisabled={isDistance}
             />
           </div>
           <fieldset className="flex justify-start items-start gap-4">
@@ -178,7 +176,7 @@ function FiltersModal({
                 <RadioInput
                   key={value}
                   id={value}
-                  name="date"
+                  name="byDate"
                   value={value}
                   checkedValue={byDate}
                   onChange={handleByDateChange}
@@ -190,7 +188,7 @@ function FiltersModal({
           <fieldset className="flex justify-center items-start gap-4">
             <div className="w-1/3 flex flex-col justify-center items-start gap-2">
               <div className="text-bColor font-medium font-barlow pt-[5px]  pb-2">
-                A prop meu:
+                Distància
               </div>
               {(userLocationLoading || userLocationError) && (
                 <div className="border-t border-bColor py-2">
@@ -219,11 +217,11 @@ function FiltersModal({
                   <RadioInput
                     key={value}
                     id={value}
-                    name="distances"
+                    name="distance"
                     value={value}
                     checkedValue={distance}
                     onChange={handleDistanceChange}
-                    label={`${value} km${value > 1 ? "s" : ""}`}
+                    label={`${value} km`}
                     disabled={disableDistance}
                   />
                 ))}

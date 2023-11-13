@@ -55,7 +55,8 @@ export default function Search({ searchTerm, setSearchTerm }) {
   useEffect(() => {
     let storedTerm = localStorage.getItem(SEARCH_TERM_KEY);
     try {
-      storedTerm = JSON.parse(storedTerm);
+      storedTerm =
+        storedTerm && storedTerm !== "" ? JSON.parse(storedTerm) : null;
     } catch (e) {
       console.error(e);
     }

@@ -155,7 +155,7 @@ export const normalizeEvent = (event) => {
   const mapsLocation = `${location}, ${town}${
     town && region ? ", " : ""
   }${region}, ${postalCode}`;
-
+  console.log(event);
   return {
     id: event.id,
     title,
@@ -176,8 +176,12 @@ export const normalizeEvent = (event) => {
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
     tag,
     slug: slug(title, originalFormattedStart, event.id),
-    startDate: (event.start && event.start.dateTime) || null,
-    endDate: (event.end && event.end.dateTime) || null,
+    startDate:
+      (event.start && event.start.dateTime) || event.start.date || null,
+    endDate:
+      (event.end && event.end.dateTime) ||
+      (event.start.end && event.start.end) ||
+      event.start.date,
     imageUploaded: imageUploaded
       ? cloudinaryUrl(imageId)
       : eventImage

@@ -45,6 +45,7 @@ export default function Navbar() {
   const navigateToMainPage = () => {
     localStorage.removeItem("place");
     localStorage.removeItem("byDate");
+    localStorage.removeItem("distance");
     localStorage.removeItem("currentPage");
     localStorage.removeItem("searchTerm");
     localStorage.removeItem("scrollPosition");

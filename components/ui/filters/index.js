@@ -3,15 +3,24 @@ import XIcon from "@heroicons/react/solid/XIcon";
 import ChevronDownIcon from "@heroicons/react/solid/ChevronDownIcon";
 import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { BYDATES } from "@utils/constants";
+import { getPlaceLabel } from "@utils/helpers";
 
 const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
-  <div key={text} className="w-1/1 flex justify-center items-center py-4 nowrap">
+  <div
+    key={text}
+    className="w-1/1 flex justify-center items-center py-4 nowrap"
+  >
     <div
       className={`w-1/1 flex justify-evenly items-center gap-1 bg-whiteCorp py-1 px-2 rounded-lg ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
-        enabled ? "border-primary border-[1px] text-primary font-semibold" : "border-whiteCorp border-[1px] text-bColor"
+        enabled
+          ? "border-primary border-[1px] text-primary font-semibold"
+          : "border-whiteCorp border-[1px] text-bColor"
       }`}
     >
-      <span onClick={handleOpenModal} className="w-full text-center uppercase tracking-wide">
+      <span
+        onClick={handleOpenModal}
+        className="w-full text-center uppercase tracking-wide"
+      >
         {text}
       </span>
       {enabled ? (
@@ -39,13 +48,14 @@ const Filters = ({
   setDistance,
   setSelectedOption,
 }) => {
-  const isAnyFilterSelected = () => place || byDate || category || distance ;
+  const isAnyFilterSelected = () => place || byDate || category || distance;
   const getText = (value, defaultValue) => (value ? value : defaultValue);
   const foundByDate = BYDATES.find((item) => item.value === byDate);
-  const handleReset = useCallback((setter) => () => setter(undefined), []);
-  const handleByDateClick = handleReset(setByDate);
-  const handleCategoryClick = handleReset(setCategory);
-  const handleDistanceClick = handleReset(setDistance);
+
+  const handleByDateClick = useCallback(() => setByDate(""), [setByDate]);
+  const handleCategoryClick = useCallback(() => setCategory(""), [setCategory]);
+  const handleDistanceClick = useCallback(() => setDistance(""), [setDistance]);
+
   const handleOnClick = useCallback(
     (value, fn) => () => value ? fn() : setOpenModal(true),
     [setOpenModal]
@@ -69,16 +79,19 @@ const Filters = ({
           type="button"
           className="w-fit flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl px-2 py-1 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase font-semibold"
         >
-          <AdjustmentsIcon className={
-          isAnyFilterSelected()
-            ? "w-6 h-6 text-primary"
-            : "w-6 h-6 text-blackCorp"
-        } aria-hidden="true"/>
+          <AdjustmentsIcon
+            className={
+              isAnyFilterSelected()
+                ? "w-6 h-6 text-primary"
+                : "w-6 h-6 text-blackCorp"
+            }
+            aria-hidden="true"
+          />
           <p className="font-barlow hidden md:block">Filtres</p>
         </div>
         <div className="w-full flex justify-start items-center gap-2 overflow-x-auto">
           {renderButton({
-            text: getText(place, "Població"),
+            text: getText(getPlaceLabel(place), "Població"),
             enabled: place,
             onClick: handlePlaceClick,
             handleOpenModal,
@@ -96,7 +109,7 @@ const Filters = ({
             handleOpenModal,
           })}
           {renderButton({
-            text: getText(distance ? `${distance}km${distance > 1 ? "s" : ""}` : null, "Distància"),
+            text: getText(distance ? `${distance}km` : null, "Distància"),
             enabled: distance,
             onClick: handleOnClick(distance, handleDistanceClick),
             handleOpenModal,

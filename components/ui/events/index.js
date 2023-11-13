@@ -33,8 +33,8 @@ function Events({ props, loadMore = true }) {
 
   // State
   const [page, setPage] = useState(getStoredPage);
-  const [place, setPlace] = useState(() => getStoredPlace(placeProps));
-  const [byDate, setByDate] = useState(() => getStoredByDate(byDateProps));
+  const [place, setPlace] = useState("");
+  const [byDate, setByDate] = useState("");
   const [category, setCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [userLocation, setUserLocation] = useState(null);
@@ -102,10 +102,35 @@ function Events({ props, loadMore = true }) {
 
   // Effects
   useEffect(() => {
+    const storedCategory = window.localStorage.getItem("category");
+    setCategory(storedCategory || "");
+  }, []);
+
+  useEffect(() => {
+    const storedPlace = window.localStorage.getItem("place");
+    setPlace(storedPlace || "");
+  }, []);
+
+  useEffect(() => {
+    const storedByDate = window.localStorage.getItem("byDate");
+    setByDate(storedByDate || "");
+  }, []);
+
+  useEffect(() => {
+    const storedDistance = window.localStorage.getItem("distance");
+    setDistance(Number(storedDistance) || "");
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem("currentPage", page);
     localStorage.setItem("place", place);
-    localStorage.setItem("byDate", byDate);
-  }, [page, place, byDate]);
+    localStorage.setItem(
+      "byDate",
+      byDate || window.localStorage.getItem("byDate")
+    );
+    localStorage.setItem("category", category);
+    localStorage.setItem("distance", distance);
+  }, [page, place, byDate, category, distance]);
 
   useEffect(() => {
     if (place !== placeProps || byDate !== byDateProps) {
@@ -147,6 +172,24 @@ function Events({ props, loadMore = true }) {
     setFilteredEvents(filterEventsByDistance(events, userLocation));
   }, [userLocation, events, filterEventsByDistance]);
 
+  useEffect(() => {
+    if (placeProps) {
+      setPlace(placeProps);
+    } else {
+      const storedPlace = window.localStorage.getItem("place");
+      setPlace(storedPlace === "undefined" ? undefined : storedPlace);
+    }
+  }, [placeProps]);
+
+  useEffect(() => {
+    if (byDateProps) {
+      setByDate(byDateProps);
+    } else {
+      const storedByDate = window.localStorage.getItem("byDate");
+      setByDate(storedByDate === "undefined" ? undefined : storedByDate);
+    }
+  }, [byDateProps]);
+
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
 
@@ -178,7 +221,7 @@ function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="fixed w-full flex-col justify-center items-center top-18 left-0 right-0 z-10 bg-whiteCorp mx-auto px-0 pb-2 sm:px-10 sm:max-w-[576px] md:px-20 md:max-w-[768px] lg:px-40 lg:max-w-[1024px]">
+      <div className="fixed w-full flex-col justify-center items-center top-18 left-0 right-0 z-10 bg-whiteCorp mx-auto px-0 pb-3 sm:px-10 sm:max-w-[576px] md:px-20 md:max-w-[768px] lg:px-40 lg:max-w-[1024px]">
         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <SubMenu
           place={place}
@@ -195,20 +238,16 @@ function Events({ props, loadMore = true }) {
           setDistance={setDistance}
         />
       </div>
-      <div className="pt-[95px]">
+      <div className="pt-[88px]">
         <div className="p-2 flex flex-col justify-center items-center">
           <button
             onClick={toggleDropdown}
             className={`w-11/12 py-4 flex justify-start items-center gap-1 text-blackCorp focus:outline-none`}
           >
             {open ? (
-              <p className="w-24 text-center">
-                Tancar
-              </p>
+              <p className="w-24 text-center">Tancar</p>
             ) : (
-              <p className="w-24 text-center">
-                Informació
-              </p>
+              <p className="w-24 text-center">Informació</p>
             )}
             {open ? (
               <XIcon className="h-4 w-4" />
@@ -276,18 +315,6 @@ function getStoredPage() {
   const storedPage =
     typeof window !== "undefined" && window.localStorage.getItem("currentPage");
   return storedPage ? parseInt(storedPage) : 1;
-}
-
-function getStoredPlace(placeProps) {
-  const storedPlace =
-    typeof window !== "undefined" && window.localStorage.getItem("place");
-  return storedPlace === "undefined" ? undefined : storedPlace || placeProps;
-}
-
-function getStoredByDate(byDateProps) {
-  const storedByDate =
-    typeof window !== "undefined" && window.localStorage.getItem("byDate");
-  return storedByDate === "undefined" ? undefined : storedByDate || byDateProps;
 }
 
 function sendGA() {

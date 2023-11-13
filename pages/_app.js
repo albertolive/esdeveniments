@@ -8,10 +8,7 @@ import { BaseLayout } from "@components/ui/layout";
 function EsdevenimentsMainEntry({ Component, pageProps }) {
   useEffect(() => {
     const handleBeforeUnload = () => {
-      localStorage.removeItem("place");
-      localStorage.removeItem("byDate");
       localStorage.removeItem("currentPage");
-      localStorage.removeItem("searchTerm");
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
