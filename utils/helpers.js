@@ -390,7 +390,6 @@ export function truncateString(text, maxLength) {
     : text;
 }
 
-
 export function getDistance(location1, location2) {
   var R = 6371;
   var dLat = deg2rad(location2.lat - location1.lat);
@@ -423,3 +422,14 @@ export function generateTownUrls() {
 
   return urls;
 }
+
+export const sendEventToGA = (eventCategory, eventLabel, value) => {
+  if (typeof window !== "undefined") {
+    window.gtag &&
+      window.gtag("event", eventCategory, {
+        event_category: eventCategory,
+        event_label: eventLabel,
+        value: value,
+      });
+  }
+};

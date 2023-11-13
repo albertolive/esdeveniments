@@ -8,6 +8,7 @@ import {
   generateJsonData,
   getDistance,
   getPlaceTypeAndLabel,
+  sendEventToGA,
 } from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
 import SubMenu from "@components/ui/common/subMenu";
@@ -118,19 +119,29 @@ function Events({ props, loadMore = true }) {
   }, [page]);
 
   useEffect(() => {
-    place && window.localStorage.setItem("place", place);
+    if (place) {
+      window.localStorage.setItem("place", place);
+      sendEventToGA("filter", "place", place);
+    }
   }, [place]);
 
   useEffect(() => {
-    byDate && window.localStorage.setItem("byDate", byDate);
+    if (byDate) {
+      window.localStorage.setItem("byDate", byDate);
+      sendEventToGA("filter", "byDate", byDate);
+    }
   }, [byDate]);
 
   useEffect(() => {
     window.localStorage.setItem("category", category);
+    category && sendEventToGA("filter", "category", category);
   }, [category]);
 
   useEffect(() => {
     window.localStorage.setItem("distance", distance);
+    if (typeof distance === "number") {
+      sendEventToGA("filter", "distance", distance);
+    }
   }, [distance]);
 
   useEffect(() => {
