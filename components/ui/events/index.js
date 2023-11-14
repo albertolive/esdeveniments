@@ -234,58 +234,62 @@ function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="fixed w-full flex-col justify-center items-center top-18 left-0 right-0 z-10 bg-whiteCorp mx-auto px-0 pb-3 sm:px-10 sm:max-w-[576px] md:px-20 md:max-w-[768px] lg:px-40 lg:max-w-[1024px]">
-        <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <SubMenu
-          place={place}
-          setPlace={setPlace}
-          byDate={byDate}
-          setByDate={setByDate}
-          category={category}
-          setCategory={setCategory}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          userLocation={userLocation}
-          setUserLocation={setUserLocation}
-          distance={distance}
-          setDistance={setDistance}
-        />
+      <div className="w-full bg-whiteCorp fixed top-14 z-10 flex justify-center items-center">
+        <div className="w-full flex flex-col md:flex-row justify-center items-center mx-auto px-0 pb-3 md:pb-1 md:px-6">  
+          <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <SubMenu
+            place={place}
+            setPlace={setPlace}
+            byDate={byDate}
+            setByDate={setByDate}
+            category={category}
+            setCategory={setCategory}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            userLocation={userLocation}
+            setUserLocation={setUserLocation}
+            distance={distance}
+            setDistance={setDistance}
+          />
+        </div>
       </div>
-      <div className="pt-[120px]">
-        <div className="p-2 flex flex-col justify-center items-center invisible">
-          <button
-            onClick={toggleDropdown}
-            className={`w-11/12 py-4 flex justify-start items-center gap-1 text-blackCorp focus:outline-none`}
-          >
-            {open ? (
-              <p className="w-24 text-center">Tancar</p>
-            ) : (
-              <p className="w-24 text-center">Informació</p>
-            )}
-            {open ? (
-              <XIcon className="h-4 w-4" />
-            ) : (
-              <ChevronDownIcon className="h-4 w-4" />
-            )}
-          </button>
-          {open && (
-            <div className="flex flex-col gap-4 py-4 border-t border-darkCorp">
-              <div>
-                <h1 className="leading-8 font-semibold text-blackCorp text-center md:text-left uppercase italic">
-                  {title}
-                </h1>
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-full md:w-10/12 lg:w-8/12">
+        <div className="pt-16 md:pt-8">
+          <div className="p-2 flex flex-col justify-center items-center invisible">
+            <button
+              onClick={toggleDropdown}
+              className={`w-11/12 py-4 flex justify-start items-center gap-1 text-blackCorp focus:outline-none`}
+            >
+              {open ? (
+                <p className="w-24 text-center">Tancar</p>
+              ) : (
+                <p className="w-24 text-center">Informació</p>
+              )}
+              {open ? (
+                <XIcon className="h-4 w-4" />
+              ) : (
+                <ChevronDownIcon className="h-4 w-4" />
+              )}
+            </button>
+            {open && (
+              <div className="flex flex-col gap-4 py-4 border-t border-darkCorp">
+                <div>
+                  <h1 className="leading-8 font-semibold text-blackCorp text-center md:text-left uppercase italic">
+                    {title}
+                  </h1>
+                </div>
+                <div className="px-2 flex flex-col justify-center items-center gap-4 lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
+                  <p className="w-full text-center md:text-left lg:w-1/2">
+                    {subTitle}
+                  </p>
+                  <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
+                  <p className="w-full text-center md:text-left lg:w-1/2">
+                    {description}
+                  </p>
+                </div>
               </div>
-              <div className="px-2 flex flex-col justify-center items-center gap-4 lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
-                <p className="w-full text-center md:text-left lg:w-1/2">
-                  {subTitle}
-                </p>
-                <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
-                <p className="w-full text-center md:text-left lg:w-1/2">
-                  {description}
-                </p>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
         {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
         {isLoading && !isLoadingMore ? (

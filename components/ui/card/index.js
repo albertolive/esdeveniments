@@ -43,7 +43,7 @@ function Card({ event, isLoading }) {
         onClick={handlePrefetch}
       >
         {/* Title */}
-        <div className="bg-whiteCorp h-24 flex justify-between items-start gap-3">
+        <div className="bg-whiteCorp h-fit flex justify-between items-start gap-3">
           <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
             <div className="w-1 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             <div className="triangle-down px-0 mx-0"></div>

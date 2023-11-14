@@ -8,13 +8,13 @@ import { getPlaceLabel } from "@utils/helpers";
 const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
   <div
     key={text}
-    className="w-1/1 flex justify-center items-center py-4 nowrap"
+    className="w-1/1 bg-whiteCorp flex justify-between items-center nowrap"
   >
     <div
-      className={`w-1/1 flex justify-evenly items-center gap-1 bg-whiteCorp py-1 px-2 rounded-lg ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+      className={`w-1/1 flex justify-evenly items-center gap-1 py-1 px-2 rounded-xl border-[1px] border-whiteCorp hover:border-[1px] hover:border-bColor ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
         enabled
-          ? "border-primary border-[1px] text-primary font-semibold"
-          : "border-whiteCorp border-[1px] text-bColor"
+          ? "text-primary font-medium rounded-xl"
+          : "border-whiteCorp border-[1px] text-bColor rounded-xl"
       }`}
     >
       <span
@@ -24,7 +24,7 @@ const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
         {text}
       </span>
       {enabled ? (
-        <XIcon className="h-5 w-5" aria-hidden="true" onClick={onClick} />
+        <XIcon className="h-4 w-4" aria-hidden="true" onClick={onClick} />
       ) : (
         <ChevronDownIcon
           className="h-4 w-4 hidden"
@@ -80,24 +80,24 @@ const Filters = ({
   }, [place, setPlace, setSelectedOption, setOpenModal]);
 
   return (
-    <div className="bg-whiteCorp flex justify-center items-center pl-4 pr-6">
-      <div className="w-full flex justify-center items-center cursor-pointer gap-1">
+    <div className="w-full bg-whiteCorp flex justify-center items-center px-0">
+      <div className="w-full flex justify-start items-center cursor-pointer">
         <div
           onClick={handleOpenModal}
           type="button"
-          className="w-fit flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl px-2 py-1 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase font-semibold"
+          className="w-1/12 h-12 mr-3 flex justify-end items-center cursor-pointer"
         >
           <AdjustmentsIcon
             className={
               isAnyFilterSelected()
-                ? "w-6 h-6 text-primary"
-                : "w-6 h-6 text-blackCorp"
+                ? "w-5 h-5 text-primary"
+                : "w-5 h-5 text-blackCorp"
             }
             aria-hidden="true"
           />
           <p className="font-barlow hidden md:block">Filtres</p>
         </div>
-        <div className="w-full flex justify-start items-center gap-2 overflow-x-auto">
+        <div className="h-12 flex justify-cenetr items-center border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,

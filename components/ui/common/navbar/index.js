@@ -140,7 +140,7 @@ export default function Navbar() {
                   <ActiveLink href="/">
                     <button
                       type="button"
-                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl border border-darkCorp"
+                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl"
                     >
                       <HomeIcon className="h-6 w-6" />
                     </button>
@@ -152,7 +152,7 @@ export default function Navbar() {
                   <ActiveLink href="/publica">
                     <button
                       type="button"
-                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl border border-darkCorp"
+                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl"
                     >
                       <PlusSmIcon className="h-6 w-6" aria-hidden="true" />
                       <span className="hidden sm:visible">Publica</span>
@@ -165,7 +165,7 @@ export default function Navbar() {
                   <ActiveLink href="/qui-som">
                     <button
                       type="button"
-                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl border border-darkCorp"
+                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl"
                     >
                       <InformationCircleIcon className="h-6 w-6" />
                     </button>
@@ -176,10 +176,10 @@ export default function Navbar() {
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="h-fit flex justify-center items-center gap-4 px-4 pb-4 pt-2 bg-whiteCorp">
+            <div className="fixed flex justify-center items-center gap-4 px-4 pb-5 bg-whiteCorp transition-transform">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
-                  <a className="flex justify-center items-center font-semibold px-6 py-2 font-barlow italic uppercase">
+                  <a className="flex justify-center items-center font-semibold px-4 py-1 font-barlow italic uppercase">
                     {item.name}
                   </a>
                 </ActiveLink>

@@ -15,7 +15,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="md:sticky bottom-0 w-full flex flex-col justify-center items-center gap-4 bg-whiteCorp pb-24 pt-4 px-4 md:pb-8 md:pt-4 md:px-4">
+    <footer className="w-full flex flex-col justify-center items-center gap-4 bg-whiteCorp pb-24 pt-4 px-4 md:pb-8 md:pt-4 md:px-4">
       <Social links={links} />
       <div className="flex flex-col sm:flex-row justify-center items-center gap-6 text-xs">
         <a
