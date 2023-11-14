@@ -1,4 +1,4 @@
-import { TAGS } from "./constants";
+// import { CATEGORIES } from "./constants";
 import {
   slug,
   getFormattedDate,
@@ -84,7 +84,9 @@ export const normalizeEvents = (event, weatherInfo) => {
       : "";
   const location = locationParts.length > 2 ? locationParts[0].trim() : town;
   let title = event.summary ? sanitizeText(event.summary) : "";
-  const tag = TAGS.find((v) => title.includes(v)) || null;
+
+  const tag = null; //CATEGORIES.find((v) => title.includes(v)) || null;
+
   const { coords } = getTownOptionsWithLabel(town);
 
   if (tag) title = title.replace(`${tag}:`, "").trim();
@@ -144,7 +146,7 @@ export const normalizeEvent = (event) => {
       ? locationParts[locationParts.length - 1].trim()
       : "";
   const location = locationParts.length > 2 ? locationParts[0].trim() : town;
-  const tag = TAGS.find((v) => title.includes(v)) || null;
+  const tag = null; //CATEGORIES.find((v) => title.includes(v)) || null;
   if (tag) title = title.replace(`${tag}:`, "").trim();
   const { postalCode = null, label = null } = getTownOptionsWithLabel(town);
   const imageUploaded = event.guestsCanModify || false;
@@ -174,8 +176,12 @@ export const normalizeEvent = (event) => {
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
     tag,
     slug: slug(title, originalFormattedStart, event.id),
-    startDate: (event.start && event.start.dateTime) || null,
-    endDate: (event.end && event.end.dateTime) || null,
+    startDate:
+      (event.start && event.start.dateTime) || event.start.date || null,
+    endDate:
+      (event.end && event.end.dateTime) ||
+      (event.start.end && event.start.end) ||
+      event.start.date,
     imageUploaded: imageUploaded
       ? cloudinaryUrl(imageId)
       : eventImage

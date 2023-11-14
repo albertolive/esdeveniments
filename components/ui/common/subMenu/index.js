@@ -1,46 +1,24 @@
-import { useMemo, useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-import { BYDATES } from "@utils/constants";
+import { useMemo, useState, useEffect, memo } from "react";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
+import FiltersModal from "@components/ui/filtersModal";
+import Filters from "@components/ui/filters";
 
-const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
-  loading: () => "",
-  noSSR: false,
-});
-
-const Select = dynamic(() => import("@components/ui/common/form/select"), {
-  loading: () => "",
-  noSSR: false,
-});
-
-const RenderButton = ({ value, label, goTo, byDate }) => {
-  const isActiveLink =
-    byDate === value ? "bg-primary text-whiteCorp border-0" : "bg-whiteCorp";
-
-  return (
-    <button
-      className={`w-full relative inline-flex justify-center items-center py-2 px-8 border border-primarydark font-normal rounded-xl ${isActiveLink} focus:outline-none`}
-      type="button"
-      onClick={() => goTo(value)}
-    >
-      {label}
-    </button>
-  );
-};
-
-export default function SubMenu({
-  place: placeProps,
+function SubMenu({
+  place,
   setPlace,
-  byDate: byDateProps,
+  byDate,
   setByDate,
+  category,
+  setCategory,
+  searchTerm,
+  setSearchTerm,
+  userLocation,
+  setUserLocation,
+  distance,
+  setDistance,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
-  const {
-    query: { place: placeQuery, byDate: byDateQuery },
-  } = useRouter();
-  const place = placeProps || placeQuery;
-  const byDate = byDateProps || byDateQuery;
+  const [openModal, setOpenModal] = useState(false);
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
@@ -53,49 +31,49 @@ export default function SubMenu({
         .flatMap((group) => group.options)
         .find((option) => option.value === place);
       setSelectedOption(regionOption || null);
+    } else {
+      setSelectedOption(undefined);
     }
   }, [place, regionsAndCitiesArray]);
 
-  const handlePlaceChange = ({ value }) => {
-    setPlace(value);
-    setSelectedOption(value);
-
-    localStorage.removeItem("currentPage");
-    localStorage.removeItem("scrollPosition");
-  };
-
-  const handleByDateChange = (value) => {
-    setByDate(value);
-  };
-
   return (
     <>
-      <div className="flex flex-col justify-center items-center my-4">
-        <div className="w-11/12 p-2">
-          <Select
-            id="options"
-            options={regionsAndCitiesArray}
-            value={selectedOption}
-            onChange={handlePlaceChange}
-            isClearable
-            placeholder="una localitat"
+      <div className="flex justify-center items-center gap-3">
+        {openModal && (
+          <FiltersModal
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            place={place}
+            setPlace={setPlace}
+            byDate={byDate}
+            setByDate={setByDate}
+            category={category}
+            setCategory={setCategory}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            userLocation={userLocation}
+            setUserLocation={setUserLocation}
+            distance={distance}
+            setDistance={setDistance}
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
           />
-        </div>
-        {/* <div className="flex flex-col justify-center items-start gap-4 my-4">
-          {BYDATES.map(({ value, label }) => (
-            <RenderButton
-              key={value}
-              value={value}
-              label={label}
-              goTo={handleByDateChange}
-              byDate={byDate}
-            />
-          ))}
-        </div> */}
+        )}
       </div>
-      {/* <div className="min-h-[325px] lg:min-h-[100px]">
-        <AdArticle slot="6571056515" />
-      </div> */}
+      <Filters
+        setOpenModal={setOpenModal}
+        place={place}
+        setPlace={setPlace}
+        byDate={byDate}
+        setByDate={setByDate}
+        category={category}
+        setCategory={setCategory}
+        distance={distance}
+        setDistance={setDistance}
+        setSelectedOption={setSelectedOption}
+      />
     </>
   );
 }
+
+export default memo(SubMenu);

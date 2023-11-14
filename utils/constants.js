@@ -40,18 +40,18 @@ export const MONTHS_URL = [
   "desembre",
 ];
 
-export const TAGS = [
-  "Familiar",
-  "Tertúlia Literària",
-  "Vermut",
-  "Cinema",
-  "Concert",
-  "Teatre",
-  "Exposició",
-];
+export const CATEGORIES = {
+  Familiar: "Familiar",
+  Música: "Música",
+  Cinema: "Cinema",
+  Teatre: "Teatre",
+  Exposicions: "Exposició",
+  Fires: "Fira",
+  Espectacles: "Espectacles",
+  "Festa Major": "Festa Major",
+};
 
 export const BYDATES = [
-  // Replace it with a dynamic data source
   { value: "avui", label: "Avui" },
   { value: "setmana", label: "Aquesta setmana" },
   { value: "cap-de-setmana", label: "Cap de setmana" },
@@ -62,6 +62,8 @@ export const dateFunctions = {
   setmana: "week",
   "cap-de-setmana": "weekend",
 };
+
+export const DISTANCES = [1, 5, 10, 30, 50];
 
 export const CITIES_DATA = new Map([
   [
@@ -214,10 +216,9 @@ export const CITIES_DATA = new Map([
           "la-garriga",
           {
             label: "La Garriga",
-            rssFeed: "http://lagarriga.webmunicipal.diba.cat/rss/12/0",
-            descriptionSelector: ".text-maquetat",
-            imageSelector: ".justified-gallery",
-            locationSelector: ".td_justificat",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=granollers`,
+            descriptionSelector: ".body-text",
+            imageSelector: ".foto a",
             postalCode: "08530",
             coords: { lat: 41.680381, lng: 2.28334 },
           },

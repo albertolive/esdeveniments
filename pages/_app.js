@@ -1,55 +1,14 @@
 import "@styles/globals.css";
 import "@styles/fonts.css";
 
-import { useEffect, useCallback, memo, Suspense } from "react";
+import { useEffect, memo, Suspense } from "react";
 import Script from "next/script";
 import { BaseLayout } from "@components/ui/layout";
-import { useRouter } from "next/router";
-import { generateRegionsOptions } from "@utils/helpers";
 
 function EsdevenimentsMainEntry({ Component, pageProps }) {
-  const { events } = useRouter();
-
-  const dynamicURLs = generateRegionsOptions().map(({ value }) => `/${value}`);
-
-  const handleRouteChange = useCallback(
-    (url) => {
-      const urlsToCheck = [
-        "/",
-        "/qui-som",
-        "sitemap",
-        "/publica",
-        ...dynamicURLs,
-      ];
-      const shouldResetSearchTerm =
-        urlsToCheck.some((checkUrl) => url.startsWith(checkUrl)) &&
-        !url.startsWith("/cerca");
-
-      if (
-        typeof window !== "undefined" &&
-        window.localStorage !== undefined &&
-        shouldResetSearchTerm
-      ) {
-        localStorage.setItem("searchTerm", JSON.stringify(""));
-      }
-    },
-    [dynamicURLs]
-  );
-
-  useEffect(() => {
-    events.on("routeChangeComplete", handleRouteChange);
-
-    return () => {
-      events.off("routeChangeComplete", handleRouteChange);
-    };
-  }, [events, handleRouteChange]);
-
   useEffect(() => {
     const handleBeforeUnload = () => {
-      localStorage.removeItem("place");
-      localStorage.removeItem("byDate");
       localStorage.removeItem("currentPage");
-      localStorage.removeItem("searchTerm");
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
