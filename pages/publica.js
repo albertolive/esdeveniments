@@ -216,11 +216,25 @@ export default function Publica() {
         setProgress(Math.round((e.loaded * 100.0) / e.total));
       });
 
-      xhr.onreadystatechange = (e) => {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-          const public_id = JSON.parse(xhr.responseText).public_id;
-          console.log(public_id);
-          router.push(goToEventPage(`/e/${slugifiedTitle}`));
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            const public_id = JSON.parse(xhr.responseText).public_id;
+            console.log(public_id);
+            router.push(goToEventPage(`/e/${slugifiedTitle}`));
+          } else {
+            // The server responded with an error status
+            const error = JSON.parse(xhr.responseText).error;
+            console.error("Error uploading file:", error);
+            setIsLoading(false);
+            setFormState(
+              _createFormState(
+                true,
+                true,
+                `Hi ha hagut un error en pujar la imatge: ${error.message}, torna-ho a provar més tard o contacta amb nosaltres.`
+              )
+            );
+          }
         }
       };
 
