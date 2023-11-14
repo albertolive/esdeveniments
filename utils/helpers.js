@@ -359,6 +359,7 @@ export function getTownOptionsWithLabel(label) {
       }
     });
   });
+
   return townOptions;
 }
 
@@ -389,6 +390,25 @@ export function truncateString(text, maxLength) {
     : text;
 }
 
+export function getDistance(location1, location2) {
+  var R = 6371;
+  var dLat = deg2rad(location2.lat - location1.lat);
+  var dLng = deg2rad(location2.lng - location1.lng);
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(location1.lat)) *
+      Math.cos(deg2rad(location2.lat)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var distance = R * c;
+  return distance;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
 export function generateTownUrls() {
   const baseUrl = `${siteUrl}/api/fetchRss`;
   let urls = [];
@@ -402,3 +422,14 @@ export function generateTownUrls() {
 
   return urls;
 }
+
+export const sendEventToGA = (eventCategory, eventLabel, value) => {
+  if (typeof window !== "undefined") {
+    window.gtag &&
+      window.gtag("event", eventCategory, {
+        event_category: eventCategory,
+        event_label: eventLabel,
+        value: value,
+      });
+  }
+};

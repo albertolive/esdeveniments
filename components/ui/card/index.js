@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -13,7 +14,7 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
   noSSR: false,
 });
 
-export default function Card({ event, isLoading }) {
+function Card({ event, isLoading }) {
   const { prefetch } = useRouter();
 
   const handlePrefetch = () => {
@@ -24,7 +25,7 @@ export default function Card({ event, isLoading }) {
 
   if (event.isAd)
     return (
-      <div className=" bg-whiteCorp overflow-hidden cursor-pointer mb-10 md:border-t-0 block visible md:hidden md:invisible">
+      <div className=" bg-whiteCorp overflow-hidden cursor-pointer mb-2 md:border-t-0 block visible md:hidden md:invisible">
         <AdCard event={event} />
       </div>
     );
@@ -37,15 +38,18 @@ export default function Card({ event, isLoading }) {
   return (
     <Link href={`/e/${event.slug}`} passHref prefetch={false}>
       <div
-        className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10 md:border-t-0"
+        className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10"
         onMouseEnter={handlePrefetch}
         onClick={handlePrefetch}
       >
         {/* Title */}
-        <div className="bg-whiteCorp h-24 flex justify-between items-center gap-2 gap-x-4">
-          <div className="w-2 h-1/3 bg-gradient-to-r from-primary to-primarydark px-0 mx-0"></div>
+        <div className="bg-whiteCorp h-24 flex justify-between items-start gap-3">
+          <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
+            <div className="w-1 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
+            <div className="triangle-down px-0 mx-0"></div>
+          </div>
           {/* Title */}
-          <h2 className="w-10/12 uppercase font-semibold text-blackCorp italic">
+          <h2 className="w-10/12 uppercase text-blackCorp italic">
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
               <a>{title}</a>
             </Link>
@@ -78,9 +82,9 @@ export default function Card({ event, isLoading }) {
         </div>
         {/* Info */}
         {/* InfoEvent */}
-        <div className="flex flex-col px-4 pt-8 gap-4">
+        <div className="flex flex-col px-4 pt-4 gap-4">
           {/* Date */}
-          <h3 className="text-blackCorp font-barlow font-medium uppercase italic pl-1">
+          <h3 className="text-blackCorp uppercase italic pl-1">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}
@@ -110,3 +114,5 @@ export default function Card({ event, isLoading }) {
     </Link>
   );
 }
+
+export default memo(Card);

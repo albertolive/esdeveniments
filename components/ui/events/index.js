@@ -1,41 +1,53 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useState, useCallback } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
-import { generateJsonData, getPlaceTypeAndLabel } from "@utils/helpers";
+import {
+  generateJsonData,
+  getDistance,
+  getPlaceTypeAndLabel,
+  sendEventToGA,
+} from "@utils/helpers";
 import { dateFunctions } from "@utils/constants";
-import { SubMenu } from "@components/ui/common";
+import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
 import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
+import { CATEGORIES } from "@utils/constants";
+import Search from "@components/ui/search";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
   {
     loading: () => "",
+    ssr: false,
   }
 );
 
-export default function Events({ props, loadMore = true }) {
-  // Refs
-  const scrollPosition = useRef(0);
-
+function Events({ props, loadMore = true }) {
   // Props destructuring
   const { place: placeProps, byDate: byDateProps } = props;
 
   // State
   const [page, setPage] = useState(getStoredPage);
-  const [place, setPlace] = useState(() => getStoredPlace(placeProps));
-  const [byDate, setByDate] = useState(() => getStoredByDate(byDateProps));
+  const [place, setPlace] = useState("");
+  const [byDate, setByDate] = useState("");
+  const [category, setCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [userLocation, setUserLocation] = useState(null);
+  const [distance, setDistance] = useState("");
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
+  const categoryQuery = category ? CATEGORIES[category] : "";
+  const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
@@ -44,24 +56,42 @@ export default function Events({ props, loadMore = true }) {
     props,
     pageIndex: dateFunctions[byDate] || "all",
     maxResults: page * 10,
-    q: type === "town" ? `${label} ${regionLabel}` : label,
+    q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
   });
+
   const jsonEvents = events
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));
 
   // Event handlers
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("scrollPosition", window.scrollY);
     }
     setIsLoadingMore(true);
     setPage((prevPage) => prevPage + 1);
     sendGA();
-  };
-  const toggleDropdown = () => {
+  }, []);
+
+  const toggleDropdown = useCallback(() => {
     setOpen(!open);
-  };
+  }, [open]);
+
+  const filterEventsByDistance = useCallback(
+    (events, userLocation) => {
+      if (distance === "" || isNaN(distance)) return events;
+
+      return events.filter((event) => {
+        if (event.isAd || !event.coords || !userLocation) {
+          return true;
+        }
+
+        const eventDistance = getDistance(userLocation, event.coords);
+        return eventDistance <= distance;
+      });
+    },
+    [distance]
+  );
 
   // Helper function
   const resetPage = () => {
@@ -73,16 +103,46 @@ export default function Events({ props, loadMore = true }) {
 
   // Effects
   useEffect(() => {
-    localStorage.setItem("currentPage", page);
+    const storedCategory = window.localStorage.getItem("category");
+    const storedPlace = window.localStorage.getItem("place");
+    const storedByDate = window.localStorage.getItem("byDate");
+    const storedDistance = window.localStorage.getItem("distance");
+
+    setCategory(storedCategory || "");
+    setPlace(storedPlace || "");
+    setByDate(storedByDate || "");
+    setDistance(Number(storedDistance) || "");
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("currentPage", page);
   }, [page]);
 
   useEffect(() => {
-    localStorage.setItem("place", place);
+    if (place) {
+      window.localStorage.setItem("place", place);
+      sendEventToGA("filter", "place", place);
+    }
   }, [place]);
 
   useEffect(() => {
-    localStorage.setItem("byDate", byDate);
+    if (byDate) {
+      window.localStorage.setItem("byDate", byDate);
+      sendEventToGA("filter", "byDate", byDate);
+    }
   }, [byDate]);
+
+  useEffect(() => {
+    window.localStorage.setItem("category", category);
+    category && sendEventToGA("filter", "category", category);
+  }, [category]);
+
+  useEffect(() => {
+    window.localStorage.setItem("distance", distance);
+    if (typeof distance === "number") {
+      sendEventToGA("filter", "distance", distance);
+    }
+  }, [distance]);
 
   useEffect(() => {
     if (place !== placeProps || byDate !== byDateProps) {
@@ -112,13 +172,35 @@ export default function Events({ props, loadMore = true }) {
     if (storedScrollPosition) {
       window.scrollTo(0, parseInt(storedScrollPosition));
     }
-  }, [events]);
+  }, [events.length]);
 
   useEffect(() => {
     if (events.length > 0) {
       setIsLoadingMore(false);
     }
   }, [events]);
+
+  useEffect(() => {
+    setFilteredEvents(filterEventsByDistance(events, userLocation));
+  }, [userLocation, events, filterEventsByDistance]);
+
+  useEffect(() => {
+    if (placeProps) {
+      setPlace(placeProps);
+    } else {
+      const storedPlace = window.localStorage.getItem("place");
+      setPlace(storedPlace === "undefined" ? undefined : storedPlace);
+    }
+  }, [placeProps]);
+
+  useEffect(() => {
+    if (byDateProps) {
+      setByDate(byDateProps);
+    } else {
+      const storedByDate = window.localStorage.getItem("byDate");
+      setByDate(storedByDate === "undefined" ? undefined : storedByDate);
+    }
+  }, [byDateProps]);
 
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
@@ -132,11 +214,12 @@ export default function Events({ props, loadMore = true }) {
     description,
     canonical,
     notFoundText,
-  } = generatePagesData({
-    currentYear,
-    place,
-    byDate,
-  });
+  } =
+    generatePagesData({
+      currentYear,
+      place,
+      byDate,
+    }) || {};
 
   // Render
   return (
@@ -151,98 +234,100 @@ export default function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <SubMenu
-        place={place}
-        setPlace={setPlace}
-        byDate={byDate}
-        setByDate={setByDate}
-      />
-      <div className="p-2 flex flex-col justify-center items-center">
-        <button
-          onClick={toggleDropdown}
-          className={`w-11/12 p-3 flex justify-center items-center gap-2 text-blackCorp focus:outline-none`}
-        >
-          {open ? (
-            <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
-              Tancar
-            </h2>
-          ) : (
-            <h2 className="w-24 text-center text-[20px] uppercase italic font-medium">
-              Informació
-            </h2>
-          )}
-          {open ? (
-            <XIcon className="h-5 w-5" />
-          ) : (
-            <ChevronDownIcon className="h-5 w-5" />
-          )}
-        </button>
-        {open && (
-          <div className="flex flex-col gap-4 py-4 border-t border-darkCorp">
-            <div>
-              <h1 className="leading-8 font-semibold text-blackCorp text-center md:text-left uppercase italic">
-                {title}
-              </h1>
-            </div>
-            <div className="px-2 flex flex-col justify-center items-center gap-4 lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
-              <p className="w-full text-center md:text-left lg:w-1/2">
-                {subTitle}
-              </p>
-              <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
-              <p className="w-full text-center md:text-left lg:w-1/2">
-                {description}
-              </p>
-            </div>
-          </div>
-        )}
+      <div className="fixed w-full flex-col justify-center items-center top-18 left-0 right-0 z-10 bg-whiteCorp mx-auto px-0 pb-3 sm:px-10 sm:max-w-[576px] md:px-20 md:max-w-[768px] lg:px-40 lg:max-w-[1024px]">
+        <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <SubMenu
+          place={place}
+          setPlace={setPlace}
+          byDate={byDate}
+          setByDate={setByDate}
+          category={category}
+          setCategory={setCategory}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          userLocation={userLocation}
+          setUserLocation={setUserLocation}
+          distance={distance}
+          setDistance={setDistance}
+        />
       </div>
-      {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
-      {isLoading && !isLoadingMore ? (
-        <div>
-          {[...Array(10)].map((_, i) => (
-            <CardLoading key={i} />
-          ))}
-        </div>
-      ) : (
-        <List events={events}>
-          {(event) => <Card key={event.id} event={event} />}
-        </List>
-      )}
-      {isLoadingMore && <CardLoading />}
-      {!noEventsFound && loadMore && events.length > 7 && !isLoadingMore && (
-        <div className=" text-center py-10">
+      <div className="pt-[120px]">
+        <div className="p-2 flex flex-col justify-center items-center invisible">
           <button
-            type="button"
-            className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
-            onClick={handleLoadMore}
+            onClick={toggleDropdown}
+            className={`w-11/12 py-4 flex justify-start items-center gap-1 text-blackCorp focus:outline-none`}
           >
-            <span className="text-white text-base font-semibold px-4">
-              Carregar més
-            </span>
+            {open ? (
+              <p className="w-24 text-center">Tancar</p>
+            ) : (
+              <p className="w-24 text-center">Informació</p>
+            )}
+            {open ? (
+              <XIcon className="h-4 w-4" />
+            ) : (
+              <ChevronDownIcon className="h-4 w-4" />
+            )}
           </button>
+          {open && (
+            <div className="flex flex-col gap-4 py-4 border-t border-darkCorp">
+              <div>
+                <h1 className="leading-8 font-semibold text-blackCorp text-center md:text-left uppercase italic">
+                  {title}
+                </h1>
+              </div>
+              <div className="px-2 flex flex-col justify-center items-center gap-4 lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
+                <p className="w-full text-center md:text-left lg:w-1/2">
+                  {subTitle}
+                </p>
+                <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
+                <p className="w-full text-center md:text-left lg:w-1/2">
+                  {description}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+        {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
+        {isLoading && !isLoadingMore ? (
+          <div>
+            {[...Array(10)].map((_, i) => (
+              <CardLoading key={i} />
+            ))}
+          </div>
+        ) : (
+          <List events={filteredEvents}>
+            {(event) => <Card key={event.id} event={event} />}
+          </List>
+        )}
+        {isLoadingMore && <CardLoading />}
+        {!noEventsFound &&
+          loadMore &&
+          filteredEvents.length > 7 &&
+          !isLoadingMore && (
+            <div className=" text-center py-10">
+              <button
+                type="button"
+                className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
+                onClick={handleLoadMore}
+              >
+                <span className="text-white text-base font-semibold px-4">
+                  Carregar més
+                </span>
+              </button>
+            </div>
+          )}
+      </div>
     </>
   );
 }
+
+export default memo(Events);
 
 // Helper functions
 function getStoredPage() {
   const storedPage =
     typeof window !== "undefined" && window.localStorage.getItem("currentPage");
   return storedPage ? parseInt(storedPage) : 1;
-}
-
-function getStoredPlace(placeProps) {
-  const storedPlace =
-    typeof window !== "undefined" && window.localStorage.getItem("place");
-  return storedPlace === "undefined" ? undefined : storedPlace || placeProps;
-}
-
-function getStoredByDate(byDateProps) {
-  const storedByDate =
-    typeof window !== "undefined" && window.localStorage.getItem("byDate");
-  return storedByDate === "undefined" ? undefined : storedByDate || byDateProps;
 }
 
 function sendGA() {

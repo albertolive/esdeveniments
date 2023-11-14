@@ -126,9 +126,9 @@ export default function Publica() {
 
   const handleChangeDate = (name, value) => handleFormChange(name, value);
 
-  const handleRegionChange = ({ value }) => {
-    setRegion(value);
-    handleFormChange("region", value);
+  const handleRegionChange = (region) => {
+    setRegion(region.value);
+    handleFormChange("region", region);
   };
 
   const handleImageChange = (value) => {
@@ -136,7 +136,7 @@ export default function Publica() {
     handleFormChange("imageUploaded", value);
   };
 
-  const handleTownChange = ({ value }) => handleFormChange("town", value);
+  const handleTownChange = (town) => handleFormChange("town", town);
 
   const goToEventPage = (url) => ({
     pathname: `${url}`,
@@ -216,11 +216,25 @@ export default function Publica() {
         setProgress(Math.round((e.loaded * 100.0) / e.total));
       });
 
-      xhr.onreadystatechange = (e) => {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-          const public_id = JSON.parse(xhr.responseText).public_id;
-          console.log(public_id);
-          router.push(goToEventPage(`/e/${slugifiedTitle}`));
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            const public_id = JSON.parse(xhr.responseText).public_id;
+            console.log(public_id);
+            router.push(goToEventPage(`/e/${slugifiedTitle}`));
+          } else {
+            // The server responded with an error status
+            const error = JSON.parse(xhr.responseText).error;
+            console.error("Error uploading file:", error);
+            setIsLoading(false);
+            setFormState(
+              _createFormState(
+                true,
+                true,
+                `Hi ha hagut un error en pujar la imatge: ${error.message}, torna-ho a provar més tard o contacta amb nosaltres.`
+              )
+            );
+          }
         }
       };
 
@@ -254,12 +268,7 @@ export default function Publica() {
         description="Publica un acte cultural - Esdeveniments.cat"
         canonical={`${siteUrl}/publica`}
       />
-      <div
-        className="max-w-full mx-0 px-4 
-        sm:px-0 sm:max-w-[576px]
-        md:px-4 md:max-w-[768px] 
-        lg:px-20 lg:max-w-[1024px]"
-      >
+      <div className="max-w-full mx-0 px-4 sm:px-0 sm:max-w-[576px] md:px-4 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col items-center gap-4">
             <h1 className="text-center text-primary italic uppercase font-semibold">
