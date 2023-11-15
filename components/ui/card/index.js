@@ -69,9 +69,9 @@ function Card({ event, isLoading }) {
           </div>
         </div>
         {/* ImageEvent */}
-        <div className="">
+        <div className="p-4">
           <Image
-            className=""
+            className="object-contain"
             title={event.title}
             date={event.formattedStart}
             location={event.location}

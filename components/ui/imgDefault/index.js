@@ -36,7 +36,7 @@ export default function ImgDefault({ title, date, location }) {
 
   return (
     <div
-      className="flex flex-col items-start gap-y-6 text-whiteCorp max-h-[100%] py-6"
+      className="flex flex-col items-start gap-y-6 text-whiteCorp py-6"
       style={{ background: background }}
     >
       <h1

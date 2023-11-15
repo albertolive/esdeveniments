@@ -31,25 +31,25 @@ export default function Modal({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel className="w-full h-full flex flex-col justify-center items-center p-2">
+              <Dialog.Panel className="w-full h-full flex flex-col justify-start md:justify-center items-center p-2">
                 <Dialog.Title
                   as="h3"
-                  className="w-full bg-whiteCorp flex fixed top-0 p-6 font-semibold"
+                  className="w-full bg-whiteCorp flex fixed top-0 z-50 p-6 font-semibold"
                 >
-                  <div className="w-full flex justify-between items-center">
+                  <div className="w-full flex justify-center items-center">
                     <button
                       ref={cancelButtonRef}
                       onClick={() => setOpen(false)}
                       className="w-1/12 focus:outline-none"
                     >
-                      <ArrowLeftIcon className="h-6 w-6" aria-hidden="true" />
+                      <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
-                    <div className="w-11/12 pr-11">
+                    <div className="w-11/12 flex justify-center">
                       <h3 className="text-center uppercase italic">{title}</h3>
                     </div>
                   </div>
                 </Dialog.Title>
-                <div className="w-full p-4 overflow-auto">{children}</div>
+                <div className="w-full md:w-2/3 lg:w-1/3 flex justify-center items-start px-4 md:px-8 pt-8 md:py-8 overflow-auto">{children}</div>
                 {actionButton && (
                   <div className="w-full bg-whiteCorp fixed bottom-0 left-0 p-3">
                     <div

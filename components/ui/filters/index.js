@@ -95,7 +95,7 @@ const Filters = ({
             }
             aria-hidden="true"
           />
-          <p className="font-barlow hidden md:block">Filtres</p>
+          <p className="hidden md:block md:font-barlow md:uppercase md:italic md:font-medium">Filtres</p>
         </div>
         <div className="h-12 flex justify-cenetr items-center border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({

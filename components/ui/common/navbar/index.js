@@ -118,7 +118,7 @@ export default function Navbar() {
                         key={item.name}
                         className="focus:outline-none cursor-pointer"
                       >
-                        <a className="text-center text-base font-semibold px-4 w-24 font-barlow italic uppercase">
+                        <a className="text-center font-medium px-4 w-24 font-barlow italic uppercase">
                           {item.name}
                         </a>
                       </ActiveLink>
@@ -179,7 +179,7 @@ export default function Navbar() {
             <div className="fixed flex justify-center items-center gap-4 px-4 pb-5 bg-whiteCorp transition-transform">
               {navigation.map((item) => (
                 <ActiveLink href={item.href} key={item.name}>
-                  <a className="flex justify-center items-center font-semibold px-4 py-1 font-barlow italic uppercase">
+                  <a className="flex justify-center items-center font-medium px-4 py-1 font-barlow italic uppercase">
                     {item.name}
                   </a>
                 </ActiveLink>

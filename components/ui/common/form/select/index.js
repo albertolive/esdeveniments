@@ -15,23 +15,31 @@ const customStyles = {
   }),
   control: (provided, state) => ({
     ...provided,
-    borderColor: state.isSelected ? "#CCC !important" : "#CCC !important",
-    borderColor: state.isFocused ? "#CCC !important" : "#CCC !important",
+    borderColor: state.isSelected ? "#FFF !important" : "#FFF !important",
+    borderColor: state.isFocused ? "#FFF !important" : "#FFF !important",
     boxShadow: state.isFocused ? "#000 !important" : "#CCC !important",
-    borderRadius: "12px",
+    borderRadius: "0px",
   }),
   placeholder: (provided) => ({
     ...provided,
-    fontSize: "16px",
+    fontSize: "14px",
     color: "#CCC",
   }),
-  option: (provided) => ({
+  option: (provided, state) => ({
     ...provided,
     fontSize: "16px",
+    background: state.isFocused ? "#FF0037" : "#FFF",
+    color: state.isFocused ? "#FFF" : "#454545",
   }),
   singleValue: (provided) => ({
     ...provided,
     fontSize: "16px",
+    color: "#454545",
+  }),
+  menu: (provided, state) => ({
+    ...provided,
+    borderColor: state.isSelected ? "#FFF !important" : "#FFF !important",
+    borderRadius: "0px",
   }),
 };
 
@@ -71,8 +79,9 @@ export default function SelectComponent({
       <label htmlFor="first-name" className="text-blackCorp">
         {title}
       </label>
-      <div className="p-2">
+      <div className="">
         <CreatableSelect
+          className="border-0"
           id={id}
           instanceId={id}
           isSearchable
