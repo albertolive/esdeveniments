@@ -122,8 +122,8 @@ function FiltersModal({
         setUserLocationLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      userLocation,
       setUserLocation,
       setUserLocationLoading,
       setUserLocationError,
@@ -131,6 +131,7 @@ function FiltersModal({
       setDistance,
     ]
   );
+
   const disablePlace =
     distance === undefined || distance !== "" || isNaN(Number(distance));
   const disableDistance = place || userLocationLoading || userLocationError;
