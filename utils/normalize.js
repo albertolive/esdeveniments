@@ -70,6 +70,7 @@ export const normalizeEvents = (event, weatherInfo) => {
     isFullDayEvent,
     nameDay,
     startDate,
+    isMultipleDays,
   } = getFormattedDate(event.start, event.end);
   const weatherObject = normalizeWeather(startDate, weatherInfo);
   const eventImage = hasEventImage(event.description);
@@ -107,8 +108,12 @@ export const normalizeEvents = (event, weatherInfo) => {
     nameDay,
     tag,
     slug: slug(title, originalFormattedStart, event.id),
-    startDate: event.start && event.start.dateTime,
-    endDate: event.end && event.end.dateTime,
+    startDate:
+      (event.start && event.start.dateTime) || event.start.date || null,
+    endDate:
+      (event.end && event.end.dateTime) ||
+      (event.start.end && event.start.end) ||
+      event.start.date,
     imageUploaded: imageUploaded
       ? cloudinaryUrl(imageId)
       : eventImage
@@ -119,6 +124,7 @@ export const normalizeEvents = (event, weatherInfo) => {
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
     weather: weatherObject,
     coords,
+    isMultipleDays,
   };
 };
 
