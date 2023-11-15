@@ -1,47 +1,21 @@
-import { useState, useEffect, memo } from "react";
+import { useState, memo } from "react";
 import NextImage from "next/image";
-import Head from "next/head";
 import ImgDefault from "@components/ui/imgDefault";
 
-const blurDataURL =
-  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIxMCUiIHkxPSIxMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgxNDUpIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNDQ0NDQ0M7IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNDQ0NDQ0M7IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIgLz4KPC9zdmc+Cg==";
-
-const useImage = (url) => {
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    if (url) {
-      const img = new Image();
-      img.src = url;
-      img.onerror = () => {
-        setError(true);
-      };
-    } else {
-      setError(true);
-    }
-  }, [url]);
-
-  return { error };
-};
+const solidColorPlaceholder =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3Crect fill='%23CCC' width='1' height='1'/%3E%3C/svg%3E";
 
 function ImageComponent({
   title,
   date,
   location,
   image,
-  className = "w-auto h-full",
+  className = "h-full",
 }) {
-  const { error } = useImage(image);
-
+  const [hasError, setHasError] = useState(false);
   const imageClassName = `${className}`;
 
-  const srcSet = `${image} 1200w,
-                  ${image}?w=200 200w,
-                  ${image}?w=400 400w, 
-                  ${image}?w=800 800w, 
-                  ${image}?w=1024 1024w`;
-
-  if (error || !image) {
+  if (!image || hasError) {
     return (
       <div className={imageClassName}>
         <ImgDefault title={title} date={date} location={location} />
@@ -50,33 +24,23 @@ function ImageComponent({
   }
 
   return (
-    <>
-      <Head>
-        <link
-          rel="prefetch"
-          href={image}
-          as="image"
-          crossOrigin="true"
-          imagesrcset={srcSet}
-          imagesizes="100vw"
-        />
-      </Head>
-      <div
-        className={imageClassName}
-        style={{ position: "relative", width: "auto", height: "300px" }}
-      >
-        <NextImage
-          className="object-cover"
-          src={image}
-          srcSet={srcSet}
-          layout="fill"
-          objectFit="contain"
-          alt={title}
-          placeholder="blur"
-          blurDataURL={blurDataURL}
-        />
-      </div>
-    </>
+    <div
+      className={imageClassName}
+      style={{ position: "relative", width: "100%", height: "41vh" }}
+    >
+      <NextImage
+        className="object-cover"
+        src={image}
+        layout="fill"
+        objectFit="contain"
+        alt={title}
+        placeholder="blur"
+        blurDataURL={solidColorPlaceholder}
+        loading="lazy"
+        onError={() => setHasError(true)}
+        quality={75}
+      />
+    </div>
   );
 }
 
