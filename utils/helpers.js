@@ -115,6 +115,7 @@ export const getFormattedDate = (start, end) => {
       : startDateConverted,
     isLessThanFiveDays: isLessThanFiveDays(startDate),
     isFullDayEvent,
+    isMultipleDays,
   };
 };
 
