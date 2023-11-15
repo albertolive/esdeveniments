@@ -204,7 +204,6 @@ function Events({ props, loadMore = true }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    debugger;
   }, [place, byDate, category, searchTerm, userLocation, distance]);
 
   // Error handling
