@@ -29,7 +29,7 @@ function ImageComponent({
   date,
   location,
   image,
-  className = "h-full",
+  className = "w-auto h-full",
 }) {
   const { error } = useImage(image);
 
@@ -63,7 +63,7 @@ function ImageComponent({
       </Head>
       <div
         className={imageClassName}
-        style={{ position: "relative", width: "100%", height: "41vh" }}
+        style={{ position: "relative", width: "auto", height: "300px" }}
       >
         <NextImage
           className="object-cover"
