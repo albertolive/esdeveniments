@@ -202,6 +202,11 @@ function Events({ props, loadMore = true }) {
     }
   }, [byDateProps]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    debugger;
+  }, [place, byDate, category, searchTerm, userLocation, distance]);
+
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
 
