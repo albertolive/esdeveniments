@@ -8,7 +8,7 @@ import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import InformationCircleIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
-import logo from "@public/static/images/logo-esdeveniments.png";
+import logo from "@public/static/images/logo-esdeveniments.webp";
 import { useRouter } from "next/router";
 
 const navigation = [
