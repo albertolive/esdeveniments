@@ -317,7 +317,7 @@ function Events({ props, loadMore = true }) {
             </div>
           )}
         </div>
-        {((noEventsFound && !isLoading) || filteredEvents.length === 0) && (
+        {(noEventsFound || filteredEvents.length === 0) && !isLoading && (
           <NoEventsFound title={notFoundText} />
         )}
         {isLoading && !isLoadingMore ? (
