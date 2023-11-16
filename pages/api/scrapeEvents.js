@@ -53,14 +53,18 @@ function convertToRSSDate(dateString, dateRegex) {
       return null;
     }
 
-    const date = DateTime.fromObject({
-      day: day,
-      month: parseInt(monthNumber),
-      year: year,
-      hour: hour,
-      minute: minute,
-      zone: "Europe/Madrid",
-    });
+    const date = DateTime.fromObject(
+      {
+        day: day,
+        month: parseInt(monthNumber),
+        year: year,
+        hour: hour,
+        minute: minute,
+      },
+      {
+        zone: "Europe/Madrid",
+      }
+    );
 
     return date;
   }
@@ -172,6 +176,8 @@ export default async function handler(req, res) {
     const rssXml = await createEventRss(city);
     res.status(200).send(rssXml);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create RSS feed" });
+    res
+      .status(500)
+      .json({ error: "Failed to create RSS feed", details: error });
   }
 }

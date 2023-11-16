@@ -4,6 +4,7 @@ import { google } from "googleapis";
 import { load } from "cheerio";
 import Bottleneck from "bottleneck";
 import { DateTime } from "luxon";
+import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
 
 const debugMode = false;
@@ -100,14 +101,18 @@ async function fetchRSSFeed(rssFeed, town) {
         data,
       });
     } catch (err) {
-      console.error(`An error occurred while caching the RSS feed: ${err}`);
+      console.error(
+        `An error occurred while caching the RSS feed of ${town}: ${err}`
+      );
       throw new Error(`Failed to cache RSS feed: ${err}`);
     }
 
     console.log("Returning new RSS data");
     return data;
   } catch (err) {
-    console.error(`An error occurred while fetching the RSS feed: ${err}`);
+    console.error(
+      `An error occurred while fetching the RSS feed of ${town}: ${err}`
+    );
     // Throw a custom error
     throw new RSSFeedError(`Failed to fetch RSS feed: ${err}`);
   }
@@ -505,6 +510,7 @@ export default async function handler(req, res) {
     res.status(200).json(newItems);
   } catch (err) {
     console.error(err);
+    Sentry.captureException(err);
     if (err instanceof RSSFeedError) {
       // Handle custom RSS feed error
       res.status(500).json({

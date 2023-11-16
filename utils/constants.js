@@ -216,9 +216,10 @@ export const CITIES_DATA = new Map([
           "la-garriga",
           {
             label: "La Garriga",
-            rssFeed: `${siteUrl}/api/scrapeEvents?city=granollers`,
-            descriptionSelector: ".body-text",
-            imageSelector: ".foto a",
+            rssFeed: "http://lagarriga.webmunicipal.diba.cat/rss/12/0",
+            descriptionSelector: ".text-maquetat",
+            imageSelector: ".justified-gallery",
+            locationSelector: ".td_justificat",
             postalCode: "08530",
             coords: { lat: 41.680381, lng: 2.28334 },
           },
