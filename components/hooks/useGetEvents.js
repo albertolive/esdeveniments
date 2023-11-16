@@ -20,8 +20,9 @@ export const useGetEvents = ({
     refreshInterval: refreshInterval ? 300000 : 0,
     revalidateOnFocus: false,
     revalidateOnReconnect: true,
-    refreshWhenOffline: true,
+    refreshWhenOffline: false,
     suspense: true,
     keepPreviousData: true,
+    revalidateOnMount: false,
   });
 };
