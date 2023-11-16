@@ -46,7 +46,6 @@
     "react-select": "^5.7.0",
     "react-social-icons": "^6.3.0",
     "rss": "^1.2.2",
-    "seedrandom": "^3.0.5",
     "swr": "^2.0.3",
     "tailwindcss": "^3.2.6"
   },
