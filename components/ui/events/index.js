@@ -121,12 +121,12 @@ function Events({ props, loadMore = true }) {
 
   useEffect(() => {
     // If the timeout has passed and the events data is still not available, show the loading state
-    if (isTimeout && events.length === 0) {
+    if (isTimeout && events.length === 0 && !noEventsFound) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
     }
-  }, [isTimeout, events]);
+  }, [isTimeout, events, noEventsFound]);
 
   useEffect(() => {
     const storedCategory = window.localStorage.getItem("category");
@@ -317,7 +317,9 @@ function Events({ props, loadMore = true }) {
             </div>
           )}
         </div>
-        {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
+        {((noEventsFound && !isLoading) || filteredEvents.length === 0) && (
+          <NoEventsFound title={notFoundText} />
+        )}
         {isLoading && !isLoadingMore ? (
           <div>
             {[...Array(10)].map((_, i) => (
