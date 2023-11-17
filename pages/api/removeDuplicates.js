@@ -18,9 +18,18 @@ const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
 async function deleteEvent(eventId, summary) {
   try {
     const authToken = await auth.getClient();
+
+    // Calculate the date one week before and one week after today
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const oneWeekLater = new Date();
+    oneWeekLater.setDate(oneWeekLater.getDate() + 7);
+
     await calendar.events.delete({
       auth: authToken,
       calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
+      timeMin: oneWeekAgo.toISOString(),
+      timeMax: oneWeekLater.toISOString(),
       eventId: eventId,
     });
     console.log(`Deleted event with ID: ${eventId}, Summary: ${summary}`);
@@ -37,7 +46,7 @@ async function deleteEvent(eventId, summary) {
   }
 }
 
-export default async function handler(req, res) {
+export default async function handler(_, res) {
   try {
     const authToken = await auth.getClient();
 
