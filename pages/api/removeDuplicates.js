@@ -20,10 +20,10 @@ async function deleteEvent(eventId, summary) {
     const authToken = await auth.getClient();
 
     // Calculate the date one week before and one week after today
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const oneWeekLater = new Date();
-    oneWeekLater.setDate(oneWeekLater.getDate() + 7);
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+    const twoWeeksLater = new Date();
+    twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
 
     await calendar.events.delete({
       auth: authToken,
