@@ -11,7 +11,7 @@ const debugMode = false;
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
-const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
+const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
 
 const calendar = google.calendar("v3");
 const auth = new google.auth.GoogleAuth({
@@ -104,7 +104,7 @@ async function fetchRSSFeed(rssFeed, town) {
       console.error(
         `An error occurred while caching the RSS feed of ${town}: ${err}`
       );
-      Sentry.captureException(
+      captureException(
         new Error(`Failed to fetch RSS feed for ${town}: ${err.message}`)
       );
       throw new Error(`Failed to cache RSS feed: ${err}`);
@@ -127,7 +127,7 @@ async function getProcessedItems(town) {
     processedItems = await kv.get(`${env}_${town}_${PROCESSED_ITEMS_KEY}`);
   } catch (err) {
     console.error(`An error occurred while getting processed items: ${err}`);
-    Sentry.captureException(
+    captureException(
       new Error(`Failed to get processed items for ${town}: ${err.message}`)
     );
     throw new Error(`Failed to get processed items: ${err}`);
@@ -141,7 +141,7 @@ async function setProcessedItems(processedItems, town) {
     await kv.set(`${env}_${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
   } catch (err) {
     console.error(`An error occurred while setting processed items: ${err}`);
-    Sentry.captureException(
+    captureException(
       new Error(`Failed to set processed items for ${town}: ${err.message}`)
     );
     throw new Error(`Failed to set processed items: ${err}`);
@@ -248,7 +248,7 @@ async function scrapeDescription(
     <div>${appendUrl}</div>`;
   } catch (error) {
     console.error("Error occurred during scraping description:", url);
-    Sentry.captureException(
+    captureException(
       new Error(
         `Error occurred during scraping description for ${url}: ${error.message}`
       )
@@ -301,7 +301,7 @@ async function scrapeLocation(url, location, locationSelector) {
     return locationElement ? locationElement.trim() : location;
   } catch (error) {
     console.error("Error occurred during scraping location:", url);
-    Sentry.captureException(
+    captureException(
       new Error(
         `Error occurred during scraping location for ${url}: ${error.message}`
       )
@@ -318,7 +318,8 @@ async function insertItemToCalendar(
   descriptionSelector,
   imageSelector,
   locationSelector,
-  processedItems
+  processedItems,
+  authToken
 ) {
   if (!item) return;
   const {
@@ -373,8 +374,6 @@ async function insertItemToCalendar(
 
   try {
     if (!debugMode) {
-      const authToken = await auth.getClient();
-
       await calendar.events.insert({
         auth: authToken,
         calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
@@ -393,7 +392,7 @@ async function insertItemToCalendar(
     }
   } catch (error) {
     console.error("Error inserting item to calendar:", error);
-    Sentry.captureException(
+    captureException(
       new Error(
         `Error inserting item to calendar for ${town}: ${error.message}`
       )
@@ -412,7 +411,8 @@ async function insertItemToCalendarWithRetry(
   descriptionSelector,
   imageSelector,
   locationSelector,
-  processedItems
+  processedItems,
+  authToken
 ) {
   if (!item) return null;
 
@@ -429,12 +429,13 @@ async function insertItemToCalendarWithRetry(
         descriptionSelector,
         imageSelector,
         locationSelector,
-        processedItems
+        processedItems,
+        authToken
       );
       return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
-      Sentry.captureException(
+      captureException(
         new Error(
           `Error inserting item to calendar for ${town} after ${retries} retries: ${error.message}`
         )
@@ -450,6 +451,10 @@ async function insertItemToCalendarWithRetry(
 }
 
 export default async function handler(req, res) {
+  const startTime = Date.now();
+  const TIMEOUT_LIMIT = 10000;
+  const SAFETY_MARGIN = 1000;
+
   try {
     const { region, town } = req.query;
 
@@ -513,8 +518,21 @@ export default async function handler(req, res) {
       return;
     }
 
+    const authToken = await auth.getClient();
+    let isTimeout = false;
+
     // Insert items in GCal
     for (const item of newItems) {
+      // Check the elapsed time
+      const elapsedTime = Date.now() - startTime;
+      if (elapsedTime > TIMEOUT_LIMIT - SAFETY_MARGIN) {
+        console.log(
+          "Approaching timeout limit, stopping processing of new items"
+        );
+        isTimeout = true;
+        break; // Stop processing new items
+      }
+
       await limiter.schedule(async () => {
         try {
           await insertItemToCalendarWithRetry(
@@ -525,7 +543,8 @@ export default async function handler(req, res) {
             descriptionSelector,
             imageSelector,
             locationSelector,
-            processedItems
+            processedItems,
+            authToken
           );
           return;
         } catch (error) {
@@ -534,12 +553,17 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log(`Finished processing items for ${town}`);
+    if (!isTimeout) {
+      console.log(`Finished processing items for ${town}`);
+    } else {
+      console.log(`Stopped processing items for ${town} due to timeout`);
+    }
+
     // Send the response
     res.status(200).json(newItems);
   } catch (err) {
     console.error(err);
-    Sentry.captureException(err);
+    captureException(err);
     if (err instanceof RSSFeedError) {
       // Handle custom RSS feed error
       res.status(500).json({
