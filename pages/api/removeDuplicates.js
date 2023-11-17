@@ -15,21 +15,11 @@ const auth = new google.auth.GoogleAuth({
 
 const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
 
-async function deleteEvent(eventId, summary) {
+async function deleteEvent(authToken, eventId, summary) {
   try {
-    const authToken = await auth.getClient();
-
-    // Calculate the date one week before and one week after today
-    const twoWeeksAgo = new Date();
-    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-    const twoWeeksLater = new Date();
-    twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
-
     await calendar.events.delete({
       auth: authToken,
       calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
-      timeMin: oneWeekAgo.toISOString(),
-      timeMax: oneWeekLater.toISOString(),
       eventId: eventId,
     });
     console.log(`Deleted event with ID: ${eventId}, Summary: ${summary}`);
@@ -50,9 +40,17 @@ export default async function handler(_, res) {
   try {
     const authToken = await auth.getClient();
 
+    // Calculate the date one week before and one week after today
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+    const twoWeeksLater = new Date();
+    twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
+
     // Fetch all events from the calendar
     const { data } = await calendar.events.list({
       auth: authToken,
+      timeMin: twoWeeksAgo.toISOString(),
+      timeMax: twoWeeksLater.toISOString(),
       calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
     });
 
@@ -101,7 +99,11 @@ export default async function handler(_, res) {
       // Delete all but the most recent duplicate event
       for (let i = 1; i < duplicateEvents.length; i++) {
         await limiter.schedule(() =>
-          deleteEvent(duplicateEvents[i].id, duplicateEvents[i].summary)
+          deleteEvent(
+            authToken,
+            duplicateEvents[i].id,
+            duplicateEvents[i].summary
+          )
         );
         duplicatesDeleted = true;
       }
