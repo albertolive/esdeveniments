@@ -314,9 +314,9 @@ export default function Event(props) {
               Aquest esdeveniment ha finalitzat
             </p>
           )}
-          <div className="px-3 h-full min-h-[325px] lg:min-h-[100px]">
+          {/* <div className="px-3 h-full min-h-[325px] lg:min-h-[100px]">
             <AdArticle slot="1510301521" />
-          </div>
+          </div> */}
           {imageUploaded && (
             <div className="w-full">
               <a
