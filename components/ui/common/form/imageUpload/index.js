@@ -42,16 +42,13 @@ export default function ImageUploader({ value, onUpload, progress }) {
 
   return (
     <div className="w-full text-blackCorp">
-      <label
-        htmlFor="first-name"
-        className="text-blackCorp"
-      >
+      <label htmlFor="first-name" className="text-blackCorp">
         Imatge *
       </label>
 
       <div
         className={`m-2 p-4 border border-bColor rounded-xl cursor-pointer ${
-          dragOver ? "border-green-600" : "border-gray-300"
+          dragOver ? "border-primary" : "border-bColor"
         }`}
         onDragOver={(e) => {
           e.preventDefault();
@@ -89,11 +86,11 @@ export default function ImageUploader({ value, onUpload, progress }) {
         <div className="flex justigy-center items-start p-4">
           <button
             onClick={() => setImgData(null)}
-            className=" bg-white rounded-full p-1 hover:bg-red-500"
+            className=" bg-whiteCorp rounded-full p-1 hover:bg-primary"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-blackCorp hover:text-white"
+              className="h-6 w-6 text-blackCorp hover:text-whiteCorp"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
