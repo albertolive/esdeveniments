@@ -104,6 +104,9 @@ async function fetchRSSFeed(rssFeed, town) {
       console.error(
         `An error occurred while caching the RSS feed of ${town}: ${err}`
       );
+      Sentry.captureException(
+        new Error(`Failed to fetch RSS feed for ${town}: ${err.message}`)
+      );
       throw new Error(`Failed to cache RSS feed: ${err}`);
     }
 
@@ -124,6 +127,9 @@ async function getProcessedItems(town) {
     processedItems = await kv.get(`${env}_${town}_${PROCESSED_ITEMS_KEY}`);
   } catch (err) {
     console.error(`An error occurred while getting processed items: ${err}`);
+    Sentry.captureException(
+      new Error(`Failed to get processed items for ${town}: ${err.message}`)
+    );
     throw new Error(`Failed to get processed items: ${err}`);
   }
   return processedItems ? new Map(processedItems) : new Map();
@@ -135,6 +141,9 @@ async function setProcessedItems(processedItems, town) {
     await kv.set(`${env}_${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
   } catch (err) {
     console.error(`An error occurred while setting processed items: ${err}`);
+    Sentry.captureException(
+      new Error(`Failed to set processed items for ${town}: ${err.message}`)
+    );
     throw new Error(`Failed to set processed items: ${err}`);
   }
 }
@@ -239,6 +248,11 @@ async function scrapeDescription(
     <div>${appendUrl}</div>`;
   } catch (error) {
     console.error("Error occurred during scraping description:", url);
+    Sentry.captureException(
+      new Error(
+        `Error occurred during scraping description for ${url}: ${error.message}`
+      )
+    );
     throw error;
   }
 }
@@ -287,6 +301,11 @@ async function scrapeLocation(url, location, locationSelector) {
     return locationElement ? locationElement.trim() : location;
   } catch (error) {
     console.error("Error occurred during scraping location:", url);
+    Sentry.captureException(
+      new Error(
+        `Error occurred during scraping location for ${url}: ${error.message}`
+      )
+    );
     throw error;
   }
 }
@@ -374,6 +393,11 @@ async function insertItemToCalendar(
     }
   } catch (error) {
     console.error("Error inserting item to calendar:", error);
+    Sentry.captureException(
+      new Error(
+        `Error inserting item to calendar for ${town}: ${error.message}`
+      )
+    );
     throw error;
   }
 
@@ -410,6 +434,11 @@ async function insertItemToCalendarWithRetry(
       return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
+      Sentry.captureException(
+        new Error(
+          `Error inserting item to calendar for ${town} after ${retries} retries: ${error.message}`
+        )
+      );
       retries++;
       // Implement a delay before retrying (exponential backoff)
       await delay(Math.pow(2, retries) * 1000); // 2 seconds, 4 seconds, 8 seconds, etc.
