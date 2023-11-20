@@ -6,7 +6,7 @@ import XIcon from "@heroicons/react/outline/XIcon";
 import PlusSmIcon from "@heroicons/react/outline/PlusSmIcon";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import InformationCircleIcon from "@heroicons/react/outline/InformationCircleIcon";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-esdeveniments.png";
 import { useRouter } from "next/router";

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/legacy/image";
 import eventNotFound from "@public/static/images/error_404_page_not_found.png";
 import Link from "next/link";
 

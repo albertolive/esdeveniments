@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { getFormattedDate } from "@utils/helpers";
 import { normalizeWeather } from "@utils/normalize";
 import { useGetWeather } from "@components/hooks/useGetWeather";
