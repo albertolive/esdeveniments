@@ -36,7 +36,7 @@ function Card({ event, isLoading }) {
   const subLocation = truncateString(event.subLocation || "", 45);
 
   return (
-    <Link href={`/e/${event.slug}`} passHref prefetch={false}>
+    <Link href={`/e/${event.slug}`} passHref prefetch={false} legacyBehavior>
       <div
         className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10"
         onMouseEnter={handlePrefetch}
@@ -51,7 +51,7 @@ function Card({ event, isLoading }) {
           {/* Title */}
           <h2 className="w-10/12 uppercase text-blackCorp italic">
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
-              <a>{title}</a>
+              {title}
             </Link>
           </h2>
           {/* WeatherIcon */}
@@ -61,8 +61,8 @@ function Card({ event, isLoading }) {
                 <NextImage
                   alt={description}
                   src={icon}
-                  width="30px"
-                  height="30px"
+                  width="30"
+                  height="30"
                 />
               </div>
             )}

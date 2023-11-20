@@ -27,13 +27,14 @@ export default function Notify() {
             A Cardedeu sempre diem que som un poble ple de cultura. És realment
             així? Descobreix-ho a:{" "}
             <span className="text-md ">
-              <Link href={"/2022-en-xifres"} prefetch={false}>
-                <a
-                  className="text-md font-bold text-[#ECB84A] hover:underline"
-                  onClick={sendGA}
-                >
+              <Link
+                href={"/2022-en-xifres"}
+                prefetch={false}
+                className="text-md font-bold text-[#ECB84A] hover:underline"
+                onClick={sendGA}>
+                
                   2022 en xifres
-                </a>
+                
               </Link>
             </span>
           </h3>

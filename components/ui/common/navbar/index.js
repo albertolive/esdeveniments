@@ -85,17 +85,17 @@ export default function Navbar() {
                   onClick={handleLogoClick}
                 >
                   <Link href="/">
-                    <a>
-                      <Image
-                        src={logo}
-                        className="block cursor-pointer bg-whiteCorp py-2 px-4"
-                        alt="Logo Esdeveniments.cat"
-                        width={168}
-                        height={20}
-                        layout="fixed"
-                        priority
-                      />
-                    </a>
+
+                    <Image
+                      src={logo}
+                      className="block cursor-pointer bg-whiteCorp py-2 px-4"
+                      alt="Logo Esdeveniments.cat"
+                      width={168}
+                      height={20}
+                      layout="fixed"
+                      priority
+                    />
+
                   </Link>
                 </div>
                 {/* MenuIcon */}
