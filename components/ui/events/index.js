@@ -44,6 +44,9 @@ function Events({ props, loadMore = true }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(true); // Set initial loading state to false
+  const [isTimeout, setIsTimeout] = useState(false); // Set initial timeout state to false
+
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const categoryQuery = category ? CATEGORIES[category] : "";
@@ -51,7 +54,6 @@ function Events({ props, loadMore = true }) {
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
-    isLoading,
   } = useGetEvents({
     props,
     pageIndex: dateFunctions[byDate] || "all",
@@ -102,6 +104,30 @@ function Events({ props, loadMore = true }) {
   };
 
   // Effects
+
+  useEffect(() => {
+    // Set a timeout to show the loading state after a delay
+    const timeoutId = setTimeout(() => setIsTimeout(true), 1000); // 1 second delay
+
+    // If events data is available before the timeout, clear the timeout and don't show the loading state
+    if (events.length > 0) {
+      clearTimeout(timeoutId);
+      setIsTimeout(false);
+    }
+
+    // Clean up the timeout when the component unmounts
+    return () => clearTimeout(timeoutId);
+  }, [events]);
+
+  useEffect(() => {
+    // If the timeout has passed and the events data is still not available, show the loading state
+    if (isTimeout && events.length === 0 && !noEventsFound) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [isTimeout, events, noEventsFound]);
+
   useEffect(() => {
     const storedCategory = window.localStorage.getItem("category");
     const storedPlace = window.localStorage.getItem("place");
@@ -295,7 +321,9 @@ function Events({ props, loadMore = true }) {
             )}
           </div>
         </div>
-        {noEventsFound && !isLoading && <NoEventsFound title={notFoundText} />}
+        {(noEventsFound || filteredEvents.length === 0) && !isLoading && (
+          <NoEventsFound title={notFoundText} />
+        )}
         {isLoading && !isLoadingMore ? (
           <div>
             {[...Array(10)].map((_, i) => (

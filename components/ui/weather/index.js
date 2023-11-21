@@ -20,8 +20,12 @@ export default memo(function Weather({ startDate }) {
           <Image
             alt={weatherDescription}
             src={icon}
-            width="25px"
-            height="25px"
+            width="25"
+            height="25"
+            style={{
+              maxWidth: "100%",
+              height: "auto",
+            }}
           />
         </div>
       )}{" "}

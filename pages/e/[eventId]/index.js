@@ -249,18 +249,20 @@ export default function Event(props) {
       <nav className="flex w-full" aria-label="Breadcrumb">
         <ol className="flex justify-start items-center gap-1 w-full px-3 xs:px-4 xs:max-w-full sm:px-0 sm:max-w-[576px] md:px-10 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
           <li className="flex justify-center items-end gap-1">
-            <Link href="/" prefetch={false}>
-              <a className="flex justify-center items-center gap-2 hover:text-primary">
-                <svg
-                  className=" w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                </svg>
-                <p className="font-semibold font-barlow">Agenda</p>
-              </a>
+            <Link
+              href="/"
+              prefetch={false}
+              className="flex justify-center items-center gap-2 hover:text-primary"
+            >
+              <svg
+                className=" w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+              </svg>
+              <p className="font-semibold font-barlow">Agenda</p>
             </Link>
             <div>
               <svg
@@ -314,11 +316,11 @@ export default function Event(props) {
               Aquest esdeveniment ha finalitzat
             </p>
           )}
-          <div className="px-3 h-full min-h-[325px] lg:min-h-[100px]">
-            <AdArticle slot="1510301521" />
-          </div>
+          {/* <div className="px-3 h-full min-h-[325px] lg:min-h-[100px]">
+          <AdArticle slot="1510301521" />
+        </div> */}
           {imageUploaded && (
-            <div className="w-full">
+            <div className="w-full h-full relative">
               <a
                 href={imageUploaded}
                 className="pointer"
@@ -328,8 +330,6 @@ export default function Event(props) {
                 <Image
                   alt={title}
                   title={title}
-                  height="100%"
-                  width="100%"
                   image={imageUploaded}
                   className="h-full object-center object-cover"
                 />
@@ -388,13 +388,13 @@ export default function Event(props) {
                 </div>
               )}
               {/* {tag && (
-                <dl className="mt-6 space-y-10">
-                  <div>
-                    <dt className="text-md font-bold text-gray-900">Tags</dt>
-                    <dd className="mt-3 text-sm text-gray-500">{tag}</dd>
-                  </div>
-                </dl>
-              )} */}
+              <dl className="mt-6 space-y-10">
+                <div>
+                  <dt className="text-md font-bold text-gray-900">Tags</dt>
+                  <dd className="mt-3 text-sm text-gray-500">{tag}</dd>
+                </div>
+              </dl>
+            )} */}
               <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
                 <AdArticle slot="9643657007" />
               </div>
