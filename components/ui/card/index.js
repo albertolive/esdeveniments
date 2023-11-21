@@ -2,7 +2,7 @@ import { memo } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import NextImage from "next/legacy/image";
+import NextImage from "next/image";
 import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
@@ -63,7 +63,10 @@ function Card({ event, isLoading }) {
                   src={icon}
                   width="30"
                   height="30"
-                />
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto"
+                  }} />
               </div>
             )}
           </div>

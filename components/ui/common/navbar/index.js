@@ -6,7 +6,7 @@ import XIcon from "@heroicons/react/outline/XIcon";
 import PlusSmIcon from "@heroicons/react/outline/PlusSmIcon";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import InformationCircleIcon from "@heroicons/react/outline/InformationCircleIcon";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-esdeveniments.png";
 import { useRouter } from "next/router";
@@ -92,9 +92,7 @@ export default function Navbar() {
                       alt="Logo Esdeveniments.cat"
                       width={168}
                       height={20}
-                      layout="fixed"
-                      priority
-                    />
+                      priority />
 
                   </Link>
                 </div>

@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from "next/image";
 import eventNotFound from "@public/static/images/error_404_page_not_found.png";
 import Link from "next/link";
 
@@ -10,8 +10,10 @@ export default function NoEventFound() {
           title="Esdeveniment no trobat - Esdeveniments.cat"
           src={eventNotFound}
           alt="Esdeveniment no trobat - Esdeveniments.cat"
-          layout="intrinsic"
-        />
+          style={{
+            maxWidth: "100%",
+            height: "auto"
+          }} />
       </div>
       <div className="flex flex-col h-full justify-center items-center text-center mx-4">
         <div className="reset-this">

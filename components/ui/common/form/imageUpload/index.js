@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { useRef, useState } from "react";
 import PlusSmIcon from "@heroicons/react/outline/PlusSmIcon";
 
@@ -105,10 +105,14 @@ export default function ImageUploader({ value, onUpload, progress }) {
           </button>
           <Image
             alt="Imatge"
-            height="100%"
-            width="100%"
+            height="100"
+            width="100"
             className="object-contain"
             src={imgData}
+            style={{
+              maxWidth: "100%",
+              height: "auto",
+            }}
           />
         </div>
       )}

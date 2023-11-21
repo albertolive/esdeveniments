@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import NextImage from "next/legacy/image";
+import NextImage from "next/image";
 import ImgDefault from "@components/ui/imgDefault";
 
 const solidColorPlaceholder =
@@ -31,14 +31,17 @@ function ImageComponent({
       <NextImage
         className="object-cover"
         src={image}
-        layout="fill"
-        objectFit="contain"
         alt={title}
         placeholder="blur"
         blurDataURL={solidColorPlaceholder}
         loading="lazy"
         onError={() => setHasError(true)}
         quality={75}
+        fill
+        sizes="100vw"
+        style={{
+          objectFit: "contain",
+        }}
       />
     </div>
   );
