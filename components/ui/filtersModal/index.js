@@ -48,88 +48,89 @@ function FiltersModal({
     [handleStateChange, setCategory]
   );
 
+  
+  const handlePlaceChange = useCallback(
+    ({ value }) => {
+      if (!value) window.localStorage.removeItem("place");
+      
+      setPlace(value);
+      setSelectedOption(value);
+      
+      localStorage.removeItem("currentPage");
+      localStorage.removeItem("scrollPosition");
+    },
+    [setPlace, setSelectedOption]
+    );
+    
+    const handleUserLocation = useCallback(
+      (value) => {
+        if (userLocation) {
+          handleStateChange(setDistance, value);
+          return;
+        }
+        
+        setUserLocationLoading(true);
+        setUserLocationError(null);
+        
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              const location = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              };
+              
+              setUserLocation(location);
+              setUserLocationLoading(false);
+              handleStateChange(setDistance, value);
+            },
+            function (error) {
+              console.log("Error occurred. Error code: " + error.code);
+              switch (error.code) {
+                case 1:
+                  setUserLocationError(
+                    "Permís denegat. L'usuari no ha permès la sol·licitud de geolocalització."
+                    );
+                    break;
+                    case 2:
+                      setUserLocationError(
+                        "Posició no disponible. No s'ha pogut obtenir la informació de la ubicació."
+                        );
+                        break;
+                        case 3:
+                          setUserLocationError(
+                            "Temps d'espera esgotat. La sol·licitud per obtenir la ubicació de l'usuari ha superat el temps d'espera."
+                );
+                break;
+              default:
+                setUserLocationError("S'ha produït un error desconegut.");
+              }
+              setUserLocationLoading(false);
+            }
+            );
+          } else {
+            console.log("Geolocation is not supported by this browser.");
+            setUserLocationError(
+              "La geolocalització no és compatible amb aquest navegador."
+              );
+              setUserLocationLoading(false);
+            }
+          },
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+          [
+            setUserLocation,
+            setUserLocationLoading,
+            setUserLocationError,
+            handleStateChange,
+            setDistance,
+          ]
+  );
+  
   const handleDistanceChange = useCallback(
     (value) => {
       handleUserLocation(value);
     },
     [handleUserLocation]
-  );
-
-  const handlePlaceChange = useCallback(
-    ({ value }) => {
-      if (!value) window.localStorage.removeItem("place");
-
-      setPlace(value);
-      setSelectedOption(value);
-
-      localStorage.removeItem("currentPage");
-      localStorage.removeItem("scrollPosition");
-    },
-    [setPlace, setSelectedOption]
-  );
-
-  const handleUserLocation = useCallback(
-    (value) => {
-      if (userLocation) {
-        handleStateChange(setDistance, value);
-        return;
-      }
-
-      setUserLocationLoading(true);
-      setUserLocationError(null);
-
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          function (position) {
-            const location = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-
-            setUserLocation(location);
-            setUserLocationLoading(false);
-            handleStateChange(setDistance, value);
-          },
-          function (error) {
-            console.log("Error occurred. Error code: " + error.code);
-            switch (error.code) {
-              case 1:
-                setUserLocationError(
-                  "Permís denegat. L'usuari no ha permès la sol·licitud de geolocalització."
-                );
-                break;
-              case 2:
-                setUserLocationError(
-                  "Posició no disponible. No s'ha pogut obtenir la informació de la ubicació."
-                );
-                break;
-              case 3:
-                setUserLocationError(
-                  "Temps d'espera esgotat. La sol·licitud per obtenir la ubicació de l'usuari ha superat el temps d'espera."
-                );
-                break;
-              default:
-                setUserLocationError("S'ha produït un error desconegut.");
-            }
-            setUserLocationLoading(false);
-          }
-        );
-      } else {
-        console.log("Geolocation is not supported by this browser.");
-        setUserLocationError(
-          "La geolocalització no és compatible amb aquest navegador."
-        );
-        setUserLocationLoading(false);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      setUserLocation,
-      setUserLocationLoading,
-      setUserLocationError,
-      handleStateChange,
-      setDistance,
-    ]
   );
 
   const disablePlace =

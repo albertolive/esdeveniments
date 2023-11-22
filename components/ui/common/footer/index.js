@@ -25,7 +25,7 @@ export default function Footer() {
           hola@esdeveniments.cat
         </a>
         <a>© {new Date().getFullYear()} Esdeveniments.cat</a>
-        <div className="pt-4">
+        <div className="">
           {navigation.map((item) => (
             <ActiveLink href={item.href} key={item.name}>
               <a className="font-medium px-4">{item.name}</a>

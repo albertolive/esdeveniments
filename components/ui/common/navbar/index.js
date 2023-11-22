@@ -3,9 +3,9 @@ import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
-import PlusSmIcon from "@heroicons/react/outline/PlusSmIcon";
+import PlusSmIcon from "@heroicons/react/outline/UploadIcon";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
-import InformationCircleIcon from "@heroicons/react/outline/InformationCircleIcon";
+import Users from "@heroicons/react/outline/UsersIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-esdeveniments.webp";
@@ -88,7 +88,7 @@ export default function Navbar() {
 
                     <Image
                       src={logo}
-                      className="block cursor-pointer bg-whiteCorp py-2 px-4"
+                      className="bg-whiteCorp flex justify-center items-center cursor-pointer"
                       alt="Logo Esdeveniments.cat"
                       width={168}
                       height={20}
@@ -97,13 +97,13 @@ export default function Navbar() {
                   </Link>
                 </div>
                 {/* MenuIcon */}
-                <div className="flex items-center md:hidden">
+                <div className="flex justify-center items-center md:hidden">
                   <Disclosure.Button className="inline-flex items-center justify-center py-2 px-3 focus:outline-none">
                     {/* <span className="sr-only">Obrir menú principal</span> */}
                     {open ? (
-                      <XIcon className="h-6 w-6" aria-hidden="true" />
+                      <XIcon className="h-5 w-5" aria-hidden="true" />
                     ) : (
-                      <MenuIcon className="h-6 w-6" aria-hidden="true" />
+                      <MenuIcon className="h-5 w-5" aria-hidden="true" />
                     )}
                   </Disclosure.Button>
                 </div>
@@ -126,7 +126,7 @@ export default function Navbar() {
               </div>
               {/* SecondBar - Search&Share&MenuIcon */}
               <div
-                className="fixed h-content bottom-0 left-0 right-0 p-2 bg-whiteCorp flex justify-evenly items-center gap-x-16
+                className="fixed h-content bottom-0 left-0 right-0 py-2 bg-whiteCorp flex justify-evenly items-center gap-16
               md:hidden
               "
               >
@@ -165,7 +165,7 @@ export default function Navbar() {
                       type="button"
                       className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl"
                     >
-                      <InformationCircleIcon className="h-6 w-6" />
+                      <Users className="h-6 w-6" />
                     </button>
                   </ActiveLink>
                 </div>

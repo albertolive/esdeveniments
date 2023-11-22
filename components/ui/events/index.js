@@ -14,7 +14,7 @@ import { dateFunctions } from "@utils/constants";
 import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
-import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
+import PlusIcon from "@heroicons/react/outline/PlusIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
@@ -298,7 +298,7 @@ function Events({ props, loadMore = true }) {
               {open ? (
                 <XIcon className="h-4 w-4" />
               ) : (
-                <ChevronDownIcon className="h-4 w-4" />
+                <PlusIcon className="h-4 w-4" />
               )}
             </button>
             {open && (
@@ -340,15 +340,16 @@ function Events({ props, loadMore = true }) {
           loadMore &&
           filteredEvents.length > 7 &&
           !isLoadingMore && (
-            <div className=" text-center py-10">
+            <div className="h-12 flex justify-center items-center text-center py-10">
               <button
                 type="button"
-                className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold"
+                className="flex justify-center items-center p-2 hover:p-3 border border-bColor rounded-3xl ease-in-out duration-300 focus:outline-none"
                 onClick={handleLoadMore}
               >
-                <span className="text-white text-base font-semibold px-4">
-                  Carregar més
-                </span>
+                <PlusIcon
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                />
               </button>
             </div>
           )}
