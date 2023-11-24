@@ -147,26 +147,26 @@ function Events({ props, loadMore = true }) {
   useEffect(() => {
     if (place) {
       window.localStorage.setItem("place", place);
-      sendEventToGA("filter", "place", place);
+      sendEventToGA("Place", place);
     }
   }, [place]);
 
   useEffect(() => {
     if (byDate) {
       window.localStorage.setItem("byDate", byDate);
-      sendEventToGA("filter", "byDate", byDate);
+      sendEventToGA("ByDate", byDate);
     }
   }, [byDate]);
 
   useEffect(() => {
     window.localStorage.setItem("category", category);
-    category && sendEventToGA("filter", "category", category);
+    category && sendEventToGA("Category", category);
   }, [category]);
 
   useEffect(() => {
     window.localStorage.setItem("distance", distance);
     if (typeof distance === "number") {
-      sendEventToGA("filter", "distance", distance);
+      sendEventToGA("Distance", distance);
     }
   }, [distance]);
 

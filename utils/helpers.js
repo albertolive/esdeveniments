@@ -424,13 +424,12 @@ export function generateTownUrls() {
   return urls;
 }
 
-export const sendEventToGA = (eventCategory, eventLabel, value) => {
+export const sendEventToGA = (filterName, filterValue) => {
   if (typeof window !== "undefined") {
     window.gtag &&
-      window.gtag("event", eventCategory, {
-        event_category: eventCategory,
-        event_label: eventLabel,
-        value: value,
+      window.gtag("event", "filter_used", {
+        filter_name: filterName,
+        filter_value: filterValue,
       });
   }
 };
