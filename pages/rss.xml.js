@@ -3,16 +3,19 @@ import { Feed } from "feed";
 
 const getAllArticles = async () => {
   const { getCalendarEvents } = require("@lib/helpers");
+  const { MAX_RESULTS } = require("@utils/constants");
 
   const now = new Date();
   const from = new Date();
-  const until = new Date(now.setDate(now.getDate() + 7));
+  const until = new Date(now.setDate(now.getDate() + 14));
 
   const { events } = await getCalendarEvents({
     from,
     until,
     normalizeRss: true,
     filterByDate: false,
+    maxResults: MAX_RESULTS,
+    shuffleItems: true,
   });
   const normalizedEvents = JSON.parse(JSON.stringify(events));
 

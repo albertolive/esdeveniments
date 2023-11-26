@@ -49,6 +49,7 @@ export async function getStaticProps({ params }) {
     from,
     until,
     q: type === "town" ? `${label} ${regionLabel}` : label,
+    shuffleItems: true,
   });
   const normalizedEvents = JSON.parse(JSON.stringify(events));
 

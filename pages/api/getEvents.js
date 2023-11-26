@@ -11,7 +11,7 @@ const noEventsFound = async (events) => {
 };
 
 const handler = async (req, res) => {
-  const { page, q, maxResults } = req.query;
+  const { page, q, maxResults, shuffleItems } = req.query;
 
   let events = [];
 
@@ -24,6 +24,7 @@ const handler = async (req, res) => {
         until: untilToday,
         q,
         maxResults,
+        shuffleItems,
       });
 
       if (events.noEventsFound) events = await noEventsFound(events);
@@ -37,6 +38,7 @@ const handler = async (req, res) => {
         until: toWeek,
         q,
         maxResults,
+        shuffleItems,
       });
 
       if (events.noEventsFound) events = await noEventsFound(events);
@@ -50,6 +52,7 @@ const handler = async (req, res) => {
         until: toWeekend,
         q,
         maxResults,
+        shuffleItems,
       });
 
       if (events.noEventsFound) events = await noEventsFound(events);
@@ -58,7 +61,7 @@ const handler = async (req, res) => {
     case "search":
       const fromSearch = new Date();
 
-      events = await getCalendarEvents({ from: fromSearch, q });
+      events = await getCalendarEvents({ from: fromSearch, q, shuffleItems });
 
       if (events.noEventsFound) events = await noEventsFound(events);
 
@@ -66,7 +69,7 @@ const handler = async (req, res) => {
     default:
       const from = new Date();
 
-      events = await getCalendarEvents({ from, q, maxResults });
+      events = await getCalendarEvents({ from, q, maxResults, shuffleItems });
   }
 
   try {

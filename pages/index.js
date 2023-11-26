@@ -14,6 +14,7 @@ export async function getStaticProps() {
     from,
     until,
     maxResults: MAX_RESULTS,
+    shuffleItems: true,
   });
   const normalizedEvents = JSON.parse(JSON.stringify(events));
 

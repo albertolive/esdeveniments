@@ -51,14 +51,16 @@ function Events({ props, loadMore = true }) {
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const categoryQuery = category ? CATEGORIES[category] : "";
   const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
+  const pageIndex = dateFunctions[byDate] || "all";
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
   } = useGetEvents({
     props,
-    pageIndex: dateFunctions[byDate] || "all",
+    pageIndex,
     maxResults: page * 10,
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
+    shuffleItems: sharedQuery.trim() === "" && pageIndex === "all",
   });
 
   const jsonEvents = events
@@ -228,9 +230,11 @@ function Events({ props, loadMore = true }) {
     }
   }, [byDateProps]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [place, byDate, category, searchTerm, userLocation, distance]);
+  // This is causing to not restore the scroll after coming back from an event page
+
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  // }, [place, byDate, category, searchTerm, userLocation, distance]);
 
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;

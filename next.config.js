@@ -41,6 +41,7 @@ const nextConfig = {
       "www.santfeliudecodines.cat",
       "www.caldesdemontbui.cat",
       "estatics-nasia.dtibcn.cat",
+      "www.escenagran.cat",
     ],
   },
   async headers() {
