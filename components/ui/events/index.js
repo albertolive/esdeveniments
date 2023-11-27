@@ -10,7 +10,7 @@ import {
   getPlaceTypeAndLabel,
   sendEventToGA,
 } from "@utils/helpers";
-import { dateFunctions } from "@utils/constants";
+import { MAX_RESULTS, dateFunctions } from "@utils/constants";
 import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
@@ -52,15 +52,16 @@ function Events({ props, loadMore = true }) {
   const categoryQuery = category ? CATEGORIES[category] : "";
   const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
   const pageIndex = dateFunctions[byDate] || "all";
+  const shuffleItems = sharedQuery.trim() === "" && pageIndex === "all";
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
   } = useGetEvents({
     props,
     pageIndex,
-    maxResults: page * 10,
+    maxResults: shuffleItems ? page * MAX_RESULTS : page * 10,
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
-    shuffleItems: sharedQuery.trim() === "" && pageIndex === "all",
+    shuffleItems,
   });
 
   const jsonEvents = events
