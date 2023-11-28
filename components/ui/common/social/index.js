@@ -87,7 +87,7 @@ const renderTelegram = (link) => (
 export default function Social({ links }) {
   return (
     <div className="mt-2">
-      <div className="flex flex-nowrap justify-center items-center gap-4">
+      <div className="flex flex-nowrap justify-center items-center gap-6">
         {links.twitter && renderTwitter(links.twitter)}
         {links.instagram && renderInstagram(links.instagram)}
         {links.telegram && renderTelegram(links.telegram)}

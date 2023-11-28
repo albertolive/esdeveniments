@@ -6,12 +6,14 @@ const customStyles = {
   container: (provided) => ({
     ...provided,
     borderColor: "#FFF !important",
+    border:"0px",
   }),
   input: (provided, state) => ({
     ...provided,
     fontSize: "16px",
     borderColor: state.isSelected ? "#CCC !important" : "#CCC !important",
     borderColor: state.isFocused ? "#CCC !important" : "#CCC !important",
+    padding: "0px 15px",
   }),
   control: (provided, state) => ({
     ...provided,
@@ -22,8 +24,9 @@ const customStyles = {
   }),
   placeholder: (provided) => ({
     ...provided,
-    fontSize: "14px",
+    fontSize: "16px",
     color: "#CCC",
+    padding: "0px 15px",
   }),
   option: (provided, state) => ({
     ...provided,
@@ -36,10 +39,13 @@ const customStyles = {
     fontSize: "16px",
     color: "#454545",
   }),
-  menu: (provided, state) => ({
+  menu: (provided) => ({
     ...provided,
-    borderColor: state.isSelected ? "#FFF !important" : "#FFF !important",
+    border: "0px",
     borderRadius: "0px",
+    boxShadow: "0px 10px 30px -25px #454545",
+    background: "#FFF",
+    padding: "0px 10px 30px",
   }),
 };
 
@@ -79,7 +85,7 @@ export default function SelectComponent({
       <label htmlFor="first-name" className="text-blackCorp">
         {title}
       </label>
-      <div className="">
+      <div>
         <CreatableSelect
           className="border-0"
           id={id}

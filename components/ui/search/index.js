@@ -120,8 +120,8 @@ export default function Search({ searchTerm, setSearchTerm }) {
 
   return (
     <div className="w-full md:w-1/3 flex justify-center">
-      <div className="w-full flex justify-center items-center gap-1">
-        <div className="h-12 flex justify-end items-center cursor-pointer">
+      <div className="w-full flex justify-start md:justify-center items-center gap-8">
+        <div className="h-10 flex justify-end items-center cursor-pointer">
           {inputValue.length ? (
             <XIcon
               className="h-4 w-4 text-blackCorp"
@@ -137,7 +137,7 @@ export default function Search({ searchTerm, setSearchTerm }) {
         </div>
         <input
           type="text"
-          className="h-12 border-0 placeholder:text-bColor"
+          className="h-10 border-0 placeholder:text-bColor"
           placeholder="Cerca qualevol cosa"
           value={inputValue}
           onKeyDown={handleKeyPress}

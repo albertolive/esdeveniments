@@ -145,12 +145,12 @@ function FiltersModal({
         title="Filtres"
         actionButton="Aplicar filtres"
       >
-        <div className="w-full flex flex-col gap-10 pt-12 pb-16">
-          <div className="flex justify-start items-start gap-10">
-            <p className="w-1/4 text-primary text-right font-medium font-barlow uppercase italic pt-[5px]">
+        <div className="w-full flex flex-col justify-center items-start gap-6 pt-12 pb-16">
+          <div className="w-full flex flex-col justify-start items-start gap-2">
+            <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px] px-6">
               Poblacions
             </p>
-            <div className="w-3/4 flex flex-col px-4 border-l border-bColor">
+            <div className="w-full flex flex-col px-0">
               <Select
                 id="options"
                 options={regionsAndCitiesArray}
@@ -162,11 +162,11 @@ function FiltersModal({
               />
             </div>
           </div>
-          <fieldset className="flex justify-start items-start gap-10">
-            <p className="w-1/4 text-primary text-right font-medium font-barlow uppercase italic pt-[5px]">
+          <fieldset className="w-full md:w-1/3 flex flex-col justify-start items-start gap-6 px-6">
+            <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
               Categories
             </p>
-            <div className="w-3/4 flex flex-col px-4 pt-2 border-l border-bColor">
+            <div className="w-8/12 flex flex-col px-4 pt-2 border-l border-bColor">
               {Object.entries(CATEGORIES).map(([value]) => (
                 <RadioInput
                   key={value}
@@ -180,11 +180,11 @@ function FiltersModal({
               ))}
             </div>
           </fieldset>
-          <fieldset className="flex justify-start items-start gap-10">
-            <p className="w-1/4 text-primary text-right font-medium font-barlow uppercase italic pt-[5px]">
+          <fieldset className="w-full md:w-1/3 flex flex-col justify-start items-start gap-6 px-6">
+            <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
               Data
             </p>
-            <div className="w-3/4 flex flex-col px-4 pt-2 border-l border-bColor">
+            <div className="w-full flex flex-col px-4 pt-2 border-l border-bColor">
               {BYDATES.map(({ value, label }) => (
                 <RadioInput
                   key={value}
@@ -198,9 +198,9 @@ function FiltersModal({
               ))}
             </div>
           </fieldset>
-          <fieldset className="flex justify-start items-start gap-10">
-            <div className="w-1/4 text-primary text-right font-medium font-barlow uppercase italic pt-[5px]">
-              <p className="text-primary text-right font-normal font-barlow pt-[5px]  pb-2">
+          <fieldset className="w-full md:w-1/3 flex flex-col justify-start items-start gap-6 px-6">
+            <div className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
+              <p className="text-primary font-normal font-barlow pt-[5px]  pb-2">
                 Distància
               </p>
               {(userLocationLoading || userLocationError) && (
@@ -220,7 +220,7 @@ function FiltersModal({
                 </div>
               )}
             </div>
-            <div className="w-3/4 flex flex-col px-4 pt-2 border-l border-bColor">
+            <div className="w-full flex flex-col px-4 pt-2 border-l border-bColor">
               <div
                 className={`flex flex-col ${
                   disableDistance ? "opacity-30" : ""

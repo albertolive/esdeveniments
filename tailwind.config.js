@@ -19,23 +19,36 @@ module.exports = {
         xl: "1280px",
       },
       animation: {
-        "fast-pulse": "fast-pulse 900ms cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "fast-pulse": "fast-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "fast-pulse1": "fast-pulse 300ms cubic-bezier(0.4, 0, 0.6, 1) 100ms",
+        "appear": "appear 500ms",
+        "disappear": "disappear 500ms",
       },
       keyframes: {
         "fast-pulse": {
           "0%, 100%": { opacity: 1 },
-          "50%": { opacity: 0.5 },
+          "50%": { opacity: 0 },
+        },
+        "appear": {
+          "0%": {opacity:0},
+          "100%": {opacity:1}
+        },
+        "disappear": {
+          "0%": {opacity:1},
+          "100%": {opacity:0}
         },
       },
       boxShadow: {
-        lg: "0px 5px 50px 0px rgba(241, 241, 241, 0.05)",
+        lg: "4px 4px 9px -3px #45454590",
       },
       flex: {
         2: "2 2 0%",
         3: "3 3 0%",
         4: "4 4 0%",
       },
+      zIndex: {
+        '900': '900',
+      }
     },
     colors: {
       primary: "#FF0037",

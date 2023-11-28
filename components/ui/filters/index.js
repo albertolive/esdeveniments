@@ -81,11 +81,11 @@ const Filters = ({
 
   return (
     <div className="w-full md:w-2/3 bg-whiteCorp flex justify-center items-center px-0">
-      <div className="w-full flex justify-center items-center gap-8 cursor-pointer">
+      <div className="w-full flex justify-start md:justify-center items-center gap-8 cursor-pointer">
         <div
           onClick={handleOpenModal}
           type="button"
-          className="w-2/10 h-12 mr-3 flex justify-end items-center gap-1 cursor-pointer"
+          className="w-2/10 h-10 mr-3 flex justify-end items-center gap-1 cursor-pointer"
         >
           <AdjustmentsIcon
             className={
@@ -97,7 +97,7 @@ const Filters = ({
           />
           <p className="hidden md:block md:font-barlow md:uppercase md:italic md:font-medium">Filtres</p>
         </div>
-        <div className="w-8/10 h-12 flex justify-cenetr items-center gap-2 border-0 placeholder:text-bColor overflow-x-auto">
+        <div className="w-8/10 h-10 flex justify-cenetr items-center gap-2 border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,

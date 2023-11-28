@@ -27,24 +27,24 @@ export default function Month({ events, town }) {
       description={`Descobreix què va passar a ${town} el ${month} del ${year}. Teatre, cinema, música, art i altres excuses per no parar de descobrir ${town} - Arxiu - Esdeveniments.cat`}
       canonical={`${siteUrl}/sitemap/${year}/${month}`}
     />
-    <div className="reset-this mb-2">
-      <h1>
-        <span className="capitalize">{month}</span> del {year}
-      </h1>
-    </div>
-    {events.map((event) => (
-      <div key={event.id} className="py-1 w-fit">
-        <Link href={`/${event.slug}`} prefetch={false} className="hover:underline">
+    <div className="flex flex-col justify-center items-start gap-2 p-6">
+      <h1 className="font-semibold italic uppercase">{month} del {year}</h1>
+      {events.map((event) => (
+        <div key={event.id} className="">
+          <Link href={`/${event.slug}`} prefetch={false} className="hover:text-primary">
+            <h3 key={event.id}>
+              {event.title}
+            </h3>
+            <p className="text-sm" key={event.id}>
+              {event.formattedEnd
+                ? `${event.formattedStart} - ${event.formattedEnd}`
+                : `${event.formattedStart}`}
+            </p>
 
-          <p className="text-sm" key={event.id}>
-            {event.formattedEnd
-              ? `${event.title} - Del ${event.formattedStart} al ${event.formattedEnd}`
-              : `${event.title} - ${event.formattedStart}`}
-          </p>
-
-        </Link>
+          </Link>
       </div>
     ))}
+    </div>
   </>;
 }
 

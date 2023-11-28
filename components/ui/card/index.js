@@ -45,8 +45,7 @@ function Card({ event, isLoading }) {
         {/* Title */}
         <div className="bg-whiteCorp h-fit flex justify-between items-start gap-3">
           <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
-            <div className="w-1 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
-            <div className="triangle-down px-0 mx-0"></div>
+            <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
           </div>
           {/* Title */}
           <h2 className="w-10/12 uppercase text-blackCorp italic">
@@ -72,7 +71,7 @@ function Card({ event, isLoading }) {
           </div>
         </div>
         {/* ImageEvent */}
-        <div className="p-4">
+        <div className="p-4 flex justify-center items-center">
           <Image
             className="object-contain"
             title={event.title}
@@ -98,8 +97,8 @@ function Card({ event, isLoading }) {
               <LocationMarkerIcon className="h-6 w-6" />
             </div>
             <div className="h-full flex flex-col justify-center items-start px-2 gap-1">
-              <span className="">{location}</span>
-              <span className="">{subLocation}</span>
+              <span>{location}</span>
+              <span>{subLocation}</span>
             </div>
           </div>
           {/* hour */}

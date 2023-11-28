@@ -1,6 +1,7 @@
 import { memo, useEffect, useState, useCallback } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
@@ -15,6 +16,7 @@ import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
+import ArrowUp from "@heroicons/react/outline/ArrowUpIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
@@ -43,6 +45,7 @@ function Events({ props, loadMore = true }) {
   const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [scrollButton, setScrollButton] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true); // Set initial loading state to false
   const [isTimeout, setIsTimeout] = useState(false); // Set initial timeout state to false
@@ -66,6 +69,26 @@ function Events({ props, loadMore = true }) {
     .map((event) => generateJsonData(event));
 
   // Event handlers
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setScrollButton(true);
+      } else if (window.scrollY < 200) {
+        setScrollButton(false);
+      }
+    };
+
+    // Run the function once to handle the initial scroll position
+    handleScroll();
+
+    // Add the event listener when the component mounts
+    window.addEventListener("scroll", handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   const handleLoadMore = useCallback(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("scrollPosition", window.scrollY);
@@ -264,8 +287,17 @@ function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div className="w-full bg-whiteCorp fixed top-14 z-10 flex justify-center items-center">
-        <div className="w-full flex flex-col md:flex-row justify-center items-center mx-auto px-0 pb-3 md:pb-1 md:px-6">  
+      <div id="top" className="w-full bg-whiteCorp fixed top-14 z-10 flex justify-center items-center">
+        <div className={`${
+        scrollButton
+          ? "fixed bottom-[82px] md:bottom-[90px] lg:bottom-[90px] right-6 flex justify-end animate-appear"
+          : "hidden"
+      }`}>
+          <Link href="top" passHref className="w-10 h-10 flex justify-center items-center bg-primary text-whiteCorp rounded-3xl">
+              <ArrowUp className="w-5 h-5" aria-hidden="true"/>
+          </Link>
+        </div>
+        <div className="w-full flex flex-col md:flex-row justify-center items-center mx-auto px-6 md:px-6 pb-3 md:pb-1">  
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
             place={place}
@@ -284,7 +316,7 @@ function Events({ props, loadMore = true }) {
         </div>
       </div>
       <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-full md:w-10/12 lg:w-8/12">
-        <div className="pt-16 md:pt-8">
+        <div className="pt-6 md:pt-0">
           <div className="p-2 flex flex-col justify-center items-center invisible">
             <button
               onClick={toggleDropdown}
@@ -340,7 +372,7 @@ function Events({ props, loadMore = true }) {
           loadMore &&
           filteredEvents.length > 7 &&
           !isLoadingMore && (
-            <div className="h-12 flex justify-center items-center text-center py-10">
+            <div className="h-12 flex justify-center items-center text-center pt-10 pb-14">
               <button
                 type="button"
                 className="flex justify-center items-center p-2 hover:p-3 border border-bColor rounded-3xl ease-in-out duration-300 focus:outline-none"

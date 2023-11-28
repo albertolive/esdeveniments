@@ -49,9 +49,9 @@ export default function Modal({
                     </div>
                   </div>
                 </Dialog.Title>
-                <div className="w-full md:w-2/3 lg:w-1/3 flex justify-center items-start px-4 md:px-8 pt-8 md:py-8 overflow-auto">{children}</div>
+                <div className="w-full md:w-2/3 lg:w-1/3 flex justify-center items-start px-0 md:px-8 pt-8 md:py-8 overflow-auto">{children}</div>
                 {actionButton && (
-                  <div className="w-full bg-whiteCorp fixed bottom-0 left-0 p-3">
+                  <div className="w-full bg-whiteCorp fixed z-900 bottom-0 left-0 p-3">
                     <div
                       className="flex justify-center"
                       style={{ position: "sticky", bottom: 0 }}
