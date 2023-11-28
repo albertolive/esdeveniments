@@ -11,7 +11,7 @@ import {
   getPlaceTypeAndLabel,
   sendEventToGA,
 } from "@utils/helpers";
-import { dateFunctions } from "@utils/constants";
+import { MAX_RESULTS, dateFunctions } from "@utils/constants";
 import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
@@ -54,14 +54,17 @@ function Events({ props, loadMore = true }) {
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const categoryQuery = category ? CATEGORIES[category] : "";
   const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
+  const pageIndex = dateFunctions[byDate] || "all";
+  const shuffleItems = sharedQuery.trim() === "" && pageIndex === "all";
   const {
     data: { events = [], currentYear, noEventsFound = false },
     error,
   } = useGetEvents({
     props,
-    pageIndex: dateFunctions[byDate] || "all",
-    maxResults: page * 10,
+    pageIndex,
+    maxResults: shuffleItems ? page * MAX_RESULTS : page * 10,
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
+    shuffleItems,
   });
 
   const jsonEvents = events
@@ -170,26 +173,26 @@ function Events({ props, loadMore = true }) {
   useEffect(() => {
     if (place) {
       window.localStorage.setItem("place", place);
-      sendEventToGA("filter", "place", place);
+      sendEventToGA("Place", place);
     }
   }, [place]);
 
   useEffect(() => {
     if (byDate) {
       window.localStorage.setItem("byDate", byDate);
-      sendEventToGA("filter", "byDate", byDate);
+      sendEventToGA("ByDate", byDate);
     }
   }, [byDate]);
 
   useEffect(() => {
     window.localStorage.setItem("category", category);
-    category && sendEventToGA("filter", "category", category);
+    category && sendEventToGA("Category", category);
   }, [category]);
 
   useEffect(() => {
     window.localStorage.setItem("distance", distance);
     if (typeof distance === "number") {
-      sendEventToGA("filter", "distance", distance);
+      sendEventToGA("Distance", distance);
     }
   }, [distance]);
 
@@ -251,9 +254,11 @@ function Events({ props, loadMore = true }) {
     }
   }, [byDateProps]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [place, byDate, category, searchTerm, userLocation, distance]);
+  // This is causing to not restore the scroll after coming back from an event page
+
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  // }, [place, byDate, category, searchTerm, userLocation, distance]);
 
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;

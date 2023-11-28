@@ -1,5 +1,7 @@
 import { siteUrl } from "@config/index";
 
+export const MAX_RESULTS = 50;
+
 export const DAYS = [
   "Diumenge",
   "Dilluns",

@@ -423,11 +423,12 @@ export default function Event(props) {
 export async function getStaticPaths() {
   const { getCalendarEvents } = require("@lib/helpers");
   const { twoWeeksDefault } = require("@lib/dates");
-
+  const { MAX_RESULTS } = require("@utils/constants");
   const { from, until } = twoWeeksDefault();
   const { events } = await getCalendarEvents({
     from,
     until,
+    maxResults: MAX_RESULTS,
   });
   const eventsSlug = events
     .filter((event) => !event.isAd)

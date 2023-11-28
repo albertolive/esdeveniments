@@ -8,10 +8,10 @@ import { getPlaceLabel } from "@utils/helpers";
 const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
   <div
     key={text}
-    className="w-1/1 bg-whiteCorp flex justify-between items-center nowrap"
+    className="w-full bg-whiteCorp flex justify-between items-center nowrap"
   >
     <div
-      className={`w-1/1 flex justify-evenly items-center gap-1 py-1 px-2 rounded-xl border-[1px] border-whiteCorp hover:border-[1px] hover:border-bColor ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+      className={`w-full flex justify-evenly items-center gap-1 py-1 px-1 rounded-xl border-[1px] border-whiteCorp hover:border-[1px] hover:border-bColor ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
         enabled
           ? "text-primary font-medium rounded-xl"
           : "border-whiteCorp border-[1px] text-bColor rounded-xl"
@@ -81,7 +81,7 @@ const Filters = ({
 
   return (
     <div className="w-full md:w-2/3 bg-whiteCorp flex justify-center items-center px-0">
-      <div className="w-full flex justify-start md:justify-center items-center gap-8 cursor-pointer">
+      <div className="w-full flex justify-start md:justify-center items-center gap-2 cursor-pointer">
         <div
           onClick={handleOpenModal}
           type="button"
@@ -97,7 +97,7 @@ const Filters = ({
           />
           <p className="hidden md:block md:font-barlow md:uppercase md:italic md:font-medium">Filtres</p>
         </div>
-        <div className="w-8/10 h-10 flex justify-cenetr items-center gap-2 border-0 placeholder:text-bColor overflow-x-auto">
+        <div className="w-8/10 h-10 flex justify-cenetr items-center gap-1 border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,

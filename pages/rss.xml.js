@@ -1,34 +1,72 @@
 import { siteUrl } from "@config/index";
 import { Feed } from "feed";
+import { getCalendarEvents } from "@lib/helpers";
+import { MAX_RESULTS } from "@utils/constants";
+import { getPlaceTypeAndLabel } from "@utils/helpers";
+import { captureException } from "@sentry/nextjs";
 
-const getAllArticles = async () => {
-  const { getCalendarEvents } = require("@lib/helpers");
+const SITE_NAME = "Esdeveniments.cat";
 
-  const now = new Date();
-  const from = new Date();
-  const until = new Date(now.setDate(now.getDate() + 7));
+const getAllArticles = async (region, town) => {
+  try {
+    const now = new Date();
+    const from = new Date();
+    const until = new Date(now.setDate(now.getDate() + 14));
 
-  const { events } = await getCalendarEvents({
-    from,
-    until,
-    normalizeRss: true,
-    filterByDate: false,
-  });
-  const normalizedEvents = JSON.parse(JSON.stringify(events));
+    const { label: regionLabel } = getPlaceTypeAndLabel(region);
+    const { label: townLabel } = getPlaceTypeAndLabel(town);
 
-  return normalizedEvents;
+    const q = town ? `${townLabel} ${regionLabel}` : regionLabel;
+
+    const { events } = await getCalendarEvents({
+      from,
+      until,
+      q,
+      normalizeRss: true,
+      filterByDate: false,
+      maxResults: MAX_RESULTS,
+      shuffleItems: true,
+    });
+
+    return JSON.parse(JSON.stringify(events));
+  } catch (error) {
+    console.error(error);
+    captureException(
+      `Error getting all articles to generate the RSS feed for ${
+        townLabel || regionLabel || "Catalunya"
+      }: ${error}`
+    );
+    return [];
+  }
 };
 
-const buildFeed = (items) => {
+const selectImage = (item) => {
+  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
+  const hasEventImage = item.description.match(regex);
+  const eventImage = hasEventImage && hasEventImage[0];
+
+  return item.imageUploaded
+    ? item.imageUploaded
+    : eventImage
+    ? eventImage
+    : undefined;
+};
+
+const buildFeed = (items, region, town) => {
+  const { label: regionLabel } = getPlaceTypeAndLabel(region);
+  const { label: townLabel } = getPlaceTypeAndLabel(town);
+
   const feed = new Feed({
     id: siteUrl,
     link: siteUrl,
-    title: "Esdeveniments.cat",
-    description: "Calendari col·laboratiu dels actes culturals de Catalunya",
-    copyright: "Esdeveniments.cat",
+    title: `Rss ${SITE_NAME} - ${townLabel || regionLabel || "Catalunya"}`,
+    description: `Rss ${SITE_NAME} de ${
+      townLabel || regionLabel || "Catalunya"
+    }`,
+    copyright: SITE_NAME,
     updated: new Date(items[0].startDate),
     author: {
-      name: "Esdeveniments.cat",
+      name: SITE_NAME,
       link: siteUrl,
     },
   });
@@ -42,9 +80,6 @@ const buildFeed = (items) => {
 
   removedDuplicatedItems.forEach((item) => {
     const description = `${item.title}\n\n🗓️ ${item.nameDay} ${item.formattedStart}\n\n🏡 ${item.location}, ${item.town}, ${item.region} \n\nℹ️ Més informació disponible a la nostra pàgina web!`;
-    const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
-    const hasEventImage = item.description.match(regex);
-    const eventImage = hasEventImage && hasEventImage[0];
 
     feed.addItem({
       id: item.id,
@@ -53,11 +88,7 @@ const buildFeed = (items) => {
       description,
       content: item.mapsLocation,
       date: new Date(item.startDate),
-      image: item.imageUploaded
-        ? item.imageUploaded
-        : eventImage
-        ? eventImage
-        : undefined,
+      image: selectImage(item),
     });
   });
 
@@ -66,11 +97,14 @@ const buildFeed = (items) => {
 
 export const getServerSideProps = async (context) => {
   if (context && context.res) {
-    const { res } = context;
+    const { res, query } = context;
 
-    const articles = await getAllArticles();
+    // Extract region and town from query parameters
+    const { region, town } = query;
 
-    const feed = buildFeed(articles);
+    const articles = await getAllArticles(region, town);
+
+    const feed = buildFeed(articles, region, town);
     res.setHeader("content-type", "text/xml");
     res.write(feed.rss2()); // NOTE: You can also use feed.atom1() or feed.json1() for other feed formats
     res.end();

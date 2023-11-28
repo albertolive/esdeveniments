@@ -120,7 +120,7 @@ export default function Search({ searchTerm, setSearchTerm }) {
 
   return (
     <div className="w-full md:w-1/3 flex justify-center">
-      <div className="w-full flex justify-start md:justify-center items-center gap-8">
+      <div className="w-full flex justify-start md:justify-center items-center gap-2">
         <div className="h-10 flex justify-end items-center cursor-pointer">
           {inputValue.length ? (
             <XIcon
