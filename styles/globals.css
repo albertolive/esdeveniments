@@ -50,11 +50,18 @@ h2 {
 h3 {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.38rem;
-  letter-spacing: 0.02rem;
+  letter-spacing: 0.01rem;
   line-height: 1.65rem;
   font-weight: 430;
 }
 
+p {
+  font-family: "Roboto Flex", sans-serif;
+  font-size: 16px;
+  color: #454545;
+  letter-spacing: 0.034rem;
+  line-height: 1.2rem;
+}
 /* button {
   --color: #00A97F;
   padding: 0.8em 1.7em;

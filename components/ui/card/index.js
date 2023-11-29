@@ -6,8 +6,11 @@ import NextImage from "next/image";
 import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
+import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
+import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import { truncateString } from "@utils/helpers";
 import CardLoading from "@components/ui/cardLoading";
+import ShareButton from "@components/ui/common/cardShareButton";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -34,11 +37,12 @@ function Card({ event, isLoading }) {
   const title = truncateString(event.title || "", 60);
   const location = truncateString(event.location || "");
   const subLocation = truncateString(event.subLocation || "", 45);
+  const eventUrl = `https://www.esdeveniments.cat/e/${event.slug}`;
 
   return (
     <Link href={`/e/${event.slug}`} passHref prefetch={false} legacyBehavior>
       <div
-        className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10"
+        className="w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10"
         onMouseEnter={handlePrefetch}
         onClick={handlePrefetch}
       >
@@ -48,11 +52,11 @@ function Card({ event, isLoading }) {
             <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
           </div>
           {/* Title */}
-          <h2 className="w-10/12 uppercase text-blackCorp italic">
+          <h3 className="w-10/12 uppercase text-blackCorp italic">
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
               {title}
             </Link>
-          </h2>
+          </h3>
           {/* WeatherIcon */}
           <div className="w-2/12 flex justify-center">
             {icon && (
@@ -82,28 +86,36 @@ function Card({ event, isLoading }) {
             layout="responsive"
           />
         </div>
-        {/* Info */}
-        {/* InfoEvent */}
-        <div className="flex flex-col px-4 pt-4 gap-4">
+        {/* ShareButton */}
+        <div className="w-full flex justify-center items-center gap-2 px-4 py-4">
+          <ShareIcon className="w-5 h-5" />
+          <ShareButton eventUrl={eventUrl} />
+        </div>
+        <div className="flex flex-col px-4 gap-3">
           {/* Date */}
-          <h3 className="text-blackCorp uppercase italic pl-1">
-            {event.formattedEnd
-              ? `Del ${event.formattedStart} al ${event.formattedEnd}`
-              : `${event.nameDay}, ${event.formattedStart}`}
-          </h3>
-          {/* Location */}
-          <div className="flex items-start h-full">
+          <div className="flex items-center">
             <div>
-              <LocationMarkerIcon className="h-6 w-6" />
+              <CalendarIcon className="h-5 w-5" />
             </div>
-            <div className="h-full flex flex-col justify-center items-start px-2 gap-1">
+            <p className="px-2 font-semibold">
+              {event.formattedEnd
+                ? `Del ${event.formattedStart} al ${event.formattedEnd}`
+                : `${event.nameDay}, ${event.formattedStart}`}
+            </p>
+          </div>
+          {/* Location */}
+          <div className="flex justify-start items-start">
+            <div>
+              <LocationMarkerIcon className="h-5 w-5" />
+            </div>
+            <div className="h-full flex flex-col justify-start items-start px-2">
               <span>{location}</span>
               <span>{subLocation}</span>
             </div>
           </div>
           {/* hour */}
           <div className="flex justify-start items-center">
-            <ClockIcon className="h-6 w-6" />
+            <ClockIcon className="h-5 w-5" />
             <p className="px-2">
               {event.isFullDayEvent
                 ? "Consultar horaris"
