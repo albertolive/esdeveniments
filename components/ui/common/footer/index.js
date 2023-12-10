@@ -23,7 +23,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full flex justify-center items-center gap-4 border-t border-bColor bg-whiteCorp pb-24 pt-2 px-6 md:pb-8 md:pt-4 md:px-4">
+    <footer className="w-full flex justify-center items-center gap-4 border-t border-bColor bg-whiteCorp pb-16 pt-2 px-6 md:pb-8 md:pt-4 md:px-4">
       <div className="w-full flex flex-col justify-center align-center gap-4">
         <Social links={links} />
         <div className="flex flex-col justify-center items-center gap-8 text-xs">
@@ -34,7 +34,7 @@ export default function Footer() {
               </ActiveLink>
             ))}
           </div>
-          <div className="w-full flex justify-start px-6">
+          <div className="w-full flex justify-center px-6">
             <a>© {new Date().getFullYear()} Esdeveniments.cat</a>
           </div>
         </div>

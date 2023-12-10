@@ -8,10 +8,10 @@ import { getPlaceLabel } from "@utils/helpers";
 const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
   <div
     key={text}
-    className="w-full bg-whiteCorp flex justify-cenetr items-center nowrap"
+    className="w-full bg-whiteCorp flex justify-center items-center nowrap"
   >
     <div
-      className={`w-full flex justify-center items-center gap-1 py-1 px-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+      className={`w-full h-6 flex justify-center items-end gap-1 px-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
         enabled
           ? "text-primary font-medium border-b-2 border-whiteCorp hover:border-b-2 hover:border-primary"
           : "border-whiteCorp border-b-2 text-bColor hover:border-b-2 hover:border-bColor"
@@ -19,7 +19,7 @@ const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
     >
       <span
         onClick={handleOpenModal}
-        className="w-full text-center uppercase tracking-wider"
+        className="w-full text-center text-sm uppercase tracking-wider"
       >
         {text}
       </span>
@@ -80,12 +80,12 @@ const Filters = ({
   }, [place, setPlace, setSelectedOption, setOpenModal]);
 
   return (
-    <div className="w-full md:w-2/3 bg-whiteCorp flex justify-center items-center px-0">
-      <div className="w-full flex justify-start md:justify-center items-center gap-2 cursor-pointer">
+    <div className="w-full bg-whiteCorp flex justify-center items-center px-0">
+      <div className="w-full flex justify-start items-center gap-2 cursor-pointer">
         <div
           onClick={handleOpenModal}
           type="button"
-          className="w-2/10 h-10 mr-3 flex justify-end items-center gap-1 cursor-pointer"
+          className="w-2/10 h-10 mr-3 flex justify-center items-center gap-1 cursor-pointer"
         >
           <AdjustmentsIcon
             className={

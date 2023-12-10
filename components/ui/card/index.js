@@ -17,7 +17,7 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
   noSSR: false,
 });
 
-function Card({ event, isLoading }) {
+function Card({ event, isLoading, eventUrl }) {
   const { prefetch } = useRouter();
 
   const handlePrefetch = () => {
@@ -37,28 +37,28 @@ function Card({ event, isLoading }) {
   const title = truncateString(event.title || "", 60);
   const location = truncateString(event.location || "");
   const subLocation = truncateString(event.subLocation || "", 45);
-  const eventUrl = `https://www.esdeveniments.cat/e/${event.slug}`;
 
   return (
+    <>
     <Link href={`/e/${event.slug}`} passHref prefetch={false} legacyBehavior>
       <div
-        className="w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10"
+        className="w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer"
         onMouseEnter={handlePrefetch}
         onClick={handlePrefetch}
       >
         {/* Title */}
-        <div className="bg-whiteCorp h-fit flex justify-between items-start gap-3">
+        <div className="bg-whiteCorp h-fit flex justify-between items-start gap-2 pr-4">
           <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
             <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
           </div>
           {/* Title */}
-          <h3 className="w-10/12 uppercase text-blackCorp italic">
+          <h3 className="w-11/12 uppercase">
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
               {title}
             </Link>
           </h3>
           {/* WeatherIcon */}
-          <div className="w-2/12 flex justify-center">
+          <div className="w-1/12 flex justify-center">
             {icon && (
               <div>
                 <NextImage
@@ -86,8 +86,10 @@ function Card({ event, isLoading }) {
             layout="responsive"
           />
         </div>
+      </div>
+    </Link>
         {/* ShareButton */}
-        <div className="w-full flex justify-center items-center gap-2 px-4 py-4">
+        <div className="w-full flex justify-center items-center gap-2 px-4 pb-3">
           <ShareIcon className="w-5 h-5" />
           <ShareButton eventUrl={eventUrl} />
         </div>
@@ -114,7 +116,7 @@ function Card({ event, isLoading }) {
             </div>
           </div>
           {/* hour */}
-          <div className="flex justify-start items-center">
+          <div className="flex justify-start items-center mb-10">
             <ClockIcon className="h-5 w-5" />
             <p className="px-2">
               {event.isFullDayEvent
@@ -124,8 +126,7 @@ function Card({ event, isLoading }) {
           </div>
           {event.tag && <span>{event.tag}</span>}
         </div>
-      </div>
-    </Link>
+      </>
   );
 }
 

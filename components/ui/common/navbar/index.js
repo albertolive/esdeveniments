@@ -3,9 +3,9 @@ import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
-import PlusSmIcon from "@heroicons/react/outline/UploadIcon";
+import PlusSmIcon from "@heroicons/react/outline/PlusIcon";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
-import Users from "@heroicons/react/outline/UsersIcon";
+import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-esdeveniments.webp";
@@ -18,15 +18,15 @@ const navigation = [
 ];
 
 export default function Navbar() {
-  const [hasShadow, setHasShadow] = useState(false);
+  const [hasScroll, setHasScroll] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
-        setHasShadow(true);
-      } else {
-        setHasShadow(false);
+        setHasScroll(true);
+      } else if (window.scrollY === 0) {
+        setHasScroll(false);
       }
     };
 
@@ -67,16 +67,16 @@ export default function Navbar() {
     <Disclosure
       key={router.asPath}
       as="nav"
-      className={`navbar bg-whiteCorp sticky top-0 z-50 ${
-        hasShadow
-          ? "shadow-sm shadow-whiteCorp transition-all ease-in-out duration-300"
-          : ""
-      }`}
+      className="w-full bg-whiteCorp sticky top-0 z-50"
     >
       {({ open }) => (
         <>
-          <div className="bg-whiteCorp mx-auto h-18 p-3 lg:max-w-[1024px] xl:max-w-[1280px]">
-            <div className="flex flex-col justify-center h-full">
+          <div className={`sm:px-10 sm:w-[580px] md:w-[768px] lg:w-[1024px] bg-whiteCorp mx-auto py-2 ${
+                hasScroll
+                  ? "h-14"
+                  : "h-14"
+              }`}>
+            <div className="h-full flex flex-col justify-center">
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
               <div className="flex justify-around items-center">
                 {/* Logo */}
@@ -90,8 +90,8 @@ export default function Navbar() {
                       src={logo}
                       className="bg-whiteCorp flex justify-center items-center cursor-pointer"
                       alt="Logo Esdeveniments.cat"
-                      width={168}
-                      height={20}
+                      width={151}
+                      height={18}
                       priority />
 
                   </Link>
@@ -114,9 +114,9 @@ export default function Navbar() {
                       <ActiveLink
                         href={item.href}
                         key={item.name}
-                        className="focus:outline-none cursor-pointer"
+                        className="border-b-2 border-b-whiteCorp"
                       >
-                        <a className="text-center font-medium px-4 w-24 font-barlow italic uppercase">
+                        <a>
                           {item.name}
                         </a>
                       </ActiveLink>
@@ -138,7 +138,7 @@ export default function Navbar() {
                   <ActiveLink href="/">
                     <button
                       type="button"
-                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl"
+                      className="flex items-center p-2 border-b-whiteCorp focus:outline-none cursor-pointer rounded-xl"
                     >
                       <HomeIcon className="h-6 w-6" />
                     </button>
@@ -150,7 +150,7 @@ export default function Navbar() {
                   <ActiveLink href="/publica">
                     <button
                       type="button"
-                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl"
+                      className="flex items-center p-2 border-b-whiteCorp focus:outline-none cursor-pointer rounded-xl"
                     >
                       <PlusSmIcon className="h-6 w-6" aria-hidden="true" />
                       <span className="hidden sm:visible">Publica</span>
@@ -163,9 +163,9 @@ export default function Navbar() {
                   <ActiveLink href="/qui-som">
                     <button
                       type="button"
-                      className="flex items-center p-2 focus:outline-none cursor-pointer rounded-xl"
+                      className="flex items-center p-2 border-b-whiteCorp focus:outline-none cursor-pointer rounded-xl"
                     >
-                      <Users className="h-6 w-6" />
+                      <InfoIcon className="h-6 w-6" />
                     </button>
                   </ActiveLink>
                 </div>
@@ -174,10 +174,14 @@ export default function Navbar() {
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="fixed flex justify-center items-center gap-4 px-4 pb-5 bg-whiteCorp transition-transform">
+            <div className="w-full fixed flex justify-evenly items-center pb-6 bg-whiteCorp transition-transform">
               {navigation.map((item) => (
-                <ActiveLink href={item.href} key={item.name}>
-                  <a className="flex justify-center items-center font-medium px-4 py-1 font-barlow italic uppercase">
+                <ActiveLink 
+                  href={item.href}
+                  key={item.name}
+                  className="border-b-2 border-b-whiteCorp"
+                >
+                  <a>
                     {item.name}
                   </a>
                 </ActiveLink>

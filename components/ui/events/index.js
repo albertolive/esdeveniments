@@ -46,7 +46,7 @@ function Events({ props, loadMore = true }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [scrollButton, setScrollButton] = useState(false);
-
+  const [hasScroll, setHasScroll] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Set initial loading state to false
   const [isTimeout, setIsTimeout] = useState(false); // Set initial timeout state to false
 
@@ -72,6 +72,13 @@ function Events({ props, loadMore = true }) {
     .map((event) => generateJsonData(event));
 
   // Event handlers
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 400) {
@@ -130,6 +137,27 @@ function Events({ props, loadMore = true }) {
   };
 
   // Effects
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setHasScroll(true);
+      } else {
+        setHasScroll(false);
+      }
+    };
+
+    // Run the function once to handle the initial scroll position
+    handleScroll();
+
+    // Add the event listener when the component mounts
+    window.addEventListener("scroll", handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); 
 
   useEffect(() => {
     // Set a timeout to show the loading state after a delay
@@ -292,17 +320,16 @@ function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-      <div id="top" className="w-full bg-whiteCorp fixed top-14 z-10 flex justify-center items-center">
-        <div className={`${
+        <div onClick={scrollToTop} className={`w-8 h-8 text-whiteCorp bg-primary flex justify-center items-center rounded-lg shadow-xl ${
         scrollButton
-          ? "fixed bottom-[82px] md:bottom-[90px] lg:bottom-[90px] right-6 flex justify-end animate-appear"
+          ? "fixed z-10 bottom-[82px] md:bottom-[90px] lg:bottom-[90px] right-8 flex justify-end animate-appear"
           : "hidden"
-      }`}>
-          <Link href="top" passHref className="w-10 h-10 flex justify-center items-center bg-primary text-whiteCorp rounded-3xl">
-              <ArrowUp className="w-5 h-5" aria-hidden="true"/>
-          </Link>
+          }`}
+        >
+          <ArrowUp className="w-5 h-5" aria-hidden="true"/>
         </div>
-        <div className="w-full flex flex-col md:flex-row justify-center items-center mx-auto px-6 md:px-6 pb-3 md:pb-1">  
+      <div className="w-full bg-whiteCorp fixed top-10 z-10 flex justify-center items-center pt-2">
+        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">  
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
             place={place}
@@ -320,8 +347,8 @@ function Events({ props, loadMore = true }) {
           />
         </div>
       </div>
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-full md:w-10/12 lg:w-8/12">
-        <div className="pt-6 md:pt-0">
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px]">
+        <div className="pt-4">
           <div className="p-2 flex flex-col justify-center items-center invisible">
             <button
               onClick={toggleDropdown}
@@ -369,7 +396,7 @@ function Events({ props, loadMore = true }) {
           </div>
         ) : (
           <List events={filteredEvents}>
-            {(event) => <Card key={event.id} event={event} />}
+            {(event) => <Card key={event.id} event={event} eventUrl={canonical} />}
           </List>
         )}
         {isLoadingMore && <CardLoading />}
@@ -380,13 +407,10 @@ function Events({ props, loadMore = true }) {
             <div className="h-12 flex justify-center items-center text-center pt-10 pb-14">
               <button
                 type="button"
-                className="flex justify-center items-center p-2 hover:p-3 border border-bColor rounded-3xl ease-in-out duration-300 focus:outline-none"
+                className="flex justify-center items-center p-2 border-b-2 border-b-whiteCorp hover:text-primary hover:border-primary ease-in-out duration-300 focus:outline-none"
                 onClick={handleLoadMore}
               >
-                <PlusIcon
-                  className="h-5 w-5"
-                  aria-hidden="true"
-                />
+                Carregar més
               </button>
             </div>
           )}

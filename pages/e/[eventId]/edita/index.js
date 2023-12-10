@@ -219,12 +219,15 @@ export default function Edita({ event }) {
         url="hola@esdeveniments.cat"
       />
     )}
-    <div className="max-w-full mx-0 px-4 sm:px-0 sm:max-w-[576px] md:px-4 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
+    <div className="w-full p-4 sm:w-[576px] md:w-[760px] lg:w-[760px]">
       <div className="flex flex-col justify-center gap-4">
         <div className="flex flex-col justify-center gap-4">
-          <h1 className="font-semibold">
-            Editar - {form.title || event.title}
-          </h1>
+          <h3 className="font-semibold">
+            Editar
+          </h3>
+          <h3>
+            {form.title || event.title}
+          </h3>
           <p>* camps obligatoris</p>
         </div>
         <div className="flex flex-col justify-center gap-4">
@@ -323,7 +326,7 @@ export default function Edita({ event }) {
         <button
           disabled={isLoadingEdit}
           onClick={onSubmit}
-          className="text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold tracking-wide"
+          className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
         >
           {isLoadingEdit ? (
             <>

@@ -29,7 +29,7 @@ function ImageComponent({
       style={{ position: "relative" }}
     >
       <NextImage
-        className="object-cover"
+        className="object-contain"
         src={image}
         alt={title}
         width={500}
