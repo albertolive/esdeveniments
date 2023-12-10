@@ -269,7 +269,7 @@ export default function Event(props) {
         />
       )}
       {/* General */}
-      <div className="w-full  flex justify-center bg-whiteCorp">
+      <div className="w-full flex justify-center bg-whiteCorp pb-10">
         <div className="w-full px-4 flex flex-col justify-center items-center gap-4 pt-4 sm:w-[520px] md:w-[520px] lg:w-[520px]">
           <nav className="w-full" aria-label="Breadcrumb">
             <ol className="w-full flex justify-start items-center gap-1">
@@ -296,37 +296,35 @@ export default function Event(props) {
                 Aquest esdeveniment ha finalitzat
               </p>
             )}
-          <article className="w-full flex flex-col justify-center items-start gap-4">
+          <article className="w-full flex flex-col justify-center items-start gap-6">
             {/* Info */}
-            <div className="w-full flex justify-end items-center gap-2">
-              <div className="w-3/4 flex flex-col gap-1 pt-1">
-                <p className="font-medium">
-                  {formattedEnd
-                    ? `Del ${formattedStart} al ${formattedEnd}`
-                    : `${nameDay}\n${formattedStart}`}
-                </p>
-                <div className="w-full flex justify-start items-center gap-4">
-                  <Weather startDate={startDate} />
-                  <h3>
-                    {isFullDayEvent
-                      ? "Consultar horaris"
-                      : `${startTime} - ${endTime}`}
-                  </h3>
+            <div className="w-full flex flex-col justify-start items-start gap-2 pt-1">
+              <p className="font-normal">
+                {formattedEnd
+                  ? `Del ${formattedStart} al ${formattedEnd}`
+                  : `${nameDay}, ${formattedStart}`}
+              </p>
+              <h3>
+                {isFullDayEvent
+                  ? "Consultar horaris"
+                  : `${startTime} - ${endTime}`}
+              </h3>
+              <div className="w-full flex justify-between items-start">
+                <Weather startDate={startDate} />
+                {/* EditButton */}
+                <div className="pr-6 flex justify-end items-start cursor-pointer">
+                  <button
+                    onClick={() => {
+                      setOpenModal(true);
+                      sendGoogleEvent("open-change-modal");
+                    }}
+                    type="button"
+                    className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+                  >
+                    <PencilIcon className="w-5 h-5" aria-hidden="true" />
+                    <p className="hidden sm:block font-barlow">Editar</p>
+                  </button>
                 </div>
-              </div>
-              {/* EditButton */}
-              <div className="w-1/4 h-full pr-2 flex justify-end items-start cursor-pointer">
-                <button
-                  onClick={() => {
-                    setOpenModal(true);
-                    sendGoogleEvent("open-change-modal");
-                  }}
-                  type="button"
-                  className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-                >
-                  <PencilIcon className="w-5 h-5" aria-hidden="true" />
-                  <p className="font-barlow">Editar</p>
-                </button>
               </div>
             </div>
             <h3 className="w-full uppercase">{title}</h3>
@@ -352,13 +350,13 @@ export default function Event(props) {
               </div>
               {/* Description */}
               <div className="w-full flex justify-center items-start gap-4 px-4">
-                  <div className="w-full break-words overflow-hidden">{ReactHtmlParser(description)}</div>
+                <div className="w-full break-words overflow-hidden">{ReactHtmlParser(description)}</div>
               </div>
             </div>
           </article>
           {/* Map */}
           <div className="w-full flex flex-col justify-center items-center gap-4">
-            <div className="flex justify-evenly items-center gap-3">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 p-3">
               <div 
               className="flex justify-center items-center gap-3"
               onClick={handleShowMap}>
@@ -392,12 +390,10 @@ export default function Event(props) {
                 </button>
               </div>
             </div>
-            <div className="w-full flex flex-col justify-center items-center gap-4">
+            <div className="w-full flex justify-center items-center gap-4">
               {showMap && (
-                <div className="flex flex-col gap-4">
-                  <div className="overflow-hidden">
-                    <Maps location={mapsLocation} />
-                  </div>
+                <div className="overflow-hidden">
+                  <Maps location={mapsLocation} />
                 </div>
               )}
               <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">

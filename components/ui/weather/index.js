@@ -20,8 +20,8 @@ export default memo(function Weather({ startDate }) {
           <Image
             alt={weatherDescription}
             src={icon}
-            width="30"
-            height="30"
+            width="23"
+            height="23"
             style={{
               maxWidth: "100%",
               height: "auto",
@@ -30,8 +30,8 @@ export default memo(function Weather({ startDate }) {
         </div>
       )}{" "}
       <div className="flex justify-center items-center gap-1">
-        <p>{weatherDescription ? weatherDescription : ""}{" "}</p>
-        <h3 className="font-barlow">{temp ? `- ${temp}º` : ""}</h3>
+        <p className="text-sm">{weatherDescription ? weatherDescription : ""}{" "}</p>
+        <p className="text-sm">{temp ? `- ${temp}º` : ""}</p>
       </div>
     </div>
   );

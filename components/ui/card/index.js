@@ -93,7 +93,7 @@ function Card({ event, isLoading, eventUrl }) {
           <ShareIcon className="w-5 h-5" />
           <ShareButton eventUrl={eventUrl} />
         </div>
-        <div className="flex flex-col px-4 gap-3">
+        <div className="w-full flex flex-col px-4 gap-3">
           {/* Date */}
           <div className="flex items-center">
             <div>

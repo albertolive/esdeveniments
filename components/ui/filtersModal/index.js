@@ -27,6 +27,11 @@ function FiltersModal({
   const handleStateChange = useCallback((setState, value) => {
     setState((prevValue) => (prevValue === value ? "" : value));
   }, []);
+  const [isEnabled, setIsEnabled] = useState(true);
+  
+  const toggleEnable = () => {
+    setIsEnabled(!isEnabled);
+  };
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
@@ -235,6 +240,8 @@ function FiltersModal({
                 value={distance}
                 onChange={handleDistanceChange}
                 label="Esdeveniments a"
+                isEnabled={isEnabled}
+                toggleEnable={toggleEnable}
               />
             </div>
           </fieldset>
