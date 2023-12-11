@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
-import PlusSmIcon from "@heroicons/react/outline/PlusSmIcon";
+import UploadIcon from "@heroicons/react/outline/UploadIcon";
 
 export default function ImageUploader({ value, onUpload, progress }) {
   const fileSelect = useRef(null);
@@ -66,7 +66,7 @@ export default function ImageUploader({ value, onUpload, progress }) {
                 onClick={handleImageUpload}
                 type="button"
               >
-                <PlusSmIcon className="w-6 h-6 text-blackCorp hover:text-whiteCorp" />
+                <UploadIcon className="w-6 h-6 text-blackCorp hover:text-whiteCorp" />
               </button>
             </div>
           ) : (
@@ -105,10 +105,14 @@ export default function ImageUploader({ value, onUpload, progress }) {
           </button>
           <Image
             alt="Imatge"
-            height="100%"
-            width="100%"
+            height="100"
+            width="100"
             className="object-contain"
             src={imgData}
+            style={{
+              maxWidth: "100%",
+              height: "auto",
+            }}
           />
         </div>
       )}

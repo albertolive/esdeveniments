@@ -13,8 +13,9 @@ body {
   -o-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: "Roboto Flex", sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   color: #454545;
+  font-weight: 300;
   letter-spacing: 0.034rem;
   line-height: 1.2rem;
 }
@@ -31,6 +32,41 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #fff;
   border-radius: 20px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  border-radius: 5px;
+  background: #ddd;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+  opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #FF0037;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
 }
 
 h1 {
@@ -50,25 +86,58 @@ h2 {
 h3 {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.38rem;
-  letter-spacing: 0.02rem;
+  letter-spacing: 0.01rem;
   line-height: 1.65rem;
   font-weight: 430;
 }
 
-/* Filter classes */
+p {
+  font-family: "Roboto Flex", sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.034rem;
+  line-height: 1.2rem;
+}
+
+.slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  border-radius: 5px;
+  background: #13b60a;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
 
 .nowrap {
   white-space: nowrap;
   overflow-wrap: break-word;
 }
 
-.triangle-down {
-	width: 0;
-	height: 0;
-	border-left: 0px solid transparent;
-	border-right: 3px solid transparent;
-	border-top: 24px solid #C8033F;
-}
+
 
 #map {
   height: 100%;

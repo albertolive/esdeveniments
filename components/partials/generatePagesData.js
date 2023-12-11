@@ -44,16 +44,25 @@ export function generatePagesData({ currentYear, place, byDate }) {
       <>
         Us donem un ventall de possibilitats perquè no us quedi temps per
         avorrir-vos. La cultura no descansa. Podeu veure què passa{" "}
-        <Link href={`/${place}/avui`} prefetch={false}>
-          <a className="font-medium text-black underline">avui</a>
+        <Link
+          href={`/${place}/avui`}
+          prefetch={false}
+          className="font-medium text-black underline">
+          avui
         </Link>
         ,{" "}
-        <Link href={`/${place}/setmana`} prefetch={false}>
-          <a className="font-medium text-black underline">aquesta setmana</a>
+        <Link
+          href={`/${place}/setmana`}
+          prefetch={false}
+          className="font-medium text-black underline">
+          aquesta setmana
         </Link>
         , o ve,{" "}
-        <Link href={`/${place}/cap-de-setmana`} prefetch={false}>
-          <a className="font-medium text-black underline">el cap de setmana</a>
+        <Link
+          href={`/${place}/cap-de-setmana`}
+          prefetch={false}
+          className="font-medium text-black underline">
+          el cap de setmana
         </Link>{" "}
         a {label}. Ja no teniu cap excusa, per no estar al dia, de tot el que
         passa a {label} vinculat a la cultura!
@@ -84,8 +93,11 @@ export function generatePagesData({ currentYear, place, byDate }) {
         description: (
           <>
             Les coses per fer {fixArticles(label)} no descansen ni un dia.{" "}
-            <Link href={`/${place}/setmana`} prefetch={false}>
-              <a className="font-medium text-black underline">Cada setmana</a>
+            <Link
+              href={`/${place}/setmana`}
+              prefetch={false}
+              className="font-medium text-black underline">
+              Cada setmana
             </Link>
             , descobrireu centenars d&apos;activitats increïbles per tots els
             racons. Perquè us sigui més fàcil la tria, us ajudem a trobar el pla
@@ -151,8 +163,11 @@ export function generatePagesData({ currentYear, place, byDate }) {
         description: (
           <>
             Les coses per fer a Catalunya no descansen ni un dia.{" "}
-            <Link href={`/setmana`} prefetch={false}>
-              <a className="font-medium text-black underline">Cada setmana</a>
+            <Link
+              href={`/setmana`}
+              prefetch={false}
+              className="font-medium text-black underline">
+              Cada setmana
             </Link>
             , descobrireu centenars d&apos;activitats increïbles per tots els
             racons. Perquè us sigui més fàcil la tria, us ajudem a trobar el pla

@@ -4,21 +4,11 @@ let lastRandomIndex = null;
 
 function getRandomBackground() {
   const gradients = [
-    "linear-gradient( 145deg, #b692fe 10%, #EA5455 100%)",
-    "linear-gradient( 145deg, #FFF6B7 10%, #F6416C 100%)",
-    "linear-gradient( 145deg, #43CBFF 10%, #9708CC 100%)",
-    "linear-gradient( 145deg, #79F1A4 10%, #0E5CAD 100%)",
-    "linear-gradient( 145deg, #FFF720 10%, #3CD500 100%)",
-    "linear-gradient( 145deg, #FF9A8B 10%, #FF6A88 100%)",
-    "linear-gradient( 145deg, #FFD8CB 10%, #FF3CAC 100%)",
-    "linear-gradient( 145deg, #B8F2E6 10%, #0ED2F7 100%)",
-    "linear-gradient( 145deg, #F0F5F9 10%, #30BCED 100%)",
-    "linear-gradient( 145deg, #81FBB8 10%, #28C76F 100%)",
-    "linear-gradient( 145deg, #E2B0FF 10%, #9F44D3 100%)",
-    "linear-gradient( 145deg, #F97794 10%, #623AA2 100%)",
-    "linear-gradient( 145deg, #FCCF31 10%, #F55555 100%)",
-    "linear-gradient( 145deg, #4facfe 10%, #00f2fe 100%)",
-    "linear-gradient( 145deg, #43e97b 10%, #38f9d7 100%)",
+    "linear-gradient( 145deg, #FF0037 10%, #EA5455 100%)",
+    "linear-gradient( 145deg, #FF0037 10%, #F6416C 100%)",
+    "linear-gradient( 145deg, #FF0037 10%, #FF6A88 100%)",
+    "linear-gradient( 145deg, #FF0037 10%, #FF3CAC 100%)",
+    "linear-gradient( 145deg, #FF0037 10%, #F55555 100%)",
   ];
 
   let randomIndex;
@@ -31,33 +21,36 @@ function getRandomBackground() {
   return gradients[randomIndex];
 }
 
-export default function ImgDefault({ title, date, location }) {
+export default function ImgDefault({ title, date }) {
   const [background] = useState(getRandomBackground());
 
   return (
     <div
-      className="flex flex-col items-start gap-y-6 text-whiteCorp max-h-[100%] py-6"
-      style={{ background: background }}
+      className="bg-whiteCorp flex flex-col justify-center items-start gap-[1px] text-whiteCorp py-6"
     >
-      <h1
-        className="drop-shadow text-[54px] leading-none font-bold px-10 pt-14"
-        aria-label={title}
+      <div 
+        className="w-full"
+        style={{ background: background }}
       >
-        {title}
-      </h1>
-      <div className="border-t-4 w-full mr-32"></div>
-      <h2
-        className="drop-shadow text-[28px] px-10 pb-16 font-normal"
-        aria-label={date}
+        <h1
+          className="drop-shadow text-[30px] font-medium leading-8 uppercase px-10 pt-6 pb-4"
+          aria-label={title}
+        >
+          {title}
+        </h1>
+      </div>
+      
+      <div 
+        className="border-t-4 w-full"
+        style={{ background: background }}
       >
-        {date}
-      </h2>
-      {/* <p
-        className="drop-shadow text-center text-[21px] font-normal tracking-wider"
-        aria-label={location}
-      >
-        {location}
-      </p> */}
+        <h3
+          className="drop-shadow px-10 pt-4 pb-4 font-normal"
+          aria-label={date}
+        >
+          {date}
+        </h3>
+      </div>
     </div>
   );
 }

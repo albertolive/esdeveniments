@@ -26,19 +26,22 @@ function ImageComponent({
   return (
     <div
       className={imageClassName}
-      style={{ position: "relative", width: "100%", height: "41vh" }}
+      style={{ position: "relative" }}
     >
       <NextImage
-        className="object-cover"
+        className="object-contain"
         src={image}
-        layout="fill"
-        objectFit="contain"
         alt={title}
+        width={500}
+        height={500}
         placeholder="blur"
         blurDataURL={solidColorPlaceholder}
         loading="lazy"
         onError={() => setHasError(true)}
         quality={75}
+        style={{
+          objectFit: "contain",
+        }}
       />
     </div>
   );
