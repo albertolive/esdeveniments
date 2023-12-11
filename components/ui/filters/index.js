@@ -8,23 +8,23 @@ import { getPlaceLabel } from "@utils/helpers";
 const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
   <div
     key={text}
-    className="w-1/1 flex justify-center items-center py-4 nowrap"
+    className="w-full bg-whiteCorp flex justify-center items-center nowrap"
   >
     <div
-      className={`w-1/1 flex justify-evenly items-center gap-1 bg-whiteCorp py-1 px-2 rounded-lg ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+      className={`w-full h-6 flex justify-center items-end gap-1 px-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
         enabled
-          ? "border-primary border-[1px] text-primary font-semibold"
-          : "border-whiteCorp border-[1px] text-bColor"
+          ? "text-primary font-medium border-b-2 border-whiteCorp hover:border-b-2 hover:border-primary"
+          : "border-whiteCorp border-b-2 text-bColor hover:border-b-2 hover:border-bColor"
       }`}
     >
       <span
         onClick={handleOpenModal}
-        className="w-full text-center uppercase tracking-wide"
+        className="w-full text-center text-sm uppercase tracking-wider"
       >
         {text}
       </span>
       {enabled ? (
-        <XIcon className="h-5 w-5" aria-hidden="true" onClick={onClick} />
+        <XIcon className="h-4 w-4" aria-hidden="true" onClick={onClick} />
       ) : (
         <ChevronDownIcon
           className="h-4 w-4 hidden"
@@ -80,24 +80,26 @@ const Filters = ({
   }, [place, setPlace, setSelectedOption, setOpenModal]);
 
   return (
-    <div className="bg-whiteCorp flex justify-center items-center pl-4 pr-6">
-      <div className="w-full flex justify-center items-center cursor-pointer gap-1">
+    <div className="w-full bg-whiteCorp flex justify-center items-center px-0">
+      <div className="w-full flex justify-start items-center gap-2 cursor-pointer">
         <div
           onClick={handleOpenModal}
           type="button"
-          className="w-fit flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl px-2 py-1 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase font-semibold"
+          className="w-2/10 h-10 mr-3 flex justify-center items-center gap-1 cursor-pointer"
         >
           <AdjustmentsIcon
             className={
               isAnyFilterSelected()
-                ? "w-6 h-6 text-primary"
-                : "w-6 h-6 text-blackCorp"
+                ? "w-4 h-4 text-primary"
+                : "w-4 h-4 text-blackCorp"
             }
             aria-hidden="true"
           />
-          <p className="font-barlow hidden md:block">Filtres</p>
+          <p className="hidden md:block md:font-barlow md:uppercase md:italic md:font-medium">
+            Filtres
+          </p>
         </div>
-        <div className="w-full flex justify-start items-center gap-2 overflow-x-auto">
+        <div className="w-8/10 h-10 flex justify-cenetr items-center gap-1 xs:gap-2 sm:gap-3 border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,
@@ -105,7 +107,7 @@ const Filters = ({
             handleOpenModal,
           })}
           {renderButton({
-            text: getText(category, "Categories"),
+            text: getText(category, "Categoria"),
             enabled: category,
             onClick: handleOnClick(category, handleCategoryClick),
             handleOpenModal,

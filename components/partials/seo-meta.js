@@ -4,12 +4,12 @@ import { siteUrl } from "@config/index";
 const getRandomImage = Math.floor(Math.random() * 9);
 
 const Meta = (props) => {
-  const image = props.imageUploaded
+  let image = props.imageUploaded
     ? props.imageUploaded
     : props.image
     ? siteUrl + props.image
-    : `${siteUrl}/static/images/logo-esdeveniments-fonsclar.png`; // Improve with a proper default image
-
+    : `${siteUrl}/static/images/logo-esdeveniments.webp`;
+    
   return (
     <Head>
       <title>{props.title}</title>

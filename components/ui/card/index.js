@@ -6,8 +6,11 @@ import NextImage from "next/image";
 import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
+import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
+import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import { truncateString } from "@utils/helpers";
 import CardLoading from "@components/ui/cardLoading";
+import ShareButton from "@components/ui/common/cardShareButton";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -36,82 +39,95 @@ function Card({ event, isLoading }) {
   const subLocation = truncateString(event.subLocation || "", 45);
 
   return (
-    <Link href={`/e/${event.slug}`} passHref prefetch={false}>
-      <div
-        className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10"
-        onMouseEnter={handlePrefetch}
-        onClick={handlePrefetch}
-      >
-        {/* Title */}
-        <div className="bg-whiteCorp h-24 flex justify-between items-start gap-3">
-          <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
-            <div className="w-1 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
-            <div className="triangle-down px-0 mx-0"></div>
-          </div>
+    <>
+      <Link href={`/e/${event.slug}`} passHref prefetch={false} legacyBehavior>
+        <div
+          className="w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer"
+          onMouseEnter={handlePrefetch}
+          onClick={handlePrefetch}
+        >
           {/* Title */}
-          <h2 className="w-10/12 uppercase text-blackCorp italic">
-            <Link href={`/e/${event.slug}`} passHref prefetch={false}>
-              <a>{title}</a>
-            </Link>
-          </h2>
-          {/* WeatherIcon */}
-          <div className="w-2/12 flex justify-center">
-            {icon && (
-              <div>
-                <NextImage
-                  alt={description}
-                  src={icon}
-                  width="30px"
-                  height="30px"
-                />
-              </div>
-            )}
+          <div className="bg-whiteCorp h-fit flex justify-between items-start gap-2 pr-4">
+            <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
+              <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
+            </div>
+            {/* Title */}
+            <h3 className="w-11/12 uppercase">
+              <Link href={`/e/${event.slug}`} passHref prefetch={false}>
+                {title}
+              </Link>
+            </h3>
+            {/* WeatherIcon */}
+            <div className="w-1/12 flex justify-center">
+              {icon && (
+                <div>
+                  <NextImage
+                    alt={description}
+                    src={icon}
+                    width="30"
+                    height="30"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+          {/* ImageEvent */}
+          <div className="p-4 flex justify-center items-center">
+            <Image
+              className="object-contain"
+              title={event.title}
+              date={event.formattedStart}
+              location={event.location}
+              image={event.imageUploaded}
+              alt={event.title}
+              layout="responsive"
+            />
           </div>
         </div>
-        {/* ImageEvent */}
-        <div className="">
-          <Image
-            className=""
-            title={event.title}
-            date={event.formattedStart}
-            location={event.location}
-            image={event.imageUploaded}
-            alt={event.title}
-            layout="responsive"
-          />
-        </div>
-        {/* Info */}
-        {/* InfoEvent */}
-        <div className="flex flex-col px-4 pt-4 gap-4">
-          {/* Date */}
-          <h3 className="text-blackCorp uppercase italic pl-1">
+      </Link>
+      {/* ShareButton */}
+      <div className="w-full flex justify-center items-center gap-2 px-4 pb-3">
+        <ShareIcon className="w-5 h-5" />
+        <ShareButton slug={event.slug} />
+      </div>
+      <div className="w-full flex flex-col px-4 gap-3">
+        {/* Date */}
+        <div className="flex items-center">
+          <div>
+            <CalendarIcon className="h-5 w-5" />
+          </div>
+          <p className="px-2 font-semibold">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}
-          </h3>
-          {/* Location */}
-          <div className="flex items-start h-full">
-            <div>
-              <LocationMarkerIcon className="h-6 w-6" />
-            </div>
-            <div className="h-full flex flex-col justify-center items-start px-2 gap-1">
-              <span className="">{location}</span>
-              <span className="">{subLocation}</span>
-            </div>
-          </div>
-          {/* hour */}
-          <div className="flex justify-start items-center">
-            <ClockIcon className="h-6 w-6" />
-            <p className="px-2">
-              {event.isFullDayEvent
-                ? "Consultar horaris"
-                : `${event.startTime} - ${event.endTime}`}
-            </p>
-          </div>
-          {event.tag && <span>{event.tag}</span>}
+          </p>
         </div>
+        {/* Location */}
+        <div className="flex justify-start items-start">
+          <div>
+            <LocationMarkerIcon className="h-5 w-5" />
+          </div>
+          <div className="h-full flex flex-col justify-start items-start px-2">
+            <span>{location}</span>
+            <span>{subLocation}</span>
+          </div>
+        </div>
+        {/* hour */}
+        <div className="flex justify-start items-center mb-10">
+          <ClockIcon className="h-5 w-5" />
+          <p className="px-2">
+            {event.isFullDayEvent
+              ? "Consultar horaris"
+              : `${event.startTime} - ${event.endTime}`}
+          </p>
+        </div>
+        {event.tag && <span>{event.tag}</span>}
       </div>
-    </Link>
+    </>
   );
 }
 

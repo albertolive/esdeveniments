@@ -1,6 +1,7 @@
 import { useMemo, memo, useCallback, useState } from "react";
 import Modal from "@components/ui/common/modal";
 import RadioInput from "@components/ui/common/form/radioInput";
+import RangeInput from "@components/ui/common/form/rangeInput";
 import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
 import Select from "@components/ui/common/form/select";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
@@ -46,13 +47,6 @@ function FiltersModal({
       handleStateChange(setCategory, value);
     },
     [handleStateChange, setCategory]
-  );
-
-  const handleDistanceChange = useCallback(
-    (value) => {
-      handleUserLocation(value);
-    },
-    [handleUserLocation]
   );
 
   const handlePlaceChange = useCallback(
@@ -122,14 +116,21 @@ function FiltersModal({
         setUserLocationLoading(false);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      userLocation,
       setUserLocation,
       setUserLocationLoading,
       setUserLocationError,
       handleStateChange,
       setDistance,
     ]
+  );
+
+  const handleDistanceChange = useCallback(
+    (event) => {
+      handleUserLocation(event.target.value);
+    },
+    [handleUserLocation]
   );
 
   const disablePlace =
@@ -144,23 +145,28 @@ function FiltersModal({
         title="Filtres"
         actionButton="Aplicar filtres"
       >
-        <div className="w-full flex flex-col gap-10 pt-12 pb-16">
-          <div className="w-full">
-            <Select
-              id="options"
-              options={regionsAndCitiesArray}
-              value={selectedOption}
-              onChange={handlePlaceChange}
-              isClearable
-              placeholder="una localitat"
-              isDisabled={disablePlace}
-            />
-          </div>
-          <fieldset className="flex justify-start items-start gap-4">
-            <div className="w-1/3 text-bColor font-medium font-barlow pt-[5px]">
-              Categories
+        <div className="w-full flex flex-col justify-center items-center gap-5 px-6 py-8">
+          <div className="w-full flex flex-col justify-center items-center gap-2 px-6 sm:px-0">
+            <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
+              Poblacions
+            </p>
+            <div className="w-full flex flex-col px-0">
+              <Select
+                id="options"
+                options={regionsAndCitiesArray}
+                value={selectedOption}
+                onChange={handlePlaceChange}
+                isClearable
+                placeholder="població"
+                isDisabled={disablePlace}
+              />
             </div>
-            <div className="w-2/3 flex flex-col px-4 pt-2 border-l border-bColor">
+          </div>
+          <fieldset className="w-full flex flex-col justify-start items-start gap-4 px-6 sm:px-0">
+            <p className="w-full text-primary font-medium font-barlow uppercase italic">
+              Categories
+            </p>
+            <div className="w-full h-40 flex flex-col justify-start items-start gap-2 flex-wrap">
               {Object.entries(CATEGORIES).map(([value]) => (
                 <RadioInput
                   key={value}
@@ -174,11 +180,11 @@ function FiltersModal({
               ))}
             </div>
           </fieldset>
-          <fieldset className="flex justify-start items-start gap-4">
-            <div className="w-1/3 text-bColor font-medium font-barlow pt-[5px]">
+          <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
+            <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
               Data
-            </div>
-            <div className="w-2/3 flex flex-col px-4 pt-2 border-l border-bColor">
+            </p>
+            <div className="w-full flex flex-col justify-start items-start gap-x-3 gap-y-3 flex-wrap">
               {BYDATES.map(({ value, label }) => (
                 <RadioInput
                   key={value}
@@ -192,47 +198,42 @@ function FiltersModal({
               ))}
             </div>
           </fieldset>
-          <fieldset className="flex justify-center items-start gap-4">
-            <div className="w-1/3 flex flex-col justify-center items-start gap-2">
-              <div className="text-bColor font-medium font-barlow pt-[5px]  pb-2">
-                Distància
-              </div>
-              {(userLocationLoading || userLocationError) && (
-                <div className="border-t border-bColor py-2">
-                  <div className="flex flex-col">
-                    {userLocationLoading && (
-                      <div className="text-sm text-bColor">
-                        Carregant localització...
-                      </div>
-                    )}
-                    {userLocationError && (
-                      <div className="text-sm text-primary">
-                        {userLocationError}
-                      </div>
-                    )}
-                  </div>
+          <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
+            <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
+              Distància
+            </p>
+            {(userLocationLoading || userLocationError) && (
+              <div className="border-t border-bColor py-2">
+                <div className="flex flex-col">
+                  {userLocationLoading && (
+                    <div className="text-sm text-bColor">
+                      Carregant localització...
+                    </div>
+                  )}
+                  {userLocationError && (
+                    <div className="text-sm text-primary">
+                      {userLocationError}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            <div className="w-2/3 flex flex-col px-4 pt-2 border-l border-bColor">
-              <div
-                className={`flex flex-col ${
-                  disableDistance ? "opacity-30" : ""
-                }`}
-              >
-                {DISTANCES.map((value) => (
-                  <RadioInput
-                    key={value}
-                    id={value}
-                    name="distance"
-                    value={value}
-                    checkedValue={distance}
-                    onChange={handleDistanceChange}
-                    label={`${value} km`}
-                    disabled={disableDistance}
-                  />
-                ))}
               </div>
+            )}
+            <div
+              className={`w-full flex flex-col justify-start items-start gap-3 px-6 sm:px-0 ${
+                disableDistance ? "opacity-30" : ""
+              }`}
+            >
+              <RangeInput
+                key="distance"
+                id="distance"
+                name="distance"
+                min={DISTANCES[0]}
+                max={DISTANCES[DISTANCES.length - 1]}
+                value={distance}
+                onChange={handleDistanceChange}
+                label="Esdeveniments a"
+                disabled={disableDistance}
+              />
             </div>
           </fieldset>
         </div>

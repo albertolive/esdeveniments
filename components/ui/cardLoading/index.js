@@ -2,37 +2,44 @@ import { memo } from "react";
 
 function CardLoading() {
   return (
-    <div className="min-w-full w-full flex flex-col content-center bg-whiteCorp mb-10">
+    <div className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10">
       {/* Title */}
-      <div className="bg-whiteCorp h-24 flex justify-between items-center gap-2 gap-x-4">
+      <div className="bg-whiteCorp h-fit flex justify-between items-center gap-3">
       <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
             <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
-            <div className="triangle-down px-0 mx-0"></div>
           </div>
         {/* Title */}
-        <div className="w-10/12 flex flex-col gap-4 h-18 animate-fast-pulse">
-          <div className="w-4/5 bg-darkCorp h-4 rounded-xl"></div>
+        <div className="w-10/12 flex justify-start items-center animate-fast-pulse">
+          <div className="w-2/3 h-5 bg-darkCorp rounded-xl"></div>
         </div>
         {/* WeatherIcon */}
-        <div className="w-2/12 flex justify-center">
+        <div className="w-2/12 flex justify-center animate-fast-pulse">
           <div className="w-4 h-4 bg-darkCorp opacity-50 rounded-xl"></div>
         </div>
       </div>
       {/* ImageEvent */}
-      <div className="h-[254px] bg-darkCorp m-2 animate-fast-pulse"></div>
+      <div className="p-4 flex justify-center items-center">
+        <div className="w-full h-60 bg-darkCorp m-2 animate-fast-pulse"></div>
+      </div>
       {/* Info */}
       {/* InfoEvent */}
-      <div className="flex flex-col px-4 pt-8 gap-4">
+      <div className="bg-whiteCorp flex flex-col px-4 pt-4 gap-4">
         {/* Date */}
-        <div className="bg-darkCorp h-4 mx-8 rounded-xl text-blackCorp animate-fast-pulse"></div>
+        <div className="bg-darkCorp w-2/3 h-5 pl-1 rounded-xl animate-fast-pulse"></div>
         {/* Location */}
-        <div className="w-full h-18 flex flex-col gap-4">
-          <div className="w-4/5 bg-darkCorp h-4 rounded-xl"></div>
-          <div className="w-2/3 bg-darkCorp h-4 rounded-xl"></div>
+        <div className="w-full h-full flex items-start animate-fast-pulse">
+          <div className="h-4 w-4 bg-darkCorp rounded-xl"></div>
+          <div className="w-full h-full flex flex-col justify-center items-start px-2 gap-2">
+            <div className="w-2/3 my-1 bg-darkCorp h-3 rounded-xl"></div>
+            <div className="w-2/3 my-1 bg-darkCorp h-3 rounded-xl"></div>
+          </div>
         </div>
         {/* hour */}
-        <div className="flex justify-start items-center">
-          <p className="px-2"></p>
+        <div className="w-full h-full flex items-start animate-fast-pulse">
+          <div className="h-4 w-4 bg-darkCorp rounded-xl"></div>
+          <div className="w-full h-full flex flex-col justify-center items-start px-2 gap-2">
+            <div className="w-2/3 my-1 bg-darkCorp h-3 rounded-xl"></div>
+          </div>
         </div>
       </div>
     </div>

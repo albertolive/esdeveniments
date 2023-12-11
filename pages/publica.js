@@ -272,13 +272,13 @@ export default function Publica() {
         description="Publica un acte cultural - Esdeveniments.cat"
         canonical={`${siteUrl}/publica`}
       />
-      <div className="max-w-full mx-0 px-4 sm:px-0 sm:max-w-[576px] md:px-4 md:max-w-[768px] lg:px-20 lg:max-w-[1024px]">
+      <div className="w-full flex flex-col justify-center items-center px-4 pt-10 pb-14 sm:px-10 sm:w-[580px]">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex flex-col items-center gap-4">
-            <h1 className="text-center text-primary italic uppercase font-semibold">
+          <div className="flex flex-col items-center gap-2">
+            <h1 className="text-center italic uppercase font-medium">
               Publica un esdeveniment
             </h1>
-            <p className="text-center">* camps obligatoris</p>
+            <p className=" text-sm text-center">* camps obligatoris</p>
           </div>
           <div className="w-full flex flex-col justify-center items-center gap-y-4 pt-4">
             <Input
@@ -341,7 +341,7 @@ export default function Publica() {
           </div>
         )}
 
-        <div className="flex justify-center p-6 pb-8">
+        <div className="flex justify-center pt-10">
           <button
             disabled={isLoading}
             onClick={onSubmit}

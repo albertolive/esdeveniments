@@ -60,6 +60,10 @@ const nextConfig = {
             value:
               "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
           },
+          {
+            key: 'Link',
+            value: '</fonts/roboto-flex.woff2>; rel=preload; as=font, </fonts/barlow-condensed.woff2>; rel=preload; as=font',
+          },
         ],
       },
     ];
