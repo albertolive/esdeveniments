@@ -1,17 +1,28 @@
-import React from 'react';
-import { FacebookShareButton, TwitterShareButton, TelegramShareButton, WhatsappShareButton } from 'react-share';
-import { FacebookIcon, TwitterIcon, TelegramIcon, WhatsappIcon } from 'react-share';
+import { siteUrl } from "@config/index";
+import React from "react";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  TelegramShareButton,
+  WhatsappShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  TelegramIcon,
+  WhatsappIcon,
+} from "react-share";
 
-export default function CardShareButton({ eventUrl }) {
+export default function CardShareButton({ slug }) {
+  const eventUrl = `${siteUrl}/e/${slug}`;
+
   const iconProps = {
-    bgStyle: { fill: '#FFF' },
-    iconFillColor: '#FF0037',
+    bgStyle: { fill: "#FFF" },
+    iconFillColor: "#FF0037",
     size: 28,
-    round: true
+    round: true,
   };
 
   return (
-    <div className='w-full h-8 flex justify-start items-center gap-6 px-2'>
+    <div className="w-full h-8 flex justify-start items-center gap-6 px-2">
       <FacebookShareButton url={eventUrl}>
         <FacebookIcon {...iconProps} size={32} />
       </FacebookShareButton>
@@ -29,4 +40,4 @@ export default function CardShareButton({ eventUrl }) {
       </WhatsappShareButton>
     </div>
   );
-};
+}

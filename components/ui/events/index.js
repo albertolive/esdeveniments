@@ -46,7 +46,6 @@ function Events({ props, loadMore = true }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [scrollButton, setScrollButton] = useState(false);
-  const [hasScroll, setHasScroll] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Set initial loading state to false
   const [isTimeout, setIsTimeout] = useState(false); // Set initial timeout state to false
 
@@ -75,7 +74,7 @@ function Events({ props, loadMore = true }) {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
   };
 
@@ -137,27 +136,6 @@ function Events({ props, loadMore = true }) {
   };
 
   // Effects
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setHasScroll(true);
-      } else {
-        setHasScroll(false);
-      }
-    };
-
-    // Run the function once to handle the initial scroll position
-    handleScroll();
-
-    // Add the event listener when the component mounts
-    window.addEventListener("scroll", handleScroll);
-
-    // Remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []); 
 
   useEffect(() => {
     // Set a timeout to show the loading state after a delay
@@ -320,16 +298,18 @@ function Events({ props, loadMore = true }) {
         description={`${metaDescription}`}
         canonical={canonical}
       />
-        <div onClick={scrollToTop} className={`w-8 h-8 text-whiteCorp bg-primary flex justify-center items-center rounded-lg shadow-xl ${
-        scrollButton
-          ? "fixed z-10 bottom-[82px] md:bottom-[90px] lg:bottom-[90px] right-8 flex justify-end animate-appear"
-          : "hidden"
-          }`}
-        >
-          <ArrowUp className="w-5 h-5" aria-hidden="true"/>
-        </div>
+      <div
+        onClick={scrollToTop}
+        className={`w-8 h-8 text-whiteCorp bg-primary flex justify-center items-center rounded-lg shadow-xl ${
+          scrollButton
+            ? "fixed z-10 bottom-[82px] md:bottom-[90px] lg:bottom-[90px] right-8 flex justify-end animate-appear"
+            : "hidden"
+        }`}
+      >
+        <ArrowUp className="w-5 h-5" aria-hidden="true" />
+      </div>
       <div className="w-full bg-whiteCorp fixed top-10 z-10 flex justify-center items-center pt-2">
-        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">  
+        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
             place={place}
@@ -396,7 +376,7 @@ function Events({ props, loadMore = true }) {
           </div>
         ) : (
           <List events={filteredEvents}>
-            {(event) => <Card key={event.id} event={event} eventUrl={canonical} />}
+            {(event) => <Card key={event.id} event={event} />}
           </List>
         )}
         {isLoadingMore && <CardLoading />}

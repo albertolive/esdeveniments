@@ -154,7 +154,6 @@ export default function Event(props) {
   const title = data.event ? data.event.title : "";
   const [hasError, setHasError] = useState(false);
 
-
   useEffect(() => {
     if (newEvent || edit_suggested) return;
 
@@ -220,7 +219,6 @@ export default function Event(props) {
     imageUploaded,
     isEventFinished,
     eventImage,
-    
   } = data.event;
 
   const jsonData = generateJsonData({ ...data.event, imageUploaded });
@@ -239,7 +237,10 @@ export default function Event(props) {
   }
 
   const handleDirectionsClick = () => {
-    window.open(`https://www.google.com/maps/dir/?api=1&destination=${location}`, "_blank");
+    window.open(
+      `https://www.google.com/maps/dir/?api=1&destination=${location}`,
+      "_blank"
+    );
   };
 
   return (
@@ -280,10 +281,15 @@ export default function Event(props) {
                   className="flex justify-center items-center gap-1 hover:text-primary"
                 >
                   <HomeIcon className="h-3 w-3" />
-                  <p className="text-xs font-semibold font-barlow uppercase hidden md:block">Esdeveniments</p>
+                  <p className="text-xs font-semibold font-barlow uppercase hidden md:block">
+                    Esdeveniments
+                  </p>
                 </Link>
                 <ChevronRightIcon className="h-3 w-3" />
-                <div className="flex justify-center items-center" aria-current="page">
+                <div
+                  className="flex justify-center items-center"
+                  aria-current="page"
+                >
                   <span className="text-xs whitespace-normal break-words">
                     {title}
                   </span>
@@ -291,11 +297,11 @@ export default function Event(props) {
               </li>
             </ol>
           </nav>
-            {isEventFinished && (
-              <p className="w-full font-medium text-primary">
-                Aquest esdeveniment ha finalitzat
-              </p>
-            )}
+          {isEventFinished && (
+            <p className="w-full font-medium text-primary">
+              Aquest esdeveniment ha finalitzat
+            </p>
+          )}
           <article className="w-full flex flex-col justify-center items-start gap-6">
             {/* Info */}
             <div className="w-full flex flex-col justify-start items-start gap-2 pt-1">
@@ -332,60 +338,57 @@ export default function Event(props) {
               <div className="w-full flex justify-center items-start gap-4 p-1">
                 {imageUploaded ? (
                   <a
-                  href={imageUploaded}
-                  className="flex justify-center"
-                  target="_blank"
-                  rel="image_src noreferrer"
+                    href={imageUploaded}
+                    className="flex justify-center"
+                    target="_blank"
+                    rel="image_src noreferrer"
                   >
                     <Image
-                    alt={title}
-                    title={title}
-                    image={imageUploaded}
-                    className="w-full object-center object-cover"
+                      alt={title}
+                      title={title}
+                      image={imageUploaded}
+                      className="w-full object-center object-cover"
                     />
                   </a>
-                ):(
+                ) : (
                   <ImgDefault />
                 )}
               </div>
               {/* Description */}
               <div className="w-full flex justify-center items-start gap-4 px-4">
-                <div className="w-full break-words overflow-hidden">{ReactHtmlParser(description)}</div>
+                <div className="w-full break-words overflow-hidden">
+                  {ReactHtmlParser(description)}
+                </div>
               </div>
             </div>
           </article>
           {/* Map */}
           <div className="w-full flex flex-col justify-center items-center gap-4">
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 p-3">
-              <div 
-              className="flex justify-center items-center gap-3"
-              onClick={handleShowMap}>
+              <div
+                className="flex justify-center items-center gap-3"
+                onClick={handleShowMap}
+              >
                 <button
                   type="button"
                   className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
                 >
                   {showMap ? (
-                      <XIcon
-                        className="h-5 w-5"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <MapIcon
-                        className="h-5 w-5"
-                        aria-hidden="true"
-                      />
-                    )
-                  }
-                <p className="uppercase font-barlow font-semibold italic">Mapa - {location}</p>
+                    <XIcon className="h-5 w-5" aria-hidden="true" />
+                  ) : (
+                    <MapIcon className="h-5 w-5" aria-hidden="true" />
+                  )}
+                  <p className="uppercase font-barlow font-semibold italic">
+                    Mapa - {location}
+                  </p>
                 </button>
               </div>
               <div className="">
-                <button 
-                  className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp" 
-                  onClick={handleDirectionsClick}>
-                    <LocationIcon
-                      className="h-5 w-5"
-                      aria-hidden="true" />
+                <button
+                  className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+                  onClick={handleDirectionsClick}
+                >
+                  <LocationIcon className="h-5 w-5" aria-hidden="true" />
                   <p className="font-barlow">Com arribar</p>
                 </button>
               </div>

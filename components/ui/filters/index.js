@@ -95,7 +95,9 @@ const Filters = ({
             }
             aria-hidden="true"
           />
-          <p className="hidden md:block md:font-barlow md:uppercase md:italic md:font-medium">Filtres</p>
+          <p className="hidden md:block md:font-barlow md:uppercase md:italic md:font-medium">
+            Filtres
+          </p>
         </div>
         <div className="w-8/10 h-10 flex justify-cenetr items-center gap-1 xs:gap-2 sm:gap-3 border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
@@ -105,7 +107,7 @@ const Filters = ({
             handleOpenModal,
           })}
           {renderButton({
-            text: getText(category, "Categories"),
+            text: getText(category, "Categoria"),
             enabled: category,
             onClick: handleOnClick(category, handleCategoryClick),
             handleOpenModal,

@@ -27,11 +27,6 @@ function FiltersModal({
   const handleStateChange = useCallback((setState, value) => {
     setState((prevValue) => (prevValue === value ? "" : value));
   }, []);
-  const [isEnabled, setIsEnabled] = useState(true);
-  
-  const toggleEnable = () => {
-    setIsEnabled(!isEnabled);
-  };
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
@@ -54,84 +49,83 @@ function FiltersModal({
     [handleStateChange, setCategory]
   );
 
-  
   const handlePlaceChange = useCallback(
     ({ value }) => {
       if (!value) window.localStorage.removeItem("place");
-      
+
       setPlace(value);
       setSelectedOption(value);
-      
+
       localStorage.removeItem("currentPage");
       localStorage.removeItem("scrollPosition");
     },
     [setPlace, setSelectedOption]
-    );
-    
-    const handleUserLocation = useCallback(
-      (value) => {
-        if (userLocation) {
-          handleStateChange(setDistance, value);
-          return;
-        }
-        
-        setUserLocationLoading(true);
-        setUserLocationError(null);
-        
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            function (position) {
-              const location = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              };
-              
-              setUserLocation(location);
-              setUserLocationLoading(false);
-              handleStateChange(setDistance, value);
-            },
-            function (error) {
-              console.log("Error occurred. Error code: " + error.code);
-              switch (error.code) {
-                case 1:
-                  setUserLocationError(
-                    "Permís denegat. L'usuari no ha permès la sol·licitud de geolocalització."
-                    );
-                    break;
-                    case 2:
-                      setUserLocationError(
-                        "Posició no disponible. No s'ha pogut obtenir la informació de la ubicació."
-                        );
-                        break;
-                        case 3:
-                          setUserLocationError(
-                            "Temps d'espera esgotat. La sol·licitud per obtenir la ubicació de l'usuari ha superat el temps d'espera."
+  );
+
+  const handleUserLocation = useCallback(
+    (value) => {
+      if (userLocation) {
+        handleStateChange(setDistance, value);
+        return;
+      }
+
+      setUserLocationLoading(true);
+      setUserLocationError(null);
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            const location = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+
+            setUserLocation(location);
+            setUserLocationLoading(false);
+            handleStateChange(setDistance, value);
+          },
+          function (error) {
+            console.log("Error occurred. Error code: " + error.code);
+            switch (error.code) {
+              case 1:
+                setUserLocationError(
+                  "Permís denegat. L'usuari no ha permès la sol·licitud de geolocalització."
+                );
+                break;
+              case 2:
+                setUserLocationError(
+                  "Posició no disponible. No s'ha pogut obtenir la informació de la ubicació."
+                );
+                break;
+              case 3:
+                setUserLocationError(
+                  "Temps d'espera esgotat. La sol·licitud per obtenir la ubicació de l'usuari ha superat el temps d'espera."
                 );
                 break;
               default:
                 setUserLocationError("S'ha produït un error desconegut.");
-              }
-              setUserLocationLoading(false);
             }
-            );
-          } else {
-            console.log("Geolocation is not supported by this browser.");
-            setUserLocationError(
-              "La geolocalització no és compatible amb aquest navegador."
-              );
-              setUserLocationLoading(false);
-            }
-          },
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          [
-            setUserLocation,
-            setUserLocationLoading,
-            setUserLocationError,
-            handleStateChange,
-            setDistance,
-          ]
+            setUserLocationLoading(false);
+          }
+        );
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+        setUserLocationError(
+          "La geolocalització no és compatible amb aquest navegador."
+        );
+        setUserLocationLoading(false);
+      }
+    },
+    [
+      userLocation,
+      setUserLocation,
+      setUserLocationLoading,
+      setUserLocationError,
+      handleStateChange,
+      setDistance,
+    ]
   );
-  
+
   const handleDistanceChange = useCallback(
     (event) => {
       handleUserLocation(event.target.value);
@@ -205,27 +199,25 @@ function FiltersModal({
             </div>
           </fieldset>
           <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
-            <div className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
-              <p className="text-primary font-normal font-barlow pt-[5px]  pb-2">
-                Distància
-              </p>
-              {/* {(userLocationLoading || userLocationError) && (
-                <div className="border-t border-bColor py-2">
-                  <div className="flex flex-col">
-                    {userLocationLoading && (
-                      <div className="text-sm text-bColor">
-                        Carregant localització...
-                      </div>
-                    )}
-                    {userLocationError && (
-                      <div className="text-sm text-primary">
-                        {userLocationError}
-                      </div>
-                    )}
-                  </div>
+            <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
+              Distància
+            </p>
+            {(userLocationLoading || userLocationError) && (
+              <div className="border-t border-bColor py-2">
+                <div className="flex flex-col">
+                  {userLocationLoading && (
+                    <div className="text-sm text-bColor">
+                      Carregant localització...
+                    </div>
+                  )}
+                  {userLocationError && (
+                    <div className="text-sm text-primary">
+                      {userLocationError}
+                    </div>
+                  )}
                 </div>
-              )} */}
-            </div>
+              </div>
+            )}
             <div
               className={`w-full flex flex-col justify-start items-start gap-3 px-6 sm:px-0 ${
                 disableDistance ? "opacity-30" : ""
@@ -240,8 +232,7 @@ function FiltersModal({
                 value={distance}
                 onChange={handleDistanceChange}
                 label="Esdeveniments a"
-                isEnabled={isEnabled}
-                toggleEnable={toggleEnable}
+                disabled={disableDistance}
               />
             </div>
           </fieldset>
