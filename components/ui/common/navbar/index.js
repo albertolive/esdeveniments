@@ -148,7 +148,7 @@ export default function Navbar() {
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="w-full sticky flex justify-evenly items-center pb-6 bg-whiteCorp transition-transform">
+            <div className="w-full relative flex justify-evenly items-center bg-whiteCorp transition-transform">
               {navigation.map((item) => (
                 <ActiveLink
                   href={item.href}

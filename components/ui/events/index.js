@@ -328,7 +328,7 @@ function Events({ props, loadMore = true }) {
         </div>
       </div>
       <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px]">
-        <div className="pt-4">
+        <div className="mt-4">
           <div className="p-2 flex flex-col justify-center items-center invisible">
             <button
               onClick={toggleDropdown}
