@@ -1,7 +1,6 @@
 import { memo, useEffect, useState, useCallback } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
@@ -78,26 +77,6 @@ function Events({ props, loadMore = true }) {
     });
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 400) {
-        setScrollButton(true);
-      } else if (window.scrollY < 200) {
-        setScrollButton(false);
-      }
-    };
-
-    // Run the function once to handle the initial scroll position
-    handleScroll();
-
-    // Add the event listener when the component mounts
-    window.addEventListener("scroll", handleScroll);
-
-    // Remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
   const handleLoadMore = useCallback(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("scrollPosition", window.scrollY);
@@ -136,6 +115,33 @@ function Events({ props, loadMore = true }) {
   };
 
   // Effects
+
+  useEffect(() => {
+    if (!shuffleItems) {
+      window.scrollTo(0, 0);
+    }
+  }, [shuffleItems]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setScrollButton(true);
+      } else if (window.scrollY < 200) {
+        setScrollButton(false);
+      }
+    };
+
+    // Run the function once to handle the initial scroll position
+    handleScroll();
+
+    // Add the event listener when the component mounts
+    window.addEventListener("scroll", handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     // Set a timeout to show the loading state after a delay
@@ -259,12 +265,6 @@ function Events({ props, loadMore = true }) {
       setByDate(storedByDate === "undefined" ? undefined : storedByDate);
     }
   }, [byDateProps]);
-
-  // This is causing to not restore the scroll after coming back from an event page
-
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, [place, byDate, category, searchTerm, userLocation, distance]);
 
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
