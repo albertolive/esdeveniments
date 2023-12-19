@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
@@ -8,7 +9,7 @@ import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-esdeveniments.webp";
-import { useRouter } from "next/router";
+import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 
 const navigation = [
   { name: "Agenda", href: "/", current: true },
@@ -18,6 +19,7 @@ const navigation = [
 
 export default function Navbar() {
   const router = useRouter();
+  const isSticky = useScrollVisibility(100);
 
   const navigateToMainPage = () => {
     localStorage.removeItem("place");
@@ -44,7 +46,9 @@ export default function Navbar() {
     <Disclosure
       key={router.asPath}
       as="nav"
-      className="w-full bg-whiteCorp sticky top-0 z-50"
+      className={`w-full bg-whiteCorp transition-all duration-500 ease-in-out ${
+        isSticky ? "sticky top-0 opacity-100" : "relative opacity-0"
+      } z-50`}
     >
       {({ open }) => (
         <>

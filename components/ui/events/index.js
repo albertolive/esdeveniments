@@ -20,6 +20,7 @@ import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
 import Search from "@components/ui/search";
+import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -76,6 +77,8 @@ function Events({ props, loadMore = true }) {
       behavior: "smooth",
     });
   };
+
+  const isSticky = useScrollVisibility(100);
 
   const handleLoadMore = useCallback(() => {
     if (typeof window !== "undefined") {
@@ -308,7 +311,11 @@ function Events({ props, loadMore = true }) {
       >
         <ArrowUp className="w-5 h-5" aria-hidden="true" />
       </div>
-      <div className="w-full bg-whiteCorp fixed top-10 z-10 flex justify-center items-center pt-2">
+      <div
+        className={`w-full bg-whiteCorp fixed transition-all duration-500 ease-in-out ${
+          isSticky ? "top-10" : "top-0"
+        } z-10 flex justify-center items-center pt-2`}
+      >
         <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
