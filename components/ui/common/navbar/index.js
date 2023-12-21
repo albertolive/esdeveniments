@@ -9,7 +9,6 @@ import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-esdeveniments.webp";
-import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 
 const navigation = [
   { name: "Agenda", href: "/", current: true },
@@ -19,7 +18,6 @@ const navigation = [
 
 export default function Navbar() {
   const router = useRouter();
-  const isSticky = useScrollVisibility(100);
 
   const navigateToMainPage = () => {
     localStorage.removeItem("place");
