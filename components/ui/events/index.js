@@ -36,6 +36,7 @@ function Events({ props, loadMore = true }) {
 
   // State
   const [page, setPage] = useState(getStoredPage);
+  const [openModal, setOpenModal] = useState(false);
   const [place, setPlace] = useState("");
   const [byDate, setByDate] = useState("");
   const [category, setCategory] = useState("");
@@ -78,8 +79,6 @@ function Events({ props, loadMore = true }) {
     });
   };
 
-  const isSticky = useScrollVisibility(100);
-
   const handleLoadMore = useCallback(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("scrollPosition", window.scrollY);
@@ -117,13 +116,21 @@ function Events({ props, loadMore = true }) {
     }
   };
 
+  const isSticky = useScrollVisibility(30);
+
   // Effects
 
   useEffect(() => {
-    if (!shuffleItems) {
-      window.scrollTo(0, 0);
+    if (!shuffleItems && !openModal) {
+      scrollToTop();
     }
-  }, [shuffleItems]);
+  }, [shuffleItems, openModal]);
+
+  useEffect(() => {
+    if (distance && !openModal) {
+      scrollToTop();
+    }
+  }, [distance, openModal]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -166,6 +173,7 @@ function Events({ props, loadMore = true }) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
+      setIsLoadingMore(false);
     }
   }, [isTimeout, events, noEventsFound]);
 
@@ -189,6 +197,8 @@ function Events({ props, loadMore = true }) {
     if (place) {
       window.localStorage.setItem("place", place);
       sendEventToGA("Place", place);
+    } else {
+      scrollToTop();
     }
   }, [place]);
 
@@ -196,18 +206,26 @@ function Events({ props, loadMore = true }) {
     if (byDate) {
       window.localStorage.setItem("byDate", byDate);
       sendEventToGA("ByDate", byDate);
+    } else {
+      scrollToTop();
     }
   }, [byDate]);
 
   useEffect(() => {
     window.localStorage.setItem("category", category);
     category && sendEventToGA("Category", category);
+
+    if (!category) {
+      scrollToTop();
+    }
   }, [category]);
 
   useEffect(() => {
     window.localStorage.setItem("distance", distance);
     if (typeof distance === "number") {
       sendEventToGA("Distance", distance);
+    } else {
+      scrollToTop();
     }
   }, [distance]);
 
@@ -269,6 +287,10 @@ function Events({ props, loadMore = true }) {
     }
   }, [byDateProps]);
 
+  useEffect(() => {
+    setIsLoading(!events && !error);
+  }, [events, error]);
+
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
 
@@ -313,7 +335,7 @@ function Events({ props, loadMore = true }) {
       </div>
       <div
         className={`w-full bg-whiteCorp fixed transition-all duration-500 ease-in-out ${
-          isSticky ? "top-10" : "top-0"
+          isSticky ? "top-10" : "top-0 md:top-10"
         } z-10 flex justify-center items-center pt-2`}
       >
         <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">
@@ -331,6 +353,8 @@ function Events({ props, loadMore = true }) {
             setUserLocation={setUserLocation}
             distance={distance}
             setDistance={setDistance}
+            openModal={openModal}
+            setOpenModal={setOpenModal}
           />
         </div>
       </div>

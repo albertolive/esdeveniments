@@ -16,9 +16,10 @@ function SubMenu({
   setUserLocation,
   distance,
   setDistance,
+  openModal,
+  setOpenModal,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
