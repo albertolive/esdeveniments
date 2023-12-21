@@ -46,17 +46,11 @@ export default function Navbar() {
     <Disclosure
       key={router.asPath}
       as="nav"
-      className={`w-full bg-whiteCorp transition-all duration-500 ease-in-out ${
-        isSticky ? "sticky top-0 opacity-100" : "relative opacity-0"
-      } z-50`}
+      className="w-full bg-whiteCorp transition-all duration-500 ease-in-out sticky z-50"
     >
       {({ open }) => (
         <>
-          <div
-            className={
-              "sm:px-10 sm:w-[580px] md:w-[768px] lg:w-[1024px] bg-whiteCorp mx-auto py-2 h-14"
-            }
-          >
+          <div className="sm:px-10 sm:w-[580px] md:w-[768px] lg:w-[1024px] bg-whiteCorp mx-auto py-2 h-14">
             <div className="h-full flex flex-col justify-center">
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
               <div className="flex justify-around items-center">
