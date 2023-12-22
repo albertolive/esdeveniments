@@ -18,6 +18,7 @@ function SubMenu({
   setDistance,
   openModal,
   setOpenModal,
+  scrollToTop,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -72,6 +73,7 @@ function SubMenu({
         distance={distance}
         setDistance={setDistance}
         setSelectedOption={setSelectedOption}
+        scrollToTop={scrollToTop}
       />
     </>
   );

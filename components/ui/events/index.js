@@ -197,8 +197,6 @@ function Events({ props, loadMore = true }) {
     if (place) {
       window.localStorage.setItem("place", place);
       sendEventToGA("Place", place);
-    } else {
-      scrollToTop();
     }
   }, [place]);
 
@@ -206,26 +204,18 @@ function Events({ props, loadMore = true }) {
     if (byDate) {
       window.localStorage.setItem("byDate", byDate);
       sendEventToGA("ByDate", byDate);
-    } else {
-      scrollToTop();
     }
   }, [byDate]);
 
   useEffect(() => {
     window.localStorage.setItem("category", category);
     category && sendEventToGA("Category", category);
-
-    if (!category) {
-      scrollToTop();
-    }
   }, [category]);
 
   useEffect(() => {
     window.localStorage.setItem("distance", distance);
     if (typeof distance === "number") {
       sendEventToGA("Distance", distance);
-    } else {
-      scrollToTop();
     }
   }, [distance]);
 
@@ -355,6 +345,7 @@ function Events({ props, loadMore = true }) {
             setDistance={setDistance}
             openModal={openModal}
             setOpenModal={setOpenModal}
+            scrollToTop={scrollToTop}
           />
         </div>
       </div>
