@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { today, week, weekend, twoWeeksDefault } from "@lib/dates";
 import { getCalendarEvents } from "@lib/helpers";
 
@@ -90,6 +91,7 @@ const handler = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error });
+    captureException(new Error(`Error fetching calendar events ${error}`));
   }
 };
 
