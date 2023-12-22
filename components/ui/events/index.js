@@ -21,6 +21,7 @@ import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
 import Search from "@components/ui/search";
+import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -36,6 +37,7 @@ function Events({ props, loadMore = true }) {
 
   // State
   const [page, setPage] = useState(getStoredPage);
+  const [openModal, setOpenModal] = useState(false);
   const [place, setPlace] = useState("");
   const [byDate, setByDate] = useState("");
   const [category, setCategory] = useState("");
@@ -46,8 +48,7 @@ function Events({ props, loadMore = true }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [scrollButton, setScrollButton] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Set initial loading state to false
-  const [isTimeout, setIsTimeout] = useState(false); // Set initial timeout state to false
+  const [isLoading, setIsLoading] = useState(true);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
@@ -56,7 +57,8 @@ function Events({ props, loadMore = true }) {
   const pageIndex = dateFunctions[byDate] || "all";
   const shuffleItems = sharedQuery.trim() === "" && pageIndex === "all";
   const {
-    data: { events = [], currentYear, noEventsFound = false },
+    data: { events = [], currentYear, noEventsFound = false, allEventsLoaded },
+    isValidating,
     error,
   } = useGetEvents({
     props,
@@ -78,26 +80,6 @@ function Events({ props, loadMore = true }) {
     });
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 400) {
-        setScrollButton(true);
-      } else if (window.scrollY < 200) {
-        setScrollButton(false);
-      }
-    };
-
-    // Run the function once to handle the initial scroll position
-    handleScroll();
-
-    // Add the event listener when the component mounts
-    window.addEventListener("scroll", handleScroll);
-
-    // Remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
   const handleLoadMore = useCallback(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("scrollPosition", window.scrollY);
@@ -135,30 +117,42 @@ function Events({ props, loadMore = true }) {
     }
   };
 
+  const isSticky = useScrollVisibility(30);
+
   // Effects
 
   useEffect(() => {
-    // Set a timeout to show the loading state after a delay
-    const timeoutId = setTimeout(() => setIsTimeout(true), 1000); // 1 second delay
-
-    // If events data is available before the timeout, clear the timeout and don't show the loading state
-    if (events.length > 0) {
-      clearTimeout(timeoutId);
-      setIsTimeout(false);
+    if (!shuffleItems && !openModal) {
+      scrollToTop();
     }
-
-    // Clean up the timeout when the component unmounts
-    return () => clearTimeout(timeoutId);
-  }, [events]);
+  }, [shuffleItems, openModal]);
 
   useEffect(() => {
-    // If the timeout has passed and the events data is still not available, show the loading state
-    if (isTimeout && events.length === 0 && !noEventsFound) {
-      setIsLoading(true);
-    } else {
-      setIsLoading(false);
+    if (distance && !openModal) {
+      scrollToTop();
     }
-  }, [isTimeout, events, noEventsFound]);
+  }, [distance, openModal]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setScrollButton(true);
+      } else if (window.scrollY < 200) {
+        setScrollButton(false);
+      }
+    };
+
+    // Run the function once to handle the initial scroll position
+    handleScroll();
+
+    // Add the event listener when the component mounts
+    window.addEventListener("scroll", handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const storedCategory = window.localStorage.getItem("category");
@@ -260,11 +254,9 @@ function Events({ props, loadMore = true }) {
     }
   }, [byDateProps]);
 
-  // This is causing to not restore the scroll after coming back from an event page
-
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, [place, byDate, category, searchTerm, userLocation, distance]);
+  useEffect(() => {
+    setIsLoading(!events && !error);
+  }, [events, error]);
 
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
@@ -308,7 +300,11 @@ function Events({ props, loadMore = true }) {
       >
         <ArrowUp className="w-5 h-5" aria-hidden="true" />
       </div>
-      <div className="w-full bg-whiteCorp fixed top-10 z-10 flex justify-center items-center pt-2">
+      <div
+        className={`w-full bg-whiteCorp fixed transition-all duration-500 ease-in-out ${
+          isSticky ? "top-10" : "top-0 md:top-10"
+        } z-10 flex justify-center items-center pt-2`}
+      >
         <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
@@ -324,11 +320,14 @@ function Events({ props, loadMore = true }) {
             setUserLocation={setUserLocation}
             distance={distance}
             setDistance={setDistance}
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            scrollToTop={scrollToTop}
           />
         </div>
       </div>
       <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px]">
-        <div className="pt-4">
+        <div className="mt-4">
           <div className="p-2 flex flex-col justify-center items-center invisible">
             <button
               onClick={toggleDropdown}
@@ -365,10 +364,12 @@ function Events({ props, loadMore = true }) {
             )}
           </div>
         </div>
-        {(noEventsFound || filteredEvents.length === 0) && !isLoading && (
-          <NoEventsFound title={notFoundText} />
-        )}
-        {isLoading && !isLoadingMore ? (
+        {!isLoading &&
+          !isValidating &&
+          (noEventsFound || filteredEvents.length === 0) && (
+            <NoEventsFound title={notFoundText} />
+          )}
+        {(isLoading || isValidating) && !isLoadingMore ? (
           <div>
             {[...Array(10)].map((_, i) => (
               <CardLoading key={i} />
@@ -383,7 +384,8 @@ function Events({ props, loadMore = true }) {
         {!noEventsFound &&
           loadMore &&
           filteredEvents.length > 7 &&
-          !isLoadingMore && (
+          !isLoadingMore &&
+          !allEventsLoaded && (
             <div className="h-12 flex justify-center items-center text-center pt-10 pb-14">
               <button
                 type="button"

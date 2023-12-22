@@ -410,14 +410,25 @@ function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
-export function generateTownUrls() {
+export function generateTownUrls(region) {
   const baseUrl = `${siteUrl}/api/fetchRss`;
   let urls = [];
 
-  for (let [region, regionData] of CITIES_DATA) {
-    for (let town of regionData.towns.keys()) {
-      let url = `${baseUrl}?region=${region}&town=${town}`;
-      urls.push(url);
+  if (region) {
+    // If region is provided, generate URLs for towns in that region
+    if (CITIES_DATA.has(region)) {
+      for (let town of CITIES_DATA.get(region).towns.keys()) {
+        let url = `${baseUrl}?region=${region}&town=${town}`;
+        urls.push(url);
+      }
+    }
+  } else {
+    // If no region is provided, generate URLs for all towns from all regions
+    for (let [region, regionData] of CITIES_DATA) {
+      for (let town of regionData.towns.keys()) {
+        let url = `${baseUrl}?region=${region}&town=${town}`;
+        urls.push(url);
+      }
     }
   }
 

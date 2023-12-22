@@ -18,7 +18,11 @@ export default function Modal({
       className="fixed inset-0 z-50 overflow-y-auto"
       initialFocus={cancelButtonRef}
     >
-      <div className="w-full bg-bColor opacity-60 fixed inset-0" aria-hidden="true" />
+      <div
+        className="w-full bg-bColor opacity-60 fixed inset-0"
+        aria-hidden="true"
+        onClick={() => setOpen(false)}
+      />
       <div className="w-full fixed inset-0 overflow-y-auto">
         <div className="w-full flex items-center justify-center">
           <Transition.Root show={open} as={Fragment}>
@@ -49,7 +53,9 @@ export default function Modal({
                     </div>
                   </div>
                 </Dialog.Title>
-                <div className="w-full h-full sm:h-fit sm:w-[400px] bg-whiteCorp rounded-lg flex justify-center items-center shadow-xl">{children}</div>
+                <div className="w-full h-full sm:h-fit sm:w-[400px] bg-whiteCorp rounded-lg flex justify-center items-center shadow-xl">
+                  {children}
+                </div>
                 {actionButton && (
                   <div className="w-full bg-whiteCorp fixed z-10 bottom-0 left-0 p-2">
                     <div

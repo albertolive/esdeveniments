@@ -5,13 +5,19 @@ import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { BYDATES } from "@utils/constants";
 import { getPlaceLabel } from "@utils/helpers";
 
-const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
+const renderButton = ({
+  text,
+  enabled,
+  onClick,
+  handleOpenModal,
+  scrollToTop,
+}) => (
   <div
     key={text}
     className="w-full bg-whiteCorp flex justify-center items-center nowrap"
   >
     <div
-      className={`w-full h-6 flex justify-center items-end gap-1 px-2 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+      className={`w-full h-6 flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
         enabled
           ? "text-primary font-medium border-b-2 border-whiteCorp hover:border-b-2 hover:border-primary"
           : "border-whiteCorp border-b-2 text-bColor hover:border-b-2 hover:border-bColor"
@@ -24,10 +30,17 @@ const renderButton = ({ text, enabled, onClick, handleOpenModal }) => (
         {text}
       </span>
       {enabled ? (
-        <XIcon className="h-4 w-4" aria-hidden="true" onClick={onClick} />
+        <XIcon
+          className="h-4 w-4"
+          aria-hidden="true"
+          onClick={() => {
+            onClick();
+            scrollToTop();
+          }}
+        />
       ) : (
         <ChevronDownIcon
-          className="h-4 w-4 hidden"
+          className="h-4 w-4"
           aria-hidden="true"
           onClick={onClick}
         />
@@ -47,6 +60,7 @@ const Filters = ({
   distance,
   setDistance,
   setSelectedOption,
+  scrollToTop,
 }) => {
   const isAnyFilterSelected = () => place || byDate || category || distance;
   const getText = (value, defaultValue) => (value ? value : defaultValue);
@@ -105,24 +119,28 @@ const Filters = ({
             enabled: place,
             onClick: handlePlaceClick,
             handleOpenModal,
+            scrollToTop,
           })}
           {renderButton({
             text: getText(category, "Categoria"),
             enabled: category,
             onClick: handleOnClick(category, handleCategoryClick),
             handleOpenModal,
+            scrollToTop,
           })}
           {renderButton({
             text: getText(foundByDate && foundByDate.label, "Data"),
             enabled: foundByDate,
             onClick: handleOnClick(foundByDate, handleByDateClick),
             handleOpenModal,
+            scrollToTop,
           })}
           {renderButton({
             text: getText(distance ? `${distance} km` : null, "Distància"),
             enabled: distance,
             onClick: handleOnClick(distance, handleDistanceClick),
             handleOpenModal,
+            scrollToTop,
           })}
         </div>
       </div>
