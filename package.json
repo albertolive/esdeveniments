@@ -48,7 +48,7 @@
     "react-social-icons": "^6.3.0",
     "rss": "^1.2.2",
     "swr": "^2.0.3",
-    "tailwindcss": "^3.2.6"
+    "tailwindcss": "^3.3.6"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.1.6",

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
@@ -9,7 +9,6 @@ import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-esdeveniments.webp";
-import { useRouter } from "next/router";
 
 const navigation = [
   { name: "Agenda", href: "/", current: true },
@@ -18,29 +17,7 @@ const navigation = [
 ];
 
 export default function Navbar() {
-  const [hasScroll, setHasScroll] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setHasScroll(true);
-      } else if (window.scrollY === 0) {
-        setHasScroll(false);
-      }
-    };
-
-    // Run the function once to handle the initial scroll position
-    handleScroll();
-
-    // Add the event listener when the component mounts
-    window.addEventListener("scroll", handleScroll);
-
-    // Remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []); // Empty dependency array means this effect runs once on mount and cleanup on unmount
 
   const navigateToMainPage = () => {
     localStorage.removeItem("place");
@@ -67,15 +44,11 @@ export default function Navbar() {
     <Disclosure
       key={router.asPath}
       as="nav"
-      className="w-full bg-whiteCorp sticky top-0 z-50"
+      className="w-full bg-whiteCorp transition-all duration-500 ease-in-out sticky md:top-0 z-50"
     >
       {({ open }) => (
         <>
-          <div className={`sm:px-10 sm:w-[580px] md:w-[768px] lg:w-[1024px] bg-whiteCorp mx-auto py-2 ${
-                hasScroll
-                  ? "h-14"
-                  : "h-14"
-              }`}>
+          <div className="sm:px-10 sm:w-[580px] md:w-[768px] lg:w-[1024px] bg-whiteCorp mx-auto py-2 h-14">
             <div className="h-full flex flex-col justify-center">
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
               <div className="flex justify-around items-center">
@@ -85,15 +58,14 @@ export default function Navbar() {
                   onClick={handleLogoClick}
                 >
                   <Link href="/">
-
                     <Image
                       src={logo}
                       className="bg-whiteCorp flex justify-center items-center cursor-pointer"
                       alt="Logo Esdeveniments.cat"
                       width={151}
                       height={18}
-                      priority />
-
+                      priority
+                    />
                   </Link>
                 </div>
                 {/* MenuIcon */}
@@ -116,9 +88,7 @@ export default function Navbar() {
                         key={item.name}
                         className="border-b-2 border-b-whiteCorp"
                       >
-                        <a>
-                          {item.name}
-                        </a>
+                        <a>{item.name}</a>
                       </ActiveLink>
                     ))}
                   </div>
@@ -174,16 +144,14 @@ export default function Navbar() {
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="w-full fixed flex justify-evenly items-center pb-6 bg-whiteCorp transition-transform">
+            <div className="w-full relative flex justify-evenly items-center bg-whiteCorp transition-transform">
               {navigation.map((item) => (
-                <ActiveLink 
+                <ActiveLink
                   href={item.href}
                   key={item.name}
                   className="border-b-2 border-b-whiteCorp"
                 >
-                  <a>
-                    {item.name}
-                  </a>
+                  <a>{item.name}</a>
                 </ActiveLink>
               ))}
             </div>

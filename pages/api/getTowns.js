@@ -1,8 +1,11 @@
 import { generateTownUrls } from "@utils/helpers";
 
-const handler = async (_, res) => {
+const handler = async (req, res) => {
   try {
-    const townsUrls = generateTownUrls();
+    // Extract region from query parameters
+    const { region } = req.query;
+
+    const townsUrls = generateTownUrls(region);
 
     res.setHeader("Cache-Control", "public, max-age=86400, immutable");
     res.setHeader("Content-Type", "application/json");

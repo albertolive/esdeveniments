@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { today, week, weekend, twoWeeksDefault } from "@lib/dates";
 import { getCalendarEvents } from "@lib/helpers";
 
@@ -10,6 +11,28 @@ const noEventsFound = async (events) => {
   return events;
 };
 
+const getEvents = async ({ from, until, q, maxResults, shuffleItems }) => {
+  let events;
+  try {
+    events = await getCalendarEvents({
+      from,
+      until,
+      q,
+      maxResults,
+      shuffleItems,
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching calendar events");
+  }
+
+  if (events.noEventsFound) {
+    events = await noEventsFound(events);
+  }
+
+  return events;
+};
+
 const handler = async (req, res) => {
   const { page, q, maxResults, shuffleItems } = req.query;
 
@@ -18,58 +41,41 @@ const handler = async (req, res) => {
   switch (page) {
     case "today":
       const { from: fromToday, until: untilToday } = today();
-
-      events = await getCalendarEvents({
+      events = await getEvents({
         from: fromToday,
         until: untilToday,
         q,
         maxResults,
         shuffleItems,
       });
-
-      if (events.noEventsFound) events = await noEventsFound(events);
-
       break;
     case "week":
       const { from: fromWeek, until: toWeek } = week();
-
-      events = await getCalendarEvents({
+      events = await getEvents({
         from: fromWeek,
         until: toWeek,
         q,
         maxResults,
         shuffleItems,
       });
-
-      if (events.noEventsFound) events = await noEventsFound(events);
-
       break;
     case "weekend":
       const { from: fromWeekend, until: toWeekend } = weekend();
-
-      events = await getCalendarEvents({
+      events = await getEvents({
         from: fromWeekend,
         until: toWeekend,
         q,
         maxResults,
         shuffleItems,
       });
-
-      if (events.noEventsFound) events = await noEventsFound(events);
-
       break;
     case "search":
       const fromSearch = new Date();
-
-      events = await getCalendarEvents({ from: fromSearch, q, shuffleItems });
-
-      if (events.noEventsFound) events = await noEventsFound(events);
-
+      events = await getEvents({ from: fromSearch, q, shuffleItems });
       break;
     default:
       const from = new Date();
-
-      events = await getCalendarEvents({ from, q, maxResults, shuffleItems });
+      events = await getEvents({ from, q, maxResults, shuffleItems });
   }
 
   try {
@@ -85,6 +91,7 @@ const handler = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error });
+    captureException(new Error(`Error fetching calendar events ${error}`));
   }
 };
 
