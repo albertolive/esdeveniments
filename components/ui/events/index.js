@@ -57,7 +57,9 @@ function Events({ props, loadMore = true }) {
   const pageIndex = dateFunctions[byDate] || "all";
   const shuffleItems = sharedQuery.trim() === "" && pageIndex === "all";
   const {
-    data: { events = [], currentYear, noEventsFound = false },
+    data: { events = [], currentYear, noEventsFound = false, allEventsLoaded },
+    isLoading: isLoadingSWR,
+    isValidating,
     error,
   } = useGetEvents({
     props,
@@ -166,16 +168,6 @@ function Events({ props, loadMore = true }) {
     // Clean up the timeout when the component unmounts
     return () => clearTimeout(timeoutId);
   }, [events]);
-
-  useEffect(() => {
-    // If the timeout has passed and the events data is still not available, show the loading state
-    if (isTimeout && events.length === 0 && !noEventsFound) {
-      setIsLoading(true);
-    } else {
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  }, [isTimeout, events, noEventsFound]);
 
   useEffect(() => {
     const storedCategory = window.localStorage.getItem("category");
@@ -405,7 +397,8 @@ function Events({ props, loadMore = true }) {
         {!noEventsFound &&
           loadMore &&
           filteredEvents.length > 7 &&
-          !isLoadingMore && (
+          !isLoadingMore &&
+          !allEventsLoaded && (
             <div className="h-12 flex justify-center items-center text-center pt-10 pb-14">
               <button
                 type="button"
