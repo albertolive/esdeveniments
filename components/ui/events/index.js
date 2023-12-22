@@ -47,8 +47,7 @@ function Events({ props, loadMore = true }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [scrollButton, setScrollButton] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Set initial loading state to false
-  const [isTimeout, setIsTimeout] = useState(false); // Set initial timeout state to false
+  const [isLoading, setIsLoading] = useState(true);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
@@ -58,7 +57,6 @@ function Events({ props, loadMore = true }) {
   const shuffleItems = sharedQuery.trim() === "" && pageIndex === "all";
   const {
     data: { events = [], currentYear, noEventsFound = false, allEventsLoaded },
-    isLoading: isLoadingSWR,
     isValidating,
     error,
   } = useGetEvents({
@@ -154,20 +152,6 @@ function Events({ props, loadMore = true }) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
-  useEffect(() => {
-    // Set a timeout to show the loading state after a delay
-    const timeoutId = setTimeout(() => setIsTimeout(true), 1000); // 1 second delay
-
-    // If events data is available before the timeout, clear the timeout and don't show the loading state
-    if (events.length > 0) {
-      clearTimeout(timeoutId);
-      setIsTimeout(false);
-    }
-
-    // Clean up the timeout when the component unmounts
-    return () => clearTimeout(timeoutId);
-  }, [events]);
 
   useEffect(() => {
     const storedCategory = window.localStorage.getItem("category");
@@ -379,10 +363,12 @@ function Events({ props, loadMore = true }) {
             )}
           </div>
         </div>
-        {(noEventsFound || filteredEvents.length === 0) && !isLoading && (
-          <NoEventsFound title={notFoundText} />
-        )}
-        {isLoading && !isLoadingMore ? (
+        {!isLoading &&
+          !isValidating &&
+          (noEventsFound || filteredEvents.length === 0) && (
+            <NoEventsFound title={notFoundText} />
+          )}
+        {(isLoading || isValidating) && !isLoadingMore ? (
           <div>
             {[...Array(10)].map((_, i) => (
               <CardLoading key={i} />
