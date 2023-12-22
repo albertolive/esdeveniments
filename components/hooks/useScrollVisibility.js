@@ -1,23 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export const useScrollVisibility = (scrollThreshold) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.scrollY < scrollThreshold;
+    }
+    return true;
+  });
+
+  const handleScroll = useCallback(() => {
+    const shouldShow = window.scrollY < scrollThreshold;
+    if (shouldShow !== isVisible) {
+      setIsVisible(shouldShow);
+    }
+  }, [isVisible, scrollThreshold]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY >= scrollThreshold && isVisible) {
-        setIsVisible(false);
-      } else if (window.scrollY < scrollThreshold && !isVisible) {
-        setIsVisible(true);
-      }
-    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll);
 
-    window.addEventListener("scroll", handleScroll);
+      // Call the handleScroll function immediately to check the initial scroll position
+      handleScroll();
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [isVisible, scrollThreshold]);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, [handleScroll]);
 
   return isVisible;
 };
