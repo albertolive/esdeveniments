@@ -16,36 +16,41 @@ export default function Month({ events, town }) {
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));
 
-  return <>
-    <Script
-      id="-script"
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
-    />
-    <Meta
-      title={`Arxiu del ${month} del ${year} - Esdeveniments.cat`}
-      description={`Descobreix què va passar a ${town} el ${month} del ${year}. Teatre, cinema, música, art i altres excuses per no parar de descobrir ${town} - Arxiu - Esdeveniments.cat`}
-      canonical={`${siteUrl}/sitemap/${year}/${month}`}
-    />
-    <div className="flex flex-col justify-center items-start gap-2 p-6">
-      <h1 className="font-semibold italic uppercase">{month} del {year}</h1>
-      {events.map((event) => (
-        <div key={event.id} className="">
-          <Link href={`/${event.slug}`} prefetch={false} className="hover:text-primary">
-            <h3 key={event.id}>
-              {event.title}
-            </h3>
-            <p className="text-sm" key={event.id}>
-              {event.formattedEnd
-                ? `${event.formattedStart} - ${event.formattedEnd}`
-                : `${event.formattedStart}`}
-            </p>
-
-          </Link>
+  return (
+    <>
+      <Script
+        id="-script"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
+      />
+      <Meta
+        title={`Arxiu del ${month} del ${year} - Esdeveniments.cat`}
+        description={`Descobreix què va passar a ${town} el ${month} del ${year}. Teatre, cinema, música, art i altres excuses per no parar de descobrir ${town} - Arxiu - Esdeveniments.cat`}
+        canonical={`${siteUrl}/sitemap/${year}/${month}`}
+      />
+      <div className="flex flex-col justify-center items-start gap-2 p-6">
+        <h1 className="font-semibold italic uppercase">
+          {month} del {year}
+        </h1>
+        {events.map((event) => (
+          <div key={event.id} className="">
+            <Link
+              href={`/${event.slug}`}
+              prefetch={false}
+              className="hover:text-primary"
+            >
+              <h3 key={event.id}>{event.title}</h3>
+              <p className="text-sm" key={event.id}>
+                {event.formattedEnd
+                  ? `${event.formattedStart} - ${event.formattedEnd}`
+                  : `${event.formattedStart}`}
+              </p>
+            </Link>
+          </div>
+        ))}
       </div>
-    ))}
-    </div>
-  </>;
+    </>
+  );
 }
 
 export async function getStaticPaths() {

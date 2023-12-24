@@ -1,4 +1,4 @@
-import { useMemo, memo, useCallback, useState } from "react";
+import { useMemo, memo, useCallback, useState, useEffect } from "react";
 import Modal from "@components/ui/common/modal";
 import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
@@ -21,12 +21,19 @@ function FiltersModal({
   setDistance,
   selectedOption,
   setSelectedOption,
+  setNavigatedFilterModal,
 }) {
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const [userLocationError, setUserLocationError] = useState("");
   const handleStateChange = useCallback((setState, value) => {
     setState((prevValue) => (prevValue === value ? "" : value));
   }, []);
+
+  useEffect(() => {
+    if (openModal) {
+      setNavigatedFilterModal(true);
+    }
+  }, [openModal, setNavigatedFilterModal]);
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),

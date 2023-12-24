@@ -1,7 +1,6 @@
 import { memo, useEffect, useState, useCallback } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
@@ -49,6 +48,7 @@ function Events({ props, loadMore = true }) {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [scrollButton, setScrollButton] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [navigatedFilterModal, setNavigatedFilterModal] = useState(false);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
@@ -122,16 +122,17 @@ function Events({ props, loadMore = true }) {
   // Effects
 
   useEffect(() => {
-    if (!shuffleItems && !openModal) {
+    if (!shuffleItems && !openModal && navigatedFilterModal) {
       scrollToTop();
+      setNavigatedFilterModal(false);
     }
-  }, [shuffleItems, openModal]);
+  }, [shuffleItems, openModal, navigatedFilterModal]);
 
   useEffect(() => {
-    if (distance && !openModal) {
+    if (distance && !openModal && navigatedFilterModal) {
       scrollToTop();
     }
-  }, [distance, openModal]);
+  }, [distance, openModal, navigatedFilterModal]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -302,10 +303,12 @@ function Events({ props, loadMore = true }) {
       </div>
       <div
         className={`w-full bg-whiteCorp fixed transition-all duration-500 ease-in-out ${
-          isSticky ? "top-10" : "top-0 md:top-10"
-        } z-10 flex justify-center items-center pt-2`}
+          isSticky
+            ? "top-10"
+            : "top-0 md:top-10 border-b border-bColor md:border-b-0 shadow-sm"
+        } z-10 flex justify-center items-center pt-2 `}
       >
-        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">
+        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px}">
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
             place={place}
@@ -323,6 +326,7 @@ function Events({ props, loadMore = true }) {
             openModal={openModal}
             setOpenModal={setOpenModal}
             scrollToTop={scrollToTop}
+            setNavigatedFilterModal={setNavigatedFilterModal}
           />
         </div>
       </div>

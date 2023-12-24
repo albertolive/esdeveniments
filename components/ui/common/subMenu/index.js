@@ -19,6 +19,7 @@ function SubMenu({
   openModal,
   setOpenModal,
   scrollToTop,
+  setNavigatedFilterModal,
 }) {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -59,6 +60,7 @@ function SubMenu({
             setDistance={setDistance}
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
+            setNavigatedFilterModal={setNavigatedFilterModal}
           />
         )}
       </div>

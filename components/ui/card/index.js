@@ -24,6 +24,11 @@ function Card({ event, isLoading }) {
     prefetch(`/e/${event.slug}`);
   };
 
+  const handleOnClick = () => {
+    handlePrefetch();
+    // sessionStorage.setItem("navigating", "true");
+  };
+
   if (isLoading) return <CardLoading />;
 
   if (event.isAd)
@@ -44,7 +49,7 @@ function Card({ event, isLoading }) {
         <div
           className="w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer"
           onMouseEnter={handlePrefetch}
-          onClick={handlePrefetch}
+          onClick={handleOnClick}
         >
           {/* Title */}
           <div className="bg-whiteCorp h-fit flex justify-between items-start gap-2 pr-4">
