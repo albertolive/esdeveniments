@@ -44,7 +44,7 @@ export default function Navbar() {
     <Disclosure
       key={router.asPath}
       as="nav"
-      className="w-full bg-whiteCorp transition-all duration-500 ease-in-out sticky md:top-0 z-50"
+      className="w-full bg-whiteCorp sticky top-0 z-10"
     >
       {({ open }) => (
         <>
@@ -144,7 +144,7 @@ export default function Navbar() {
           </div>
           {/* MenuPanel (md:hidden) */}
           <Disclosure.Panel className="md:hidden">
-            <div className="w-full relative flex justify-evenly items-center bg-whiteCorp transition-transform">
+            <div className="w-full fixed flex justify-evenly items-center bg-whiteCorp transition-transform">
               {navigation.map((item) => (
                 <ActiveLink
                   href={item.href}
