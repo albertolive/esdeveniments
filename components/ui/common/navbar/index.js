@@ -44,7 +44,7 @@ export default function Navbar() {
     <Disclosure
       key={router.asPath}
       as="nav"
-      className="w-full bg-whiteCorp transition-all duration-500 ease-in-out sticky md:top-0 z-50"
+      className="w-full bg-whiteCorp sticky top-0 z-10"
     >
       {({ open }) => (
         <>

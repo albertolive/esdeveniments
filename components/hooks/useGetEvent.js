@@ -17,6 +17,6 @@ export const useGetEvent = (props) => {
     refreshWhenOffline: false,
     suspense: true,
     keepPreviousData: true,
-    revalidateOnMount: false,
+    revalidateOnMount: true,
   });
 };
