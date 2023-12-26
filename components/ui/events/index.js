@@ -304,9 +304,9 @@ function Events({ props, loadMore = true }) {
       <div
         className={`w-full bg-whiteCorp fixed transition-all duration-500 ease-in-out ${
           isSticky
-            ? "top-10"
-            : "top-0 md:top-10 border-bColor md:border-b-0 shadow-sm md:shadow-none"
-        } z-10 flex justify-center items-center pt-2 `}
+            ? "top-10 z-5"
+            : "top-0 z-10 md:top-10 border-bColor md:border-b-0 shadow-sm md:shadow-none"
+        }  flex justify-center items-center pt-2 `}
       >
         <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
