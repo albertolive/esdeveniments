@@ -40,11 +40,18 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const { getCalendarEvents } = require("@lib/helpers");
-  const { getPlaceTypeAndLabel } =  require("@utils/helpers");
+  const { getPlaceTypeAndLabel } = require("@utils/helpers");
   const { place, byDate } = params;
-  const { today, week, weekend, twoWeeksDefault } = require("@lib/dates");
+  const {
+    today,
+    tomorrow,
+    week,
+    weekend,
+    twoWeeksDefault,
+  } = require("@lib/dates");
   const dateFunctions = {
     avui: today,
+    dema: tomorrow,
     setmana: week,
     "cap-de-setmana": weekend,
   };
@@ -56,7 +63,7 @@ export async function getStaticProps({ params }) {
   const { events: todayEvents } = await getCalendarEvents({
     from,
     until,
-    q
+    q,
   });
 
   let events = todayEvents;
@@ -69,7 +76,7 @@ export async function getStaticProps({ params }) {
       from,
       until,
       maxResults: 7,
-      q
+      q,
     });
 
     noEventsFound = true;
