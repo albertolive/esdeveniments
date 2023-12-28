@@ -37,8 +37,8 @@ async function deleteEvent(authToken, eventId, summary) {
 }
 
 function generateKey(event) {
-  const summary = event.summary.toLowerCase().trim();
-  const location = event.location.toLowerCase().trim();
+  const summary = event.summary ? event.summary.toLowerCase().trim() : "";
+  const location = event.location ? event.location.toLowerCase().trim() : "";
   const startDate = new Date(event.start.dateTime || event.start.date);
   const endDate = new Date(event.end.dateTime || event.end.date);
 
@@ -65,6 +65,7 @@ export default async function handler(_, res) {
       timeMin: timeMin.toISOString(),
       timeMax: timeMax.toISOString(),
       calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
+      maxResults: 2500,
     });
 
     const events = data.items;
