@@ -88,7 +88,7 @@ async function fetchRSSFeed(rssFeed, town) {
         !json.rss.channel ||
         !Array.isArray(json.rss.channel.item)
       ) {
-        throw new Error("Invalid data format");
+        throw new Error("Invalid data format. No items in feed");
       }
 
       data = json.rss.channel.item;
