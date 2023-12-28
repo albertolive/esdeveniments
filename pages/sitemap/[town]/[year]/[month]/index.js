@@ -35,7 +35,7 @@ export default function Month({ events, town }) {
         {events.map((event) => (
           <div key={event.id} className="">
             <Link
-              href={`/${event.slug}`}
+              href={`/e/${event.slug}`}
               prefetch={false}
               className="hover:text-primary"
             >

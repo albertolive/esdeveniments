@@ -55,12 +55,14 @@ export const CATEGORIES = {
 
 export const BYDATES = [
   { value: "avui", label: "Avui" },
-  { value: "setmana", label: "Aquesta setmana" },
+  { value: "dema", label: "Demà" },
   { value: "cap-de-setmana", label: "Cap de setmana" },
+  { value: "setmana", label: "Aquesta setmana" },
 ];
 
 export const dateFunctions = {
   avui: "today",
+  dema: "tomorrow",
   setmana: "week",
   "cap-de-setmana": "weekend",
 };
