@@ -119,31 +119,32 @@ export default function Search({ searchTerm, setSearchTerm }) {
   };
 
   return (
-    <div className="w-full md:w-1/3 flex justify-center">
+    <div className="w-full flex justify-center">
       <div className="w-full flex justify-start items-center gap-2">
         <div className="h-10 flex justify-end items-center cursor-pointer">
-          {inputValue.length ? (
-            <XIcon
-              className="h-4 w-4 text-blackCorp"
-              onClick={clearSearchTerm}
-            />
-          ) : (
-            <SearchIcon
-              className="h-4 w-4 text-blackCorp"
-              onClick={() => searchEvents(searchTerm)}
-              aria-label="Search"
-            />
-          )}
+          <SearchIcon
+            className="h-4 w-4 text-blackCorp"
+            onClick={() => searchEvents(searchTerm)}
+            aria-label="Search"
+          />
         </div>
         <input
           type="text"
-          className="h-10 border-0 placeholder:text-bColor"
+          className="w-full h-10 border-0 placeholder:text-bColor"
           placeholder="Cerca qualevol cosa"
           value={inputValue}
           onKeyDown={handleKeyPress}
           onChange={handleChange}
           onFocus={onFocus}
         />
+        {inputValue.length > 0 && (
+          <div className="h-10 flex justify-end items-center cursor-pointer">
+            <XIcon
+              className="h-4 w-4 text-blackCorp"
+              onClick={clearSearchTerm}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
