@@ -51,7 +51,7 @@ const handler = async (req, res) => {
       break;
     case "tomorrow":
       const { from: fromTomorrow, until: toTomorrow } = tomorrow();
-      console.log("fromTomorrow", fromTomorrow, "toTomorrow", toTomorrow);
+
       events = await getEvents({
         from: fromTomorrow,
         until: toTomorrow,
