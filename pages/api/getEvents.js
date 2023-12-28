@@ -1,5 +1,5 @@
 import { captureException } from "@sentry/nextjs";
-import { today, week, weekend, twoWeeksDefault } from "@lib/dates";
+import { today, tomorrow, week, weekend, twoWeeksDefault } from "@lib/dates";
 import { getCalendarEvents } from "@lib/helpers";
 
 const noEventsFound = async (events) => {
@@ -44,6 +44,17 @@ const handler = async (req, res) => {
       events = await getEvents({
         from: fromToday,
         until: untilToday,
+        q,
+        maxResults,
+        shuffleItems,
+      });
+      break;
+    case "tomorrow":
+      const { from: fromTomorrow, until: toTomorrow } = tomorrow();
+      console.log("fromTomorrow", fromTomorrow, "toTomorrow", toTomorrow);
+      events = await getEvents({
+        from: fromTomorrow,
+        until: toTomorrow,
         q,
         maxResults,
         shuffleItems,
