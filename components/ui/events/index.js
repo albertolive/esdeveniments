@@ -66,6 +66,7 @@ function Events({ props, loadMore = true }) {
     maxResults: shuffleItems ? page * MAX_RESULTS : page * 10,
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
     shuffleItems,
+    hideMultiDay: true,
   });
 
   const jsonEvents = events

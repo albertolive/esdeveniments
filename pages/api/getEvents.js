@@ -11,7 +11,14 @@ const noEventsFound = async (events) => {
   return events;
 };
 
-const getEvents = async ({ from, until, q, maxResults, shuffleItems }) => {
+const getEvents = async ({
+  from,
+  until,
+  q,
+  maxResults,
+  shuffleItems,
+  hideMultiDay,
+}) => {
   let events;
   try {
     events = await getCalendarEvents({
@@ -20,6 +27,7 @@ const getEvents = async ({ from, until, q, maxResults, shuffleItems }) => {
       q,
       maxResults,
       shuffleItems,
+      hideMultiDay,
     });
   } catch (error) {
     console.error(error);
@@ -34,7 +42,7 @@ const getEvents = async ({ from, until, q, maxResults, shuffleItems }) => {
 };
 
 const handler = async (req, res) => {
-  const { page, q, maxResults, shuffleItems } = req.query;
+  const { page, q, maxResults, shuffleItems, hideMultiDay } = req.query;
 
   let events = [];
 
@@ -47,6 +55,7 @@ const handler = async (req, res) => {
         q,
         maxResults,
         shuffleItems,
+        hideMultiDay,
       });
       break;
     case "tomorrow":
@@ -58,6 +67,7 @@ const handler = async (req, res) => {
         q,
         maxResults,
         shuffleItems,
+        hideMultiDay,
       });
       break;
     case "week":
@@ -68,6 +78,7 @@ const handler = async (req, res) => {
         q,
         maxResults,
         shuffleItems,
+        hideMultiDay,
       });
       break;
     case "weekend":
@@ -78,15 +89,27 @@ const handler = async (req, res) => {
         q,
         maxResults,
         shuffleItems,
+        hideMultiDay,
       });
       break;
     case "search":
       const fromSearch = new Date();
-      events = await getEvents({ from: fromSearch, q, shuffleItems });
+      events = await getEvents({
+        from: fromSearch,
+        q,
+        shuffleItems,
+        hideMultiDay,
+      });
       break;
     default:
       const from = new Date();
-      events = await getEvents({ from, q, maxResults, shuffleItems });
+      events = await getEvents({
+        from,
+        q,
+        maxResults,
+        shuffleItems,
+        hideMultiDay,
+      });
   }
 
   try {

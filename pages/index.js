@@ -13,8 +13,9 @@ export async function getStaticProps() {
   const { events } = await getCalendarEvents({
     from,
     until,
-    maxResults: MAX_RESULTS,
+    maxResults: 50,
     shuffleItems: true,
+    hideMultiDay: true,
   });
   const normalizedEvents = JSON.parse(JSON.stringify(events));
 
