@@ -15,6 +15,8 @@ export const useGetEvents = ({
   shuffleItems = false,
   hideMultiDay = false,
 }) => {
+  console.log("pageIndex", pageIndex);
+  console.log("maxResults", maxResults);
   preload(
     ["/api/getEvents", pageIndex, q, maxResults, shuffleItems, hideMultiDay],
     fetcher
