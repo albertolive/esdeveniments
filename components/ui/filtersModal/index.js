@@ -152,7 +152,7 @@ function FiltersModal({
         title="Filtres"
         actionButton="Aplicar filtres"
       >
-        <div className="w-full flex flex-col justify-center items-center gap-5 px-6 py-8">
+        <div className="w-full flex flex-col justify-center items-center gap-5 px-6 pb-20 pt-20">
           <div className="w-full flex flex-col justify-center items-center gap-2 px-6 sm:px-0">
             <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
               Poblacions
@@ -173,7 +173,7 @@ function FiltersModal({
             <p className="w-full text-primary font-medium font-barlow uppercase italic">
               Categories
             </p>
-            <div className="w-full h-40 flex flex-col justify-start items-start gap-2 flex-wrap">
+            <div className="w-full h-28 flex flex-col justify-start items-start gap-2 flex-wrap">
               {Object.entries(CATEGORIES).map(([value]) => (
                 <RadioInput
                   key={value}
@@ -226,7 +226,7 @@ function FiltersModal({
               </div>
             )}
             <div
-              className={`w-full flex flex-col justify-start items-start gap-3 px-6 sm:px-0 ${
+              className={`w-full flex flex-col justify-start items-start gap-3px-0 ${
                 disableDistance ? "opacity-30" : ""
               }`}
             >

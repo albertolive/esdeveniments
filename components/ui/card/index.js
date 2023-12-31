@@ -52,13 +52,13 @@ function Card({ event, isLoading }) {
               <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             </div>
             {/* Title */}
-            <h3 className="w-11/12 uppercase">
+            <h3 className="w-11/12 uppercase italic">
               <Link href={`/e/${event.slug}`} passHref prefetch={false}>
                 {title}
               </Link>
             </h3>
             {/* WeatherIcon */}
-            <div className="w-1/12 flex justify-center">
+            <div className="w-1/12 flex justify-end">
               {icon && (
                 <div>
                   <NextImage
@@ -90,17 +90,16 @@ function Card({ event, isLoading }) {
         </div>
       </Link>
       {/* ShareButton */}
-      <div className="w-full flex justify-center items-center gap-2 px-4 pb-3">
-        <ShareIcon className="w-5 h-5" />
+      <div className="w-full flex justify-center items-center gap-2 pb-3">
         <ShareButton slug={event.slug} />
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
         {/* Date */}
-        <div className="flex items-center">
+        <div className="flex justify-start items-start">
           <div>
             <CalendarIcon className="h-5 w-5" />
           </div>
-          <p className="px-2 font-semibold">
+          <p className="px-2 font-medium">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}

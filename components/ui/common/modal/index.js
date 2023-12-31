@@ -35,7 +35,7 @@ export default function Modal({
               leaveFrom="opacity-70"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel className="w-full h-screen flex flex-col justify-center items-center">
+              <Dialog.Panel className="w-full flex flex-col justify-center items-center">
                 <Dialog.Title
                   as="h3"
                   className="w-full bg-whiteCorp flex fixed top-0 z-50 p-2 font-semibold"
@@ -49,11 +49,13 @@ export default function Modal({
                       <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
                     <div className="w-full flex justify-center">
-                      <h3 className="text-center uppercase italic">{title}</h3>
+                      <p className="text-center font-barlow uppercase italic">
+                        {title}
+                      </p>
                     </div>
                   </div>
                 </Dialog.Title>
-                <div className="w-full h-full sm:h-fit sm:w-[400px] bg-whiteCorp rounded-lg flex justify-center items-center shadow-xl">
+                <div className="w-full h-screen sm:h-fit sm:w-[400px] bg-whiteCorp rounded-lg flex justify-center items-center shadow-xl">
                   {children}
                 </div>
                 {actionButton && (
@@ -64,7 +66,7 @@ export default function Modal({
                     >
                       <button
                         onClick={() => setOpen(false)}
-                        className="text-whiteCorp bg-primary rounded-xl py-2 px-3 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold tracking-wide"
+                        className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
                       >
                         {actionButton}
                       </button>

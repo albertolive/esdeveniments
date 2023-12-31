@@ -21,6 +21,8 @@ import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
 import Search from "@components/ui/search";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
+import Imago from "public/static/images/imago-esdeveniments.png";
+import NextImage from "next/image";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -293,13 +295,14 @@ function Events({ props, loadMore = true }) {
       />
       <div
         onClick={scrollToTop}
-        className={`w-8 h-8 text-whiteCorp bg-primary flex justify-center items-center rounded-lg shadow-xl ${
+        className={`w-14 h-14 flex justify-center items-center bg-whiteCorp rounded-lg shadow-xl ${
           scrollButton
             ? "fixed z-10 bottom-[82px] md:bottom-[90px] lg:bottom-[90px] right-8 flex justify-end animate-appear"
             : "hidden"
         }`}
       >
-        <ArrowUp className="w-5 h-5" aria-hidden="true" />
+        <NextImage src={Imago} className="p-1" width="30" height="30" />
+        {/* <ArrowUp className="w-5 h-5" aria-hidden="true" /> */}
       </div>
       <div
         className={`w-full bg-whiteCorp fixed transition-all duration-500 ease-in-out ${
@@ -308,7 +311,7 @@ function Events({ props, loadMore = true }) {
             : "top-0 z-10 md:top-10 border-bColor md:border-b-0 shadow-sm md:shadow-none"
         }  flex justify-center items-center pt-2 `}
       >
-        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 sm:px-10 sm:w-[580px]">
+        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 pb-2 sm:px-10 sm:w-[580px]">
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
             place={place}

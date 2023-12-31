@@ -393,13 +393,13 @@ export default function Event(props) {
                 </button>
               </div>
             </div>
-            <div className="w-full flex justify-center items-center gap-4">
+            <div className="w-full flex flex-col justify-center items-center gap-0">
               {showMap && (
                 <div className="overflow-hidden">
                   <Maps location={mapsLocation} />
                 </div>
               )}
-              <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
+              <div className="h-full min-h-[280px] lg:min-h-[100px]">
                 <AdArticle slot="9643657007" />
               </div>
             </div>
