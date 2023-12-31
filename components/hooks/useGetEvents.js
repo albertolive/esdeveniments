@@ -27,7 +27,7 @@ export const useGetEvents = ({
       refreshWhenOffline: false,
       suspense: true,
       keepPreviousData: true,
-      revalidateOnMount: true,
+      revalidateOnMount: false,
     }
   );
 };
