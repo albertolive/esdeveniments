@@ -90,6 +90,25 @@ export const CITIES_DATA = new Map([
     },
   ],
   [
+    "maresme",
+    {
+      label: "Maresme",
+      towns: new Map([
+        [
+          "alella",
+          {
+            label: "Alella",
+            rssFeed: "https://alella.cat/a.php?fer=SINDICACIO&seccio=2",
+            descriptionSelector: ".cos",
+            imageSelector: ".imatge_associada2",
+            postalCode: "08328",
+            coords: { lat: "41.4938", lng: "2.2945" },
+          },
+        ],
+      ]),
+    },
+  ],
+  [
     "valles-oriental",
     {
       label: "Vallès Oriental",
