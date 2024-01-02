@@ -7,7 +7,7 @@ import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
 
-const debugMode = false;
+const debugMode = true;
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -66,7 +66,7 @@ async function fetchRSSFeed(rssFeed, town) {
       }
     }
     // Fetch the data
-    const response = await axios.get(rssFeed);
+    const response = await axios.get(rssFeed, { responseType: "arraybuffer" });
 
     // Check if the response status is not 200
     if (response.status !== 200) {
@@ -75,7 +75,15 @@ async function fetchRSSFeed(rssFeed, town) {
       );
     }
 
-    let data = response.data;
+    // Try decoding the response data with UTF-8
+    let decoder = new TextDecoder("utf-8");
+    let data = decoder.decode(response.data);
+
+    // If the decoded data contains unusual characters, try ISO-8859-1
+    if (data.includes("�")) {
+      decoder = new TextDecoder("iso-8859-1");
+      data = decoder.decode(response.data);
+    }
 
     // If response.data is not an array means that is an rss feed
     if (!Array.isArray(data)) {
@@ -88,7 +96,8 @@ async function fetchRSSFeed(rssFeed, town) {
         !json.rss.channel ||
         !Array.isArray(json.rss.channel.item)
       ) {
-        throw new Error("Invalid data format. No items in feed");
+        console.log("Invalid RSS data format or no items in feed");
+        return [];
       }
 
       data = json.rss.channel.item;
@@ -209,9 +218,31 @@ async function scrapeDescription(
     const html = await response.text();
     const $ = load(html);
 
-    const description =
-      $(descriptionSelector).html()?.trim() ||
-      "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
+    let description = $(descriptionSelector).html()?.trim();
+
+    if (description) {
+      // Parse the description HTML with cheerio
+      let dom = $.parseHTML(description);
+      let $desc = $(dom);
+
+      // Find all img tags
+      $desc.find("img").each((_, img) => {
+        // Get the src attribute
+        let src = $(img).attr("src");
+
+        // If the src is a relative URL, prepend the base URL
+        if (!src.startsWith("http")) {
+          src = new URL(src, getBaseUrl(url)).href;
+          $(img).attr("src", src);
+        }
+      });
+
+      // Update the description with the modified HTML
+      description = $desc.html();
+    } else {
+      description =
+        "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
+    }
 
     let rawImage = $(imageSelector).prop("outerHTML")?.trim();
     let image;
@@ -228,6 +259,16 @@ async function scrapeDescription(
       } else {
         imgOuterHtml = $img("img").prop("outerHTML");
       }
+
+      // Handle relative URLs
+      let src = $img("img").attr("src");
+      if (!src.startsWith("http")) {
+        // If the src is a relative URL, prepend the base URL
+        src = new URL(src, getBaseUrl(url)).href;
+        $img("img").attr("src", src);
+        imgOuterHtml = $img.html();
+      }
+
       image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
     } else {
       image = getEventImageUrl(description);

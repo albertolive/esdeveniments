@@ -61,6 +61,7 @@ const nextConfig = {
       { hostname: "www.vallromanes.cat" },
       { hostname: "www.vilalbasasserra.cat" },
       { hostname: "www.vilanovadelvalles.cat" },
+      { hostname: "alella.cat" },
     ],
   },
   async headers() {
