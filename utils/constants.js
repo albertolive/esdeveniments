@@ -105,6 +105,28 @@ export const CITIES_DATA = new Map([
             coords: { lat: "41.4938", lng: "2.2945" },
           },
         ],
+        [
+          "arenys-de-mar",
+          {
+            label: "Arenys de Mar",
+            rssFeed: "https://arenysdemar.cat/a.php?fer=SINDICACIO&seccio=2",
+            descriptionSelector: ".cos",
+            imageSelector: ".imatge_associada2",
+            postalCode: "08350",
+            coords: { lat: "41.5819", lng: "2.54936" },
+          },
+        ],
+        [
+          "argentona",
+          {
+            label: "Argentona",
+            rssFeed: "https://argentona.cat/a.php?fer=SINDICACIO&seccio=2",
+            descriptionSelector: ".cos",
+            postalCode: "08310",
+            coords: { lat: "41.5534", lng: "2.4035" },
+            removeImage: true, // TODO: fix this
+          },
+        ],
       ]),
     },
   ],
