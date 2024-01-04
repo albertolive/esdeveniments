@@ -7,8 +7,6 @@ import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
 
-const debugMode = true;
-
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
 const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
@@ -25,6 +23,9 @@ const auth = new google.auth.GoogleAuth({
 });
 
 // Configuration
+const debugMode = false;
+const TIMEOUT_LIMIT = 10000;
+const SAFETY_MARGIN = 1000;
 const PROCESSED_ITEMS_KEY = "processedItems";
 const RSS_FEED_CACHE_KEY = "rssFeedCache";
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -56,7 +57,7 @@ function isCacheValid(cachedData) {
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town) {
   try {
-    if (!debugMode) {
+    if (env === "prod") {
       // Check if the data is cached
       const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
 
@@ -104,19 +105,21 @@ async function fetchRSSFeed(rssFeed, town) {
     }
 
     // Cache the data
-    try {
-      await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
-        timestamp: Date.now(),
-        data,
-      });
-    } catch (err) {
-      console.error(
-        `An error occurred while caching the RSS feed of ${town}: ${err}`
-      );
-      captureException(
-        new Error(`Failed to fetch RSS feed for ${town}: ${err.message}`)
-      );
-      throw new Error(`Failed to cache RSS feed: ${err}`);
+    if (env === "prod") {
+      try {
+        await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
+          timestamp: Date.now(),
+          data,
+        });
+      } catch (err) {
+        console.error(
+          `An error occurred while caching the RSS feed of ${town}: ${err}`
+        );
+        captureException(
+          new Error(`Failed to fetch RSS feed for ${town}: ${err.message}`)
+        );
+        throw new Error(`Failed to cache RSS feed: ${err}`);
+      }
     }
 
     console.log("Returning new RSS data");
@@ -210,12 +213,26 @@ async function scrapeDescription(
   url,
   descriptionSelector,
   imageSelector,
-  sanitizeUrl = true
+  sanitizeUrl = true,
+  removeImage = false
 ) {
   try {
     const sanitizedUrl = sanitizeUrl ? url.replace(/\.html$/, "") : url;
+
+    // Fetch the page and get the response as an ArrayBuffer
     const response = await fetch(sanitizedUrl);
-    const html = await response.text();
+    const arrayBuffer = await response.arrayBuffer();
+
+    // Try decoding the response data with UTF-8
+    let decoder = new TextDecoder("utf-8");
+    let html = decoder.decode(arrayBuffer);
+
+    // If the decoded data contains unusual characters, try ISO-8859-1
+    if (html.includes("�")) {
+      decoder = new TextDecoder("iso-8859-1");
+      html = decoder.decode(arrayBuffer);
+    }
+
     const $ = load(html);
 
     let description = $(descriptionSelector).html()?.trim();
@@ -236,6 +253,10 @@ async function scrapeDescription(
           $(img).attr("src", src);
         }
       });
+
+      if (removeImage) {
+        $desc.find("img").remove();
+      }
 
       // Update the description with the modified HTML
       description = $desc.html();
@@ -270,7 +291,7 @@ async function scrapeDescription(
       }
 
       image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
-    } else {
+    } else if (!removeImage) {
       image = getEventImageUrl(description);
     }
 
@@ -360,7 +381,8 @@ async function insertItemToCalendar(
   imageSelector,
   locationSelector,
   processedItems,
-  authToken
+  authToken,
+  removeImage
 ) {
   if (!item) return;
   const {
@@ -389,7 +411,8 @@ async function insertItemToCalendar(
         link,
         descriptionSelector,
         imageSelector,
-        town !== "barcelona"
+        town !== "barcelona", // TODO: Remove this when we have a better solution for Barcelona
+        removeImage
       )
     : null;
 
@@ -423,10 +446,13 @@ async function insertItemToCalendar(
 
       console.log("Inserted new item successfully: " + title);
 
-      const now = Date.now();
-      processedItems.set(guid, now);
-      await setProcessedItems(processedItems, town); // Save the processed item immediately
-      console.log(`Added item ${guid} to processed items`);
+      if (env === "prod") {
+        const now = Date.now();
+        processedItems.set(guid, now);
+        await setProcessedItems(processedItems, town); // Save the processed item immediately
+        console.log(`Added item ${guid} to processed items`);
+      }
+
       return;
     } else {
       console.log("event", event);
@@ -453,7 +479,8 @@ async function insertItemToCalendarWithRetry(
   imageSelector,
   locationSelector,
   processedItems,
-  authToken
+  authToken,
+  removeImage
 ) {
   if (!item) return null;
 
@@ -471,7 +498,8 @@ async function insertItemToCalendarWithRetry(
         imageSelector,
         locationSelector,
         processedItems,
-        authToken
+        authToken,
+        removeImage
       );
       return;
     } catch (error) {
@@ -493,8 +521,6 @@ async function insertItemToCalendarWithRetry(
 
 export default async function handler(req, res) {
   const startTime = Date.now();
-  const TIMEOUT_LIMIT = 10000;
-  const SAFETY_MARGIN = 1000;
 
   try {
     const { region, town } = req.query;
@@ -528,6 +554,7 @@ export default async function handler(req, res) {
       descriptionSelector,
       imageSelector,
       locationSelector,
+      removeImage,
     } = towns.get(town);
 
     // Check if the rssFeed is available
@@ -541,15 +568,16 @@ export default async function handler(req, res) {
     // Read the database
     let processedItems = new Map();
 
-    if (!debugMode) {
+    if (env === "prod") {
       processedItems = await getProcessedItems(town);
       await cleanProcessedItems(processedItems, town);
     }
 
     // Filter out already fetched items
-    const newItems = debugMode
-      ? items
-      : items.filter((item) => !processedItems.has(item.guid));
+    const newItems =
+      env === "prod"
+        ? items.filter((item) => !processedItems.has(item.guid))
+        : items;
 
     // If no new items, log a message
     if (newItems.length === 0) {
@@ -585,7 +613,8 @@ export default async function handler(req, res) {
             imageSelector,
             locationSelector,
             processedItems,
-            authToken
+            authToken,
+            removeImage
           );
           return;
         } catch (error) {

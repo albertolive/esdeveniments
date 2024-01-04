@@ -24,10 +24,7 @@ function ImageComponent({
   }
 
   return (
-    <div
-      className={imageClassName}
-      style={{ position: "relative" }}
-    >
+    <div className={imageClassName} style={{ position: "relative" }}>
       <NextImage
         className="object-contain"
         src={image}

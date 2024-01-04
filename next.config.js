@@ -62,6 +62,8 @@ const nextConfig = {
       { hostname: "www.vilalbasasserra.cat" },
       { hostname: "www.vilanovadelvalles.cat" },
       { hostname: "alella.cat" },
+      { hostname: "arenysdemar.cat" },
+      { hostname: "argentona.cat" },
     ],
   },
   async headers() {
