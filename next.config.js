@@ -64,6 +64,11 @@ const nextConfig = {
       { hostname: "alella.cat" },
       { hostname: "arenysdemar.cat" },
       { hostname: "argentona.cat" },
+      { hostname: "cabrerademar.cat" },
+      { hostname: "caldetes.cat" },
+      { hostname: "calella.cat" },
+      { hostname: "www.dosrius.cat" },
+      { hostname: "www.mataro.cat" },
     ],
   },
   async headers() {
