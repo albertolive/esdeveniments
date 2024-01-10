@@ -23,7 +23,7 @@ const auth = new google.auth.GoogleAuth({
 });
 
 // Configuration
-const debugMode = false;
+const debugMode = true;
 const TIMEOUT_LIMIT = 10000;
 const SAFETY_MARGIN = 1000;
 const PROCESSED_ITEMS_KEY = "processedItems";
@@ -76,17 +76,25 @@ async function fetchRSSFeed(rssFeed, town) {
       );
     }
 
-    // Try decoding the response data with UTF-8
-    let decoder = new TextDecoder("utf-8");
-    let data = decoder.decode(response.data);
+    let data;
 
-    // If the decoded data contains unusual characters, try ISO-8859-1
-    if (data.includes("�")) {
-      decoder = new TextDecoder("iso-8859-1");
+    // Check the Content-Type header of the response
+    if (response.headers["content-type"].includes("application/json")) {
+      // If the Content-Type is JSON, parse the response data as JSON
+      data = JSON.parse(response.data);
+    } else {
+      // If the Content-Type is not JSON, decode the response data
+      let decoder = new TextDecoder("utf-8");
       data = decoder.decode(response.data);
+
+      // If the decoded data contains unusual characters, try ISO-8859-1
+      if (data.includes("�")) {
+        decoder = new TextDecoder("iso-8859-1");
+        data = decoder.decode(response.data);
+      }
     }
 
-    // If response.data is not an array means that is an rss feed
+    // If data is not an array, it means that it's an RSS feed
     if (!Array.isArray(data)) {
       const json = parser.parse(data);
 
@@ -208,13 +216,186 @@ function getBaseUrl(url) {
   return `${urlObject.protocol}//${urlObject.host}`;
 }
 
-async function scrapeDescription(
+async function fetchAndDecodeHtml(url, sanitizeUrl = true) {
+  const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
+  const response = await fetch(sanitizedUrl);
+  const arrayBuffer = await response.arrayBuffer();
+
+  let decoder = new TextDecoder("utf-8");
+  let html = decoder.decode(arrayBuffer);
+
+  if (html.includes("�")) {
+    decoder = new TextDecoder("iso-8859-1");
+    html = decoder.decode(arrayBuffer);
+  }
+
+  return html;
+}
+
+function sanitize(url) {
+  return url.replace(/\.html$/, "");
+}
+
+function getDescription($, item, descriptionSelector, removeImage) {
+  const { itemDescription, content, url } = getRSSItemData(item);
+  const alternativeDescription = `${itemDescription || ""}${content || ""}`;
+
+  if (alternativeDescription) {
+    return alternativeDescription;
+  }
+
+  let description = $(descriptionSelector).html()?.trim();
+
+  if (description) {
+    let dom = $.parseHTML(description);
+    let $desc = $(dom);
+
+    $desc.find("img").each((_, img) => {
+      let src = $(img).attr("src");
+      if (!src.startsWith("http")) {
+        src = new URL(src, getBaseUrl(url)).href;
+        $(img).attr("src", src);
+      }
+    });
+
+    if (removeImage) {
+      $desc.find("img").remove();
+    }
+
+    description = $desc.html();
+  } else {
+    description =
+      "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
+  }
+
+  return description;
+}
+
+function getImage($, item, imageSelector, description, removeImage = false) {
+  const { alternativeImage, url } = getRSSItemData(item);
+  let rawImage = $(imageSelector).prop("outerHTML")?.trim();
+  let image;
+  const regex = /(https?:\/\/[^"\s]+)/g;
+
+  if (alternativeImage) {
+    image = alternativeImage;
+  } else if (rawImage) {
+    let $img = load(rawImage);
+    let img = $img("img");
+    img.removeAttr("style");
+    img.removeAttr("class");
+    let imgOuterHtml;
+    if ($img("a").length) {
+      imgOuterHtml = $img("a").prop("outerHTML");
+    } else {
+      imgOuterHtml = $img("img").prop("outerHTML");
+    }
+
+    image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
+  } else if (!removeImage) {
+    image = getEventImageUrl(description);
+  }
+
+  const result = image && image.match(regex);
+  image = result && result[0];
+
+  return image;
+}
+
+function formatDescription(item, description, image) {
+  const { title, url } = getRSSItemData(item);
+
+  const appendUrl = `<br><br><b>Més informació:</b><br><a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+  return `
+    <div>${description}</div>
+    ${image ? `<div class="hidden">${image}</div>` : ""}
+    <div>${appendUrl}</div>`;
+}
+
+async function scrapeDescription(item, region, town) {
+  try {
+    const { url } = getRSSItemData(item);
+
+    if (!url) {
+      return null;
+    }
+
+    const { descriptionSelector, imageSelector, removeImage, sanitizeUrl } =
+      getTownData(region, town);
+
+    const html = await fetchAndDecodeHtml(url, sanitizeUrl);
+    const $ = load(html);
+
+    const description = getDescription(
+      $,
+      item,
+      descriptionSelector,
+      removeImage
+    );
+    const image = getImage($, item, imageSelector, description, removeImage);
+
+    return formatDescription(item, description, image);
+  } catch (error) {
+    console.error("Error occurred during scraping description:", url);
+    captureException(
+      new Error(
+        `Error occurred during scraping description for ${url}: ${error.message}`
+      )
+    );
+    throw error;
+  }
+}
+
+async function scrapeLocation(item, region, town) {
+  try {
+    const { locationSelector } = getTownData(region, town);
+    const { url, location: itemLocation, locationExtra } = getRSSItemData(item);
+    const location = itemLocation || locationExtra;
+
+    if (location) return location;
+
+    const html = await fetchAndDecodeHtml(url);
+    const $ = load(html);
+
+    // TODO: Make it more generic. Now it works for La Garriga
+    let locationElement = $(locationSelector).find("p").first().text();
+
+    // If locationElement is an array, take the first element and split it if it's too long
+    if (Array.isArray(locationElement)) {
+      locationElement = locationElement.map((item) => {
+        if (item.length > 100) {
+          return item.split(",")[0];
+        }
+        return item;
+      })[0];
+    }
+
+    // If the location is too long, split it at the first comma
+    if (locationElement && locationElement.length > 100) {
+      locationElement = locationElement.split(",")[0];
+    }
+
+    return locationElement ? locationElement.trim() : location;
+  } catch (error) {
+    console.error("Error occurred during scraping location:", url);
+    captureException(
+      new Error(
+        `Error occurred during scraping location for ${url}: ${error.message}`
+      )
+    );
+    throw error;
+  }
+}
+
+async function scrapeDescription2(
   title,
   url,
   descriptionSelector,
   imageSelector,
   sanitizeUrl = true,
-  removeImage = false
+  removeImage = false,
+  alternativeImage,
+  alternativeDescription
 ) {
   try {
     const sanitizedUrl = sanitizeUrl ? url.replace(/\.html$/, "") : url;
@@ -269,7 +450,9 @@ async function scrapeDescription(
     let image;
     const regex = /(https?:\/\/[^"\s]+)/g;
 
-    if (rawImage) {
+    if (alternativeImage) {
+      image = alternativeImage;
+    } else if (rawImage) {
       let $img = load(rawImage);
       let img = $img("img");
       img.removeAttr("style");
@@ -303,9 +486,10 @@ async function scrapeDescription(
     }
 
     const appendUrl = `<br><br><b>Més informació:</b><br><a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+    const finalDescription = alternativeDescription || description;
 
     return `
-    <div>${description}</div>
+    <div>${finalDescription}</div>
     ${image ? `<div class="hidden">${image}</div>` : ""}
     <div>${appendUrl}</div>`;
   } catch (error) {
@@ -319,108 +503,74 @@ async function scrapeDescription(
   }
 }
 
-function getLocationFromHtml(html) {
-  // Define the regular expression pattern to match the location
-  const pattern = /(?:Al|A la|A les \d+ h, a|Espai|al|a la|A ) ([^<.,]+)/g;
-
-  // Use the matchAll method to find all matches in the HTML text
-  const matches = [...html.matchAll(pattern)];
-
-  // Map the matches to an array of locations
-  const locations = matches.map((match) => match[1]);
-
-  // Return the array of matched locations or null if it's empty
-  return locations.length > 0 ? locations : null;
-}
-
-async function scrapeLocation(url, location, locationSelector) {
-  try {
-    if (location) return location;
-
-    const sanitizeUrl = url.replace(/\.html$/, "");
-    const response = await fetch(sanitizeUrl);
-    const html = await response.text();
-    const $ = load(html);
-
-    // TODO: Make it more generic. Now it works for La Garriga
-    let locationElement = $(locationSelector).find("p").first().text();
-
-    // If locationElement is an array, take the first element and split it if it's too long
-    if (Array.isArray(locationElement)) {
-      locationElement = locationElement.map((item) => {
-        if (item.length > 100) {
-          return item.split(",")[0];
-        }
-        return item;
-      })[0];
-    }
-
-    // If the location is too long, split it at the first comma
-    if (locationElement && locationElement.length > 100) {
-      locationElement = locationElement.split(",")[0];
-    }
-
-    return locationElement ? locationElement.trim() : location;
-  } catch (error) {
-    console.error("Error occurred during scraping location:", url);
-    captureException(
-      new Error(
-        `Error occurred during scraping location for ${url}: ${error.message}`
-      )
-    );
-    throw error;
+function ensureISOFormat(dateString) {
+  // Check if the dateString is in ISO 8601 format
+  const isoFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$/;
+  if (!isoFormat.test(dateString)) {
+    // If not, replace the space with 'T'
+    dateString = dateString.replace(" ", "T");
   }
+  return dateString;
 }
 
-async function insertItemToCalendar(
-  item,
-  town,
-  regionLabel,
-  townLabel,
-  descriptionSelector,
-  imageSelector,
-  locationSelector,
-  processedItems,
-  authToken,
-  removeImage
-) {
-  if (!item) return;
+function getRSSItemData(item) {
+  if (!item) {
+    throw new Error("No item provided");
+  }
   const {
     pubDate,
     title,
-    link,
-    guid,
+    description: itemDescription,
+    content,
+    image: alternativeImage,
+    link: url,
     location = "",
     "content:encoded": locationExtra,
     date,
-  } = item || {};
+  } = item;
 
-  const dateTime = DateTime.fromRFC2822(pubDate || date.from, {
-    zone: "Europe/Madrid",
-  });
-  const endDateTime =
-    date && date.to
-      ? DateTime.fromRFC2822(date.to, { zone: "Europe/Madrid" })
-      : dateTime.plus({ hours: 1 });
+  return {
+    pubDate,
+    title,
+    itemDescription,
+    content,
+    alternativeImage,
+    url,
+    location,
+    locationExtra,
+    date,
+  };
+}
+
+async function createEvent(item, region, town) {
+  const { regionLabel, label: townLabel } = getTownData(region, town);
+  const { pubDate, title, date } = getRSSItemData(item);
+  const isDateObject = date && typeof date === "object";
+  const hasFromDate = isDateObject && date.from;
+  const hasToDate = isDateObject && date.to;
+  const dateTimeParams = { zone: "Europe/Madrid" };
+
+  let dateTime;
+
+  if (pubDate) {
+    dateTime = DateTime.fromRFC2822(pubDate, dateTimeParams);
+  } else if (hasFromDate) {
+    dateTime = DateTime.fromRFC2822(date.from, dateTimeParams);
+  } else if (isDateObject) {
+    console.log("Date object without from property:", date);
+  } else {
+    dateTime = DateTime.fromISO(ensureISOFormat(date), dateTimeParams);
+  }
+
+  const endDateTime = hasToDate
+    ? DateTime.fromRFC2822(date.to, dateTimeParams)
+    : dateTime.plus({ hours: 1 });
 
   const isFullDayEvent = dateTime.toFormat("HH:mm:ss") === "00:00:00";
 
-  const description = link
-    ? await scrapeDescription(
-        title,
-        link,
-        descriptionSelector,
-        imageSelector,
-        town !== "barcelona", // TODO: Remove this when we have a better solution for Barcelona
-        removeImage
-      )
-    : null;
+  const description = await scrapeDescription(item, region, town);
 
-  const scrapedLocation = await scrapeLocation(
-    link,
-    location || locationExtra,
-    locationSelector
-  );
+  const scrapedLocation = await scrapeLocation(item, region, town);
 
   const event = {
     summary: title,
@@ -436,51 +586,74 @@ async function insertItemToCalendar(
       : { dateTime: endDateTime.toJSDate(), timeZone: "Europe/Madrid" },
   };
 
-  try {
-    if (!debugMode) {
-      await calendar.events.insert({
-        auth: authToken,
-        calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
-        resource: event,
-      });
+  return event;
+}
 
-      console.log("Inserted new item successfully: " + title);
+async function insertEventToCalendar(
+  event,
+  town,
+  guid,
+  processedItems,
+  authToken
+) {
+  if (!debugMode) {
+    await calendar.events.insert({
+      auth: authToken,
+      calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
+      resource: event,
+    });
 
-      if (env === "prod") {
-        const now = Date.now();
-        processedItems.set(guid, now);
-        await setProcessedItems(processedItems, town); // Save the processed item immediately
-        console.log(`Added item ${guid} to processed items`);
-      }
+    console.log("Inserted new item successfully: " + event.summary);
 
-      return;
-    } else {
-      console.log("event", event);
+    if (env === "prod") {
+      const now = Date.now();
+      processedItems.set(guid, now);
+      await setProcessedItems(processedItems, town); // Save the processed item immediately
+      console.log(`Added item ${guid} to processed items`);
     }
-  } catch (error) {
-    console.error("Error inserting item to calendar:", error);
-    captureException(
-      new Error(
-        `Error inserting item to calendar for ${town}: ${error.message}`
-      )
-    );
-    throw error;
-  }
 
-  return;
+    return;
+  } else {
+    console.log("event", event);
+  }
+}
+
+async function handleError(error, town) {
+  console.error("Error inserting item to calendar:", error);
+  captureException(
+    new Error(`Error inserting item to calendar for ${town}: ${error.message}`)
+  );
+  throw error;
+}
+
+async function insertItemToCalendar(
+  item,
+  region,
+  town,
+  processedItems,
+  authToken
+) {
+  try {
+    const event = await createEvent(item, region, town);
+    await insertEventToCalendar(
+      event,
+      region,
+      town,
+      item.guid,
+      processedItems,
+      authToken
+    );
+  } catch (error) {
+    handleError(error, town);
+  }
 }
 
 async function insertItemToCalendarWithRetry(
   item,
+  region,
   town,
-  regionLabel,
-  townLabel,
-  descriptionSelector,
-  imageSelector,
-  locationSelector,
   processedItems,
-  authToken,
-  removeImage
+  authToken
 ) {
   if (!item) return null;
 
@@ -489,18 +662,7 @@ async function insertItemToCalendarWithRetry(
 
   while (retries < MAX_RETRIES) {
     try {
-      await insertItemToCalendar(
-        item,
-        town,
-        regionLabel,
-        townLabel,
-        descriptionSelector,
-        imageSelector,
-        locationSelector,
-        processedItems,
-        authToken,
-        removeImage
-      );
+      await insertItemToCalendar(item, region, town, processedItems, authToken);
       return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
@@ -517,6 +679,14 @@ async function insertItemToCalendarWithRetry(
 
   // If the maximum number of retries is reached, return null to indicate failure
   return null;
+}
+
+function getTownData(region, town) {
+  const { label: regionLabel, towns } = CITIES_DATA.get(region);
+
+  const townData = towns.get(town);
+
+  return { regionLabel, ...townData };
 }
 
 export default async function handler(req, res) {
@@ -540,7 +710,7 @@ export default async function handler(req, res) {
       throw new Error("Region not found");
     }
 
-    const { label: regionLabel, towns } = CITIES_DATA.get(region);
+    const { towns } = CITIES_DATA.get(region);
 
     // Check if the town exists in the townsData map
     if (!towns.has(town)) {
@@ -548,14 +718,7 @@ export default async function handler(req, res) {
     }
 
     // Retrieve the rssFeed value for the given town
-    const {
-      label: townLabel,
-      rssFeed,
-      descriptionSelector,
-      imageSelector,
-      locationSelector,
-      removeImage,
-    } = towns.get(town);
+    const { rssFeed } = towns.get(town);
 
     // Check if the rssFeed is available
     if (!rssFeed) {
@@ -606,15 +769,10 @@ export default async function handler(req, res) {
         try {
           await insertItemToCalendarWithRetry(
             item,
+            region,
             town,
-            regionLabel,
-            townLabel,
-            descriptionSelector,
-            imageSelector,
-            locationSelector,
             processedItems,
-            authToken,
-            removeImage
+            authToken
           );
           return;
         } catch (error) {

@@ -69,6 +69,11 @@ export const dateFunctions = {
 
 export const DISTANCES = [1, 5, 10, 30, 50];
 
+const sharedData = {
+  descriptionSelector: ".ddbbtext",
+  imageSelector: ".first-image",
+};
+
 export const CITIES_DATA = new Map([
   [
     "barcelones",
@@ -84,6 +89,7 @@ export const CITIES_DATA = new Map([
             imageSelector: ".img-destacada",
             postalCode: "08001",
             coords: { lat: 41.390205, lng: 2.154007 },
+            sanitizeUrl: true,
           },
         ],
       ]),
@@ -127,6 +133,70 @@ export const CITIES_DATA = new Map([
             removeImage: true, // TODO: fix this
           },
         ],
+        [
+          "cabrera-de-mar",
+          {
+            label: "Cabrera de Mar",
+            rssFeed: "https://www.cabrerademar.cat/feeds/agenda",
+            descriptionSelector: ".brcm-event-detail-column-left",
+            imageSelector: ".brcm-image",
+            postalCode: "08349",
+            coords: { lat: "41.5534", lng: "2.4035" },
+          },
+        ],
+        [
+          "caldes-d-estrac",
+          {
+            label: "Caldes d'Estrac",
+            rssFeed: "https://caldetes.cat/a.php?fer=SINDICACIO&seccio=2",
+            descriptionSelector: ".cos",
+            postalCode: "08393",
+            coords: { lat: "41.57194", lng: "2.52861" },
+            removeImage: true, // TODO: fix this
+          },
+        ],
+        [
+          "calella",
+          {
+            label: "Calella",
+            rssFeed: "https://www.calella.cat/rss/12/0/",
+            ...sharedData,
+            postalCode: "08370",
+            coords: { lat: "41.57194", lng: "2.52861" },
+          },
+        ],
+        [
+          "canet-de-mar",
+          {
+            label: "Canet de Mar",
+            rssFeed: "https://www.canetdemar.cat/a.php?fer=SINDICACIO&seccio=2",
+            descriptionSelector: ".cos",
+            postalCode: "08360",
+            coords: { lat: "41.5905", lng: "2.5812" },
+          },
+        ],
+        [
+          "dosrius",
+          {
+            label: "Dosrius",
+            rssFeed: "https://www.dosrius.cat/rss/12",
+            ...sharedData,
+            postalCode: "08319",
+            coords: { lat: "41.594", lng: "2.406" },
+          },
+        ],
+        [
+          "mataro",
+          {
+            label: "Mataró",
+            rssFeed:
+              "https://www.mataro.cat/ca/actualitat/agenda/agenda/rss.xml",
+            descriptionSelector: "#parent-fieldname-text",
+            imageSelector: ".leadImage",
+            postalCode: "08301",
+            coords: { lat: "41.533", lng: "2.450" },
+          },
+        ],
       ]),
     },
   ],
@@ -152,8 +222,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Llinars del Vallès",
             rssFeed: "https://www.llinarsdelvalles.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08450",
             coords: { lat: 41.640555555556, lng: 2.4022222222222 },
           },
@@ -163,8 +232,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Cànoves i Samalús",
             rssFeed: "https://www.canovesisamalus.cat/rss/15/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08445",
             coords: { lat: 41.693778, lng: 2.349269 },
           },
@@ -174,8 +242,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Lliçà de Vall",
             rssFeed: "https://www.llissadevall.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08185",
             coords: { lat: 41.583186, lng: 2.239658 },
           },
@@ -185,8 +252,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Sant Antoni de Vilamajor",
             rssFeed: "https://www.santantonidevilamajor.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08459",
             coords: { lat: 41.672559, lng: 2.399991 },
           },
@@ -196,8 +262,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Sant Pere de Vilamajor",
             rssFeed: "https://www.vilamajor.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08458",
             coords: { lat: 41.68556, lng: 2.390001 },
           },
@@ -207,8 +272,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Santa Maria de Palautordera",
             rssFeed: "https://www.smpalautordera.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08460",
             coords: { lat: 41.69528, lng: 2.445832 },
           },
@@ -218,8 +282,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Sant Esteve de Palautordera",
             rssFeed: "https://www.santestevedepalautordera.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08461",
             coords: { lat: 41.70528, lng: 2.435833 },
           },
@@ -229,8 +292,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Parets del Vallès",
             rssFeed: "https://www.parets.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08150",
             coords: { lat: 41.57481, lng: 2.23306 },
           },
@@ -240,8 +302,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Sant Feliu de Codines",
             rssFeed: "https://www.santfeliudecodines.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08182",
             coords: { lat: 41.69, lng: 2.165 },
           },
@@ -251,8 +312,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Caldes de Montbui",
             rssFeed: "https://www.caldesdemontbui.cat/rss/28/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08140",
             coords: { lat: 41.63111, lng: 2.16867 },
           },
@@ -285,8 +345,7 @@ export const CITIES_DATA = new Map([
           {
             label: "L'Ametlla del Vallès",
             rssFeed: "https://www.ametlla.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08480",
             coords: { lat: 41.668325, lng: 2.260501 },
           },
@@ -296,8 +355,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Figaró-Montmany",
             rssFeed: "https://www.figaro-montmany.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08590",
             coords: { lat: 41.72278, lng: 2.275 },
           },
@@ -307,8 +365,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Fogars de Montclús",
             rssFeed: "https://www.fogarsdemontclus.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08479",
             coords: { lat: 41.72861, lng: 2.44444 },
           },
@@ -318,8 +375,7 @@ export const CITIES_DATA = new Map([
           {
             label: "La Llagosta",
             rssFeed: "https://www.llagosta.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08120",
             coords: { lat: 41.668325, lng: 2.260501 },
           },
@@ -329,8 +385,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Martorelles",
             rssFeed: "https://www.martorelles.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08107",
             coords: { lat: 41.53148, lng: 2.23889 },
           },
@@ -340,8 +395,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Montseny",
             rssFeed: "https://www.montseny.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08460",
             coords: { lat: 41.75, lng: 2.395 },
           },
@@ -351,8 +405,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Sant Fost de Campsentelles",
             rssFeed: "https://www.santfost.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08105",
             coords: { lat: 41.50611, lng: 2.24 },
           },
@@ -362,8 +415,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Santa Maria de Martorelles",
             rssFeed: "https://www.santamariademartorelles.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08106",
             coords: { lat: 41.5167, lng: 2.25 },
           },
@@ -373,8 +425,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Vallgorguina",
             rssFeed: "https://www.vallgorguina.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08471",
             coords: { lat: 41.647738, lng: 2.510201 },
           },
@@ -384,8 +435,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Vallromanes",
             rssFeed: "https://www.vallromanes.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08188",
             coords: { lat: 41.53389, lng: 2.44222 },
           },
@@ -395,8 +445,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Vilalba Sasserra",
             rssFeed: "https://www.vilalbasasserra.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08455",
             coords: { lat: 41.65389, lng: 2.44222 },
           },
@@ -406,8 +455,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Vilanova del Vallès",
             rssFeed: "https://www.vilanovadelvalles.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08410",
             coords: { lat: 41.53389, lng: 2.44222 },
           },
@@ -425,8 +473,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Martorelles",
             rssFeed: "https://www.martorelles.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08107",
             coords: { lat: 41.5321, lng: 0.236 },
           },
@@ -436,8 +483,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Castellbisbal",
             rssFeed: "https://www.castellbisbal.cat/rss/48",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08755",
             coords: { lat: 41.4753, lng: 1.9817 },
           },
@@ -447,8 +493,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Matadepera",
             rssFeed: "https://www.matadepera.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08230",
             coords: { lat: 41.60361, lng: 2.02444 },
           },
@@ -458,8 +503,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Montcada i Reixac",
             rssFeed: "https://www.montcada.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08110",
             coords: { lat: 41.4833, lng: 2.1833 },
           },
@@ -469,8 +513,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Rellinars",
             rssFeed: "https://www.rellinars.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08299",
             coords: { lat: 41.6333, lng: 1.9167 },
           },
@@ -480,8 +523,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Sant Llorenç Savall",
             rssFeed: "https://www.savall.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08212",
             coords: { lat: 41.67944, lng: 2.05778 },
           },
@@ -491,8 +533,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Santa Perpètua de Mogoda",
             rssFeed: "https://www.staperpetua.cat/rss/12/0/",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08130",
             coords: { lat: 41.5375, lng: 2.18194 },
           },
@@ -502,8 +543,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Ullastrell",
             rssFeed: "https://www.ullastrell.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08231",
             coords: { lat: 41.5167, lng: 1.9333 },
           },
@@ -513,8 +553,7 @@ export const CITIES_DATA = new Map([
           {
             label: "Polinyà",
             rssFeed: "https://www.polinya.cat/rss/12",
-            descriptionSelector: ".ddbbtext",
-            imageSelector: ".first-image",
+            ...sharedData,
             postalCode: "08213",
             coords: { lat: 41.55, lng: 2.15 },
           },
