@@ -23,7 +23,7 @@ const auth = new google.auth.GoogleAuth({
 });
 
 // Configuration
-const debugMode = true;
+const debugMode = false;
 const TIMEOUT_LIMIT = 10000;
 const SAFETY_MARGIN = 1000;
 const PROCESSED_ITEMS_KEY = "processedItems";
@@ -79,7 +79,10 @@ async function fetchRSSFeed(rssFeed, town) {
     let data;
 
     // Check the Content-Type header of the response
-    if (response.headers["content-type"].includes("application/json")) {
+    if (
+      response.headers["content-type"] &&
+      response.headers["content-type"].includes("application/json")
+    ) {
       // If the Content-Type is JSON, parse the response data as JSON
       data = JSON.parse(response.data);
     } else {
@@ -236,11 +239,16 @@ function sanitize(url) {
   return url.replace(/\.html$/, "");
 }
 
-function getDescription($, item, descriptionSelector, removeImage) {
+function getDescription($, item, region, town) {
+  const {
+    descriptionSelector,
+    removeImage,
+    getDescriptionFromRss = false,
+  } = getTownData(region, town);
   const { itemDescription, content, url } = getRSSItemData(item);
   const alternativeDescription = `${itemDescription || ""}${content || ""}`;
 
-  if (alternativeDescription) {
+  if (alternativeDescription && getDescriptionFromRss) {
     return alternativeDescription;
   }
 
@@ -271,7 +279,8 @@ function getDescription($, item, descriptionSelector, removeImage) {
   return description;
 }
 
-function getImage($, item, imageSelector, description, removeImage = false) {
+function getImage($, item, region, town, description) {
+  const { imageSelector, removeImage = false } = getTownData(region, town);
   const { alternativeImage, url } = getRSSItemData(item);
   let rawImage = $(imageSelector).prop("outerHTML")?.trim();
   let image;
@@ -289,6 +298,13 @@ function getImage($, item, imageSelector, description, removeImage = false) {
       imgOuterHtml = $img("a").prop("outerHTML");
     } else {
       imgOuterHtml = $img("img").prop("outerHTML");
+    }
+
+    let src = $img("img").attr("src");
+    if (!src.startsWith("http")) {
+      src = new URL(src, getBaseUrl(url)).href;
+      $img("img").attr("src", src);
+      imgOuterHtml = $img.html();
     }
 
     image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
@@ -313,43 +329,43 @@ function formatDescription(item, description, image) {
 }
 
 async function scrapeDescription(item, region, town) {
+  let url;
+
   try {
-    const { url } = getRSSItemData(item);
+    url = getRSSItemData(item).url;
 
     if (!url) {
       return null;
     }
 
-    const { descriptionSelector, imageSelector, removeImage, sanitizeUrl } =
-      getTownData(region, town);
+    const { sanitizeUrl } = getTownData(region, town);
 
     const html = await fetchAndDecodeHtml(url, sanitizeUrl);
     const $ = load(html);
 
-    const description = getDescription(
-      $,
-      item,
-      descriptionSelector,
-      removeImage
-    );
-    const image = getImage($, item, imageSelector, description, removeImage);
+    const description = getDescription($, item, region, town);
+    const image = getImage($, item, region, town, description);
 
     return formatDescription(item, description, image);
   } catch (error) {
-    console.error("Error occurred during scraping description:", url);
-    captureException(
-      new Error(
-        `Error occurred during scraping description for ${url}: ${error.message}`
-      )
-    );
+    const errorMessage = `Error occurred during scraping description for ${url}: ${error.message}`;
+    console.error(errorMessage);
+    captureException(new Error(errorMessage));
     throw error;
   }
 }
 
 async function scrapeLocation(item, region, town) {
+  let url;
+
   try {
     const { locationSelector } = getTownData(region, town);
-    const { url, location: itemLocation, locationExtra } = getRSSItemData(item);
+    const {
+      url: itemUrl,
+      location: itemLocation,
+      locationExtra,
+    } = getRSSItemData(item);
+    url = itemUrl;
     const location = itemLocation || locationExtra;
 
     if (location) return location;
@@ -377,128 +393,9 @@ async function scrapeLocation(item, region, town) {
 
     return locationElement ? locationElement.trim() : location;
   } catch (error) {
-    console.error("Error occurred during scraping location:", url);
-    captureException(
-      new Error(
-        `Error occurred during scraping location for ${url}: ${error.message}`
-      )
-    );
-    throw error;
-  }
-}
-
-async function scrapeDescription2(
-  title,
-  url,
-  descriptionSelector,
-  imageSelector,
-  sanitizeUrl = true,
-  removeImage = false,
-  alternativeImage,
-  alternativeDescription
-) {
-  try {
-    const sanitizedUrl = sanitizeUrl ? url.replace(/\.html$/, "") : url;
-
-    // Fetch the page and get the response as an ArrayBuffer
-    const response = await fetch(sanitizedUrl);
-    const arrayBuffer = await response.arrayBuffer();
-
-    // Try decoding the response data with UTF-8
-    let decoder = new TextDecoder("utf-8");
-    let html = decoder.decode(arrayBuffer);
-
-    // If the decoded data contains unusual characters, try ISO-8859-1
-    if (html.includes("�")) {
-      decoder = new TextDecoder("iso-8859-1");
-      html = decoder.decode(arrayBuffer);
-    }
-
-    const $ = load(html);
-
-    let description = $(descriptionSelector).html()?.trim();
-
-    if (description) {
-      // Parse the description HTML with cheerio
-      let dom = $.parseHTML(description);
-      let $desc = $(dom);
-
-      // Find all img tags
-      $desc.find("img").each((_, img) => {
-        // Get the src attribute
-        let src = $(img).attr("src");
-
-        // If the src is a relative URL, prepend the base URL
-        if (!src.startsWith("http")) {
-          src = new URL(src, getBaseUrl(url)).href;
-          $(img).attr("src", src);
-        }
-      });
-
-      if (removeImage) {
-        $desc.find("img").remove();
-      }
-
-      // Update the description with the modified HTML
-      description = $desc.html();
-    } else {
-      description =
-        "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
-    }
-
-    let rawImage = $(imageSelector).prop("outerHTML")?.trim();
-    let image;
-    const regex = /(https?:\/\/[^"\s]+)/g;
-
-    if (alternativeImage) {
-      image = alternativeImage;
-    } else if (rawImage) {
-      let $img = load(rawImage);
-      let img = $img("img");
-      img.removeAttr("style");
-      img.removeAttr("class");
-      let imgOuterHtml;
-      if ($img("a").length) {
-        imgOuterHtml = $img("a").prop("outerHTML");
-      } else {
-        imgOuterHtml = $img("img").prop("outerHTML");
-      }
-
-      // Handle relative URLs
-      let src = $img("img").attr("src");
-      if (!src.startsWith("http")) {
-        // If the src is a relative URL, prepend the base URL
-        src = new URL(src, getBaseUrl(url)).href;
-        $img("img").attr("src", src);
-        imgOuterHtml = $img.html();
-      }
-
-      image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
-    } else if (!removeImage) {
-      image = getEventImageUrl(description);
-    }
-
-    const result = image && image.match(regex);
-    image = result && result[0];
-
-    if (!image) {
-      console.error("No image URL found");
-    }
-
-    const appendUrl = `<br><br><b>Més informació:</b><br><a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
-    const finalDescription = alternativeDescription || description;
-
-    return `
-    <div>${finalDescription}</div>
-    ${image ? `<div class="hidden">${image}</div>` : ""}
-    <div>${appendUrl}</div>`;
-  } catch (error) {
-    console.error("Error occurred during scraping description:", url);
-    captureException(
-      new Error(
-        `Error occurred during scraping description for ${url}: ${error.message}`
-      )
-    );
+    const errorMessage = `Error occurred during scraping location for ${url}: ${error.message}`;
+    console.error(errorMessage);
+    captureException(new Error(errorMessage));
     throw error;
   }
 }
@@ -637,7 +534,6 @@ async function insertItemToCalendar(
     const event = await createEvent(item, region, town);
     await insertEventToCalendar(
       event,
-      region,
       town,
       item.guid,
       processedItems,
