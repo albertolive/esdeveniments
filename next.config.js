@@ -69,6 +69,8 @@ const nextConfig = {
       { hostname: "calella.cat" },
       { hostname: "www.dosrius.cat" },
       { hostname: "www.mataro.cat" },
+      { hostname: "www.montgat.cat" },
+      { hostname: "www.orrius.cat" },
     ],
   },
   async headers() {

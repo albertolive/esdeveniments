@@ -198,6 +198,26 @@ export const CITIES_DATA = new Map([
             getDescriptionFromRss: true,
           },
         ],
+        [
+          "montgat",
+          {
+            label: "Montgat",
+            rssFeed: "https://www.montgat.cat/rss/12/0/",
+            ...sharedData,
+            postalCode: "08390",
+            coords: { lat: "41.469", lng: "2.2805" },
+          },
+        ],
+        [
+          "orrius",
+          {
+            label: "Òrrius",
+            rssFeed: "https://www.orrius.cat/rss/12/0/",
+            ...sharedData,
+            postalCode: "08317",
+            coords: { lat: "41.55750", lng: "2.35583" },
+          },
+        ],
       ]),
     },
   ],
