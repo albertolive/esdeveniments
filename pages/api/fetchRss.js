@@ -6,6 +6,7 @@ import Bottleneck from "bottleneck";
 import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
+import { getFormattedDate } from "@utils/helpers";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -24,17 +25,17 @@ const auth = new google.auth.GoogleAuth({
 
 // Configuration
 const debugMode = false;
-const TIMEOUT_LIMIT = 10000;
-const SAFETY_MARGIN = 1000;
-const PROCESSED_ITEMS_KEY = "processedItems";
-const RSS_FEED_CACHE_KEY = "rssFeedCache";
-const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
-const RSS_FEED_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
 const env =
   process.env.NODE_ENV !== "production" &&
   process.env.VERCEL_ENV !== "production"
     ? "dev"
     : "prod";
+const TIMEOUT_LIMIT = env === "prod" ? 10000 : 100000;
+const SAFETY_MARGIN = 1000;
+const PROCESSED_ITEMS_KEY = "processedItems";
+const RSS_FEED_CACHE_KEY = "rssFeedCache";
+const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
+const RSS_FEED_CACHE_MAX_AGE = 3 * 60 * 60 * 1000; // 3 hours
 
 // Custom error class for RSS feed errors
 class RSSFeedError extends Error {
@@ -486,6 +487,23 @@ async function createEvent(item, region, town) {
   return event;
 }
 
+async function indexEvent({ start, end, summary, id }) {
+  try {
+    // Get the originalFormattedStart value
+    const { originalFormattedStart } = getFormattedDate(start, end);
+
+    // Construct the URL using the slug function
+    const eventUrl = `www.esdeveniments.cat/e/${slug(
+      summary,
+      originalFormattedStart,
+      id
+    )}`;
+
+    // Call the new function to index the event to Google Search
+    await axios.post("/api/indexEvent", { url: eventUrl });
+  } catch (err) {}
+}
+
 async function insertEventToCalendar(
   event,
   town,
@@ -494,15 +512,16 @@ async function insertEventToCalendar(
   authToken
 ) {
   if (!debugMode) {
-    await calendar.events.insert({
+    const response = await calendar.events.insert({
       auth: authToken,
       calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
       resource: event,
     });
-
+    console.log("caca", response);
     console.log("Inserted new item successfully: " + event.summary);
 
     if (env === "prod") {
+      indexEvent(response.data);
       const now = Date.now();
       processedItems.set(guid, now);
       await setProcessedItems(processedItems, town); // Save the processed item immediately
