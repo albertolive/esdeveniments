@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { captureException } from "@sentry/nextjs";
 
 const calendar = google.calendar("v3");
 const auth = new google.auth.GoogleAuth({
@@ -43,10 +44,12 @@ const handler = async (req, res) => {
       res.status(200).json(data);
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
+      captureException(error);
       throw error;
     }
   } catch (error) {
     console.error(error);
+    captureException(error);
     res.status(500).json({ error });
   }
 };
