@@ -6,7 +6,8 @@ import Bottleneck from "bottleneck";
 import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
-import { getFormattedDate } from "@utils/helpers";
+import { getFormattedDate, slug } from "@utils/helpers";
+import { siteUrl } from "@config/index";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -487,20 +488,20 @@ async function createEvent(item, region, town) {
   return event;
 }
 
-async function indexEvent({ start, end, summary, id }) {
+function indexEvent({ start, end, summary, id }) {
   try {
     // Get the originalFormattedStart value
     const { originalFormattedStart } = getFormattedDate(start, end);
 
     // Construct the URL using the slug function
-    const eventUrl = `www.esdeveniments.cat/e/${slug(
+    const eventUrl = `${siteUrl}/e/${slug(
       summary,
       originalFormattedStart,
       id
     )}`;
 
     // Call the new function to index the event to Google Search
-    await axios.post("/api/indexEvent", { url: eventUrl });
+    axios.post("/api/indexEvent", { url: eventUrl });
   } catch (err) {}
 }
 
@@ -517,7 +518,7 @@ async function insertEventToCalendar(
       calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
       resource: event,
     });
-    console.log("caca", response);
+
     console.log("Inserted new item successfully: " + event.summary);
 
     if (env === "prod") {
