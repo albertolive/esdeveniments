@@ -136,6 +136,7 @@ async function fetchRSSFeed(rssFeed, town) {
     }
 
     console.log("Returning new RSS data");
+
     return data;
   } catch (err) {
     console.error(
@@ -244,7 +245,7 @@ function sanitize(url) {
 function getDescription($, item, region, town) {
   const {
     descriptionSelector,
-    removeImage,
+    removeImage = false,
     getDescriptionFromRss = false,
   } = getTownData(region, town);
   const { itemDescription, content, url } = getRSSItemData(item);
@@ -272,7 +273,7 @@ function getDescription($, item, region, town) {
       $desc.find("img").remove();
     }
 
-    description = $desc.html();
+    description = $desc.toString();
   } else {
     description =
       "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
@@ -552,6 +553,7 @@ async function insertItemToCalendar(
 ) {
   try {
     const event = await createEvent(item, region, town);
+
     await insertEventToCalendar(
       event,
       town,

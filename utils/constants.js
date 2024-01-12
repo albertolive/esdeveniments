@@ -90,6 +90,7 @@ export const CITIES_DATA = new Map([
             postalCode: "08001",
             coords: { lat: 41.390205, lng: 2.154007 },
             sanitizeUrl: true,
+            getDescriptionFromRss: true,
           },
         ],
       ]),
@@ -216,6 +217,89 @@ export const CITIES_DATA = new Map([
             ...sharedData,
             postalCode: "08317",
             coords: { lat: "41.55750", lng: "2.35583" },
+          },
+        ],
+        // [
+        //   "palafolls",
+        //   {
+        //     label: "Palafolls",
+        //     rssFeed: "https://www.palafolls.cat/rss/pl3/rss.xml",
+        //     ...sharedData,
+        //     postalCode: "08389",
+        //     coords: { lat: "41.66917", lng: "2.75056" },
+        //   },
+        // ],
+        [
+          "sant-andreu-de-llavaneres",
+          {
+            label: "Sant Andreu de Llavaneres",
+            rssFeed: "https://ajllavaneres.cat/a.php?fer=SINDICACIO&seccio=2",
+            descriptionSelector: ".cos",
+            imageSelector: ".dusuari",
+            postalCode: "08392",
+            coords: { lat: "41.57333", lng: "2.48278" },
+          },
+        ],
+        [
+          "sant-cebria-de-vallalta",
+          {
+            label: "Sant Cebrià de Vallalta",
+            rssFeed: "https://www.stcebria.cat/rss/12/0/",
+            ...sharedData,
+            postalCode: "08396",
+            coords: { lat: "41.62111", lng: "2.60111" },
+          },
+        ],
+        [
+          "sant-iscle-de-vallalta",
+          {
+            label: "Sant Iscle de Vallalta",
+            rssFeed: "https://www.santiscle.cat/rss/12/0/",
+            ...sharedData,
+            postalCode: "08359",
+            coords: { lat: "41.62500", lng: "2.57000" },
+          },
+        ],
+        [
+          "sant-pol-de-mar",
+          {
+            label: "Sant Pol de Mar",
+            rssFeed: "https://www.santpol.cat/a.php?fer=SINDICACIO&seccio=2",
+            descriptionSelector: ".cos",
+            postalCode: "08395",
+            coords: { lat: "41.60333", lng: "2.62444" },
+            removeImage: true, // Image in wrong format, fails app
+          },
+        ],
+        [
+          "sant-vicenc-de-montalt",
+          {
+            label: "Sant Vicenç de Montalt",
+            rssFeed: "https://www.svmontalt.cat/a.php?fer=SINDICACIO&seccio=2",
+            descriptionSelector: ".cos",
+            postalCode: "08394",
+            coords: { lat: "41.58028", lng: "2.50861" },
+            removeImage: true,
+          },
+        ],
+        [
+          "santa-susanna",
+          {
+            label: "Santa Susanna",
+            rssFeed: "https://www.stasusanna.cat/rss/12/0/",
+            ...sharedData,
+            postalCode: "08398",
+            coords: { lat: "41.63694", lng: "2.70806" },
+          },
+        ],
+        [
+          "tordera",
+          {
+            label: "Tordera",
+            rssFeed: "https://tordera.webmunicipal.diba.cat/rss/12/0/",
+            ...sharedData,
+            postalCode: "08490",
+            coords: { lat: "41.70083", lng: "2.72000" },
           },
         ],
       ]),
