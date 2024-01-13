@@ -1,27 +1,21 @@
-import { google } from "googleapis";
 import { captureException } from "@sentry/nextjs";
 import Bottleneck from "bottleneck";
-
-const calendar = google.calendar("v3");
-const auth = new google.auth.GoogleAuth({
-  credentials: {
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    project_id: process.env.GOOGLE_PROJECT_ID,
-    private_key: process.env.GOOGLE_PRIVATE_KEY,
-  },
-  scopes: ["https://www.googleapis.com/auth/calendar"],
-});
+import axios from "axios";
+import { getAuthToken } from "@lib/auth";
 
 const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
 
-async function deleteEvent(authToken, eventId, summary) {
+async function deleteEvent(token, eventId, summary) {
   try {
-    await calendar.events.delete({
-      auth: authToken,
-      calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
-      eventId: eventId,
-    });
+    await axios.delete(
+      `https://www.googleapis.com/calendar/v3/calendars/${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com/events/${eventId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     console.log(`Deleted event with ID: ${eventId}, Summary: ${summary}`);
   } catch (err) {
     console.error(
@@ -49,7 +43,7 @@ function generateKey(event) {
 
 export default async function handler(_, res) {
   try {
-    const authToken = await auth.getClient();
+    const token = await getAuthToken();
 
     // Calculate the date one week before and one week after today
     const numDaysBefore = process.env.NEXT_PUBLIC_NUM_DAYS_BEFORE || 2;
@@ -60,13 +54,20 @@ export default async function handler(_, res) {
     timeMax.setDate(timeMax.getDate() + numDaysAfter);
 
     // Fetch all events from the calendar
-    const { data } = await calendar.events.list({
-      auth: authToken,
-      timeMin: timeMin.toISOString(),
-      timeMax: timeMax.toISOString(),
-      calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
-      maxResults: 2500,
-    });
+    const { data } = await axios.get(
+      `https://www.googleapis.com/calendar/v3/calendars/${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com/events`,
+      {
+        params: {
+          timeMin: timeMin.toISOString(),
+          timeMax: timeMax.toISOString(),
+          maxResults: 2500,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const events = data.items;
 
@@ -110,11 +111,7 @@ export default async function handler(_, res) {
       // Delete all but the most recent duplicate event
       for (let i = 1; i < duplicateEvents.length; i++) {
         await limiter.schedule(() =>
-          deleteEvent(
-            authToken,
-            duplicateEvents[i].id,
-            duplicateEvents[i].summary
-          )
+          deleteEvent(token, duplicateEvents[i].id, duplicateEvents[i].summary)
         );
         duplicatesDeleted = true;
         deletedEventSummaries.set(
@@ -134,7 +131,7 @@ export default async function handler(_, res) {
       res.status(200).json({ message: "No duplicates found" });
     }
   } catch (err) {
-    console.error(err);
+    console.error(err.message);
     captureException(new Error(`Error in handler: ${err.message}`));
     res.status(500).json({
       error: `An error occurred while checking for and deleting duplicate events: ${err.message}`,

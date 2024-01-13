@@ -32,8 +32,8 @@ export default function BaseLayout({ children }) {
       </Head>
       <Navbar />
       {/* <Notify /> */}
-      <div className="w-full bg-whiteCorp flex justify-center items-center overflow-hidden">
-          {memoizedChildren}
+      <div className="w-full bg-whiteCorp flex flex-col justify-center items-center overflow-hidden">
+        {memoizedChildren}
       </div>
       <Footer />
     </>
