@@ -1,20 +1,12 @@
-import { google } from "googleapis";
 import axios from "axios";
 import { captureException } from "@sentry/nextjs";
+import { getAuthToken } from "@lib/auth";
 
 export default async function handler(req, res) {
   const { url } = req.body;
 
-  const jwtClient = new google.auth.JWT(
-    process.env.GOOGLE_CLIENT_EMAIL,
-    null,
-    process.env.GOOGLE_PRIVATE_KEY,
-    ["https://www.googleapis.com/auth/indexing"],
-    null
-  );
-
   try {
-    const tokens = await jwtClient.authorize();
+    const token = await getAuthToken("indexing");
 
     const data = JSON.stringify({
       url: url,
@@ -25,7 +17,7 @@ export default async function handler(req, res) {
       method: "post",
       url: "https://indexing.googleapis.com/v3/urlNotifications:publish",
       headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       data: data,

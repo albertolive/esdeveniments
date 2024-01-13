@@ -1,36 +1,19 @@
 import axios from "axios";
 import { kv } from "@vercel/kv";
-import { google } from "googleapis";
 import { load } from "cheerio";
 import Bottleneck from "bottleneck";
 import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
-import { getFormattedDate, slug } from "@utils/helpers";
-import { siteUrl } from "@config/index";
+import { env } from "@utils/helpers";
+import { postToGoogleCalendar } from "@lib/apiHelpers";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
 const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
 
-const calendar = google.calendar("v3");
-const auth = new google.auth.GoogleAuth({
-  credentials: {
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    project_id: process.env.GOOGLE_PROJECT_ID,
-    private_key: process.env.GOOGLE_PRIVATE_KEY,
-  },
-  scopes: ["https://www.googleapis.com/auth/calendar"],
-});
-
 // Configuration
 const debugMode = false;
-const env =
-  process.env.NODE_ENV !== "production" &&
-  process.env.VERCEL_ENV !== "production"
-    ? "dev"
-    : "prod";
 const TIMEOUT_LIMIT = env === "prod" ? 10000 : 100000;
 const SAFETY_MARGIN = 1000;
 const PROCESSED_ITEMS_KEY = "processedItems";
@@ -489,41 +472,13 @@ async function createEvent(item, region, town) {
   return event;
 }
 
-function indexEvent({ start, end, summary, id }) {
-  try {
-    // Get the originalFormattedStart value
-    const { originalFormattedStart } = getFormattedDate(start, end);
-
-    // Construct the URL using the slug function
-    const eventUrl = `${siteUrl}/e/${slug(
-      summary,
-      originalFormattedStart,
-      id
-    )}`;
-
-    // Call the new function to index the event to Google Search
-    axios.post("/api/indexEvent", { url: eventUrl });
-  } catch (err) {}
-}
-
-async function insertEventToCalendar(
-  event,
-  town,
-  guid,
-  processedItems,
-  authToken
-) {
+async function insertEventToCalendar(event, town, guid, processedItems) {
   if (!debugMode) {
-    const response = await calendar.events.insert({
-      auth: authToken,
-      calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
-      resource: event,
-    });
+    await postToGoogleCalendar(event);
 
     console.log("Inserted new item successfully: " + event.summary);
 
     if (env === "prod") {
-      indexEvent(response.data);
       const now = Date.now();
       processedItems.set(guid, now);
       await setProcessedItems(processedItems, town); // Save the processed item immediately
@@ -536,33 +491,37 @@ async function insertEventToCalendar(
   }
 }
 
-async function handleError(error, town) {
-  console.error("Error inserting item to calendar:", error);
-  captureException(
-    new Error(`Error inserting item to calendar for ${town}: ${error.message}`)
-  );
+async function handleError(error, town, functionName) {
+  let errorMessage;
+
+  switch (functionName) {
+    case "createEvent":
+      errorMessage = `Error creating event: ${error}`;
+      break;
+    case "insertEventToCalendar":
+      errorMessage = `Error inserting event to calendar: ${error}`;
+      break;
+    default:
+      errorMessage = `Error in ${functionName}: ${error}`;
+  }
+
+  console.error(errorMessage);
+  captureException(new Error(`${errorMessage} for ${town}`));
   throw error;
 }
 
-async function insertItemToCalendar(
-  item,
-  region,
-  town,
-  processedItems,
-  authToken
-) {
+async function insertItemToCalendar(item, region, town, processedItems) {
+  let event;
   try {
-    const event = await createEvent(item, region, town);
-
-    await insertEventToCalendar(
-      event,
-      town,
-      item.guid,
-      processedItems,
-      authToken
-    );
+    event = await createEvent(item, region, town);
   } catch (error) {
-    handleError(error, town);
+    handleError(error, town, "createEvent");
+  }
+
+  try {
+    await insertEventToCalendar(event, town, item.guid, processedItems);
+  } catch (error) {
+    handleError(error, town, "insertEventToCalendar");
   }
 }
 
@@ -570,8 +529,7 @@ async function insertItemToCalendarWithRetry(
   item,
   region,
   town,
-  processedItems,
-  authToken
+  processedItems
 ) {
   if (!item) return null;
 
@@ -580,7 +538,7 @@ async function insertItemToCalendarWithRetry(
 
   while (retries < MAX_RETRIES) {
     try {
-      await insertItemToCalendar(item, region, town, processedItems, authToken);
+      await insertItemToCalendar(item, region, town, processedItems);
       return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
@@ -668,7 +626,6 @@ export default async function handler(req, res) {
       return;
     }
 
-    const authToken = await auth.getClient();
     let isTimeout = false;
 
     // Insert items in GCal
@@ -689,8 +646,7 @@ export default async function handler(req, res) {
             item,
             region,
             town,
-            processedItems,
-            authToken
+            processedItems
           );
           return;
         } catch (error) {
