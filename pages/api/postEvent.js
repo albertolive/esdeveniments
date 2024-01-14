@@ -1,7 +1,5 @@
 import { captureException } from "@sentry/nextjs";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
-import axios from "axios";
-import { env } from "@utils/helpers";
 
 const handler = async (req, res) => {
   try {
@@ -25,20 +23,6 @@ const handler = async (req, res) => {
 
     try {
       const { data } = await postToGoogleCalendar(event);
-
-      if (env === "prod") {
-        try {
-          await axios.post(process.env.NEXT_PUBLIC_NEW_EVENT_EMAIL_URL, {
-            title: title,
-          });
-        } catch (error) {
-          console.error(`Error notifying new manual event: ${error.message}`);
-          captureException(
-            new Error(`Error notifying new manual event: ${error.message}`)
-          );
-          // No need to throw the error since you want to continue execution
-        }
-      }
 
       console.log("Inserted new item successfully: " + title);
       res.status(200).json(data);
