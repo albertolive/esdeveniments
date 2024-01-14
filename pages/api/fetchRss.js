@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
 import { env } from "@utils/helpers";
+import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
 
 const { XMLParser } = require("fast-xml-parser");
@@ -472,9 +473,9 @@ async function createEvent(item, region, town) {
   return event;
 }
 
-async function insertEventToCalendar(event, town, guid, processedItems) {
+async function insertEventToCalendar(event, town, guid, processedItems, token) {
   if (!debugMode) {
-    await postToGoogleCalendar(event);
+    await postToGoogleCalendar(event, token);
 
     console.log("Inserted new item successfully: " + event.summary);
 
@@ -510,7 +511,7 @@ async function handleError(error, town, functionName) {
   throw error;
 }
 
-async function insertItemToCalendar(item, region, town, processedItems) {
+async function insertItemToCalendar(item, region, town, processedItems, token) {
   let event;
   try {
     event = await createEvent(item, region, town);
@@ -519,7 +520,7 @@ async function insertItemToCalendar(item, region, town, processedItems) {
   }
 
   try {
-    await insertEventToCalendar(event, town, item.guid, processedItems);
+    await insertEventToCalendar(event, town, item.guid, processedItems, token);
   } catch (error) {
     handleError(error, town, "insertEventToCalendar");
   }
@@ -529,7 +530,8 @@ async function insertItemToCalendarWithRetry(
   item,
   region,
   town,
-  processedItems
+  processedItems,
+  token
 ) {
   if (!item) return null;
 
@@ -538,7 +540,7 @@ async function insertItemToCalendarWithRetry(
 
   while (retries < MAX_RETRIES) {
     try {
-      await insertItemToCalendar(item, region, town, processedItems);
+      await insertItemToCalendar(item, region, town, processedItems, token);
       return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
@@ -626,6 +628,8 @@ export default async function handler(req, res) {
       return;
     }
 
+    const token = await getAuthToken();
+
     let isTimeout = false;
 
     // Insert items in GCal
@@ -646,7 +650,8 @@ export default async function handler(req, res) {
             item,
             region,
             town,
-            processedItems
+            processedItems,
+            token
           );
           return;
         } catch (error) {
