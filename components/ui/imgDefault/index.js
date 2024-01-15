@@ -1,56 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 let lastRandomIndex = null;
 
-function getRandomBackground() {
-  const gradients = [
-    "linear-gradient( 145deg, #FF0037 10%, #EA5455 100%)",
-    "linear-gradient( 145deg, #FF0037 10%, #F6416C 100%)",
-    "linear-gradient( 145deg, #FF0037 10%, #FF6A88 100%)",
-    "linear-gradient( 145deg, #FF0037 10%, #FF3CAC 100%)",
-    "linear-gradient( 145deg, #FF0037 10%, #F55555 100%)",
-  ];
+async function getRandomImage() {
+  try {
+    const response = await axios.get(
+      "https://api.pexels.com/v1/search?query=calle+ciudad&per_page=10",
+      {
+        headers: {
+          Authorization:
+            "zahN9ipHEtA0QgerhONZ8hmRVXOsABDFoZegX6IINRunTuWyYZnAMerq",
+        },
+      }
+    );
 
-  let randomIndex;
-  do {
-    randomIndex = Math.floor(Math.random() * gradients.length);
-  } while (randomIndex === lastRandomIndex);
+    const photos = response.data.photos;
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * photos.length);
+    } while (randomIndex === lastRandomIndex);
 
-  lastRandomIndex = randomIndex;
+    lastRandomIndex = randomIndex;
 
-  return gradients[randomIndex];
+    return photos[randomIndex].src.large;
+  } catch (error) {
+    console.error("Error fetching photos from Pexels API", error);
+  }
 }
 
 export default function ImgDefault({ title, date }) {
-  const [background] = useState(getRandomBackground());
+  const [backgroundImage, setBackgroundImage] = useState(null);
+
+  useEffect(() => {
+    getRandomImage().then((image) => setBackgroundImage(image));
+  }, []);
 
   return (
-    <div
-      className="bg-whiteCorp flex flex-col justify-center items-start gap-[1px] text-whiteCorp py-6"
-    >
-      <div 
-        className="w-full"
-        style={{ background: background }}
-      >
-        <h1
-          className="drop-shadow text-[30px] font-medium leading-8 uppercase px-10 pt-6 pb-4"
-          aria-label={title}
-        >
-          {title}
-        </h1>
+    <div className="w-full bg-whiteCorp flex justify-start items-start">
+      <div className="w-full py-4 flex flex-col gap-4 relative left-4 z-1">
+        <div className="py-4 bg-whiteCorp shadow-lg">
+          <h1
+            className="px-2 drop-shadow text-center font-medium leading-8 uppercase"
+            aria-label={title}
+          >
+            {title}
+          </h1>
+        </div>
+        <div className="py-4 bg-whiteCorp relative left-8 shadow-lg">
+          <h3
+            className="font-normal text-center text-blackCorp"
+            aria-label={date}
+          >
+            {date}
+          </h3>
+        </div>
       </div>
-      
-      <div 
-        className="border-t-4 w-full"
-        style={{ background: background }}
-      >
-        <h3
-          className="drop-shadow px-10 pt-4 pb-4 font-normal"
-          aria-label={date}
-        >
-          {date}
-        </h3>
-      </div>
+      <div
+        className="w-full h-[250px] relative right-4"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      ></div>
     </div>
   );
 }

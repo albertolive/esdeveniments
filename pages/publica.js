@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/router";
+import { captureException } from "@sentry/nextjs";
 import {
   slug,
   getFormattedDate,
@@ -14,7 +15,11 @@ import {
   ImageUpload,
 } from "@components/ui/common/form";
 import Meta from "@components/partials/seo-meta";
-import { generateRegionsOptions, generateTownsOptions } from "@utils/helpers";
+import {
+  env,
+  generateRegionsOptions,
+  generateTownsOptions,
+} from "@utils/helpers";
 import { siteUrl } from "@config/index";
 
 const defaultForm = {
@@ -185,12 +190,31 @@ export default function Publica() {
           );
           const slugifiedTitle = slug(form.title, formattedStart, id);
 
+          if (env === "prod") {
+            fetch(process.env.NEXT_PUBLIC_NEW_EVENT_EMAIL_URL, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ title: form.title, slug: slugifiedTitle }),
+            }).catch((error) => {
+              console.error(`Error sending new event email: ${error.message}`);
+              captureException(
+                new Error(`Error sending new event email: ${error.message}`)
+              );
+            });
+          }
+
           imageToUpload
             ? uploadFile(id, slugifiedTitle)
             : router.push(goToEventPage(`/e/${slugifiedTitle}`));
         } else {
           // Handle API error
-          console.error("Error submitting form");
+          const errorText = await rawResponse.text();
+          const errorMessage = `Error submitting form: ${errorText}`;
+          console.error(errorMessage);
+          captureException(new Error(errorMessage));
           setIsLoading(false);
         }
       } catch (error) {
@@ -204,6 +228,7 @@ export default function Publica() {
             "Hi ha hagut un error, torna-ho a provar més tard o contacta amb nosaltres."
           )
         );
+        captureException(new Error(`Error submitting form: ${error.message}`));
       }
     }
   };
@@ -238,6 +263,9 @@ export default function Publica() {
                 `Hi ha hagut un error en pujar la imatge: ${error.message}, torna-ho a provar més tard o contacta amb nosaltres.`
               )
             );
+            captureException(
+              new Error(`Error uploading file: ${error.message}`)
+            );
           }
         }
       };
@@ -261,6 +289,7 @@ export default function Publica() {
           "Hi ha hagut un error en pujar la imatge, torna-ho a provar més tard o contacta amb nosaltres."
         )
       );
+      captureException(new Error(`Error uploading file: ${error.message}`));
       throw error;
     }
   };
