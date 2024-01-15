@@ -235,9 +235,9 @@ export const CITIES_DATA = new Map([
             label: "Sant Andreu de Llavaneres",
             rssFeed: "https://ajllavaneres.cat/a.php?fer=SINDICACIO&seccio=2",
             descriptionSelector: ".cos",
-            imageSelector: ".dusuari",
             postalCode: "08392",
             coords: { lat: "41.57333", lng: "2.48278" },
+            removeImage: true,
           },
         ],
         [
