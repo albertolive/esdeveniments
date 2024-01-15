@@ -152,7 +152,7 @@ function FiltersModal({
         title="Filtres"
         actionButton="Aplicar filtres"
       >
-        <div className="w-full flex flex-col justify-center items-center gap-5 px-6 pb-20 pt-20">
+        <div className="w-full flex flex-col justify-center items-center gap-5 px-6 py-8 my-8">
           <div className="w-full flex flex-col justify-center items-center gap-2 px-6 sm:px-0">
             <p className="w-full text-primary font-medium font-barlow uppercase italic pt-[5px]">
               Poblacions

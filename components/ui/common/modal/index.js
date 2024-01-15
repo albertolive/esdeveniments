@@ -35,7 +35,7 @@ export default function Modal({
               leaveFrom="opacity-70"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel className="w-full flex flex-col justify-center items-center">
+              <Dialog.Panel className="flex flex-col justify-center items-center">
                 <Dialog.Title
                   as="h3"
                   className="w-full bg-whiteCorp flex fixed top-0 z-50 p-2 font-semibold"
@@ -55,11 +55,11 @@ export default function Modal({
                     </div>
                   </div>
                 </Dialog.Title>
-                <div className="w-full h-screen sm:h-fit sm:w-[400px] bg-whiteCorp rounded-lg flex justify-center items-center shadow-xl">
+                <div className="w-full h-screen flex justify-center items-center sm:w-[500px] bg-whiteCorp rounded-lg shadow-xl p-4">
                   {children}
                 </div>
                 {actionButton && (
-                  <div className="w-full bg-whiteCorp fixed z-10 bottom-0 left-0 p-2">
+                  <div className="w-full h-full flex justify-center items-end fixed z-10 bottom-0 left-0 p-8">
                     <div
                       className="flex justify-center"
                       style={{ position: "sticky", bottom: 0 }}
