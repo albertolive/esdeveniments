@@ -295,13 +295,13 @@ function Events({ props, loadMore = true }) {
       />
       <div
         onClick={scrollToTop}
-        className={`w-14 h-14 flex justify-center items-center bg-whiteCorp rounded-lg shadow-xl ${
+        className={`w-14 h-14 flex justify-center items-center bg-whiteCorp rounded-md shadow-xl ${
           scrollButton
-            ? "fixed z-10 bottom-[82px] md:bottom-[90px] lg:bottom-[90px] right-8 flex justify-end animate-appear"
+            ? "fixed z-10 bottom-28 right-10 flex justify-end animate-appear"
             : "hidden"
         }`}
       >
-        <NextImage src={Imago} className="p-1" width="30" height="30" />
+        <NextImage src={Imago} className="p-1" width="28" height="28" />
         {/* <ArrowUp className="w-5 h-5" aria-hidden="true" /> */}
       </div>
       <div

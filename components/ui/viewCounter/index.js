@@ -39,8 +39,8 @@ const ViewCounter = ({ slug, hideText }) => {
   }, [slug]);
 
   return (
-    <div className="flex justify-center items-center">
-      <ChartBarIcon className="inline-block w-4 h-4 mr-1" />
+    <div className="flex justify-center items-center gap-2">
+      <ChartBarIcon className="w-4 h-4 mr-1" />
       {loading ? (
         <div className="flex space-x-2">
           <div className="animate-ping h-1 w-1 bg-blackCorp rounded-full"></div>

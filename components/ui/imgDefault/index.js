@@ -30,25 +30,23 @@ export default function ImgDefault({ title, location }) {
   });
 
   return (
-    <div className="w-full bg-whiteCorp flex justify-center items-start">
-      <div className="w-full mt-4 py-4 flex flex-col gap-4 relative left-4 z-1 bg-whiteCorp shadow-lg">
+    <div className="w-full p-4 bg-whiteCorp flex justify-center items-start overflow-visible">
+      <div className="w-[217px] mt-4 py-4 flex flex-col gap-4 relative left-8 z-1 bg-whiteCorp shadow-lg">
         <h1 className="px-2 drop-shadow uppercase" aria-label={title}>
           {title}
         </h1>
       </div>
       <div
-        className={`w-full flex flex-col justify-between items-end gap-2 p-4 relative right-4`}
+        className={`w-[217px] h-[300px] flex flex-col justify-between items-end gap-2 p-4 relative right-8`}
         style={{
           background: background,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          width: `${dimensions.width}px`,
-          height: `${dimensions.height}px`,
         }}
       >
         <LocationMarkerIcon className="text-whiteCorp w-7 h-7" />
         <h2
-          className="text-right tracking-wider text-whiteCorp"
+          className="text-right text-whiteCorp tracking-wider font-normal"
           aria-label={location}
         >
           {location}
