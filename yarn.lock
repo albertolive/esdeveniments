@@ -733,6 +733,13 @@
   dependencies:
     isomorphic-fetch "^3.0.0"
 
+"@upstash/redis@^1.28.0":
+  version "1.28.0"
+  resolved "https://registry.yarnpkg.com/@upstash/redis/-/redis-1.28.0.tgz#f04aefc93b12652fc2a087e9aafefdd8e1ad89f2"
+  integrity sha512-vvFMUHGA5jUAXQHuAzFHNLD2TND/2aaf1BUPYBeg73CkQ9X+jorWVi7VGxZtRXPDEFJR9KvzuwCacbSproOKcw==
+  dependencies:
+    crypto-js "^4.2.0"
+
 "@vercel/edge-config-fs@0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@vercel/edge-config-fs/-/edge-config-fs-0.1.0.tgz#cda8327f611418c1d1cbb28c6bed02d782be928b"
@@ -1283,6 +1290,11 @@ cross-spawn@^7.0.1, cross-spawn@^7.0.2:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypto-js@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.2.0.tgz#4d931639ecdfd12ff80e8186dba6af2c2e856631"
+  integrity sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==
 
 css-select@^5.1.0:
   version "5.1.0"

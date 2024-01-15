@@ -13,9 +13,12 @@ import ChevronRightIcon from "@heroicons/react/outline/ChevronRightIcon";
 import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import ReactHtmlParser from "react-html-parser";
 import ImageDefault from "@components/ui/imgDefault";
-
+import ViewCounter from "@components/ui/viewCounter";
 import { siteUrl } from "@config/index";
 import Link from "next/link";
+import ReportView from "@components/ui/reportView";
+import ShareIcon from "@heroicons/react/outline/ShareIcon";
+import CardShareButton from "@components/ui/common/cardShareButton";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -260,6 +263,7 @@ export default function Event(props) {
         imageUploaded={imageUploaded || eventImage}
         preload="/static/images/gMaps.webp"
       />
+      <ReportView slug={slug} />
       {newEvent && <Notification title={title} url={slug} />}
       {showThankYouBanner && (
         <Notification
@@ -334,6 +338,7 @@ export default function Event(props) {
               </div>
             </div>
             <h3 className="w-full uppercase">{title}</h3>
+            <ViewCounter slug={slug} />
             <div className="w-full flex flex-col justify-center gap-4">
               <div className="w-full flex justify-center items-start gap-4 p-1">
                 {imageUploaded ? (
@@ -362,6 +367,11 @@ export default function Event(props) {
               </div>
             </div>
           </article>
+          {/* ShareButton */}
+          <div className="w-full flex justify-center items-center gap-2 px-4 pb-3">
+            <ShareIcon className="w-5 h-5" />
+            <CardShareButton slug={slug} />
+          </div>
           {/* Map */}
           <div className="w-full flex flex-col justify-center items-center gap-4">
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 p-3">

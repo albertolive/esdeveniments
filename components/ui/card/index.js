@@ -11,6 +11,7 @@ import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import { truncateString } from "@utils/helpers";
 import CardLoading from "@components/ui/cardLoading";
 import ShareButton from "@components/ui/common/cardShareButton";
+import ViewCounter from "@components/ui/viewCounter";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -92,6 +93,7 @@ function Card({ event, isLoading }) {
       {/* ShareButton */}
       <div className="w-full flex justify-center items-center gap-2 pb-3">
         <ShareButton slug={event.slug} />
+        <ViewCounter slug={event.slug} hideText />
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
         {/* Date */}
