@@ -74,7 +74,7 @@ function normalizeData(events) {
           description,
           link: url,
           date: formattedDate,
-          imageUrl,
+          image: imageUrl,
           location,
         };
       }

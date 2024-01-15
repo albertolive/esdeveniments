@@ -1,39 +1,26 @@
 import axios from "axios";
 import { kv } from "@vercel/kv";
-import { google } from "googleapis";
 import { load } from "cheerio";
 import Bottleneck from "bottleneck";
 import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
-
-const debugMode = false;
+import { env } from "@utils/helpers";
+import { getAuthToken } from "@lib/auth";
+import { postToGoogleCalendar } from "@lib/apiHelpers";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
 const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
 
-const calendar = google.calendar("v3");
-const auth = new google.auth.GoogleAuth({
-  credentials: {
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    project_id: process.env.GOOGLE_PROJECT_ID,
-    private_key: process.env.GOOGLE_PRIVATE_KEY,
-  },
-  scopes: ["https://www.googleapis.com/auth/calendar"],
-});
-
 // Configuration
+const debugMode = false;
+const TIMEOUT_LIMIT = env === "prod" ? 10000 : 100000;
+const SAFETY_MARGIN = 1000;
 const PROCESSED_ITEMS_KEY = "processedItems";
 const RSS_FEED_CACHE_KEY = "rssFeedCache";
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
-const RSS_FEED_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
-const env =
-  process.env.NODE_ENV !== "production" &&
-  process.env.VERCEL_ENV !== "production"
-    ? "dev"
-    : "prod";
+const RSS_FEED_CACHE_MAX_AGE = 3 * 60 * 60 * 1000; // 3 hours
 
 // Custom error class for RSS feed errors
 class RSSFeedError extends Error {
@@ -56,7 +43,7 @@ function isCacheValid(cachedData) {
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town) {
   try {
-    if (!debugMode) {
+    if (env === "prod") {
       // Check if the data is cached
       const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
 
@@ -66,7 +53,7 @@ async function fetchRSSFeed(rssFeed, town) {
       }
     }
     // Fetch the data
-    const response = await axios.get(rssFeed);
+    const response = await axios.get(rssFeed, { responseType: "arraybuffer" });
 
     // Check if the response status is not 200
     if (response.status !== 200) {
@@ -75,9 +62,28 @@ async function fetchRSSFeed(rssFeed, town) {
       );
     }
 
-    let data = response.data;
+    let data;
 
-    // If response.data is not an array means that is an rss feed
+    // Check the Content-Type header of the response
+    if (
+      response.headers["content-type"] &&
+      response.headers["content-type"].includes("application/json")
+    ) {
+      // If the Content-Type is JSON, parse the response data as JSON
+      data = JSON.parse(response.data);
+    } else {
+      // If the Content-Type is not JSON, decode the response data
+      let decoder = new TextDecoder("utf-8");
+      data = decoder.decode(response.data);
+
+      // If the decoded data contains unusual characters, try ISO-8859-1
+      if (data.includes("�")) {
+        decoder = new TextDecoder("iso-8859-1");
+        data = decoder.decode(response.data);
+      }
+    }
+
+    // If data is not an array, it means that it's an RSS feed
     if (!Array.isArray(data)) {
       const json = parser.parse(data);
 
@@ -88,29 +94,33 @@ async function fetchRSSFeed(rssFeed, town) {
         !json.rss.channel ||
         !Array.isArray(json.rss.channel.item)
       ) {
-        throw new Error("Invalid data format. No items in feed");
+        console.log("Invalid RSS data format or no items in feed");
+        return [];
       }
 
       data = json.rss.channel.item;
     }
 
     // Cache the data
-    try {
-      await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
-        timestamp: Date.now(),
-        data,
-      });
-    } catch (err) {
-      console.error(
-        `An error occurred while caching the RSS feed of ${town}: ${err}`
-      );
-      captureException(
-        new Error(`Failed to fetch RSS feed for ${town}: ${err.message}`)
-      );
-      throw new Error(`Failed to cache RSS feed: ${err}`);
+    if (env === "prod") {
+      try {
+        await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
+          timestamp: Date.now(),
+          data,
+        });
+      } catch (err) {
+        console.error(
+          `An error occurred while caching the RSS feed of ${town}: ${err}`
+        );
+        captureException(
+          new Error(`Failed to fetch RSS feed for ${town}: ${err.message}`)
+        );
+        throw new Error(`Failed to cache RSS feed: ${err}`);
+      }
     }
 
     console.log("Returning new RSS data");
+
     return data;
   } catch (err) {
     console.error(
@@ -196,88 +206,158 @@ function getBaseUrl(url) {
   return `${urlObject.protocol}//${urlObject.host}`;
 }
 
-async function scrapeDescription(
-  title,
-  url,
-  descriptionSelector,
-  imageSelector,
-  sanitizeUrl = true
-) {
-  try {
-    const sanitizedUrl = sanitizeUrl ? url.replace(/\.html$/, "") : url;
-    const response = await fetch(sanitizedUrl);
-    const html = await response.text();
-    const $ = load(html);
+async function fetchAndDecodeHtml(url, sanitizeUrl = true) {
+  const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
+  const response = await fetch(sanitizedUrl);
+  const arrayBuffer = await response.arrayBuffer();
 
-    const description =
-      $(descriptionSelector).html()?.trim() ||
-      "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
+  let decoder = new TextDecoder("utf-8");
+  let html = decoder.decode(arrayBuffer);
 
-    let rawImage = $(imageSelector).prop("outerHTML")?.trim();
-    let image;
-    const regex = /(https?:\/\/[^"\s]+)/g;
+  if (html.includes("�")) {
+    decoder = new TextDecoder("iso-8859-1");
+    html = decoder.decode(arrayBuffer);
+  }
 
-    if (rawImage) {
-      let $img = load(rawImage);
-      let img = $img("img");
-      img.removeAttr("style");
-      img.removeAttr("class");
-      let imgOuterHtml;
-      if ($img("a").length) {
-        imgOuterHtml = $img("a").prop("outerHTML");
-      } else {
-        imgOuterHtml = $img("img").prop("outerHTML");
+  return html;
+}
+
+function sanitize(url) {
+  return url.replace(/\.html$/, "");
+}
+
+function getDescription($, item, region, town) {
+  const {
+    descriptionSelector,
+    removeImage = false,
+    getDescriptionFromRss = false,
+  } = getTownData(region, town);
+  const { itemDescription, content, url } = getRSSItemData(item);
+  const alternativeDescription = `${itemDescription || ""}${content || ""}`;
+
+  if (alternativeDescription && getDescriptionFromRss) {
+    return alternativeDescription;
+  }
+
+  let description = $(descriptionSelector).html()?.trim();
+
+  if (description) {
+    let dom = $.parseHTML(description);
+    let $desc = $(dom);
+
+    $desc.find("img").each((_, img) => {
+      let src = $(img).attr("src");
+      if (!src.startsWith("http")) {
+        src = new URL(src, getBaseUrl(url)).href;
+        $(img).attr("src", src);
       }
-      image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
+    });
+
+    if (removeImage) {
+      $desc.find("img").remove();
+    }
+
+    description = $desc.toString();
+  } else {
+    description =
+      "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
+  }
+
+  return description;
+}
+
+function getImage($, item, region, town, description) {
+  const { imageSelector, removeImage = false } = getTownData(region, town);
+  const { alternativeImage, url } = getRSSItemData(item);
+  let rawImage = $(imageSelector).prop("outerHTML")?.trim();
+  let image;
+  const regex = /(https?:\/\/[^"\s]+)/g;
+
+  if (alternativeImage) {
+    image = alternativeImage;
+  } else if (rawImage) {
+    let $img = load(rawImage);
+    let img = $img("img");
+    img.removeAttr("style");
+    img.removeAttr("class");
+    let imgOuterHtml;
+    if ($img("a").length) {
+      imgOuterHtml = $img("a").prop("outerHTML");
     } else {
-      image = getEventImageUrl(description);
+      imgOuterHtml = $img("img").prop("outerHTML");
     }
 
-    const result = image && image.match(regex);
-    image = result && result[0];
-
-    if (!image) {
-      console.error("No image URL found");
+    let src = $img("img").attr("src");
+    if (!src.startsWith("http")) {
+      src = new URL(src, getBaseUrl(url)).href;
+      $img("img").attr("src", src);
+      imgOuterHtml = $img.html();
     }
 
-    const appendUrl = `<br><br><b>Més informació:</b><br><a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+    image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
+  } else if (!removeImage) {
+    image = getEventImageUrl(description);
+  }
 
-    return `
+  const result = image && image.match(regex);
+  image = result && result[0];
+
+  return image;
+}
+
+function formatDescription(item, description, image) {
+  const { title, url } = getRSSItemData(item);
+
+  const appendUrl = `<br><br><b>Més informació:</b><br><a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+  return `
     <div>${description}</div>
     ${image ? `<div class="hidden">${image}</div>` : ""}
     <div>${appendUrl}</div>`;
+}
+
+async function scrapeDescription(item, region, town) {
+  let url;
+
+  try {
+    url = getRSSItemData(item).url;
+
+    if (!url) {
+      return null;
+    }
+
+    const { sanitizeUrl } = getTownData(region, town);
+
+    const html = await fetchAndDecodeHtml(url, sanitizeUrl);
+    const $ = load(html);
+
+    const description = getDescription($, item, region, town);
+    const image = getImage($, item, region, town, description);
+
+    return formatDescription(item, description, image);
   } catch (error) {
-    console.error("Error occurred during scraping description:", url);
-    captureException(
-      new Error(
-        `Error occurred during scraping description for ${url}: ${error.message}`
-      )
-    );
+    const errorMessage = `Error occurred during scraping description for ${url}: ${error.message}`;
+    console.error(errorMessage);
+    captureException(new Error(errorMessage));
     throw error;
   }
 }
 
-function getLocationFromHtml(html) {
-  // Define the regular expression pattern to match the location
-  const pattern = /(?:Al|A la|A les \d+ h, a|Espai|al|a la|A ) ([^<.,]+)/g;
+async function scrapeLocation(item, region, town) {
+  let url;
 
-  // Use the matchAll method to find all matches in the HTML text
-  const matches = [...html.matchAll(pattern)];
-
-  // Map the matches to an array of locations
-  const locations = matches.map((match) => match[1]);
-
-  // Return the array of matched locations or null if it's empty
-  return locations.length > 0 ? locations : null;
-}
-
-async function scrapeLocation(url, location, locationSelector) {
   try {
+    const { locationSelector } = getTownData(region, town);
+    const {
+      url: itemUrl,
+      location: itemLocation,
+      locationExtra,
+    } = getRSSItemData(item);
+    url = itemUrl;
+    const location = itemLocation || locationExtra;
+
     if (location) return location;
 
-    const sanitizeUrl = url.replace(/\.html$/, "");
-    const response = await fetch(sanitizeUrl);
-    const html = await response.text();
+    const html = await fetchAndDecodeHtml(url);
     const $ = load(html);
 
     // TODO: Make it more generic. Now it works for La Garriga
@@ -300,63 +380,81 @@ async function scrapeLocation(url, location, locationSelector) {
 
     return locationElement ? locationElement.trim() : location;
   } catch (error) {
-    console.error("Error occurred during scraping location:", url);
-    captureException(
-      new Error(
-        `Error occurred during scraping location for ${url}: ${error.message}`
-      )
-    );
+    const errorMessage = `Error occurred during scraping location for ${url}: ${error.message}`;
+    console.error(errorMessage);
+    captureException(new Error(errorMessage));
     throw error;
   }
 }
 
-async function insertItemToCalendar(
-  item,
-  town,
-  regionLabel,
-  townLabel,
-  descriptionSelector,
-  imageSelector,
-  locationSelector,
-  processedItems,
-  authToken
-) {
-  if (!item) return;
+function ensureISOFormat(dateString) {
+  // Check if the dateString is in ISO 8601 format
+  const isoFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$/;
+  if (!isoFormat.test(dateString)) {
+    // If not, replace the space with 'T'
+    dateString = dateString.replace(" ", "T");
+  }
+  return dateString;
+}
+
+function getRSSItemData(item) {
+  if (!item) {
+    throw new Error("No item provided");
+  }
   const {
     pubDate,
     title,
-    link,
-    guid,
+    description: itemDescription,
+    content,
+    image: alternativeImage,
+    link: url,
     location = "",
     "content:encoded": locationExtra,
     date,
-  } = item || {};
+  } = item;
 
-  const dateTime = DateTime.fromRFC2822(pubDate || date.from, {
-    zone: "Europe/Madrid",
-  });
-  const endDateTime =
-    date && date.to
-      ? DateTime.fromRFC2822(date.to, { zone: "Europe/Madrid" })
-      : dateTime.plus({ hours: 1 });
+  return {
+    pubDate,
+    title,
+    itemDescription,
+    content,
+    alternativeImage,
+    url,
+    location,
+    locationExtra,
+    date,
+  };
+}
+
+async function createEvent(item, region, town) {
+  const { regionLabel, label: townLabel } = getTownData(region, town);
+  const { pubDate, title, date } = getRSSItemData(item);
+  const isDateObject = date && typeof date === "object";
+  const hasFromDate = isDateObject && date.from;
+  const hasToDate = isDateObject && date.to;
+  const dateTimeParams = { zone: "Europe/Madrid" };
+
+  let dateTime;
+
+  if (pubDate) {
+    dateTime = DateTime.fromRFC2822(pubDate, dateTimeParams);
+  } else if (hasFromDate) {
+    dateTime = DateTime.fromRFC2822(date.from, dateTimeParams);
+  } else if (isDateObject) {
+    console.log("Date object without from property:", date);
+  } else {
+    dateTime = DateTime.fromISO(ensureISOFormat(date), dateTimeParams);
+  }
+
+  const endDateTime = hasToDate
+    ? DateTime.fromRFC2822(date.to, dateTimeParams)
+    : dateTime.plus({ hours: 1 });
 
   const isFullDayEvent = dateTime.toFormat("HH:mm:ss") === "00:00:00";
 
-  const description = link
-    ? await scrapeDescription(
-        title,
-        link,
-        descriptionSelector,
-        imageSelector,
-        town !== "barcelona"
-      )
-    : null;
+  const description = await scrapeDescription(item, region, town);
 
-  const scrapedLocation = await scrapeLocation(
-    link,
-    location || locationExtra,
-    locationSelector
-  );
+  const scrapedLocation = await scrapeLocation(item, region, town);
 
   const event = {
     summary: title,
@@ -372,47 +470,68 @@ async function insertItemToCalendar(
       : { dateTime: endDateTime.toJSDate(), timeZone: "Europe/Madrid" },
   };
 
-  try {
-    if (!debugMode) {
-      await calendar.events.insert({
-        auth: authToken,
-        calendarId: `${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com`,
-        resource: event,
-      });
+  return event;
+}
 
-      console.log("Inserted new item successfully: " + title);
+async function insertEventToCalendar(event, town, guid, processedItems, token) {
+  if (!debugMode) {
+    await postToGoogleCalendar(event, token);
 
+    console.log("Inserted new item successfully: " + event.summary);
+
+    if (env === "prod") {
       const now = Date.now();
       processedItems.set(guid, now);
       await setProcessedItems(processedItems, town); // Save the processed item immediately
       console.log(`Added item ${guid} to processed items`);
-      return;
-    } else {
-      console.log("event", event);
     }
-  } catch (error) {
-    console.error("Error inserting item to calendar:", error);
-    captureException(
-      new Error(
-        `Error inserting item to calendar for ${town}: ${error.message}`
-      )
-    );
-    throw error;
+
+    return;
+  } else {
+    console.log("event", event);
+  }
+}
+
+async function handleError(error, town, functionName) {
+  let errorMessage;
+
+  switch (functionName) {
+    case "createEvent":
+      errorMessage = `Error creating event: ${error}`;
+      break;
+    case "insertEventToCalendar":
+      errorMessage = `Error inserting event to calendar: ${error}`;
+      break;
+    default:
+      errorMessage = `Error in ${functionName}: ${error}`;
   }
 
-  return;
+  console.error(errorMessage);
+  captureException(new Error(`${errorMessage} for ${town}`));
+  throw error;
+}
+
+async function insertItemToCalendar(item, region, town, processedItems, token) {
+  let event;
+  try {
+    event = await createEvent(item, region, town);
+  } catch (error) {
+    handleError(error, town, "createEvent");
+  }
+
+  try {
+    await insertEventToCalendar(event, town, item.guid, processedItems, token);
+  } catch (error) {
+    handleError(error, town, "insertEventToCalendar");
+  }
 }
 
 async function insertItemToCalendarWithRetry(
   item,
+  region,
   town,
-  regionLabel,
-  townLabel,
-  descriptionSelector,
-  imageSelector,
-  locationSelector,
   processedItems,
-  authToken
+  token
 ) {
   if (!item) return null;
 
@@ -421,17 +540,7 @@ async function insertItemToCalendarWithRetry(
 
   while (retries < MAX_RETRIES) {
     try {
-      await insertItemToCalendar(
-        item,
-        town,
-        regionLabel,
-        townLabel,
-        descriptionSelector,
-        imageSelector,
-        locationSelector,
-        processedItems,
-        authToken
-      );
+      await insertItemToCalendar(item, region, town, processedItems, token);
       return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
@@ -450,10 +559,16 @@ async function insertItemToCalendarWithRetry(
   return null;
 }
 
+function getTownData(region, town) {
+  const { label: regionLabel, towns } = CITIES_DATA.get(region);
+
+  const townData = towns.get(town);
+
+  return { regionLabel, ...townData };
+}
+
 export default async function handler(req, res) {
   const startTime = Date.now();
-  const TIMEOUT_LIMIT = 10000;
-  const SAFETY_MARGIN = 1000;
 
   try {
     const { region, town } = req.query;
@@ -473,7 +588,7 @@ export default async function handler(req, res) {
       throw new Error("Region not found");
     }
 
-    const { label: regionLabel, towns } = CITIES_DATA.get(region);
+    const { towns } = CITIES_DATA.get(region);
 
     // Check if the town exists in the townsData map
     if (!towns.has(town)) {
@@ -481,13 +596,7 @@ export default async function handler(req, res) {
     }
 
     // Retrieve the rssFeed value for the given town
-    const {
-      label: townLabel,
-      rssFeed,
-      descriptionSelector,
-      imageSelector,
-      locationSelector,
-    } = towns.get(town);
+    const { rssFeed } = towns.get(town);
 
     // Check if the rssFeed is available
     if (!rssFeed) {
@@ -500,15 +609,16 @@ export default async function handler(req, res) {
     // Read the database
     let processedItems = new Map();
 
-    if (!debugMode) {
+    if (env === "prod") {
       processedItems = await getProcessedItems(town);
       await cleanProcessedItems(processedItems, town);
     }
 
     // Filter out already fetched items
-    const newItems = debugMode
-      ? items
-      : items.filter((item) => !processedItems.has(item.guid));
+    const newItems =
+      env === "prod"
+        ? items.filter((item) => !processedItems.has(item.guid))
+        : items;
 
     // If no new items, log a message
     if (newItems.length === 0) {
@@ -518,7 +628,8 @@ export default async function handler(req, res) {
       return;
     }
 
-    const authToken = await auth.getClient();
+    const token = await getAuthToken();
+
     let isTimeout = false;
 
     // Insert items in GCal
@@ -537,14 +648,10 @@ export default async function handler(req, res) {
         try {
           await insertItemToCalendarWithRetry(
             item,
+            region,
             town,
-            regionLabel,
-            townLabel,
-            descriptionSelector,
-            imageSelector,
-            locationSelector,
             processedItems,
-            authToken
+            token
           );
           return;
         } catch (error) {
