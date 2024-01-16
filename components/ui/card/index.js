@@ -17,10 +17,10 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
   noSSR: false,
 });
-
 function Card({ event, isLoading }) {
   const { prefetch } = useRouter();
 
+  console.log(event);
   const handlePrefetch = () => {
     prefetch(`/e/${event.slug}`);
   };
@@ -79,10 +79,11 @@ function Card({ event, isLoading }) {
           {/* ImageEvent */}
           <div className="p-4 flex justify-center items-center">
             <Image
-              className="object-contain"
+              className="w-full flex justify-center object-contain"
               title={event.title}
               date={event.formattedStart}
               location={event.location}
+              subLocation={event.subLocation}
               image={event.imageUploaded}
               alt={event.title}
               layout="responsive"

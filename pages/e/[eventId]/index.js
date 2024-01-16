@@ -233,7 +233,8 @@ export default function Event(props) {
     if (!imageUploaded || hasError) {
       return (
         <div className="w-full">
-          <ImageDefault title={title} date={date} />
+          <div className="w-full border-t"></div>
+          {/* <ImageDefault title={title} date={date} /> */}
         </div>
       );
     }
@@ -337,11 +338,13 @@ export default function Event(props) {
                 </div>
               </div>
             </div>
-            <h3 className="w-full uppercase">{title}</h3>
-            <ViewCounter slug={slug} />
+            <div className="w-full flex justify-around items-center">
+              <h3 className="w-full uppercase">{title}</h3>
+              <ViewCounter slug={slug} />
+            </div>
             <div className="w-full flex flex-col justify-center gap-4">
               <div className="w-full flex justify-center items-start gap-4 p-1">
-                {imageUploaded ? (
+                {/* {imageUploaded ? (
                   <a
                     href={imageUploaded}
                     className="flex justify-center"
@@ -357,31 +360,30 @@ export default function Event(props) {
                   </a>
                 ) : (
                   <ImgDefault />
-                )}
+                )} */}
               </div>
               {/* Description */}
               <div className="w-full flex justify-center items-start gap-4 px-4">
-                <div className="w-full break-words overflow-hidden">
+                <div className="w-full md:w-8/12 break-words overflow-hidden">
                   {ReactHtmlParser(description)}
                 </div>
               </div>
             </div>
           </article>
           {/* ShareButton */}
-          <div className="w-full flex justify-center items-center gap-2 px-4 pb-3">
-            <ShareIcon className="w-5 h-5" />
+          <div className="w-full md:w-8/12 flex justify-center items-center gap-2 py-4 px-4">
             <CardShareButton slug={slug} />
           </div>
           {/* Map */}
           <div className="w-full flex flex-col justify-center items-center gap-4">
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 p-3">
+            <div className="w-full md:w-8/12 flex flex-col sm:flex-row justify-center items-center gap-4 p-3">
               <div
-                className="flex justify-center items-center gap-3"
+                className="w-full md:w-8/12 flex justify-center items-center gap-3"
                 onClick={handleShowMap}
               >
                 <button
                   type="button"
-                  className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+                  className="w-full flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
                 >
                   {showMap ? (
                     <XIcon className="h-5 w-5" aria-hidden="true" />
@@ -393,9 +395,9 @@ export default function Event(props) {
                   </p>
                 </button>
               </div>
-              <div className="">
+              <div className="w-full md:w-8/12">
                 <button
-                  className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+                  className="w-full flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
                   onClick={handleDirectionsClick}
                 >
                   <LocationIcon className="h-5 w-5" aria-hidden="true" />

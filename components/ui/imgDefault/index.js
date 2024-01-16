@@ -1,17 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
+import NextImage from "next/image";
+import Tickets from "public/static/images/tickets-color.svg";
 
 let lastRandomIndex = null;
 
 function getRandomBackground() {
   const gradients = [
-    "linear-gradient(120deg, #F23005 10%,#F25430 90%, #F27630 100%)", //red
-    "linear-gradient(62deg, #8D13A8 10%,#AF17D1 90%, #CF1CF5 100%)", //violet
-    "linear-gradient(38deg, #00A8A3 10%,#00D1CA 90%, #00F4EA 100%)", //turquoise
-    "linear-gradient(20deg, #76A800 10%,#92D100 90%, #ABF501 100%)", //green
-    "linear-gradient(170deg, #F4EB00 10%,#D1CA00 90%, #A8A300 100%)", //yellow
+    {
+      gradient: "linear-gradient(120deg, #ff0037, #ff440d, #FF921A)",
+      color: "#ff440d",
+    }, //redCorp+violet
+    {
+      gradient: "linear-gradient(120deg, #FF0033, #FF8340, #F8FFC6)",
+      color: "#FF8340", //redCorp
+    },
+    {
+      gradient: "linear-gradient(120deg, #FF0033, #FF1D00, #FFA785)",
+      color: "#FF1D00", //redCorp
+    },
+    {
+      gradient: "linear-gradient(120deg, #F06E0C, #EBAB07, #EFE900)",
+      color: "#EBAB07",
+    }, //orange
+    {
+      gradient: "linear-gradient(120deg, #FFEB01, #FFF588)",
+      color: "#FFEB01",
+    }, //yellow
+    {
+      gradient: "linear-gradient(120deg, #03001e, #7303c0, #ec38bc)",
+      color: "#7303c0",
+    }, //blue-fucsia
+    { gradient: "linear-gradient(120deg, #0575e6, #00f260)", color: "#0575e6" }, //green+blue
+    {
+      gradient: "linear-gradient(120deg, #2948ff, #396afc, #4B88FA)",
+      color: "#396afc",
+    }, //blues
   ];
-
+  console.log(gradients);
   let randomIndex;
   do {
     randomIndex = Math.floor(Math.random() * gradients.length);
@@ -22,35 +48,79 @@ function getRandomBackground() {
   return gradients[randomIndex];
 }
 
-export default function ImgDefault({ title, location }) {
+export default function ImgDefault({ title, date, location, subLocation }) {
   const [background] = useState(getRandomBackground());
-  const [dimensions] = useState({
-    width: Math.floor(Math.random() * 180) + 180,
-    height: Math.floor(Math.random() * 180) + 180,
-  });
+  const [hover, setHover] = useState(false);
 
   return (
-    <div className="w-full p-4 bg-whiteCorp flex justify-center items-start overflow-visible">
-      <div className="w-[217px] mt-4 py-4 flex flex-col gap-4 relative left-8 z-1 bg-whiteCorp shadow-lg">
-        <h1 className="px-2 drop-shadow uppercase" aria-label={title}>
-          {title}
-        </h1>
+    <div
+      className="w-full flex flex-col justify-center items-start gap-4 p-10"
+      style={{
+        background: background.gradient,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      {/* <div
+        className="w-1/3 h-fit flex flex-col justify-center items-center gap-4 p-4 border-[2px] shadow-xl rounded-md border-whiteCorp"
+        style={{
+          background: hover ? "white" : "transparent",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <h3
+          className="w-full text-center text-whiteCorp"
+          style={{
+            color: hover ? background.color : "white",
+          }}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        >
+          Detalls de l&apos;esdeveniment
+        </h3>
+      </div> */}
+      <h2 className="w-full text-whiteCorp pl-10 mb-2 tracking-wide font-normal drop-shadow-md">
+        Esdeveniment sense imatge
+      </h2>
+      <div className="w-full flex justify-start items-start gap-2">
+        <LocationMarkerIcon className="text-whiteCorp w-9 h-9 drop-shadow-md" />
+        <div className="w-full flex flex-col justify-start items-start gap-1">
+          <h1
+            className="font-bold uppercase font-roboto text-whiteCorp text-[32px] tracking-wide drop-shadow-md"
+            aria-label={location}
+          >
+            {location}
+          </h1>
+          <h2 className="text-whiteCorp font-normal">{subLocation}</h2>
+        </div>
       </div>
+      <div className="w-1/2 ml-10 border-t-2 border-whiteCorp drop-shadow-md"></div>
       <div
-        className={`w-[217px] h-[300px] flex flex-col justify-between items-end gap-2 p-4 relative right-8`}
+        className={`w-full pl-10 flex flex-col justify-center items-center`}
         style={{
           background: background,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <LocationMarkerIcon className="text-whiteCorp w-7 h-7" />
-        <h2
-          className="text-right text-whiteCorp tracking-wider font-normal"
-          aria-label={location}
+        <h3
+          className="w-full text-whiteCorp font-roboto font-normal tracking-wider drop-shadow-md"
+          aria-label={date}
         >
-          {location}
-        </h2>
+          {date}
+        </h3>
+        <div className="w-full h-28 flex justify-end items-end">
+          <NextImage
+            className="w-4/12 drop-shadow-md"
+            src={Tickets}
+            alt="Tickets.svg"
+          />
+        </div>
       </div>
     </div>
   );

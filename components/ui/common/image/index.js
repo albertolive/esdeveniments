@@ -9,8 +9,9 @@ function ImageComponent({
   title,
   date,
   location,
+  subLocation,
   image,
-  className = "h-full",
+  className = "w-full h-full flex justify-center items-center",
 }) {
   const [hasError, setHasError] = useState(false);
   const imageClassName = `${className}`;
@@ -18,7 +19,12 @@ function ImageComponent({
   if (!image || hasError) {
     return (
       <div className={imageClassName}>
-        <ImgDefault title={title} date={date} location={location} />
+        <ImgDefault
+          title={title}
+          date={date}
+          location={location}
+          subLocation={subLocation}
+        />
       </div>
     );
   }
