@@ -23,7 +23,7 @@ const getAllArticles = async (region, town, maxEventsPerDay) => {
       until,
       q,
       normalizeRss: true,
-      filterByDate: false,
+      filterByDate: true,
       maxResults: MAX_RESULTS,
       shuffleItems: true,
     });
