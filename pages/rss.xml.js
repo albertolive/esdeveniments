@@ -7,14 +7,33 @@ import { captureException } from "@sentry/nextjs";
 
 const SITE_NAME = "Esdeveniments.cat";
 
-const getAllArticles = async (region, town) => {
+const groupEventsByDate = (events) => {
+  return events.reduce((acc, event) => {
+    const eventDate = new Date(event.startDate).toISOString().split("T")[0];
+    if (!acc[eventDate]) {
+      acc[eventDate] = [];
+    }
+    acc[eventDate].push(event);
+    return acc;
+  }, {});
+};
+
+const selectFirstEventOfEachDay = (eventsByDate) => {
+  return Object.values(eventsByDate).map((events) => events[0]);
+};
+
+const limitEvents = (dailyEvents, maxEventsPerDay) => {
+  return dailyEvents.slice(0, maxEventsPerDay);
+};
+
+const getAllArticles = async (region, town, maxEventsPerDay) => {
+  const { label: regionLabel } = getPlaceTypeAndLabel(region);
+  const { label: townLabel } = getPlaceTypeAndLabel(town);
+
   try {
     const now = new Date();
     const from = new Date();
-    const until = new Date(now.setDate(now.getDate() + 14));
-
-    const { label: regionLabel } = getPlaceTypeAndLabel(region);
-    const { label: townLabel } = getPlaceTypeAndLabel(town);
+    const until = new Date(now.setDate(now.getDate() + 7)); // TODO: Change to accept a parameter
 
     const q = town ? `${townLabel} ${regionLabel}` : regionLabel;
 
@@ -28,7 +47,11 @@ const getAllArticles = async (region, town) => {
       shuffleItems: true,
     });
 
-    return JSON.parse(JSON.stringify(events));
+    const eventsByDate = groupEventsByDate(events);
+    const dailyEvents = selectFirstEventOfEachDay(eventsByDate);
+    const limitedEvents = limitEvents(dailyEvents, maxEventsPerDay);
+
+    return JSON.parse(JSON.stringify(limitedEvents));
   } catch (error) {
     console.error(error);
     captureException(
@@ -64,7 +87,7 @@ const buildFeed = (items, region, town) => {
       townLabel || regionLabel || "Catalunya"
     }`,
     copyright: SITE_NAME,
-    updated: new Date(items[0].startDate),
+    updated: items.length > 0 ? new Date(items[0].startDate) : new Date(),
     author: {
       name: SITE_NAME,
       link: siteUrl,
@@ -100,9 +123,9 @@ export const getServerSideProps = async (context) => {
     const { res, query } = context;
 
     // Extract region and town from query parameters
-    const { region, town } = query;
+    const { region, town, maxEventsPerDay } = query;
 
-    const articles = await getAllArticles(region, town);
+    const articles = await getAllArticles(region, town, maxEventsPerDay);
 
     const feed = buildFeed(articles, region, town);
     res.setHeader("content-type", "text/xml");
