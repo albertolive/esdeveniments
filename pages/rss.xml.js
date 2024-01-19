@@ -7,25 +7,6 @@ import { captureException } from "@sentry/nextjs";
 
 const SITE_NAME = "Esdeveniments.cat";
 
-const groupEventsByDate = (events) => {
-  return events.reduce((acc, event) => {
-    const eventDate = new Date(event.startDate).toISOString().split("T")[0];
-    if (!acc[eventDate]) {
-      acc[eventDate] = [];
-    }
-    acc[eventDate].push(event);
-    return acc;
-  }, {});
-};
-
-const selectFirstEventOfEachDay = (eventsByDate) => {
-  return Object.values(eventsByDate).map((events) => events[0]);
-};
-
-const limitEvents = (dailyEvents, maxEventsPerDay) => {
-  return dailyEvents.slice(0, maxEventsPerDay);
-};
-
 const getAllArticles = async (region, town, maxEventsPerDay) => {
   const { label: regionLabel } = getPlaceTypeAndLabel(region);
   const { label: townLabel } = getPlaceTypeAndLabel(town);
@@ -47,9 +28,8 @@ const getAllArticles = async (region, town, maxEventsPerDay) => {
       shuffleItems: true,
     });
 
-    const eventsByDate = groupEventsByDate(events);
-    const dailyEvents = selectFirstEventOfEachDay(eventsByDate);
-    const limitedEvents = limitEvents(dailyEvents, maxEventsPerDay);
+    // Limit the number of events
+    const limitedEvents = events.slice(0, maxEventsPerDay);
 
     return JSON.parse(JSON.stringify(limitedEvents));
   } catch (error) {
