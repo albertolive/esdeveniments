@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
 const GoogleAdsenseContainer = ({
+  id,
   style,
   layout,
   format,
@@ -9,6 +10,7 @@ const GoogleAdsenseContainer = ({
   setDisplayAd,
 }) => {
   const adRef = useRef(null);
+  const observer = useRef(null);
 
   useEffect(() => {
     if (
@@ -35,18 +37,23 @@ const GoogleAdsenseContainer = ({
       });
     };
 
-    const obs = new MutationObserver(callback);
+    if (!observer.current) {
+      observer.current = new MutationObserver(callback);
+    }
 
-    obs.observe(document.querySelector("ins"), {
-      attributeFilter: ["data-ad-status"],
-      attributes: true,
-    });
+    if (adRef.current) {
+      observer.current.observe(adRef.current, {
+        attributeFilter: ["data-ad-status"],
+        attributes: true,
+      });
+    }
 
-    return () => obs.disconnect();
-  }, [setDisplayAd]);
+    return () => observer.current.disconnect();
+  }, [setDisplayAd, style, layout, format, responsive, slot]);
 
   return (
     <ins
+      id={id}
       ref={adRef}
       className="adsbygoogle w-full"
       style={{ display: "block", ...style }}
