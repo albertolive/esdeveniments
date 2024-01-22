@@ -622,7 +622,10 @@ export default async function handler(req, res) {
     // Filter out already fetched items
     const newItems =
       env === "prod"
-        ? items.filter((item) => !processedItems.has(item.guid))
+        ? items.filter(
+            (item) =>
+              !processedItems.has(item.guid || item.date || item.pubDate)
+          )
         : items;
 
     // If no new items, log a message
