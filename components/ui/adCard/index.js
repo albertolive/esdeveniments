@@ -8,7 +8,7 @@ const AdContent = ({ children }) => (
       <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
         <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
       </div>
-      <h3 className="w-11/12 uppercase">Anunci</h3>
+      <h3 className="w-11/12 uppercase">Contingut patrocinat</h3>
     </div>
     <div className="p-4 flex justify-center items-center">{children}</div>
   </div>

@@ -402,6 +402,7 @@ function getRSSItemData(item) {
     throw new Error("No item provided");
   }
   const {
+    guid,
     pubDate,
     title,
     description: itemDescription,
@@ -414,6 +415,7 @@ function getRSSItemData(item) {
   } = item;
 
   return {
+    guid,
     pubDate,
     title,
     itemDescription,
@@ -473,17 +475,20 @@ async function createEvent(item, region, town) {
   return event;
 }
 
-async function insertEventToCalendar(event, town, guid, processedItems, token) {
+async function insertEventToCalendar(event, town, item, processedItems, token) {
   if (!debugMode) {
     await postToGoogleCalendar(event, token);
 
     console.log("Inserted new item successfully: " + event.summary);
 
     if (env === "prod") {
+      const { guid, date, pubDate } = getRSSItemData(item);
+      const id = guid || date || pubDate;
       const now = Date.now();
-      processedItems.set(guid, now);
-      await setProcessedItems(processedItems, town); // Save the processed item immediately
-      console.log(`Added item ${guid} to processed items`);
+
+      processedItems.set(id, now);
+      await setProcessedItems(processedItems, town);
+      console.log(`Added item ${id} to processed items`);
     }
 
     return;
@@ -520,7 +525,7 @@ async function insertItemToCalendar(item, region, town, processedItems, token) {
   }
 
   try {
-    await insertEventToCalendar(event, town, item.guid, processedItems, token);
+    await insertEventToCalendar(event, town, item, processedItems, token);
   } catch (error) {
     handleError(error, town, "insertEventToCalendar");
   }
