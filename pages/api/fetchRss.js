@@ -8,6 +8,7 @@ import { CITIES_DATA } from "@utils/constants";
 import { env } from "@utils/helpers";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
+import { createHash } from "@utils/normalize";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -401,7 +402,8 @@ function getRSSItemData(item) {
   if (!item) {
     throw new Error("No item provided");
   }
-  const {
+
+  let {
     guid,
     pubDate,
     title,
@@ -413,6 +415,10 @@ function getRSSItemData(item) {
     "content:encoded": locationExtra,
     date,
   } = item;
+
+  if (!guid) {
+    guid = createHash(title, url, location || locationExtra, date);
+  }
 
   return {
     guid,
@@ -482,13 +488,13 @@ async function insertEventToCalendar(event, town, item, processedItems, token) {
     console.log("Inserted new item successfully: " + event.summary);
 
     if (env === "prod") {
-      const { guid, date, pubDate } = getRSSItemData(item);
-      const id = guid || date || pubDate;
+      const { guid } = getRSSItemData(item);
+
       const now = Date.now();
 
-      processedItems.set(id, now);
+      processedItems.set(guid, now);
       await setProcessedItems(processedItems, town);
-      console.log(`Added item ${id} to processed items`);
+      console.log(`Added item ${guid} to processed items`);
     }
 
     return;
@@ -619,13 +625,16 @@ export default async function handler(req, res) {
       await cleanProcessedItems(processedItems, town);
     }
 
+    // Pre-compute the hashes for all items
+    const itemHashes = items.map(getRSSItemData).map((item) => item.guid);
+
+    // Convert processedItems to a set for faster lookups
+    const processedItemsSet = new Set(processedItems);
+
     // Filter out already fetched items
     const newItems =
       env === "prod"
-        ? items.filter(
-            (item) =>
-              !processedItems.has(item.guid || item.date || item.pubDate)
-          )
+        ? items.filter((_, i) => !processedItemsSet.has(itemHashes[i]))
         : items;
 
     // If no new items, log a message
