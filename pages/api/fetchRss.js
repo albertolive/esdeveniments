@@ -248,7 +248,7 @@ function getDescription($, item, region, town) {
 
     $desc.find("img").each((_, img) => {
       let src = $(img).attr("src");
-      if (!src.startsWith("http")) {
+      if (src && !src.startsWith("http")) {
         src = new URL(src, getBaseUrl(url)).href;
         $(img).attr("src", src);
       }
@@ -629,7 +629,7 @@ export default async function handler(req, res) {
     const itemHashes = items.map(getRSSItemData).map((item) => item.guid);
 
     // Convert processedItems to a set for faster lookups
-    const processedItemsSet = new Set(processedItems);
+    const processedItemsSet = new Set(processedItems.keys());
 
     // Filter out already fetched items
     const newItems =
