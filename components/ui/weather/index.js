@@ -14,14 +14,14 @@ export default memo(function Weather({ startDate }) {
   const { temp, description: weatherDescription, icon } = weather || {};
 
   return (
-    <div className="flex justify-start items-center gap-2 text-xs">
+    <div className="flex justify-start items-center gap-2">
       {icon && (
         <div className="flex justify-center items-center">
           <Image
             alt={weatherDescription}
             src={icon}
-            width="23"
-            height="23"
+            width="27"
+            height="27"
             style={{
               maxWidth: "100%",
               height: "auto",
@@ -29,9 +29,9 @@ export default memo(function Weather({ startDate }) {
           />
         </div>
       )}{" "}
-      <div className="flex justify-center items-center gap-1">
-        <p className="text-sm">{weatherDescription ? weatherDescription : ""}{" "}</p>
-        <p className="text-sm">{temp ? `- ${temp}º` : ""}</p>
+      <div className="flex justify-center items-center gap-2">
+        <p className="">{weatherDescription ? weatherDescription : ""} </p>
+        <p className="">{temp ? `- ${temp}º` : ""}</p>
       </div>
     </div>
   );

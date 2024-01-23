@@ -43,8 +43,8 @@ input[type="range"] {
   background: #ddd;
   outline: none;
   opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
 }
 
 input[type="range"]:hover {
@@ -57,7 +57,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #FF0037;
+  background: #ff0037;
   cursor: pointer;
 }
 
@@ -65,27 +65,28 @@ input[type="range"]::-moz-range-thumb {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  background: #4CAF50;
+  background: #4caf50;
   cursor: pointer;
 }
 
 h1 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   letter-spacing: 0.03rem;
   line-height: 2.1rem;
+  font-weight: 600;
 }
 
 h2 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.6rem;
+  font-size: 1.62rem;
   letter-spacing: 0.001rem;
   line-height: 1.6rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 h3 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.23rem;
+  font-size: 1.38rem;
   letter-spacing: 0.02rem;
   line-height: 1.65rem;
   font-weight: 500;
@@ -107,8 +108,8 @@ p {
   background: #13b60a;
   outline: none;
   opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
 }
 
 .slider:hover {
@@ -120,7 +121,7 @@ p {
   appearance: none;
   width: 25px;
   height: 25px;
-  background: #4CAF50;
+  background: #4caf50;
   cursor: pointer;
 }
 
@@ -128,7 +129,7 @@ p {
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background: #4CAF50;
+  background: #4caf50;
   cursor: pointer;
 }
 
@@ -136,8 +137,6 @@ p {
   white-space: nowrap;
   overflow-wrap: break-word;
 }
-
-
 
 #map {
   height: 100%;
@@ -219,10 +218,6 @@ iframe {
   image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;
-}
-
-ins.adsbygoogle[data-ad-status="unfilled"] {
-  display: none !important;
 }
 
 #ad-card-slot {

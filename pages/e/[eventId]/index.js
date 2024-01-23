@@ -9,7 +9,6 @@ import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import MapIcon from "@heroicons/react/outline/MapIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
-import ChevronRightIcon from "@heroicons/react/outline/ChevronRightIcon";
 import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import ReactHtmlParser from "react-html-parser";
 import ImageDefault from "@components/ui/imgDefault";
@@ -19,6 +18,9 @@ import Link from "next/link";
 import ReportView from "@components/ui/reportView";
 import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import CardShareButton from "@components/ui/common/cardShareButton";
+import { truncateString } from "@utils/helpers";
+import ChevronUpIcon from "@heroicons/react/outline/ChevronUpIcon";
+import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -156,6 +158,7 @@ export default function Event(props) {
   const slug = data.event ? data.event.slug : "";
   const title = data.event ? data.event.title : "";
   const [hasError, setHasError] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (newEvent || edit_suggested) return;
@@ -224,6 +227,14 @@ export default function Event(props) {
     eventImage,
   } = data.event;
 
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const descriptionToShow = isExpanded
+    ? description
+    : truncateString(description || "", 220);
+
   const jsonData = generateJsonData({ ...data.event, imageUploaded });
 
   if (title === "CANCELLED") return <NoEventFound />;
@@ -234,7 +245,7 @@ export default function Event(props) {
       return (
         <div className="w-full">
           <div className="w-full border-t"></div>
-          {/* <ImageDefault title={title} date={date} /> */}
+          <ImageDefault title={title} date={date} />
         </div>
       );
     }
@@ -276,146 +287,167 @@ export default function Event(props) {
       )}
       {/* General */}
       <div className="w-full flex justify-center bg-whiteCorp pb-10">
-        <div className="w-full px-4 flex flex-col justify-center items-center gap-4 pt-4 sm:w-[520px] md:w-[520px] lg:w-[520px]">
-          <nav className="w-full" aria-label="Breadcrumb">
-            <ol className="w-full flex justify-start items-center gap-1">
-              <li className="flex justify-center items-center gap-1">
-                <Link
-                  href="/"
-                  prefetch={false}
-                  className="flex justify-center items-center gap-1 hover:text-primary"
-                >
-                  <HomeIcon className="h-3 w-3" />
-                  <p className="text-xs font-semibold font-barlow uppercase hidden md:block">
-                    Esdeveniments
-                  </p>
-                </Link>
-                <ChevronRightIcon className="h-3 w-3" />
-                <div
-                  className="flex justify-center items-center"
-                  aria-current="page"
-                >
-                  <span className="text-xs whitespace-normal break-words">
-                    {title}
-                  </span>
-                </div>
-              </li>
-            </ol>
-          </nav>
+        <div className="w-full px-4 flex flex-col justify-center items-center gap-4 pt-5 sm:w-[520px] md:w-[520px] lg:w-[520px]">
           {isEventFinished && (
             <p className="w-full font-medium text-primary">
               Aquest esdeveniment ha finalitzat
             </p>
           )}
           <article className="w-full flex flex-col justify-center items-start gap-6">
-            {/* Info */}
-            <div className="w-full flex flex-col justify-start items-start gap-2 pt-1">
-              <p className="font-normal">
+            {/* Image */}
+            <div className="w-full flex flex-col justify-center items-start gap-4 p-1">
+              {imageUploaded ? (
+                <a
+                  href={imageUploaded}
+                  className="flex justify-center"
+                  target="_blank"
+                  rel="image_src noreferrer"
+                >
+                  <Image
+                    alt={title}
+                    title={title}
+                    image={imageUploaded}
+                    className="w-full object-center object-cover"
+                  />
+                </a>
+              ) : (
+                <ImgDefault />
+              )}
+              {/* ShareButton */}
+              <div className="w-full flex justify-between items-center py-4 px-4">
+                <CardShareButton slug={slug} />
+                <ViewCounter slug={slug} />
+              </div>
+            </div>
+            <div className="w-full flex flex-col justify-start items-start gap-2">
+              <p className="font-semibold">
                 {formattedEnd
                   ? `Del ${formattedStart} al ${formattedEnd}`
                   : `${nameDay}, ${formattedStart}`}
               </p>
-              <h3>
-                {isFullDayEvent
-                  ? "Consultar horaris"
-                  : `${startTime} - ${endTime}`}
-              </h3>
-              <div className="w-full flex justify-between items-start">
-                <Weather startDate={startDate} />
-                {/* EditButton */}
-                <div className="pr-6 flex justify-end items-start cursor-pointer">
-                  <button
-                    onClick={() => {
-                      setOpenModal(true);
-                      sendGoogleEvent("open-change-modal");
-                    }}
-                    type="button"
-                    className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-                  >
-                    <PencilIcon className="w-5 h-5" aria-hidden="true" />
-                    <p className="hidden sm:block font-barlow">Editar</p>
+              <h1 className="w-full uppercase">{title}</h1>
+            </div>
+            {/* Description */}
+            <div className="w-full flex justify-center items-start gap-4">
+              <div className="w-full break-words overflow-hidden">
+                {ReactHtmlParser(descriptionToShow)}
+                <div
+                  className="w-fit flex justify-start items-center gap-2 pt-4 px-1 border-b-2 border-whiteCorp hover:border-b-2 hover:border-blackCorp ease-in-out duration-300 cursor-pointer"
+                  onClick={toggleExpanded}
+                >
+                  <button className="font-medium">
+                    {isExpanded ? (
+                      <p className="pt-4">Reduir descripció</p>
+                    ) : (
+                      <p>Descripció completa</p>
+                    )}
                   </button>
+                  <div>
+                    {isExpanded ? (
+                      <ChevronUpIcon className="h-4 w-4" />
+                    ) : (
+                      <ChevronDownIcon className="h-4 w-4" />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="w-full flex justify-around items-center">
-              <h3 className="w-full uppercase">{title}</h3>
-              <ViewCounter slug={slug} />
-            </div>
-            <div className="w-full flex flex-col justify-center gap-4">
-              <div className="w-full flex justify-center items-start gap-4 p-1">
-                {/* {imageUploaded ? (
-                  <a
-                    href={imageUploaded}
-                    className="flex justify-center"
-                    target="_blank"
-                    rel="image_src noreferrer"
-                  >
-                    <Image
-                      alt={title}
-                      title={title}
-                      image={imageUploaded}
-                      className="w-full object-center object-cover"
-                    />
-                  </a>
-                ) : (
-                  <ImgDefault />
-                )} */}
-              </div>
-              {/* Description */}
-              <div className="w-full flex justify-center items-start gap-4 px-4">
-                <div className="w-full md:w-8/12 break-words overflow-hidden">
-                  {ReactHtmlParser(description)}
+            {/* Info */}
+            <div className="w-full flex flex-col justify-start items-start gap-4 pt-6">
+              <div className="w-full flex flex-col gap-2">
+                <h3>Data i hora</h3>
+                <div className="w-full flex gap-4 px-2">
+                  <p>
+                    {formattedEnd
+                      ? `Del ${formattedStart} al ${formattedEnd}`
+                      : `${nameDay}, ${formattedStart}`}
+                  </p>
+                  <p>
+                    {isFullDayEvent
+                      ? "Consultar horaris"
+                      : `${startTime} - ${endTime}`}
+                  </p>
                 </div>
               </div>
+              <div className="w-full flex flex-col gap-2">
+                <h3>Oratge previst</h3>
+                <div className=" px-2">
+                  <Weather startDate={startDate} />
+                </div>
+              </div>
+              <div className="w-full flex flex-col gap-2">
+                <h3>Ubicació</h3>
+                {/* Map */}
+                <div className="w-full flex flex-col justify-center items-center gap-4">
+                  <div className="w-full flex flex-col justify-center items-start gap-6">
+                    <div
+                      className="w-fit flex justify-start items-center gap-2 px-2 border-b-2 border-whiteCorp hover:border-b-2 hover:border-blackCorp ease-in-out duration-300 cursor-pointer"
+                      onClick={handleShowMap}
+                    >
+                      <button type="button" className="flex gap-2">
+                        <p className="font-medium">
+                          Mostrar localització - {location}
+                        </p>
+                        {showMap ? (
+                          <XIcon className="h-5 w-5" aria-hidden="true" />
+                        ) : (
+                          <ChevronDownIcon
+                            className="h-5 w-5"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </button>
+                    </div>
+                    <div className="w-full flex justify-start">
+                      <button
+                        className="w-1/2 flex justify-start items-end gap-2 py-2 px-3 ease-in-out duration-300"
+                        onClick={handleDirectionsClick}
+                      >
+                        <LocationIcon className="h-6 w-6" aria-hidden="true" />
+                        <p className="font-medium">Com arribar</p>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="w-full flex flex-col justify-center items-center gap-0">
+                    {showMap && (
+                      <div className="overflow-hidden">
+                        <Maps location={mapsLocation} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex flex-col gap-2">
+                <h3>Editar</h3>
+                <div className="w-full flex flex-col gap-6 px-2">
+                  <p>
+                    Si després de veure la informació de l&apos;esdeveniment,
+                    veus que hi ha alguna dada erronia o vols ampliar la
+                    informació, pots fer-ho al següent enllaç. Revisarem el
+                    canvi i actualitzarem l&apos;informació.
+                  </p>
+                  {/* EditButton */}
+                  <div className="w-full flex justify-start items-start cursor-pointer">
+                    <button
+                      onClick={() => {
+                        setOpenModal(true);
+                        sendGoogleEvent("open-change-modal");
+                      }}
+                      type="button"
+                      className="w-full flex justify-start items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300"
+                    >
+                      <PencilIcon className="w-5 h-5" aria-hidden="true" />
+                      <p className="font-medium">Editar</p>
+                    </button>
+                  </div>
+                  <p></p>
+                </div>
+              </div>
+            </div>
+            <div className="h-full min-h-[280px] lg:min-h-[100px]">
+              <AdArticle slot="9643657007" />
             </div>
           </article>
-          {/* ShareButton */}
-          <div className="w-full md:w-8/12 flex justify-center items-center gap-2 py-4 px-4">
-            <CardShareButton slug={slug} />
-          </div>
-          {/* Map */}
-          <div className="w-full flex flex-col justify-center items-center gap-4">
-            <div className="w-full md:w-8/12 flex flex-col sm:flex-row justify-center items-center gap-4 p-3">
-              <div
-                className="w-full md:w-8/12 flex justify-center items-center gap-3"
-                onClick={handleShowMap}
-              >
-                <button
-                  type="button"
-                  className="w-full flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-                >
-                  {showMap ? (
-                    <XIcon className="h-5 w-5" aria-hidden="true" />
-                  ) : (
-                    <MapIcon className="h-5 w-5" aria-hidden="true" />
-                  )}
-                  <p className="uppercase font-barlow font-semibold italic">
-                    Mapa - {location}
-                  </p>
-                </button>
-              </div>
-              <div className="w-full md:w-8/12">
-                <button
-                  className="w-full flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-                  onClick={handleDirectionsClick}
-                >
-                  <LocationIcon className="h-5 w-5" aria-hidden="true" />
-                  <p className="font-barlow">Com arribar</p>
-                </button>
-              </div>
-            </div>
-            <div className="w-full flex flex-col justify-center items-center gap-0">
-              {showMap && (
-                <div className="overflow-hidden">
-                  <Maps location={mapsLocation} />
-                </div>
-              )}
-              <div className="h-full min-h-[280px] lg:min-h-[100px]">
-                <AdArticle slot="9643657007" />
-              </div>
-            </div>
-          </div>
 
           {openModal || openDeleteReasonModal ? (
             <EditModal

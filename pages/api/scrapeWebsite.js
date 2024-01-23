@@ -1,6 +1,7 @@
+import { createHash } from "@utils/normalize";
+
 const axios = require("axios");
 const { DateTime } = require("luxon");
-const crypto = require("crypto");
 
 const DATE_FORMAT = "dd/MM/yyyy";
 const TIME_ZONE = "Europe/Madrid";
@@ -63,10 +64,7 @@ function normalizeData(events) {
         if (!title) return null;
 
         const formattedDate = convertDateToRSS(date);
-        const hash = crypto
-          .createHash("md5")
-          .update(`${title}${url}${location}${date}`)
-          .digest("hex");
+        const hash = createHash(title, url, location, date);
 
         return {
           guid: hash,

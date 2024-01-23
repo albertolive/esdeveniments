@@ -8,6 +8,7 @@ import { CITIES_DATA } from "@utils/constants";
 import { env } from "@utils/helpers";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
+import { createHash } from "@utils/normalize";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -401,7 +402,9 @@ function getRSSItemData(item) {
   if (!item) {
     throw new Error("No item provided");
   }
-  const {
+
+  let {
+    guid,
     pubDate,
     title,
     description: itemDescription,
@@ -413,7 +416,12 @@ function getRSSItemData(item) {
     date,
   } = item;
 
+  if (!guid) {
+    guid = createHash(title, url, location || locationExtra, date);
+  }
+
   return {
+    guid,
     pubDate,
     title,
     itemDescription,
@@ -473,16 +481,19 @@ async function createEvent(item, region, town) {
   return event;
 }
 
-async function insertEventToCalendar(event, town, guid, processedItems, token) {
+async function insertEventToCalendar(event, town, item, processedItems, token) {
   if (!debugMode) {
     await postToGoogleCalendar(event, token);
 
     console.log("Inserted new item successfully: " + event.summary);
 
     if (env === "prod") {
+      const { guid } = getRSSItemData(item);
+
       const now = Date.now();
+
       processedItems.set(guid, now);
-      await setProcessedItems(processedItems, town); // Save the processed item immediately
+      await setProcessedItems(processedItems, town);
       console.log(`Added item ${guid} to processed items`);
     }
 
@@ -520,7 +531,7 @@ async function insertItemToCalendar(item, region, town, processedItems, token) {
   }
 
   try {
-    await insertEventToCalendar(event, town, item.guid, processedItems, token);
+    await insertEventToCalendar(event, town, item, processedItems, token);
   } catch (error) {
     handleError(error, town, "insertEventToCalendar");
   }
@@ -614,10 +625,16 @@ export default async function handler(req, res) {
       await cleanProcessedItems(processedItems, town);
     }
 
+    // Pre-compute the hashes for all items
+    const itemHashes = items.map(getRSSItemData).map((item) => item.guid);
+
+    // Convert processedItems to a set for faster lookups
+    const processedItemsSet = new Set(processedItems);
+
     // Filter out already fetched items
     const newItems =
       env === "prod"
-        ? items.filter((item) => !processedItems.has(item.guid))
+        ? items.filter((_, i) => !processedItemsSet.has(itemHashes[i]))
         : items;
 
     // If no new items, log a message

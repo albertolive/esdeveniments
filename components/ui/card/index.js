@@ -27,12 +27,9 @@ function Card({ event, isLoading }) {
 
   if (isLoading) return <CardLoading />;
 
-  if (event.isAd)
-    return (
-      <div className=" bg-whiteCorp overflow-hidden cursor-pointer mb-2 md:border-t-0 block visible md:hidden md:invisible">
-        <AdCard event={event} />
-      </div>
-    );
+  if (event.isAd) {
+    return <AdCard event={event} />;
+  }
 
   const { description, icon } = event.weather || {};
   const title = truncateString(event.title || "", 60);

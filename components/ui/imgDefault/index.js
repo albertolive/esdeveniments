@@ -48,7 +48,7 @@ function getRandomBackground() {
   return gradients[randomIndex];
 }
 
-export default function ImgDefault({ title, date, location, subLocation }) {
+export default function ImgDefault({ date, location, subLocation }) {
   const [background] = useState(getRandomBackground());
   const [hover, setHover] = useState(false);
 
@@ -63,27 +63,6 @@ export default function ImgDefault({ title, date, location, subLocation }) {
         height: "100%",
       }}
     >
-      {/* <div
-        className="w-1/3 h-fit flex flex-col justify-center items-center gap-4 p-4 border-[2px] shadow-xl rounded-md border-whiteCorp"
-        style={{
-          background: hover ? "white" : "transparent",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
-        <h3
-          className="w-full text-center text-whiteCorp"
-          style={{
-            color: hover ? background.color : "white",
-          }}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-        >
-          Detalls de l&apos;esdeveniment
-        </h3>
-      </div> */}
       <h2 className="w-full text-whiteCorp pl-10 mb-2 tracking-wide font-normal drop-shadow-md">
         Esdeveniment sense imatge
       </h2>

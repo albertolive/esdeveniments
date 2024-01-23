@@ -2,8 +2,8 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const RSS = require("rss");
 const { DateTime } = require("luxon");
-const crypto = require("crypto");
 import { siteUrl } from "@config/index";
+import { createHash } from "@utils/normalize";
 
 const CITIES = {
   granollers: {
@@ -101,10 +101,7 @@ function extractEventDetails(html, selectors) {
     const rssDate = date && convertToRSSDate(date, dateRegex);
     const rssUrl = `${selectors.domain}${url}`;
     const rssImage = image && image.replace(selectors.urlImage, "/");
-    const hash = crypto
-      .createHash("md5")
-      .update(title + url + location + date)
-      .digest("hex");
+    const hash = createHash(title, url, location, date);
 
     events.push({
       id: hash,

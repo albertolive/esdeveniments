@@ -7,14 +7,14 @@ import { captureException } from "@sentry/nextjs";
 
 const SITE_NAME = "Esdeveniments.cat";
 
-const getAllArticles = async (region, town) => {
+const getAllArticles = async (region, town, maxEventsPerDay) => {
+  const { label: regionLabel } = getPlaceTypeAndLabel(region);
+  const { label: townLabel } = getPlaceTypeAndLabel(town);
+
   try {
     const now = new Date();
     const from = new Date();
-    const until = new Date(now.setDate(now.getDate() + 14));
-
-    const { label: regionLabel } = getPlaceTypeAndLabel(region);
-    const { label: townLabel } = getPlaceTypeAndLabel(town);
+    const until = new Date(now.setDate(now.getDate() + 7)); // TODO: Change to accept a parameter
 
     const q = town ? `${townLabel} ${regionLabel}` : regionLabel;
 
@@ -23,12 +23,15 @@ const getAllArticles = async (region, town) => {
       until,
       q,
       normalizeRss: true,
-      filterByDate: false,
+      filterByDate: true,
       maxResults: MAX_RESULTS,
       shuffleItems: true,
     });
 
-    return JSON.parse(JSON.stringify(events));
+    // Limit the number of events
+    const limitedEvents = events.slice(0, maxEventsPerDay);
+
+    return JSON.parse(JSON.stringify(limitedEvents));
   } catch (error) {
     console.error(error);
     captureException(
@@ -64,7 +67,7 @@ const buildFeed = (items, region, town) => {
       townLabel || regionLabel || "Catalunya"
     }`,
     copyright: SITE_NAME,
-    updated: new Date(items[0].startDate),
+    updated: items.length > 0 ? new Date(items[0].startDate) : new Date(),
     author: {
       name: SITE_NAME,
       link: siteUrl,
@@ -100,9 +103,9 @@ export const getServerSideProps = async (context) => {
     const { res, query } = context;
 
     // Extract region and town from query parameters
-    const { region, town } = query;
+    const { region, town, maxEventsPerDay } = query;
 
-    const articles = await getAllArticles(region, town);
+    const articles = await getAllArticles(region, town, maxEventsPerDay);
 
     const feed = buildFeed(articles, region, town);
     res.setHeader("content-type", "text/xml");
