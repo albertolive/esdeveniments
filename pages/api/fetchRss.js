@@ -16,7 +16,8 @@ const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
 
 // Configuration
 const debugMode = false;
-const TIMEOUT_LIMIT = env === "prod" ? 10000 : 100000;
+const TIMEOUT_LIMIT =
+  env === "prod" ? process.env.NEXT_PUBLIC_TIMEOUT_LIMIT : 100000;
 const SAFETY_MARGIN = 1000;
 const PROCESSED_ITEMS_KEY = "processedItems";
 const RSS_FEED_CACHE_KEY = "rssFeedCache";
