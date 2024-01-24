@@ -17,7 +17,7 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
-
+  //
   return (
     <>
       <Script
