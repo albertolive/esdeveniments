@@ -9,7 +9,7 @@ export default function Maps({ location }) {
 
     const frame = document.createElement("iframe");
     frame.src = map.getAttribute("data-src");
-    frame.style.width = "400px";
+    frame.style.width = "100%";
     frame.style.height = "400px";
     frame.style.border = "0";
     frame.allowFullscreen = true;

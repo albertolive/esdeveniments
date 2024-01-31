@@ -24,10 +24,6 @@ function getRandomBackground() {
       color: "#EBAB07",
     }, //orange
     {
-      gradient: "linear-gradient(120deg, #FFEB01, #FFF588)",
-      color: "#FFEB01",
-    }, //yellow
-    {
       gradient: "linear-gradient(120deg, #03001e, #7303c0, #ec38bc)",
       color: "#7303c0",
     }, //blue-fucsia
@@ -63,9 +59,6 @@ export default function ImgDefault({ date, location, subLocation }) {
         height: "100%",
       }}
     >
-      <h2 className="w-full text-whiteCorp pl-10 mb-2 tracking-wide font-normal drop-shadow-md">
-        Esdeveniment sense imatge
-      </h2>
       <div className="w-full flex justify-start items-start gap-2">
         <LocationMarkerIcon className="text-whiteCorp w-9 h-9 drop-shadow-md" />
         <div className="w-full flex flex-col justify-start items-start gap-1">
@@ -95,7 +88,7 @@ export default function ImgDefault({ date, location, subLocation }) {
         </h3>
         <div className="w-full h-28 flex justify-end items-end">
           <NextImage
-            className="w-4/12 drop-shadow-md"
+            className="w-6/12 drop-shadow-md"
             src={Tickets}
             alt="Tickets.svg"
           />
