@@ -7,7 +7,6 @@ import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
-import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import { truncateString } from "@utils/helpers";
 import CardLoading from "@components/ui/cardLoading";
 import ShareButton from "@components/ui/common/cardShareButton";
@@ -50,13 +49,13 @@ function Card({ event, isLoading }) {
               <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             </div>
             {/* Title */}
-            <h3 className="w-11/12 uppercase">
+            <h3 className="w-11/12 uppercase italic">
               <Link href={`/e/${event.slug}`} passHref prefetch={false}>
                 {title}
               </Link>
             </h3>
             {/* WeatherIcon */}
-            <div className="w-1/12 flex justify-center">
+            <div className="w-1/12 flex justify-end">
               {icon && (
                 <div>
                   <NextImage
@@ -76,10 +75,11 @@ function Card({ event, isLoading }) {
           {/* ImageEvent */}
           <div className="p-4 flex justify-center items-center">
             <Image
-              className="object-contain"
+              className="w-full flex justify-center object-contain"
               title={event.title}
               date={event.formattedStart}
               location={event.location}
+              subLocation={event.subLocation}
               image={event.imageUploaded}
               alt={event.title}
               layout="responsive"
@@ -88,18 +88,17 @@ function Card({ event, isLoading }) {
         </div>
       </Link>
       {/* ShareButton */}
-      <div className="w-full flex justify-center items-center gap-2 px-4 pb-3">
-        <ShareIcon className="w-5 h-5" />
+      <div className="w-full flex justify-center items-center gap-2 pb-6 px-4">
         <ShareButton slug={event.slug} />
         <ViewCounter slug={event.slug} hideText />
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
         {/* Date */}
-        <div className="flex items-center">
+        <div className="flex justify-start items-start">
           <div>
             <CalendarIcon className="h-5 w-5" />
           </div>
-          <p className="px-2 font-semibold">
+          <p className="px-2 font-medium">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}
@@ -116,7 +115,7 @@ function Card({ event, isLoading }) {
           </div>
         </div>
         {/* hour */}
-        <div className="flex justify-start items-center mb-10">
+        <div className="flex justify-start items-center mb-12">
           <ClockIcon className="h-5 w-5" />
           <p className="px-2">
             {event.isFullDayEvent

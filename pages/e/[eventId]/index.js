@@ -6,19 +6,22 @@ import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
 import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
-import MapIcon from "@heroicons/react/outline/MapIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
-import HomeIcon from "@heroicons/react/outline/HomeIcon";
-import ChevronRightIcon from "@heroicons/react/outline/ChevronRightIcon";
 import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import ReactHtmlParser from "react-html-parser";
-import ImageDefault from "@components/ui/imgDefault";
 import ViewCounter from "@components/ui/viewCounter";
 import { siteUrl } from "@config/index";
-import Link from "next/link";
 import ReportView from "@components/ui/reportView";
-import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import CardShareButton from "@components/ui/common/cardShareButton";
+import { truncateString } from "@utils/helpers";
+import ChevronUpIcon from "@heroicons/react/outline/ChevronUpIcon";
+import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
+import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
+import CloudIcon from "@heroicons/react/outline/CloudIcon";
+import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
+import DocumentIcon from "@heroicons/react/outline/DocumentIcon";
+import ArrowRightIcon from "@heroicons/react/outline/ArrowRightIcon";
+import { Tooltip } from "react-tooltip";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -51,11 +54,11 @@ const Notification = dynamic(
   }
 );
 
-const Social = dynamic(() => import("@components/ui/common/social"), {
+const Weather = dynamic(() => import("@components/ui/weather"), {
   loading: () => "",
 });
 
-const Weather = dynamic(() => import("@components/ui/weather"), {
+const ImageDefault = dynamic(() => import("@components/ui/imgDefault"), {
   loading: () => "",
 });
 
@@ -156,6 +159,7 @@ export default function Event(props) {
   const slug = data.event ? data.event.slug : "";
   const title = data.event ? data.event.title : "";
   const [hasError, setHasError] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (newEvent || edit_suggested) return;
@@ -210,6 +214,9 @@ export default function Event(props) {
     id,
     description,
     location,
+    town,
+    region,
+    postalCode,
     mapsLocation,
     startDate,
     startTime,
@@ -224,6 +231,14 @@ export default function Event(props) {
     eventImage,
   } = data.event;
 
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const descriptionToShow = isExpanded
+    ? description
+    : truncateString(description || "", 220);
+
   const jsonData = generateJsonData({ ...data.event, imageUploaded });
 
   if (title === "CANCELLED") return <NoEventFound />;
@@ -233,7 +248,8 @@ export default function Event(props) {
     if (!imageUploaded || hasError) {
       return (
         <div className="w-full">
-          <ImageDefault title={title} date={date} />
+          <div className="w-full border-t"></div>
+          <ImageDefault date={date} location={location} alt={title} />
         </div>
       );
     }
@@ -275,145 +291,186 @@ export default function Event(props) {
       )}
       {/* General */}
       <div className="w-full flex justify-center bg-whiteCorp pb-10">
-        <div className="w-full px-4 flex flex-col justify-center items-center gap-4 pt-4 sm:w-[520px] md:w-[520px] lg:w-[520px]">
-          <nav className="w-full" aria-label="Breadcrumb">
-            <ol className="w-full flex justify-start items-center gap-1">
-              <li className="flex justify-center items-center gap-1">
-                <Link
-                  href="/"
-                  prefetch={false}
-                  className="flex justify-center items-center gap-1 hover:text-primary"
-                >
-                  <HomeIcon className="h-3 w-3" />
-                  <p className="text-xs font-semibold font-barlow uppercase hidden md:block">
-                    Esdeveniments
-                  </p>
-                </Link>
-                <ChevronRightIcon className="h-3 w-3" />
-                <div
-                  className="flex justify-center items-center"
-                  aria-current="page"
-                >
-                  <span className="text-xs whitespace-normal break-words">
-                    {title}
-                  </span>
-                </div>
-              </li>
-            </ol>
-          </nav>
+        <div className="w-full flex flex-col justify-center items-center gap-4 sm:w-[520px] md:w-[520px] lg:w-[520px]">
           {isEventFinished && (
             <p className="w-full font-medium text-primary">
               Aquest esdeveniment ha finalitzat
             </p>
           )}
-          <article className="w-full flex flex-col justify-center items-start gap-6">
-            {/* Info */}
-            <div className="w-full flex flex-col justify-start items-start gap-2 pt-1">
-              <p className="font-normal">
+          <article className="w-full flex flex-col justify-center items-start gap-8">
+            {/* Image */}
+            <div className="w-full flex flex-col justify-center items-start gap-4">
+              {imageUploaded ? (
+                <a
+                  href={imageUploaded}
+                  className="flex justify-center"
+                  target="_blank"
+                  rel="image_src noreferrer"
+                >
+                  <Image
+                    alt={title}
+                    title={title}
+                    image={imageUploaded}
+                    className="w-full object-center object-cover"
+                  />
+                </a>
+              ) : (
+                <ImgDefault />
+              )}
+              {/* ShareButton */}
+              <div className="w-full flex justify-between items-center px-4">
+                <CardShareButton slug={slug} />
+                <ViewCounter slug={slug} />
+              </div>
+            </div>
+            <div className="w-full flex flex-col justify-start items-start gap-2 px-4">
+              <p className="font-medium">
                 {formattedEnd
                   ? `Del ${formattedStart} al ${formattedEnd}`
                   : `${nameDay}, ${formattedStart}`}
               </p>
-              <h3>
-                {isFullDayEvent
-                  ? "Consultar horaris"
-                  : `${startTime} - ${endTime}`}
-              </h3>
-              <div className="w-full flex justify-between items-start">
-                <Weather startDate={startDate} />
-                {/* EditButton */}
-                <div className="pr-6 flex justify-end items-start cursor-pointer">
-                  <button
-                    onClick={() => {
-                      setOpenModal(true);
-                      sendGoogleEvent("open-change-modal");
-                    }}
-                    type="button"
-                    className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-                  >
-                    <PencilIcon className="w-5 h-5" aria-hidden="true" />
-                    <p className="hidden sm:block font-barlow">Editar</p>
-                  </button>
-                </div>
-              </div>
+              <h1 className="w-full uppercase">{title}</h1>
             </div>
-            <h3 className="w-full uppercase">{title}</h3>
-            <ViewCounter slug={slug} />
-            <div className="w-full flex flex-col justify-center gap-4">
-              <div className="w-full flex justify-center items-start gap-4 p-1">
-                {imageUploaded ? (
-                  <a
-                    href={imageUploaded}
-                    className="flex justify-center"
-                    target="_blank"
-                    rel="image_src noreferrer"
-                  >
-                    <Image
-                      alt={title}
-                      title={title}
-                      image={imageUploaded}
-                      className="w-full object-center object-cover"
-                    />
-                  </a>
-                ) : (
-                  <ImgDefault />
-                )}
-              </div>
-              {/* Description */}
-              <div className="w-full flex justify-center items-start gap-4 px-4">
+            {/* Description */}
+            <div className="w-full flex justify-center items-start gap-2 px-4">
+              <DocumentIcon className="w-5 h-5 mt-1" />
+              <div className="w-11/12 flex flex-col gap-4">
+                <h3>Descripció</h3>
                 <div className="w-full break-words overflow-hidden">
-                  {ReactHtmlParser(description)}
+                  {ReactHtmlParser(descriptionToShow)}
+                  <div
+                    className="w-fit flex justify-start items-center gap-2 pt-4 border-b-2 border-whiteCorp hover:border-b-2 hover:border-blackCorp ease-in-out duration-300 cursor-pointer"
+                    onClick={toggleExpanded}
+                  >
+                    <button className="font-medium">
+                      {isExpanded ? (
+                        <p className="pt-4">Reduir descripció</p>
+                      ) : (
+                        <p>Descripció completa</p>
+                      )}
+                    </button>
+                    <div>
+                      {isExpanded ? (
+                        <ChevronUpIcon className="h-4 w-4" />
+                      ) : (
+                        <ChevronDownIcon className="h-4 w-4" />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </article>
-          {/* ShareButton */}
-          <div className="w-full flex justify-center items-center gap-2 px-4 pb-3">
-            <ShareIcon className="w-5 h-5" />
-            <CardShareButton slug={slug} />
-          </div>
-          {/* Map */}
-          <div className="w-full flex flex-col justify-center items-center gap-4">
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 p-3">
-              <div
-                className="flex justify-center items-center gap-3"
-                onClick={handleShowMap}
-              >
-                <button
-                  type="button"
-                  className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-                >
-                  {showMap ? (
-                    <XIcon className="h-5 w-5" aria-hidden="true" />
-                  ) : (
-                    <MapIcon className="h-5 w-5" aria-hidden="true" />
-                  )}
-                  <p className="uppercase font-barlow font-semibold italic">
-                    Mapa - {location}
-                  </p>
-                </button>
+            {/* Info */}
+            <div className="w-full flex flex-col justify-start items-start gap-4">
+              <div className="w-full flex justify-center items-start gap-2 px-4">
+                <CalendarIcon className="w-5 h-5 mt-1" />
+                <div className="w-11/12 flex flex-col gap-4">
+                  <h3>Data i hora</h3>
+                  <div className="w-full flex flex-col gap-4">
+                    <p>
+                      {formattedEnd
+                        ? `Del ${formattedStart} al ${formattedEnd}`
+                        : `${nameDay}, ${formattedStart}`}
+                    </p>
+                    <p className="uppercase">
+                      {isFullDayEvent
+                        ? "Consultar horaris"
+                        : `${startTime} - ${endTime}`}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="">
-                <button
-                  className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
-                  onClick={handleDirectionsClick}
-                >
-                  <LocationIcon className="h-5 w-5" aria-hidden="true" />
-                  <p className="font-barlow">Com arribar</p>
-                </button>
+              <div className="w-full flex justify-center items-start gap-2 px-4">
+                <CloudIcon className="w-5 h-5 mt-1" />
+                <div className="w-11/12 flex flex-col gap-4">
+                  <h3>El temps</h3>
+                  <Weather startDate={startDate} />
+                </div>
               </div>
-            </div>
-            <div className="w-full flex justify-center items-center gap-4">
+              <div className="w-full flex justify-center items-start gap-2 px-4">
+                <LocationIcon className="h-5 w-5 mt-1" aria-hidden="true" />
+                <div className="w-11/12 flex flex-col gap-4 pr-4">
+                  <h3>Ubicació</h3>
+                  {/* Show Map Button */}
+                  <div className="w-full flex flex-col justify-center items-center gap-4">
+                    <div className="w-full flex flex-col justify-center items-start gap-4">
+                      <div className="w-full flex flex-col justify-start items-start gap-1">
+                        <p>{location}</p>{" "}
+                        <p>
+                          {postalCode} {town}, {region}
+                        </p>
+                      </div>
+                      <div
+                        className="w-fit flex justify-start items-center gap-2 border-b-2 border-whiteCorp hover:border-b-2 hover:border-blackCorp ease-in-out duration-300 cursor-pointer"
+                        onClick={handleShowMap}
+                      >
+                        <button type="button" className="flex gap-2">
+                          <p className="font-medium">Mostrar mapa</p>
+                          {showMap ? (
+                            <XIcon className="h-5 w-5" aria-hidden="true" />
+                          ) : (
+                            <ChevronDownIcon
+                              className="h-5 w-5"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               {showMap && (
-                <div className="overflow-hidden">
+                <div className="w-full flex flex-col justify-center items-end gap-6 overflow-hidden">
                   <Maps location={mapsLocation} />
+                  <div className="w-fit flex justify-end items-center gap-2 px-4 border-b-2 border-whiteCorp hover:border-b-2 hover:border-blackCorp ease-in-out duration-300 cursor-pointer">
+                    <button
+                      className="flex gap-2"
+                      onClick={handleDirectionsClick}
+                    >
+                      <p className="font-medium">Com arribar</p>
+                      <ArrowRightIcon className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
               )}
-              <div className="mt-6 space-y-10 min-h-[280px] lg:min-h-[100px] h-full">
-                <AdArticle slot="9643657007" />
+              {/* EditButton */}
+              <div className="w-full flex justify-center items-start gap-2 px-4">
+                <PencilIcon className="w-5 h-5 mt-1" />
+                <div className="w-11/12 flex flex-col gap-4">
+                  <h3>Suggerir un canvi</h3>
+                  <div className="w-11/12 flex justify-start items-center gap-2 cursor-pointer">
+                    <button
+                      onClick={() => {
+                        setOpenModal(true);
+                        sendGoogleEvent("open-change-modal");
+                      }}
+                      type="button"
+                      className="flex justify-start items-center gap-2 ease-in-out duration-300 border-b-2 border-whiteCorp hover:border-blackCorp"
+                    >
+                      <p className="font-medium">Editar</p>
+                    </button>
+                    <InfoIcon
+                      className="w-5 h-5"
+                      data-tooltip-id="edit-button"
+                    />
+                    <Tooltip id="edit-button">
+                      Si després de veure la informació de l&apos;esdeveniment,
+                      <br />
+                      veus que hi ha alguna dada erronia o vols ampliar la
+                      <br />
+                      informació, pots fer-ho al següent enllaç. Revisarem el
+                      <br />
+                      canvi i actualitzarem l&apos;informació.
+                    </Tooltip>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+            <div className="h-full px-4 min-h-[280px] lg:min-h-[100px]">
+              <AdArticle slot="9643657007" />
+            </div>
+          </article>
 
           {openModal || openDeleteReasonModal ? (
             <EditModal
