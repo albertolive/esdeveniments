@@ -372,7 +372,7 @@ export default function Event(props) {
                         ? `Del ${formattedStart} al ${formattedEnd}`
                         : `${nameDay}, ${formattedStart}`}
                     </p>
-                    <p className="text-sm font-semibold uppercase">
+                    <p className="uppercase">
                       {isFullDayEvent
                         ? "Consultar horaris"
                         : `${startTime} - ${endTime}`}
@@ -396,7 +396,7 @@ export default function Event(props) {
                     <div className="w-full flex flex-col justify-center items-start gap-4">
                       <div className="w-full flex flex-col justify-start items-start gap-1">
                         <p>{location}</p>{" "}
-                        <p className="text-sm">
+                        <p>
                           {postalCode} {town}, {region}
                         </p>
                       </div>
