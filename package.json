@@ -48,6 +48,7 @@
     "react-select": "^5.7.0",
     "react-share": "^5.0.3",
     "react-social-icons": "^6.3.0",
+    "react-tooltip": "^5.26.0",
     "rss": "^1.2.2",
     "swr": "^2.0.3",
     "tailwindcss": "^3.3.6"

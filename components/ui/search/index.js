@@ -123,7 +123,7 @@ export default function Search({ searchTerm, setSearchTerm }) {
       <div className="w-full flex justify-start items-center gap-2">
         <div className="h-10 flex justify-end items-center cursor-pointer">
           <SearchIcon
-            className="h-4 w-4 text-blackCorp"
+            className="h-5 w-5 text-blackCorp"
             onClick={() => searchEvents(searchTerm)}
             aria-label="Search"
           />

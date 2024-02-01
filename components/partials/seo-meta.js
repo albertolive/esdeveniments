@@ -8,8 +8,8 @@ const Meta = (props) => {
     ? props.imageUploaded
     : props.image
     ? siteUrl + props.image
-    : `${siteUrl}/static/images/logo-esdeveniments.webp`;
-    
+    : `${siteUrl}/static/images/logo-seo-meta.png`;
+
   return (
     <Head>
       <title>{props.title}</title>

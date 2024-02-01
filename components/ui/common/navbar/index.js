@@ -62,8 +62,8 @@ export default function Navbar() {
                       src={logo}
                       className="bg-whiteCorp flex justify-center items-center cursor-pointer"
                       alt="Logo Esdeveniments.cat"
-                      width={151}
-                      height={18}
+                      width={169}
+                      height={16}
                       priority
                     />
                   </Link>
@@ -95,11 +95,7 @@ export default function Navbar() {
                 </div>
               </div>
               {/* SecondBar - Search&Share&MenuIcon */}
-              <div
-                className="fixed h-content bottom-0 left-0 right-0 py-2 bg-whiteCorp flex justify-evenly items-center gap-16
-              md:hidden
-              "
-              >
+              <div className="fixed h-content bottom-0 left-0 right-0 py-2 bg-whiteCorp flex justify-evenly items-center gap-16 md:hidden">
                 {/* Home */}
                 <div
                   className="flex justify-center items-center rounded-xl cursor-pointer"

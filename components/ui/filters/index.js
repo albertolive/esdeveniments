@@ -17,16 +17,13 @@ const renderButton = ({
     className="w-full bg-whiteCorp flex justify-center items-center nowrap"
   >
     <div
-      className={`w-full h-6 flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none font-barlow italic uppercase ${
+      className={`w-full h-8 flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none ${
         enabled
-          ? "text-primary font-medium border-b-2 border-whiteCorp hover:border-b-2 hover:border-primary"
+          ? "text-primary font-medium border-b-2 border-primary"
           : "border-whiteCorp border-b-2 text-bColor hover:border-b-2 hover:border-bColor"
       }`}
     >
-      <span
-        onClick={handleOpenModal}
-        className="w-full text-center text-sm uppercase tracking-wider"
-      >
+      <span onClick={handleOpenModal} className="w-full text-center">
         {text}
       </span>
       {enabled ? (
@@ -104,8 +101,8 @@ const Filters = ({
           <AdjustmentsIcon
             className={
               isAnyFilterSelected()
-                ? "w-4 h-4 text-primary"
-                : "w-4 h-4 text-blackCorp"
+                ? "w-5 h-5 text-primary"
+                : "w-5 h-5 text-blackCorp"
             }
             aria-hidden="true"
           />
@@ -113,7 +110,7 @@ const Filters = ({
             Filtres
           </p>
         </div>
-        <div className="w-8/10 h-10 flex justify-cenetr items-center gap-1 xs:gap-2 sm:gap-3 border-0 placeholder:text-bColor overflow-x-auto">
+        <div className="w-8/10 h-10 flex justify-cenetr items-center gap-1 sm:gap-2 border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,
