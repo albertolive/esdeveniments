@@ -6,17 +6,12 @@ import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
 import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
-import MapIcon from "@heroicons/react/outline/MapIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
-import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import ReactHtmlParser from "react-html-parser";
-import ImageDefault from "@components/ui/imgDefault";
 import ViewCounter from "@components/ui/viewCounter";
 import { siteUrl } from "@config/index";
-import Link from "next/link";
 import ReportView from "@components/ui/reportView";
-import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import CardShareButton from "@components/ui/common/cardShareButton";
 import { truncateString } from "@utils/helpers";
 import ChevronUpIcon from "@heroicons/react/outline/ChevronUpIcon";
@@ -59,11 +54,11 @@ const Notification = dynamic(
   }
 );
 
-const Social = dynamic(() => import("@components/ui/common/social"), {
+const Weather = dynamic(() => import("@components/ui/weather"), {
   loading: () => "",
 });
 
-const Weather = dynamic(() => import("@components/ui/weather"), {
+const ImageDefault = dynamic(() => import("@components/ui/imgDefault"), {
   loading: () => "",
 });
 
@@ -254,7 +249,7 @@ export default function Event(props) {
       return (
         <div className="w-full">
           <div className="w-full border-t"></div>
-          <ImageDefault title={title} date={date} />
+          <ImageDefault date={date} location={location} alt={title} />
         </div>
       );
     }

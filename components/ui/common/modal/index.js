@@ -35,31 +35,27 @@ export default function Modal({
               leaveFrom="opacity-70"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel className="flex flex-col justify-center items-center">
-                <Dialog.Title
-                  as="h3"
-                  className="w-full bg-whiteCorp flex fixed top-0 z-50 p-2 font-semibold"
-                >
-                  <div className="w-full flex justify-center items-center">
-                    <button
-                      ref={cancelButtonRef}
-                      onClick={() => setOpen(false)}
-                      className="fixed top-0 left-0 p-3 focus:outline-none"
-                    >
-                      <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                    <div className="w-full flex justify-center">
-                      <p className="text-center font-barlow uppercase italic">
-                        {title}
-                      </p>
-                    </div>
-                  </div>
-                </Dialog.Title>
-                <div className="w-full h-screen flex justify-center items-center sm:w-[500px] bg-whiteCorp rounded-lg shadow-xl p-4">
+              <Dialog.Panel className="w-full flex justify-center items-center">
+                <div className="w-full h-screen flex flex-col justify-center items-center sm:w-[500px] bg-whiteCorp rounded-lg shadow-xl p-4 relative">
+                  <button
+                    ref={cancelButtonRef}
+                    onClick={() => setOpen(false)}
+                    className="absolute top-0 left-2 p-3 focus:outline-none"
+                  >
+                    <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                  <Dialog.Title
+                    as="h3"
+                    className="absolute top-0 text-center font-semibold p-3"
+                  >
+                    <p className="text-center font-barlow uppercase italic">
+                      {title}
+                    </p>
+                  </Dialog.Title>
                   {children}
                 </div>
                 {actionButton && (
-                  <div className="w-full h-full flex justify-center items-end fixed z-10 bottom-0 left-0 p-8">
+                  <div className="w-full flex justify-center items-end fixed bottom-0 left-0 p-8">
                     <div
                       className="flex justify-center"
                       style={{ position: "sticky", bottom: 0 }}

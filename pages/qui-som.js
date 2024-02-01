@@ -53,22 +53,24 @@ export default function QuiSom() {
         <div className="w-full flex flex-col justify-center gap-8 pb-20">
           <h2 className="text-center">El nostre equip</h2>
           <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-8">
-            <div class="w-[300px] h-[414px] bg-whiteCorp rounded-md shadow-xl">
-              <Image
-                className="w-full h-[185px] object-cover object-top rounded-t-md"
-                src="https://media.licdn.com/dms/image/C4D03AQETSNS8Sficgg/profile-displayphoto-shrink_200_200/0/1610292527836?e=1711584000&v=beta&t=ymqnTnXEVV9aiQDGLmHR3TW-XvNVhrk44K1tRw0jEDk"
-                alt="Albert Olivé"
-                width={200}
-                height={200}
-              />
+            <div className="w-[200px] h-[414px] bg-whiteCorp rounded-md shadow-xl">
+              <div className="h-[185px] overflow-hidden">
+                <Image
+                  className="object-cover object-top rounded-t-md"
+                  src="/static/images/linkedin_albert.jpeg"
+                  alt="Albert Olivé Corbella"
+                  width={200}
+                  height={200}
+                />
+              </div>
               <div className="w-full flex flex-col justify-center items-center gap-6 py-8">
                 <div className="w-full flex justify-start items-start gap-2 pt-4">
                   <div className="w-2 h-6 bg-primary"></div>
                   <h2>Albert Olivé Corbella</h2>
                 </div>
                 <div className="w-full flex flex-col justify-start items-start px-4">
-                  <p className="w-full">Full Stack Developer</p>
-                  <p className="w-full text-sm font-semibold">Fundador</p>
+                  <p className="w-full">Senior Full Stack Developer</p>
+                  <p className="w-full text-sm font-semibold">CTO Fundador</p>
                 </div>
                 <a
                   href="https://www.linkedin.com/in/albertolivecorbella/"
@@ -78,14 +80,16 @@ export default function QuiSom() {
                 </a>
               </div>
             </div>
-            <div class="w-[300px] h-[414px] bg-whiteCorp rounded-md shadow-xl">
-              <Image
-                className="w-full h-[185px] object-cover object-top rounded-t-md"
-                src="https://media.licdn.com/dms/image/D4D03AQGHRf-STQur6g/profile-displayphoto-shrink_200_200/0/1702401973666?e=1711584000&v=beta&t=8A0NGvY7w1iOpeLtKd5cA9klHJZJ0xTdBboVYavIIR4"
-                alt="Andreu Benitez Moreno"
-                width={200}
-                height={200}
-              />
+            <div className="w-[200px] h-[414px] bg-whiteCorp rounded-md shadow-xl">
+              <div className="h-[185px] overflow-hidden">
+                <Image
+                  className="object-cover object-top rounded-t-md"
+                  src="/static/images/linkedin_andreu.jpeg"
+                  alt="Andreu Benitez Moreno"
+                  width={200}
+                  height={200}
+                />
+              </div>
               <div className="w-full flex flex-col justify-center items-center gap-6 py-8">
                 <div className="w-full flex justify-start items-start gap-2 pt-4">
                   <div className="w-2 h-6 bg-primary"></div>

@@ -7,7 +7,6 @@ import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
-import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import { truncateString } from "@utils/helpers";
 import CardLoading from "@components/ui/cardLoading";
 import ShareButton from "@components/ui/common/cardShareButton";
@@ -17,10 +16,10 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
   noSSR: false,
 });
+
 function Card({ event, isLoading }) {
   const { prefetch } = useRouter();
 
-  console.log(event);
   const handlePrefetch = () => {
     prefetch(`/e/${event.slug}`);
   };
