@@ -68,7 +68,7 @@ export async function getStaticPaths() {
   // Get the current year and the next three months
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const nextThreeMonths = currentMonth + 3;
+  const nextThreeMonths = currentMonth + 2;
 
   years.map((year) => {
     MONTHS_URL.map((month, index) => {
