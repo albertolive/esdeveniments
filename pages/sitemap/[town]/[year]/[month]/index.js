@@ -119,7 +119,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      events: normalizedEvents.filter(({ isAd }) => !isAd),
+      events: normalizedEvents && normalizedEvents.filter(({ isAd }) => !isAd),
       town: townLabel,
     },
   };
