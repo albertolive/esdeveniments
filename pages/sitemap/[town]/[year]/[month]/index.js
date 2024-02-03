@@ -64,26 +64,37 @@ export async function getStaticPaths() {
   const years = getAllYears();
   let params = [];
 
+  // Get the current year and the next three months
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const nextThreeMonths = currentMonth + 3;
+
   years.map((year) => {
-    MONTHS_URL.map((month) => {
-      regions.map((region) => {
-        const towns = generateTownsOptions(region.value);
-        towns.map((town) => {
-          params.push({
-            params: {
-              town: town.value,
-              year: year.toString(),
-              month: month.toLowerCase(),
-            },
+    MONTHS_URL.map((month, index) => {
+      // Only pre-render pages for the current year and the next three months
+      if (
+        year < currentYear ||
+        (year === currentYear && index <= nextThreeMonths)
+      ) {
+        regions.map((region) => {
+          const towns = generateTownsOptions(region.value);
+          towns.map((town) => {
+            params.push({
+              params: {
+                town: town.value,
+                year: year.toString(),
+                month: month.toLowerCase(),
+              },
+            });
           });
         });
-      });
+      }
     });
   });
 
   return {
     paths: params,
-    fallback: false,
+    fallback: true, // Generate remaining pages on-demand
   };
 }
 
