@@ -32,22 +32,23 @@ export default function Month({ events, town }) {
         <h1 className="font-semibold italic uppercase">
           {month} del {year}
         </h1>
-        {events.map((event) => (
-          <div key={event.id} className="">
-            <Link
-              href={`/e/${event.slug}`}
-              prefetch={false}
-              className="hover:text-primary"
-            >
-              <h3 key={event.id}>{event.title}</h3>
-              <p className="text-sm" key={event.id}>
-                {event.formattedEnd
-                  ? `${event.formattedStart} - ${event.formattedEnd}`
-                  : `${event.formattedStart}`}
-              </p>
-            </Link>
-          </div>
-        ))}
+        {events &&
+          events.map((event) => (
+            <div key={event.id} className="">
+              <Link
+                href={`/e/${event.slug}`}
+                prefetch={false}
+                className="hover:text-primary"
+              >
+                <h3 key={event.id}>{event.title}</h3>
+                <p className="text-sm" key={event.id}>
+                  {event.formattedEnd
+                    ? `${event.formattedStart} - ${event.formattedEnd}`
+                    : `${event.formattedStart}`}
+                </p>
+              </Link>
+            </div>
+          ))}
       </div>
     </>
   );
