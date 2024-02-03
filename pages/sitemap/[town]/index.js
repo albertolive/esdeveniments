@@ -48,24 +48,9 @@ export default function Sitemap({ town, label }) {
 }
 
 export async function getStaticPaths() {
-  const {
-    generateRegionsOptions,
-    generateTownsOptions,
-  } = require("@utils/helpers");
-  const regions = generateRegionsOptions();
-  const paths = [];
-  for (const region of regions) {
-    const towns = generateTownsOptions(region.value);
-    for (const town of towns) {
-      paths.push({
-        params: { town: town.value },
-      });
-    }
-  }
-
   return {
-    paths,
-    fallback: false,
+    paths: [],
+    fallback: "blocking",
   };
 }
 
