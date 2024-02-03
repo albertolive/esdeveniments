@@ -13,8 +13,8 @@ export default function Month({ events, town }) {
   if (month === "marc") month = month.replace("c", "ç");
 
   const jsonData = events
-    .filter(({ isAd }) => !isAd)
-    .map((event) => generateJsonData(event));
+    ? events.filter(({ isAd }) => !isAd).map((event) => generateJsonData(event))
+    : [];
 
   return (
     <>
