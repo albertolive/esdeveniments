@@ -18,7 +18,7 @@ jobs:
         run: yarn
 
       - name: Build App
-        run: yarn run build
+        run: yarn run vercel-build
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
