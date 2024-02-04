@@ -9,10 +9,29 @@ export default function App(props) {
 }
 
 export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
+  const { CITIES_DATA } = require("@utils/constants");
+
+  const paths = [];
+
+  for (const [regionKey, region] of CITIES_DATA) {
+    // Add path for region
+    paths.push({
+      params: {
+        place: regionKey,
+      },
+    });
+
+    // Add paths for towns
+    for (const [townKey] of region.towns) {
+      paths.push({
+        params: {
+          place: townKey,
+        },
+      });
+    }
+  }
+
+  return { paths, fallback: false };
 }
 
 export async function getStaticProps({ params }) {

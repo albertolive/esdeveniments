@@ -57,7 +57,7 @@ function Events({ props, loadMore = true }) {
   const categoryQuery = category ? CATEGORIES[category] : "";
   const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
   const pageIndex = dateFunctions[byDate] || "all";
-  const shuffleItems = sharedQuery.trim() === "" && pageIndex === "all";
+  const shuffleItems = false; //sharedQuery.trim() === "" && pageIndex === "all";
   const {
     data: { events = [], currentYear, noEventsFound = false, allEventsLoaded },
     isValidating,
