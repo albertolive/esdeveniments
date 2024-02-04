@@ -2,11 +2,11 @@ name: Lighthouse
 on:
   push:
     branches:
-      - main
+      - develop
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - main
+      - develop
 
 jobs:
   lighthouseci:
@@ -16,8 +16,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm install && npm install -g @lhci/cli@0.12.0
-      - run: npm run build && lhci collect && lhci upload
+      - run: yarn && npm install -g @lhci/cli@0.12.0
+      - run: yarn run vercel-build && lhci collect && lhci upload
         env:
           # If you app has any environment variables that
           # are required at build time, add them here:
