@@ -10,6 +10,15 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {(process.env.NODE_ENV === "development" ||
+            process.env.VERCEL_ENV === "preview") && (
+            // eslint-disable-next-line @next/next/no-sync-scripts
+            <script
+              data-project-id={process.env.NEXT_PUBLIC_METICULOUS_PROJECT_ID}
+              data-is-production-environment="false"
+              src="https://snippet.meticulous.ai/v1/meticulous.js"
+            />
+          )}
           <link
             rel="preconnect"
             href="https://fonts.gstatic.com"
