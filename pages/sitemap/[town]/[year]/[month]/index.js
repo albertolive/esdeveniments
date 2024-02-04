@@ -13,8 +13,8 @@ export default function Month({ events, town }) {
   if (month === "marc") month = month.replace("c", "ç");
 
   const jsonData = events
-    .filter(({ isAd }) => !isAd)
-    .map((event) => generateJsonData(event));
+    ? events.filter(({ isAd }) => !isAd).map((event) => generateJsonData(event))
+    : [];
 
   return (
     <>
@@ -32,31 +32,71 @@ export default function Month({ events, town }) {
         <h1 className="font-semibold italic uppercase">
           {month} del {year}
         </h1>
-        {events.map((event) => (
-          <div key={event.id} className="">
-            <Link
-              href={`/e/${event.slug}`}
-              prefetch={false}
-              className="hover:text-primary"
-            >
-              <h3 key={event.id}>{event.title}</h3>
-              <p className="text-sm" key={event.id}>
-                {event.formattedEnd
-                  ? `${event.formattedStart} - ${event.formattedEnd}`
-                  : `${event.formattedStart}`}
-              </p>
-            </Link>
-          </div>
-        ))}
+        {events &&
+          events.map((event) => (
+            <div key={event.id} className="">
+              <Link
+                href={`/e/${event.slug}`}
+                prefetch={false}
+                className="hover:text-primary"
+              >
+                <h3 key={event.id}>{event.title}</h3>
+                <p className="text-sm" key={event.id}>
+                  {event.formattedEnd
+                    ? `${event.formattedStart} - ${event.formattedEnd}`
+                    : `${event.formattedStart}`}
+                </p>
+              </Link>
+            </div>
+          ))}
       </div>
     </>
   );
 }
 
 export async function getStaticPaths() {
+  const { getAllYears } = require("@lib/dates");
+  const {
+    generateRegionsOptions,
+    generateTownsOptions,
+  } = require("@utils/helpers");
+
+  const regions = generateRegionsOptions();
+  const years = getAllYears();
+  let params = [];
+
+  // Get the current year and the next three months
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const nextThreeMonths = currentMonth + 2;
+
+  years.map((year) => {
+    MONTHS_URL.map((month, index) => {
+      // Only pre-render pages for the current year from the current month to three months ahead
+      if (
+        year === currentYear &&
+        index >= currentMonth &&
+        index <= nextThreeMonths
+      ) {
+        regions.map((region) => {
+          const towns = generateTownsOptions(region.value);
+          towns.map((town) => {
+            params.push({
+              params: {
+                town: town.value,
+                year: year.toString(),
+                month: month.toLowerCase(),
+              },
+            });
+          });
+        });
+      }
+    });
+  });
+
   return {
-    paths: [],
-    fallback: "blocking",
+    paths: params,
+    fallback: true, // Generate remaining pages on-demand
   };
 }
 
@@ -81,9 +121,8 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      events: normalizedEvents.filter(({ isAd }) => !isAd),
+      events: normalizedEvents && normalizedEvents.filter(({ isAd }) => !isAd),
       town: townLabel,
     },
-    revalidate: 60,
   };
 }
