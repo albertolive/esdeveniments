@@ -1,0 +1,48 @@
+name: Lighthouse CI
+
+on: push
+
+jobs:
+  build-deploy-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Build App
+        run: yarn run build
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: --yes
+
+      - name: Wait for Deployment
+        run: |
+          echo "Waiting for deployment to finish..."
+          preview_url=$(curl -s -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" "<https://api.vercel.com/v6/deployments?projectId=$>{{ secrets.VERCEL_PROJECT_ID }}&limit=1" | jq -r ".deployments[0].url")
+          while [[ $(curl -sL -w "%{http_code}\\\\n" "${preview_url}" -o /dev/null) != "200" ]]; do sleep 10; done
+          echo "Deployment finished. Preview URL: $preview_url"
+          echo "PREVIEW_URL=$preview_url" >> $GITHUB_ENV
+
+      - name: Run Lighthouse Tests
+        run: |
+          npm install -g @lhci/cli@0.11.x
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: lhci-report
+          path: "./.lighthouseci"
