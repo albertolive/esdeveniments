@@ -57,7 +57,7 @@ function Events({ props, loadMore = true }) {
   const categoryQuery = category ? CATEGORIES[category] : "";
   const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
   const pageIndex = dateFunctions[byDate] || "all";
-  const shuffleItems = sharedQuery.trim() === "" && pageIndex === "all";
+  const shuffleItems = false; //sharedQuery.trim() === "" && pageIndex === "all";
   const {
     data: { events = [], currentYear, noEventsFound = false, allEventsLoaded },
     isValidating,
@@ -126,6 +126,7 @@ function Events({ props, loadMore = true }) {
   useEffect(() => {
     if (!shuffleItems && !openModal && navigatedFilterModal) {
       scrollToTop();
+      resetPage();
       setNavigatedFilterModal(false);
     }
   }, [shuffleItems, openModal, navigatedFilterModal]);
@@ -133,6 +134,7 @@ function Events({ props, loadMore = true }) {
   useEffect(() => {
     if (distance && !openModal && navigatedFilterModal) {
       scrollToTop();
+      resetPage();
     }
   }, [distance, openModal, navigatedFilterModal]);
 
@@ -198,13 +200,6 @@ function Events({ props, loadMore = true }) {
       sendEventToGA("Distance", distance);
     }
   }, [distance]);
-
-  useEffect(() => {
-    if (place !== placeProps || byDate !== byDateProps) {
-      resetPage();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [place, byDate]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {

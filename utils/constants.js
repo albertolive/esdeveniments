@@ -1,6 +1,6 @@
 import { siteUrl } from "@config/index";
 
-export const MAX_RESULTS = 50;
+export const MAX_RESULTS = 10;
 
 export const DAYS = [
   "Diumenge",

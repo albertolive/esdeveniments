@@ -6,17 +6,12 @@ import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
 import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
-import MapIcon from "@heroicons/react/outline/MapIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
-import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import ReactHtmlParser from "react-html-parser";
-import ImageDefault from "@components/ui/imgDefault";
 import ViewCounter from "@components/ui/viewCounter";
 import { siteUrl } from "@config/index";
-import Link from "next/link";
 import ReportView from "@components/ui/reportView";
-import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import CardShareButton from "@components/ui/common/cardShareButton";
 import { truncateString } from "@utils/helpers";
 import ChevronUpIcon from "@heroicons/react/outline/ChevronUpIcon";
@@ -59,11 +54,11 @@ const Notification = dynamic(
   }
 );
 
-const Social = dynamic(() => import("@components/ui/common/social"), {
+const Weather = dynamic(() => import("@components/ui/weather"), {
   loading: () => "",
 });
 
-const Weather = dynamic(() => import("@components/ui/weather"), {
+const ImageDefault = dynamic(() => import("@components/ui/imgDefault"), {
   loading: () => "",
 });
 
@@ -254,7 +249,7 @@ export default function Event(props) {
       return (
         <div className="w-full">
           <div className="w-full border-t"></div>
-          <ImageDefault title={title} date={date} />
+          <ImageDefault date={date} location={location} alt={title} />
         </div>
       );
     }
@@ -377,7 +372,7 @@ export default function Event(props) {
                         ? `Del ${formattedStart} al ${formattedEnd}`
                         : `${nameDay}, ${formattedStart}`}
                     </p>
-                    <p className="text-sm font-semibold uppercase">
+                    <p className="uppercase">
                       {isFullDayEvent
                         ? "Consultar horaris"
                         : `${startTime} - ${endTime}`}
@@ -401,7 +396,7 @@ export default function Event(props) {
                     <div className="w-full flex flex-col justify-center items-start gap-4">
                       <div className="w-full flex flex-col justify-start items-start gap-1">
                         <p>{location}</p>{" "}
-                        <p className="text-sm">
+                        <p>
                           {postalCode} {town}, {region}
                         </p>
                       </div>
@@ -498,21 +493,8 @@ export default function Event(props) {
 }
 
 export async function getStaticPaths() {
-  const { getCalendarEvents } = require("@lib/helpers");
-  const { twoWeeksDefault } = require("@lib/dates");
-  const { MAX_RESULTS } = require("@utils/constants");
-  const { from, until } = twoWeeksDefault();
-  const { events } = await getCalendarEvents({
-    from,
-    until,
-    maxResults: MAX_RESULTS,
-  });
-  const eventsSlug = events
-    .filter((event) => !event.isAd)
-    .map((c) => ({ params: { eventId: c.slug } }));
-
   return {
-    paths: eventsSlug,
+    paths: [],
     fallback: "blocking",
   };
 }

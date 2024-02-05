@@ -8,7 +8,7 @@ export default memo(function Weather({ startDate }) {
   const { isLessThanFiveDays, startDate: start } = getFormattedDate(startDate);
   const { data, error } = useGetWeather(isLessThanFiveDays);
 
-  if (!data || error) return null;
+  if (!data || error) return <p>No hi ha dades meteorològiques disponibles.</p>;
 
   const weather = normalizeWeather(start, data);
   const { temp, description: weatherDescription, icon } = weather || {};

@@ -9,29 +9,25 @@ export default function App(props) {
 }
 
 export async function getStaticPaths() {
-  const { CITIES_DATA, BYDATES } = require("@utils/constants");
+  const { CITIES_DATA } = require("@utils/constants");
 
   const paths = [];
 
   for (const [regionKey, region] of CITIES_DATA) {
-    // Add paths for regions
-    const regionDatePaths = BYDATES.map((byDate) => ({
+    // Add path for region
+    paths.push({
       params: {
         place: regionKey,
-        byDate: byDate.value,
       },
-    }));
-    paths.push(...regionDatePaths);
+    });
 
     // Add paths for towns
     for (const [townKey] of region.towns) {
-      const townDatePaths = BYDATES.map((byDate) => ({
+      paths.push({
         params: {
           place: townKey,
-          byDate: byDate.value,
         },
-      }));
-      paths.push(...townDatePaths);
+      });
     }
   }
 
