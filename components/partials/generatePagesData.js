@@ -47,21 +47,24 @@ export function generatePagesData({ currentYear, place, byDate }) {
         <Link
           href={`/${place}/avui`}
           prefetch={false}
-          className="font-medium text-black underline">
+          className="font-medium text-black underline"
+        >
           avui
         </Link>
         ,{" "}
         <Link
           href={`/${place}/setmana`}
           prefetch={false}
-          className="font-medium text-black underline">
+          className="font-medium text-black underline"
+        >
           aquesta setmana
         </Link>
         , o ve,{" "}
         <Link
           href={`/${place}/cap-de-setmana`}
           prefetch={false}
-          className="font-medium text-black underline">
+          className="font-medium text-black underline"
+        >
           el cap de setmana
         </Link>{" "}
         a {label}. Ja no teniu cap excusa, per no estar al dia, de tot el que
@@ -83,7 +86,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
 
   if (byDate && place) {
     const extraProps = {
-      canonocal: `${siteUrl}/${place}/${byDate}`,
+      canonical: `${siteUrl}/${place}/${byDate}`,
       notFoundText: `Ho sentim, però no hi ha esdeveniments ${byDate} a ${label}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`,
     };
     if (byDate === "avui") {
@@ -96,7 +99,8 @@ export function generatePagesData({ currentYear, place, byDate }) {
             <Link
               href={`/${place}/setmana`}
               prefetch={false}
-              className="font-medium text-black underline">
+              className="font-medium text-black underline"
+            >
               Cada setmana
             </Link>
             , descobrireu centenars d&apos;activitats increïbles per tots els
@@ -153,7 +157,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
 
   if (byDate) {
     const extraProps = {
-      canonocal: `${siteUrl}/${byDate}`,
+      canonical: `${siteUrl}/${byDate}`,
       notFoundText: `Ho sentim, però no hi ha esdeveniments ${byDate} Catalunya. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`,
     };
     if (byDate === "avui") {
@@ -166,7 +170,8 @@ export function generatePagesData({ currentYear, place, byDate }) {
             <Link
               href={`/setmana`}
               prefetch={false}
-              className="font-medium text-black underline">
+              className="font-medium text-black underline"
+            >
               Cada setmana
             </Link>
             , descobrireu centenars d&apos;activitats increïbles per tots els

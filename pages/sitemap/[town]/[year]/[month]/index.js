@@ -28,7 +28,7 @@ export default function Month({ events, town, townLabel }) {
   return (
     <>
       <Script
-        id="-script"
+        id={`${town}-${month}-${year}-script`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
       />

@@ -148,18 +148,20 @@ export const monthsName = [
   "desembre",
 ];
 
-export const generateJsonData = ({
-  title,
-  slug,
-  description,
-  startDate,
-  endDate,
-  location,
-  imageUploaded,
-  eventImage,
-  postalCode,
-  label,
-}) => {
+export const generateJsonData = (event) => {
+  const {
+    title,
+    slug,
+    description,
+    startDate,
+    endDate,
+    location,
+    imageUploaded,
+    eventImage,
+    postalCode,
+    subLocation,
+  } = event;
+
   return {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -175,7 +177,7 @@ export const generateJsonData = ({
       address: {
         "@type": "PostalAddress",
         streetAddress: location,
-        addressLocality: label,
+        addressLocality: subLocation,
         postalCode,
         addressCountry: "ES",
         addressRegion: "CT",

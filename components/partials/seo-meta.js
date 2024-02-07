@@ -1,8 +1,6 @@
 import Head from "next/head";
 import { siteUrl } from "@config/index";
 
-const getRandomImage = Math.floor(Math.random() * 9);
-
 const Meta = (props) => {
   let image = props.imageUploaded
     ? props.imageUploaded

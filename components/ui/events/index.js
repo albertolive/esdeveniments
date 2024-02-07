@@ -271,15 +271,15 @@ function Events({ props, loadMore = true }) {
   } =
     generatePagesData({
       currentYear,
-      place,
-      byDate,
+      place: placeProps,
+      byDate: byDateProps,
     }) || {};
 
   // Render
   return (
     <>
       <Script
-        id="avui-script"
+        id={`${placeProps || "catalunya"}-${byDateProps || "all"}-script`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonEvents) }}
       />
