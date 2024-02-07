@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import Script from "next/script";
 import { generateJsonData } from "@utils/helpers";
@@ -6,7 +7,15 @@ import Link from "next/link";
 import { MONTHS_URL } from "@utils/constants";
 import { siteUrl } from "@config/index";
 
-export default function Month({ events, town }) {
+const NoEventsFound = dynamic(
+  () => import("@components/ui/common/noEventsFound"),
+  {
+    loading: () => "",
+    ssr: false,
+  }
+);
+
+export default function Month({ events, town, townLabel }) {
   const { query } = useRouter();
   let { year, month } = query;
 
@@ -24,31 +33,34 @@ export default function Month({ events, town }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
       />
       <Meta
-        title={`Arxiu del ${month} del ${year} - Esdeveniments.cat`}
-        description={`Descobreix què va passar a ${town} el ${month} del ${year}. Teatre, cinema, música, art i altres excuses per no parar de descobrir ${town} - Arxiu - Esdeveniments.cat`}
-        canonical={`${siteUrl}/sitemap/${year}/${month}`}
+        title={`Arxiu de ${townLabel} del ${month} del ${year} - Esdeveniments.cat`}
+        description={`Descobreix què va passar a ${townLabel} el ${month} del ${year}. Teatre, cinema, música, art i altres excuses per no parar de descobrir ${townLabel} - Arxiu - Esdeveniments.cat`}
+        canonical={`${siteUrl}/sitemap/${town}/${year}/${month}`}
       />
-      <div className="flex flex-col justify-center items-start gap-2 p-6">
+      <div className="flex flex-col justify-center items-center gap-2 p-6">
         <h1 className="font-semibold italic uppercase">
-          {month} del {year}
+          Arxiu {townLabel} - {month} del {year}
         </h1>
-        {events &&
-          events.map((event) => (
-            <div key={event.id} className="">
-              <Link
-                href={`/e/${event.slug}`}
-                prefetch={false}
-                className="hover:text-primary"
-              >
-                <h3 key={event.id}>{event.title}</h3>
-                <p className="text-sm" key={event.id}>
-                  {event.formattedEnd
-                    ? `${event.formattedStart} - ${event.formattedEnd}`
-                    : `${event.formattedStart}`}
-                </p>
-              </Link>
-            </div>
-          ))}
+        <div className="flex flex-col items-start">
+          {(events &&
+            events.length &&
+            events.map((event) => (
+              <div key={event.id}>
+                <Link
+                  href={`/e/${event.slug}`}
+                  prefetch={false}
+                  className="hover:text-primary"
+                >
+                  <h3 key={event.id}>{event.title}</h3>
+                  <p className="text-sm" key={event.id}>
+                    {event.formattedEnd
+                      ? `${event.formattedStart} - ${event.formattedEnd}`
+                      : `${event.formattedStart}`}
+                  </p>
+                </Link>
+              </div>
+            ))) || <NoEventsFound />}
+        </div>
       </div>
     </>
   );
@@ -122,7 +134,8 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       events: normalizedEvents && normalizedEvents.filter(({ isAd }) => !isAd),
-      town: townLabel,
+      town,
+      townLabel,
     },
   };
 }
