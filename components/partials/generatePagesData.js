@@ -118,6 +118,35 @@ export function generatePagesData({ currentYear, place, byDate }) {
         ),
         ...extraProps,
       };
+    } else if (byDate === "dema") {
+      return {
+        title: fixArticles(`Què fer demà a ${label}`),
+        subTitle: `Aprofita el teu temps i troba el que necessites: el millor de demà al teu abast.`,
+        description: (
+          <>
+            Les coses per fer {fixArticles(label)} no descansen ni un dia.{" "}
+            <Link
+              href={`/${place}/setmana`}
+              prefetch={false}
+              className="font-medium text-black underline"
+            >
+              Cada setmana
+            </Link>
+            , descobrireu centenars d&apos;activitats increïbles per tots els
+            racons. Perquè us sigui més fàcil la tria, us ajudem a trobar el pla
+            ideal per a vosaltres: cinema alternatiu, l&apos;exposició
+            imperdible, l&apos;obra de teatre de la qual tothom parla, mercats,
+            activitats familiars... Us oferim tota la informació per gaudir de{" "}
+            {label} i de la seva enorme activitat cultural. No cal moderació, la
+            podeu gaudir a l&apos;engròs.
+          </>
+        ),
+        metaTitle: fixArticles(`Què fer demà a ${label}`),
+        metaDescription: fixArticles(
+          `Què fer demà a ${label}. Us oferim tota la informació per gaudir ${label} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar.`
+        ),
+        ...extraProps,
+      };
     } else if (byDate === "setmana") {
       return {
         title: fixArticles(`Coses per fer ${label} aquesta ${byDate}`),
