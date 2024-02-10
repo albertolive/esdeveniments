@@ -15,7 +15,6 @@ import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
-import ArrowUp from "@heroicons/react/outline/ArrowUpIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
@@ -271,8 +270,8 @@ function Events({ props, loadMore = true }) {
   } =
     generatePagesData({
       currentYear,
-      place: placeProps,
-      byDate: byDateProps,
+      place: placeProps || place,
+      byDate: byDateProps || byDate,
     }) || {};
 
   // Render
@@ -296,7 +295,13 @@ function Events({ props, loadMore = true }) {
             : "hidden"
         }`}
       >
-        <NextImage src={Imago} className="p-1" width="28" height="28" />
+        <NextImage
+          src={Imago}
+          className="p-1"
+          width="28"
+          height="28"
+          alt="Esdeveniments.cat"
+        />
         {/* <ArrowUp className="w-5 h-5" aria-hidden="true" /> */}
       </div>
       <div
@@ -378,7 +383,11 @@ function Events({ props, loadMore = true }) {
             ))}
           </div>
         ) : (
-          <List events={filteredEvents}>
+          <List
+            events={filteredEvents}
+            title={title}
+            hideTitle={noEventsFound || filteredEvents.length === 0}
+          >
             {(event) => <Card key={event.id} event={event} />}
           </List>
         )}
