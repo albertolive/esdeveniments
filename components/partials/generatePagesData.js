@@ -29,10 +29,10 @@ export function generatePagesData({ currentYear, place, byDate }) {
       metaTitle: `Agenda ${label} ${currentYear} - Esdeveniments.cat`,
       metaDescription: `Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a ${label}. L'agenda és col·laborativa.`,
       title: `Agenda ${label} ${currentYear}`,
-      subTitle: `${fixArticles(`Les millors coses per fer ${label}: mercats, exposicions,
+      subTitle: `${fixArticles(`Les millors coses per fer a ${label}: mercats, exposicions,
       descobriments, passejades, concerts, museus, teatre... Aquests són els
       millors plans per gaudir aquest ${month}!`)}`,
-      description: `${fixArticles(`Voleu viure experiències úniques i emocionants? La cultura ${label} és el lloc on cal estar! Us oferim una gran varietat d'opcions perquè mai us avorriu i sempre tingueu
+      description: `${fixArticles(`Voleu viure experiències úniques i emocionants? La cultura a ${label} és el lloc on cal estar! Us oferim una gran varietat d'opcions perquè mai us avorriu i sempre tingueu
       alguna cosa interessant per fer. Descobriu tot el que passa ${label} i voltants, i deixeu-vos sorprendre per la seva riquesa cultural.`)}`,
       canonical: `${siteUrl}/${place}`,
       notFoundText: `Ho sentim, però no hi ha esdeveniments a ${label}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`,
@@ -147,9 +147,9 @@ export function generatePagesData({ currentYear, place, byDate }) {
       };
     } else if (byDate === "setmana") {
       return {
-        title: fixArticles(`Coses per fer ${label} aquesta ${byDate}`),
+        title: fixArticles(`Coses per fer a ${label} aquesta ${byDate}`),
         subTitle: fixArticles(
-          `Us proposem activitats d'oci i cultura ${label} per a tots els gustos i butxaques.`
+          `Us proposem activitats d'oci i cultura a ${label} per a tots els gustos i butxaques.`
         ),
         description:
           fixArticles(`Teniu ganes de gaudir de aquesta setmana? Esteu en el lloc correcte! Us hem fet
@@ -165,9 +165,9 @@ export function generatePagesData({ currentYear, place, byDate }) {
       };
     } else if (byDate === "cap-de-setmana") {
       return {
-        title: fixArticles(`Què fer aquest cap de setmana ${label}`),
+        title: fixArticles(`Què fer aquest cap de setmana a ${label}`),
         subTitle: fixArticles(
-          `Les millors propostes per esprémer al màxim el cap de setmana ${label}, de divendres a diumenge.`
+          `Les millors propostes per esprémer al màxim el cap de setmana a ${label}, de divendres a diumenge.`
         ),
         description:
           fixArticles(`Hem bussejat en l'agenda cultural ${label} i us portem una tria
