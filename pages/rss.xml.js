@@ -1,7 +1,6 @@
 import { siteUrl } from "@config/index";
 import { Feed } from "feed";
 import { getCalendarEvents } from "@lib/helpers";
-import { MAX_RESULTS } from "@utils/constants";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
 import { captureException } from "@sentry/nextjs";
 
@@ -24,7 +23,7 @@ const getAllArticles = async (region, town, maxEventsPerDay) => {
       q,
       normalizeRss: true,
       filterByDate: true,
-      maxResults: MAX_RESULTS,
+      maxResults: 1000,
       shuffleItems: true,
     });
 
