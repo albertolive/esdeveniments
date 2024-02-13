@@ -423,7 +423,6 @@ export default function Event(props) {
                 <Weather startDate={startDate} />
               </div>
             </div>
-
             {/* EditButton */}
             <div className="w-full flex justify-center items-start gap-2 px-4">
               <PencilIcon className="w-5 h-5 mt-1" />
@@ -451,6 +450,14 @@ export default function Event(props) {
                     canvi i actualitzarem l&apos;informació.
                   </Tooltip>
                 </div>
+              </div>
+            </div>
+            {/* Ad */}
+            <div className="w-full h-full flex justify-center items-start px-4 min-h-[280px] gap-2 lg:min-h-[100px]">
+              <SpeakerphoneIcon className="w-5 h-5 mt-1" />
+              <div className="w-11/12 flex flex-col gap-4">
+                <h2>Contingut patrocinat</h2>
+                <AdArticle slot="9643657007" />
               </div>
             </div>
           </article>
