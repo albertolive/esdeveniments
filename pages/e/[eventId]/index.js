@@ -86,58 +86,53 @@ function isHTML(text) {
   return text.match(/<[a-z][\s\S]*>/i);
 }
 
-function truncate(source, size, addDots = false) {
-  return source.slice(0, size - 3) + (addDots ? "..." : "");
-}
+// Helper function to sanitize input
+const sanitizeInput = (input) =>
+  input
+    .replace(/(<([^>]+)>)/gi, "") // Remove HTML tags
+    .replace(/&nbsp;/gi, " ") // Replace non-breaking spaces
+    .replace(/"/gi, "") // Remove double quotes
+    .trim(); // Trim leading and trailing spaces
+
+// Helper function to smartly truncate text to a max length without cutting words
+const smartTruncate = (text, maxLength) => {
+  if (text.length <= maxLength) return text;
+  const lastSpaceIndex = text.substring(0, maxLength).lastIndexOf(" ");
+  return lastSpaceIndex > maxLength - 20
+    ? text.substring(0, lastSpaceIndex)
+    : text.substring(0, maxLength);
+};
 
 function generateMetaDescription(title, description) {
-  const titleSanitized = title.replace(/(<([^>]+)>)/gi, "");
-  let text = titleSanitized;
+  const titleSanitized = sanitizeInput(title);
+  let metaDescription = titleSanitized;
 
-  if (text.length < 156) {
-    const descriptionSanitized = description
-      .replace(/(<([^>]+)>)/gi, "")
-      .replace(/&nbsp;/gi, " ")
-      .replace(/"/gi, "")
-      .replace(/^\s+|\s+$/g, "");
-
-    text += ` - ${descriptionSanitized}`;
+  if (metaDescription.length < 120) {
+    const descriptionSanitized = sanitizeInput(description);
+    metaDescription += ` - ${descriptionSanitized}`;
   }
 
-  text = text.replace(/^(.{156}[^\s]*).*/, "$1");
+  metaDescription = smartTruncate(metaDescription, 156);
 
-  if (text.length > 156 - 3) {
-    text = truncate(text, 156, true);
-  }
-
-  return text;
+  return metaDescription;
 }
 
 function generateMetaTitle(title, alternativeText, location) {
-  const titleSanitized = title.replace(/(<([^>]+)>)/gi, "");
-  let text = titleSanitized;
+  const titleSanitized = sanitizeInput(title);
+  let metaTitle = smartTruncate(titleSanitized, 60);
 
-  text = text.replace(/^(.{60}[^\s]*).*/, "$1");
-
-  if (text.length > 60) {
-    text = truncate(text, 37);
-    text = `${text} - ${alternativeText}`;
-    text = truncate(text, 60);
-  } else if (text.length !== 60) {
-    text = truncate(text, 37);
-    text = `${text} - ${alternativeText}`;
-
-    if (text.length > 60) text = truncate(text, 60);
+  if (location && location.trim() !== "") {
+    metaTitle = `${metaTitle} - ${location}`;
+    metaTitle = smartTruncate(metaTitle, 60);
   }
 
-  if (text.length < 60) {
-    text = `${text} - ${location}`;
-    text = truncate(text, 60);
+  if (metaTitle.length < 50) {
+    const alternativeTextSanitized = sanitizeInput(alternativeText);
+    metaTitle = `${metaTitle} - ${alternativeTextSanitized}`;
+    metaTitle = smartTruncate(metaTitle, 60);
   }
 
-  text = text.replace(/^(.{53}[^\s]*).*/, "$1");
-
-  return text;
+  return metaTitle;
 }
 
 const sendGoogleEvent = (event, obj) =>
@@ -259,7 +254,7 @@ export default function Event(props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
       />
       <Meta
-        title={generateMetaTitle(title, "Esdeveniments.cat", location)}
+        title={generateMetaTitle(title, description, location)}
         description={generateMetaDescription(
           `${title} - ${nameDay} ${formattedStart} - ${location}`,
           description
