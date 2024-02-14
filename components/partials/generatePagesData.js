@@ -37,7 +37,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
 
   if (type === "town" && !byDate) {
     return {
-      metaTitle: `Descobreix ${label} aquest ${month} (Agenda ${currentYear})`,
+      metaTitle: `Descobreix ${label} aquest ${month} - Agenda ${currentYear}`,
       metaDescription: `Descobreix els esdeveniments imperdibles a ${label} en ${currentYear}. Concerts, exposicions, i més t'esperen. Suma't a la nostra agenda col·laborativa.`,
       title: `Agenda ${label} ${currentYear}`,
       subTitle: `Explora les millors activitats a ${label}: mercats, exposicions, passejades, concerts, i més. Viu intensament ${label} aquest ${normalizedMonth}.`,

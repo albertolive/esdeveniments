@@ -122,18 +122,27 @@ function generateMetaTitle(title, description, location, town) {
   let metaTitle = smartTruncate(titleSanitized, 60);
 
   // Combine location and town, and sanitize the input
-  const locationTown = sanitizeInput(location + " " + town).trim();
+  let locationTown = "";
+  if (
+    location &&
+    town &&
+    metaTitle.length + location.length + town.length + 5 <= 60
+  ) {
+    locationTown = sanitizeInput(location + " " + town).trim();
+  } else if (location && metaTitle.length + location.length + 3 <= 60) {
+    locationTown = sanitizeInput(location).trim();
+  }
 
-  // Only append location and town if they are not empty
+  // Only append location and town if they are not empty and fit within the limit
   if (locationTown) {
-    metaTitle = `${metaTitle} | ${locationTown}`;
+    metaTitle = `${metaTitle} - ${locationTown}`;
     metaTitle = smartTruncate(metaTitle, 60);
   }
 
   // Check if there's enough space and description is provided before appending
   if (metaTitle.length < 50 && description && description.trim() !== "") {
     const descriptionSanitized = sanitizeInput(description);
-    metaTitle = `${metaTitle} | ${descriptionSanitized}`;
+    metaTitle = `${metaTitle} - ${descriptionSanitized}`;
     metaTitle = smartTruncate(metaTitle, 60);
   }
 
@@ -259,7 +268,7 @@ export default function Event(props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
       />
       <Meta
-        title={generateMetaTitle(title, description, location, town)}
+        title={generateMetaTitle(title, "", location, town)}
         description={generateMetaDescription(
           `${title} - ${nameDay} ${formattedStart} - ${location}`,
           description

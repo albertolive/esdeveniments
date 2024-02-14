@@ -282,8 +282,8 @@ function Events({ props, loadMore = true }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonEvents) }}
       />
       <Meta
-        title={`${metaTitle} - Esdeveniments.cat`}
-        description={`${metaDescription}`}
+        title={metaTitle}
+        description={metaDescription}
         canonical={canonical}
       />
       <div
