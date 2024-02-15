@@ -83,6 +83,7 @@ function Card({ event, isLoading }) {
               image={event.imageUploaded}
               alt={event.title}
               layout="responsive"
+              priority={true}
             />
           </div>
         </div>
