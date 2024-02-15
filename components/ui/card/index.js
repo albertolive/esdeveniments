@@ -3,7 +3,6 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import NextImage from "next/image";
-import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
@@ -15,6 +14,10 @@ import ViewCounter from "@components/ui/viewCounter";
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
   noSSR: false,
+});
+
+const Image = dynamic(() => import("@components/ui/common/image"), {
+  loading: () => "",
 });
 
 function Card({ event, isLoading }) {
