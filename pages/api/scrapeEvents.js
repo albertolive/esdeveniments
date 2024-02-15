@@ -24,7 +24,7 @@ const CITIES = {
 function convertToRSSDate(dateString, dateRegex) {
   const monthMap = {
     gen: "01",
-    feb: "02",
+    febr: "02",
     març: "03",
     abr: "04",
     maig: "05",
