@@ -40,7 +40,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
       metaTitle: `Descobreix ${label} aquest ${month} - Agenda ${currentYear}`,
       metaDescription: `Descobreix els esdeveniments imperdibles a ${label} en ${currentYear}. Concerts, exposicions, i més t'esperen. Suma't a la nostra agenda col·laborativa.`,
       title: `Agenda ${label} ${currentYear}`,
-      subTitle: `Explora les millors activitats a ${label}: mercats, exposicions, passejades, concerts, i més. Viu intensament ${label} aquest ${normalizedMonth}.`,
+      subTitle: `Explora les millors activitats a ${label}: mercats, exposicions, passejades, concerts, i més. Viu intensament ${label} aquest ${month}.`,
       canonical: `${siteUrl}/${place}`,
       notFoundText: `Ho sentim, però no hi ha esdeveniments a ${label}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`,
     };
