@@ -314,7 +314,7 @@ export const CITIES_DATA = new Map([
           "cardedeu",
           {
             label: "Cardedeu",
-            rssFeed: "https://www.culturacardedeu.com/rss.xml",
+            rssFeed: "https://www.culturacardedeu.com/rss.xml?until=60",
             descriptionSelector: "#description",
             imageSelector: "#image",
             locationSelector: "#location a",

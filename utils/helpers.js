@@ -328,6 +328,11 @@ export function generateDatesOptions(byDate) {
     : [];
 }
 
+export function getByDateLabel(byDateValue) {
+  const byDateObj = BYDATES.find((byDate) => byDate.value === byDateValue);
+  return byDateObj ? byDateObj.label : "";
+}
+
 export function getTownOptionsWithoutRegion(town) {
   let townData = {};
 

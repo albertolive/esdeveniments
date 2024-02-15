@@ -15,7 +15,6 @@ import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
-import ArrowUp from "@heroicons/react/outline/ArrowUpIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
@@ -265,14 +264,13 @@ function Events({ props, loadMore = true }) {
     metaDescription,
     title,
     subTitle,
-    description,
     canonical,
     notFoundText,
   } =
     generatePagesData({
       currentYear,
-      place: placeProps,
-      byDate: byDateProps,
+      place: placeProps || place,
+      byDate: byDateProps || byDate,
     }) || {};
 
   // Render
@@ -284,8 +282,8 @@ function Events({ props, loadMore = true }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonEvents) }}
       />
       <Meta
-        title={`${metaTitle} - Esdeveniments.cat`}
-        description={`${metaDescription}`}
+        title={metaTitle}
+        description={metaDescription}
         canonical={canonical}
       />
       <div
@@ -296,7 +294,13 @@ function Events({ props, loadMore = true }) {
             : "hidden"
         }`}
       >
-        <NextImage src={Imago} className="p-1" width="28" height="28" />
+        <NextImage
+          src={Imago}
+          className="p-1"
+          width="28"
+          height="28"
+          alt="Esdeveniments.cat"
+        />
         {/* <ArrowUp className="w-5 h-5" aria-hidden="true" /> */}
       </div>
       <div
@@ -328,44 +332,7 @@ function Events({ props, loadMore = true }) {
           />
         </div>
       </div>
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px]">
-        <div className="mt-4">
-          <div className="p-2 flex flex-col justify-center items-center invisible">
-            <button
-              onClick={toggleDropdown}
-              className={`w-11/12 py-4 flex justify-start items-center gap-1 text-blackCorp focus:outline-none`}
-            >
-              {open ? (
-                <p className="w-24 text-center">Tancar</p>
-              ) : (
-                <p className="w-24 text-center">Informació</p>
-              )}
-              {open ? (
-                <XIcon className="h-4 w-4" />
-              ) : (
-                <PlusIcon className="h-4 w-4" />
-              )}
-            </button>
-            {open && (
-              <div className="flex flex-col gap-4 py-4 border-t border-darkCorp">
-                <div>
-                  <h1 className="leading-8 font-semibold text-blackCorp text-center md:text-left uppercase italic">
-                    {title}
-                  </h1>
-                </div>
-                <div className="px-2 flex flex-col justify-center items-center gap-4 lg:justify-center lg:items-start lg:gap-x-8 lg:mx-20 lg:flex lg:flex-row">
-                  <p className="w-full text-center md:text-left lg:w-1/2">
-                    {subTitle}
-                  </p>
-                  <div className="w-1/2 border-b border-darkCorp lg:hidden"></div>
-                  <p className="w-full text-center md:text-left lg:w-1/2">
-                    {description}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
         {!isLoading &&
           !isValidating &&
           (noEventsFound || filteredEvents.length === 0) && (
@@ -378,7 +345,12 @@ function Events({ props, loadMore = true }) {
             ))}
           </div>
         ) : (
-          <List events={filteredEvents}>
+          <List
+            events={filteredEvents}
+            title={title}
+            subTitle={subTitle}
+            hideTitle={noEventsFound || filteredEvents.length === 0}
+          >
             {(event) => <Card key={event.id} event={event} />}
           </List>
         )}
