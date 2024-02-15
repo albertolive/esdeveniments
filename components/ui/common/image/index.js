@@ -16,6 +16,7 @@ function ImageComponent({
   subLocation,
   image,
   className = "w-full h-full flex justify-center items-center",
+  priority = false,
 }) {
   const [hasError, setHasError] = useState(false);
   const imageClassName = `${className}`;
@@ -50,6 +51,7 @@ function ImageComponent({
         style={{
           objectFit: "contain",
         }}
+        priority={priority}
       />
     </div>
   );

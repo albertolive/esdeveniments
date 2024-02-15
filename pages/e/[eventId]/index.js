@@ -310,6 +310,7 @@ export default function Event(props) {
                     title={title}
                     image={imageUploaded}
                     className="w-full object-center object-cover"
+                    priority={true}
                   />
                 </a>
               ) : (
