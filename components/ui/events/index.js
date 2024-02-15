@@ -14,8 +14,6 @@ import { MAX_RESULTS, dateFunctions } from "@utils/constants";
 import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
 import Card from "@components/ui/card";
-import PlusIcon from "@heroicons/react/outline/PlusIcon";
-import XIcon from "@heroicons/react/outline/XIcon";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
 import Search from "@components/ui/search";
