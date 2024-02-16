@@ -24,7 +24,7 @@ export default function BaseLayout({ children }) {
         <meta name="description" content="Esdeveniments.cat" />
         <link rel="icon" href="/favicon.ico" />
         <link
-          rel="alternative"
+          rel="alternate"
           title="RSS Feed Esdeveniments.cat"
           type="application/rss+xml"
           href="/rss.xml"
