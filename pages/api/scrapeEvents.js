@@ -3,6 +3,7 @@ const cheerio = require("cheerio");
 const RSS = require("rss");
 const { DateTime } = require("luxon");
 import { siteUrl } from "@config/index";
+import { captureException } from "@sentry/nextjs";
 import { createHash } from "@utils/normalize";
 
 const CITIES = {
@@ -49,7 +50,9 @@ function convertToRSSDate(dateString, dateRegex) {
     const monthNumber = monthMap[month.toLowerCase()];
 
     if (!monthNumber) {
-      console.error(`Invalid month value: ${month}`);
+      const error = `Invalid month value: ${month}`;
+      console.error(error);
+      captureException(error);
       return null;
     }
 
@@ -157,7 +160,7 @@ async function createEventRss(city) {
     return rssXml;
   } catch (error) {
     console.error("Error creating RSS feed:", error);
-    throw new Error("Failed to create RSS feed");
+    throw new Error("Failed to create RSS feed", error);
   }
 }
 
@@ -176,5 +179,6 @@ export default async function handler(req, res) {
     res
       .status(500)
       .json({ error: "Failed to create RSS feed", details: error });
+    captureException(error);
   }
 }
