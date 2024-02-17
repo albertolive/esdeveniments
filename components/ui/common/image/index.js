@@ -45,7 +45,7 @@ function ImageComponent({
         height={500}
         placeholder="blur"
         blurDataURL={solidColorPlaceholder}
-        loading="lazy"
+        loading={priority ? "eager" : "lazy"}
         onError={() => setHasError(true)}
         quality={75}
         style={{
