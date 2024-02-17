@@ -6,6 +6,21 @@ import { captureException } from "@sentry/nextjs";
 
 const SITE_NAME = "Esdeveniments.cat";
 
+function shuffle(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  while (currentIndex > 1) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+  return array;
+}
+
 const getAllArticles = async (region, town, maxEventsPerDay) => {
   const { label: regionLabel } = getPlaceTypeAndLabel(region);
   const { label: townLabel } = getPlaceTypeAndLabel(town);
@@ -27,8 +42,10 @@ const getAllArticles = async (region, town, maxEventsPerDay) => {
       shuffleItems: true,
     });
 
+    const shuffledEvents = shuffle(events);
+
     // Limit the number of events
-    const limitedEvents = events.slice(0, maxEventsPerDay);
+    const limitedEvents = shuffledEvents.slice(0, maxEventsPerDay);
 
     return JSON.parse(JSON.stringify(limitedEvents));
   } catch (error) {
@@ -66,7 +83,7 @@ const buildFeed = (items, region, town) => {
       townLabel || regionLabel || "Catalunya"
     }`,
     copyright: SITE_NAME,
-    updated: items.length > 0 ? new Date(items[0].startDate) : new Date(),
+    updated: new Date(),
     author: {
       name: SITE_NAME,
       link: siteUrl,
