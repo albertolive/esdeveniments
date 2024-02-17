@@ -221,7 +221,7 @@ const osona = [
       [
         "sant-marti-dalbars",
         {
-          label: "Sant Martí d’Albars",
+          label: "Sant Martí d'Albars",
           rssFeed: "https://www.santmartidalbars.cat/rss/12/0/",
           postalCode: "08504",
           coords: { lat: "41.95", lng: "2.2833" },
@@ -326,7 +326,9 @@ const osona = [
             "https://www.taradell.cat/index.php?md=articles&accio=rss&id=11990",
           postalCode: "08552",
           coords: { lat: "41.8730900", lng: "2.2842100" },
-          ...sharedData,
+          descriptionSelector: ".entradeta", // Fix getting description and image
+          imageSelector: "#agenda_info_foto",
+          getDescriptionFromRss: true,
         },
       ],
       [
