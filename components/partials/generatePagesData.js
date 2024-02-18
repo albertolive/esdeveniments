@@ -1,11 +1,9 @@
-// import Link from "next/link";
 import { siteUrl } from "@config/index";
 import { monthsName } from "@utils/helpers";
-import { addArticleToMonth, fixArticles } from "@utils/normalize";
+import { fixArticles } from "@utils/normalize";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
 
 const month = monthsName[new Date().getMonth()];
-const normalizedMonth = addArticleToMonth(month);
 
 export function generatePagesData({ currentYear, place, byDate }) {
   const { type, label } = getPlaceTypeAndLabel(place);
@@ -24,10 +22,10 @@ export function generatePagesData({ currentYear, place, byDate }) {
 
   if (type === "region" && !byDate) {
     return {
-      title: `El millor de ${label}. Agenda ${currentYear}`,
-      subTitle: `${fixArticles(`Les millors coses per fer a ${label}: mercats, exposicions,
+      title: `Què fer a ${label}. Agenda ${currentYear}`,
+      subTitle: `Les millors coses per fer a ${label}: mercats, exposicions,
       descobriments, passejades, concerts, museus, teatre... Aquests són els
-      millors plans per gaudir aquest ${month}!`)}`,
+      millors plans per gaudir aquest ${month}!`,
       metaTitle: `El millor de ${label}. Agenda ${currentYear}`,
       metaDescription: `Descobreix amb els millors actes culturals clau aquest ${month} a ${label}. Des de concerts fins a exposicions, la nostra agenda col·laborativa t'espera.`,
       canonical: `${siteUrl}/${place}`,
@@ -37,8 +35,8 @@ export function generatePagesData({ currentYear, place, byDate }) {
 
   if (type === "town" && !byDate) {
     return {
-      metaTitle: `Descobreix ${label} aquest ${month} - Agenda ${currentYear}`,
-      metaDescription: `Descobreix els esdeveniments imperdibles a ${label} en ${currentYear}. Concerts, exposicions, i més t'esperen. Suma't a la nostra agenda col·laborativa.`,
+      metaTitle: `Què fer a ${label} aquest ${month} - Agenda ${currentYear}`,
+      metaDescription: `Descobreix els esdeveniments imperdibles a ${label} aquest ${currentYear}. Concerts, exposicions, i més t'esperen. Suma't a la nostra agenda col·laborativa.`,
       title: `Agenda ${label} ${currentYear}`,
       subTitle: `Explora les millors activitats a ${label}: mercats, exposicions, passejades, concerts, i més. Viu intensament ${label} aquest ${month}.`,
       canonical: `${siteUrl}/${place}`,
