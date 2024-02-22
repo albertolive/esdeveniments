@@ -39,7 +39,7 @@ const handler = async (req, res) => {
   let events = [];
 
   switch (page) {
-    case "today":
+    case "today": {
       const { from: fromToday, until: untilToday } = today();
       events = await getEvents({
         from: fromToday,
@@ -49,7 +49,8 @@ const handler = async (req, res) => {
         shuffleItems,
       });
       break;
-    case "tomorrow":
+    }
+    case "tomorrow": {
       const { from: fromTomorrow, until: toTomorrow } = tomorrow();
 
       events = await getEvents({
@@ -60,7 +61,8 @@ const handler = async (req, res) => {
         shuffleItems,
       });
       break;
-    case "week":
+    }
+    case "week": {
       const { from: fromWeek, until: toWeek } = week();
       events = await getEvents({
         from: fromWeek,
@@ -70,7 +72,8 @@ const handler = async (req, res) => {
         shuffleItems,
       });
       break;
-    case "weekend":
+    }
+    case "weekend": {
       const { from: fromWeekend, until: toWeekend } = weekend();
       events = await getEvents({
         from: fromWeekend,
@@ -80,13 +83,16 @@ const handler = async (req, res) => {
         shuffleItems,
       });
       break;
-    case "search":
+    }
+    case "search": {
       const fromSearch = new Date();
       events = await getEvents({ from: fromSearch, q, shuffleItems });
       break;
-    default:
+    }
+    default: {
       const from = new Date();
       events = await getEvents({ from, q, maxResults, shuffleItems });
+    }
   }
 
   try {

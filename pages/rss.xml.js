@@ -68,7 +68,7 @@ const getAllArticles = async (region, town, maxEventsPerDay, untilProp = 7) => {
 };
 
 const selectImage = (item) => {
-  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
+  const regex = /(http(s?):)([\\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
   const hasEventImage = item.description.match(regex);
   const eventImage = hasEventImage && hasEventImage[0];
 

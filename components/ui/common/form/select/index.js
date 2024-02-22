@@ -2,23 +2,25 @@ import { useState, useEffect } from "react";
 import CreatableSelect from "react-select/creatable";
 import { components } from "react-select";
 
+const borderColor = "#CCC !important";
+
 const customStyles = {
   container: (provided) => ({
     ...provided,
     borderColor: "#FFF !important",
-    border:"0px",
+    border: "0px",
   }),
   input: (provided, state) => ({
     ...provided,
     fontSize: "16px",
-    borderColor: state.isSelected ? "#CCC !important" : "#CCC !important",
-    borderColor: state.isFocused ? "#CCC !important" : "#CCC !important",
+    borderColor:
+      state.isFocused || state.isSelected ? borderColor : borderColor,
     padding: "0px 15px",
   }),
   control: (provided, state) => ({
     ...provided,
-    borderColor: state.isSelected ? "#FFF !important" : "#FFF !important",
-    borderColor: state.isFocused ? "#FFF !important" : "#FFF !important",
+    borderColor:
+      state.isFocused || state.isSelected ? borderColor : borderColor,
     boxShadow: state.isFocused ? "#000 !important" : "#CCC !important",
     borderRadius: "0px",
   }),

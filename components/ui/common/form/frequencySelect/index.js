@@ -1,32 +1,34 @@
 import Select from "react-select";
 import { useState } from "react";
 
+const borderColor = "#D1D5DB !important";
+
 const customStyles = {
-  container: (provided, state) => ({
+  container: (provided) => ({
     ...provided,
-    borderColor: "#D1D5DB !important",
+    borderColor: borderColor,
   }),
   input: (provided, state) => ({
     ...provided,
     fontSize: "14px",
-    borderColor: state.isSelected ? "#D1D5DB !important" : "#D1D5DB !important",
-    borderColor: state.isFocused ? "#D1D5DB !important" : "#D1D5DB !important",
+    borderColor:
+      state.isFocused || state.isSelected ? borderColor : borderColor,
   }),
   control: (provided, state) => ({
     ...provided,
-    borderColor: state.isSelected ? "#D1D5DB !important" : "#D1D5DB !important",
-    borderColor: state.isFocused ? "#D1D5DB !important" : "#D1D5DB !important",
-    boxShadow: state.isFocused ? "#D1D5DB !important" : "#D1D5DB !important",
+    boxShadow: state.isFocused ? borderColor : borderColor,
+    borderColor:
+      state.isFocused || state.isSelected ? borderColor : borderColor,
   }),
-  placeholder: (provided, state) => ({
+  placeholder: (provided) => ({
     ...provided,
     fontSize: "14px",
   }),
-  option: (provided, state) => ({
+  option: (provided) => ({
     ...provided,
     fontSize: "14px",
   }),
-  singleValue: (provided, state) => ({
+  singleValue: (provided) => ({
     ...provided,
     fontSize: "14px",
   }),

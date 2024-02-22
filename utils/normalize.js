@@ -47,7 +47,7 @@ export const normalizeWeather = (startDate, weatherInfo) => {
 
 const hasEventImage = (description) => {
   const regexTraditional =
-    /(http(s?):)([\/|.|\w|\s|-])*\.(?!html|css|js)(?:jpg|jpeg|gif|png|JPG|PNG)/g;
+    /(http(s?):)([\\/|.|\w|\s|-])*\.(?!html|css|js)(?:jpg|jpeg|gif|png|JPG|PNG)/g;
   const regexCloudinary = /https?:\/\/res\.cloudinary\.com\/[^<]+/g;
 
   const hasTraditionalImage =

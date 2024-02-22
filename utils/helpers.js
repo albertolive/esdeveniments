@@ -318,8 +318,9 @@ export function getRegionsLabel() {
 }
 
 export function generateTownsOptions(region) {
-  return region
-    ? [...CITIES_DATA.get(region)?.towns.entries()]
+  const regionData = CITIES_DATA.get(region);
+  return region && regionData
+    ? [...regionData.towns.entries()]
         .filter(([_, town]) => !town.hide)
         .sort((a, b) => a[1].label.localeCompare(b[1].label))
         .map(([townKey, town]) => ({
@@ -380,7 +381,6 @@ export function getTownOptionsWithLabel(label) {
 
 export function getRegionValueByLabel(regionLabel) {
   for (const [regionKey, region] of CITIES_DATA.entries()) {
-    debugger;
     if (region.label === regionLabel) {
       return regionKey;
     }
