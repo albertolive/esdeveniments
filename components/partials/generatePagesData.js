@@ -1,6 +1,5 @@
 import { siteUrl } from "@config/index";
 import { monthsName } from "@utils/helpers";
-import { fixArticles } from "@utils/normalize";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
 
 const month = monthsName[new Date().getMonth()];

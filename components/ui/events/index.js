@@ -299,7 +299,6 @@ function Events({ props, loadMore = true }) {
           height="28"
           alt="Esdeveniments.cat"
         />
-        {/* <ArrowUp className="w-5 h-5" aria-hidden="true" /> */}
       </div>
       <div
         className={`w-full bg-whiteCorp fixed transition-all duration-500 ease-in-out ${

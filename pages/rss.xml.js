@@ -21,14 +21,14 @@ function shuffle(array) {
   return array;
 }
 
-const getAllArticles = async (region, town, maxEventsPerDay) => {
+const getAllArticles = async (region, town, maxEventsPerDay, untilProp = 7) => {
   const { label: regionLabel } = getPlaceTypeAndLabel(region);
   const { label: townLabel } = getPlaceTypeAndLabel(town);
 
   try {
     const now = new Date();
     const from = new Date();
-    const until = new Date(now.setDate(now.getDate() + 7)); // TODO: Change to accept a parameter
+    const until = new Date(now.setDate(now.getDate() + Number(untilProp)));
 
     const q = town ? `${townLabel} ${regionLabel}` : regionLabel;
 
@@ -42,10 +42,18 @@ const getAllArticles = async (region, town, maxEventsPerDay) => {
       shuffleItems: true,
     });
 
-    const shuffledEvents = shuffle(events);
+    const shuffledEvents = events;
+
+    // Get the last event
+    const lastEvent = shuffledEvents[shuffledEvents.length - 1];
 
     // Limit the number of events
     const limitedEvents = shuffledEvents.slice(0, maxEventsPerDay);
+
+    // Add the last event to the limited events
+    if (lastEvent) {
+      limitedEvents.push(lastEvent);
+    }
 
     return JSON.parse(JSON.stringify(limitedEvents));
   } catch (error) {
@@ -68,7 +76,7 @@ const selectImage = (item) => {
     ? item.imageUploaded
     : eventImage
     ? eventImage
-    : undefined;
+    : `${siteUrl}/static/images/logo-seo-meta.webp`;
 };
 
 const buildFeed = (items, region, town) => {
@@ -119,9 +127,9 @@ export const getServerSideProps = async (context) => {
     const { res, query } = context;
 
     // Extract region and town from query parameters
-    const { region, town, maxEventsPerDay } = query;
+    const { region, town, maxEventsPerDay, until } = query;
 
-    const articles = await getAllArticles(region, town, maxEventsPerDay);
+    const articles = await getAllArticles(region, town, maxEventsPerDay, until);
 
     const feed = buildFeed(articles, region, town);
     res.setHeader("content-type", "text/xml");

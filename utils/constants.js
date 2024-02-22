@@ -1,7 +1,7 @@
 import { siteUrl } from "@config/index";
 import { osona } from "@utils/cities";
 
-export const MAX_RESULTS = 10;
+export const MAX_RESULTS = 15;
 
 export const DAYS = [
   "Diumenge",

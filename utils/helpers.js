@@ -183,7 +183,11 @@ export const generateJsonData = (event) => {
         addressRegion: "CT",
       },
     },
-    image: [imageUploaded, eventImage].filter(Boolean),
+    image: [
+      imageUploaded,
+      eventImage,
+      `${siteUrl}/static/images/logo-seo-meta.webp`,
+    ].filter(Boolean),
     description,
     performer: {
       "@type": "PerformingGroup",
