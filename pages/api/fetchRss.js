@@ -187,7 +187,7 @@ async function cleanProcessedItems(processedItems, town) {
 }
 
 const getEventImageUrl = (description) => {
-  const regex = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
+  const regex = /(http(s?):)([\\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
   const match = description && description.match(regex);
   return match && match[0];
 };
