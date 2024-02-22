@@ -5,8 +5,10 @@ import Filters from "@components/ui/filters";
 
 function SubMenu({
   place,
+  placeProps,
   setPlace,
   byDate,
+  byDateProps,
   setByDate,
   category,
   setCategory,
@@ -67,8 +69,10 @@ function SubMenu({
       <Filters
         setOpenModal={setOpenModal}
         place={place}
+        placeProps={placeProps}
         setPlace={setPlace}
         byDate={byDate}
+        byDateProps={byDateProps}
         setByDate={setByDate}
         category={category}
         setCategory={setCategory}

@@ -312,8 +312,10 @@ function Events({ props, loadMore = true }) {
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
             place={place}
+            placeProps={placeProps}
             setPlace={setPlace}
             byDate={byDate}
+            byDateProps={byDateProps}
             setByDate={setByDate}
             category={category}
             setCategory={setCategory}

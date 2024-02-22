@@ -213,17 +213,20 @@ export function createArrayOfObjects(arr) {
 }
 
 export function generateRegionsAndTownsOptions() {
-  const regionsOptions = generateRegionsOptions();
-  const townsOptions = [...CITIES_DATA.entries()].map(([_, region]) => ({
-    label: region.label,
-    options: [...region.towns.entries()]
-      .filter(([_, town]) => !town.hide)
-      .sort((a, b) => a[1].label.localeCompare(b[1].label))
-      .map(([townKey, town]) => ({
-        value: townKey,
-        label: town.label,
-      })),
-  }));
+  let regionsOptions = generateRegionsOptions();
+  regionsOptions.sort((a, b) => a.label.localeCompare(b.label));
+  const townsOptions = [...CITIES_DATA.entries()]
+    .map(([_, region]) => ({
+      label: region.label,
+      options: [...region.towns.entries()]
+        .filter(([_, town]) => !town.hide)
+        .sort((a, b) => a[1].label.localeCompare(b[1].label))
+        .map(([townKey, town]) => ({
+          value: townKey,
+          label: town.label,
+        })),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
   return [{ label: "Comarques", options: regionsOptions }, ...townsOptions];
 }
 

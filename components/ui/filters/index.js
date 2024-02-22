@@ -4,6 +4,7 @@ import ChevronDownIcon from "@heroicons/react/solid/ChevronDownIcon";
 import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { BYDATES } from "@utils/constants";
 import { getPlaceLabel } from "@utils/helpers";
+import { useRouter } from "next/router";
 
 const renderButton = ({
   text,
@@ -49,8 +50,10 @@ const renderButton = ({
 const Filters = ({
   setOpenModal,
   place,
+  placeProps,
   setPlace,
   byDate,
+  byDateProps,
   setByDate,
   category,
   setCategory,
@@ -59,6 +62,7 @@ const Filters = ({
   setSelectedOption,
   scrollToTop,
 }) => {
+  const router = useRouter();
   const isAnyFilterSelected = () => place || byDate || category || distance;
   const getText = (value, defaultValue) => (value ? value : defaultValue);
   const foundByDate = BYDATES.find((item) => item.value === byDate);
@@ -67,10 +71,14 @@ const Filters = ({
     if (byDate) {
       setByDate("");
       window.localStorage.removeItem("byDate");
+
+      if (byDateProps) {
+        router.push(`/${placeProps}`);
+      }
     } else {
       setOpenModal(true);
     }
-  }, [byDate, setByDate, setOpenModal]);
+  }, [byDate, byDateProps, placeProps, router, setByDate, setOpenModal]);
   const handleCategoryClick = useCallback(() => setCategory(""), [setCategory]);
   const handleDistanceClick = useCallback(() => setDistance(""), [setDistance]);
 
@@ -85,10 +93,14 @@ const Filters = ({
       setPlace("");
       setSelectedOption(undefined);
       window.localStorage.removeItem("place");
+
+      if (placeProps) {
+        router.push(`/`);
+      }
     } else {
       setOpenModal(true);
     }
-  }, [place, setPlace, setSelectedOption, setOpenModal]);
+  }, [place, setPlace, setSelectedOption, placeProps, router, setOpenModal]);
 
   return (
     <div className="w-full bg-whiteCorp flex justify-center items-center px-0">
