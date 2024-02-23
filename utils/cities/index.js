@@ -1,3 +1,4 @@
 import osona from "./osona";
+import selva from "./selva";
 
-export { osona };
+export { osona, selva };

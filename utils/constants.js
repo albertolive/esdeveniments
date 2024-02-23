@@ -1,5 +1,5 @@
 import { siteUrl } from "@config/index";
-import { osona } from "@utils/cities";
+import { osona, selva } from "@utils/cities";
 
 export const MAX_RESULTS = 15;
 
@@ -668,4 +668,5 @@ export const CITIES_DATA = new Map([
     },
   ],
   osona,
+  selva,
 ]);
