@@ -21,7 +21,7 @@ const renderButton = ({
       className={`w-full h-8 flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none ${
         enabled
           ? "text-primary font-medium border-b-2 border-primary"
-          : "border-whiteCorp border-b-2 text-bColor hover:border-b-2 hover:border-bColor"
+          : "border-whiteCorp border-b-2 text-blackCorp hover:border-b-2 hover:border-bColor"
       }`}
     >
       <span onClick={handleOpenModal} className="w-full text-center">

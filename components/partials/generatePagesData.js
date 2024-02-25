@@ -7,8 +7,17 @@ const month = monthsName[new Date().getMonth()];
 export function generatePagesData({ currentYear, place, byDate }) {
   let { type, label } = getPlaceTypeAndLabel(place);
 
+  const feminineRegions = ["selva"];
   if (type === "region") {
-    label = `al ${label}`;
+    if (feminineRegions.includes(label.toLowerCase())) {
+      label = `a la ${label}`;
+    } else if (
+      ["a", "e", "i", "o", "u", "h"].includes(label.charAt(0).toLowerCase())
+    ) {
+      label = `al ${label}`;
+    } else {
+      label = `a ${label}`;
+    }
   } else if (type === "town") {
     label = `a ${label}`;
   }

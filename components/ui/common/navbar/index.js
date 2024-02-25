@@ -28,16 +28,8 @@ export default function Navbar() {
     localStorage.removeItem("scrollPosition");
   };
 
-  const reloadPage = () => {
-    // Delay the page reload after navigation is complete
-    setTimeout(() => {
-      window.location.reload();
-    }, 800);
-  };
-
   const handleLogoClick = () => {
     navigateToMainPage();
-    // reloadPage();
   };
 
   return (
@@ -70,12 +62,14 @@ export default function Navbar() {
                 </div>
                 {/* MenuIcon */}
                 <div className="flex justify-center items-center md:hidden">
-                  <Disclosure.Button className="inline-flex items-center justify-center py-2 px-3 focus:outline-none">
-                    {/* <span className="sr-only">Obrir menú principal</span> */}
+                  <Disclosure.Button
+                    className="inline-flex items-center justify-center py-2 px-3 focus:outline-none"
+                    aria-label={open ? "Close menu" : "Open menu"}
+                  >
                     {open ? (
-                      <XIcon className="h-5 w-5" aria-hidden="true" />
+                      <XIcon className="h-5 w-5" />
                     ) : (
-                      <MenuIcon className="h-5 w-5" aria-hidden="true" />
+                      <MenuIcon className="h-5 w-5" />
                     )}
                   </Disclosure.Button>
                 </div>
@@ -105,6 +99,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       className="flex items-center p-2 border-b-whiteCorp focus:outline-none cursor-pointer rounded-xl"
+                      aria-label="Home"
                     >
                       <HomeIcon className="h-6 w-6" />
                     </button>
@@ -117,8 +112,9 @@ export default function Navbar() {
                     <button
                       type="button"
                       className="flex items-center p-2 border-b-whiteCorp focus:outline-none cursor-pointer rounded-xl"
+                      aria-label="Publish"
                     >
-                      <PlusSmIcon className="h-6 w-6" aria-hidden="true" />
+                      <PlusSmIcon className="h-6 w-6" />
                       <span className="hidden sm:visible">Publica</span>
                     </button>
                   </ActiveLink>
@@ -130,6 +126,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       className="flex items-center p-2 border-b-whiteCorp focus:outline-none cursor-pointer rounded-xl"
+                      aria-label="WhoAreWe"
                     >
                       <InfoIcon className="h-6 w-6" />
                     </button>
