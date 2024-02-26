@@ -4,5 +4,19 @@
       "path": "/api/test",
       "schedule": "0 0 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "pages/api/fetchRss.js": {
+      "maxDuration": 300
+    },
+    "pages/api/removeDuplicates.js": {
+      "maxDuration": 300
+    },
+    "pages/api/scrapeEvents.js": {
+      "maxDuration": 300
+    },
+    "pages/api/scrapeWebsite.js": {
+      "maxDuration": 300
+    }
+  }
 }

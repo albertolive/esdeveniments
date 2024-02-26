@@ -6,9 +6,19 @@ const month = monthsName[new Date().getMonth()];
 
 export function generatePagesData({ currentYear, place, byDate }) {
   let { type, label } = getPlaceTypeAndLabel(place);
+  const labelEmpty = label;
 
+  const feminineRegions = ["selva"];
   if (type === "region") {
-    label = `al ${label}`;
+    if (feminineRegions.includes(label.toLowerCase())) {
+      label = `a la ${label}`;
+    } else if (
+      ["a", "e", "i", "o", "u", "h"].includes(label.charAt(0).toLowerCase())
+    ) {
+      label = `al ${label}`;
+    } else {
+      label = `a ${label}`;
+    }
   } else if (type === "town") {
     label = `a ${label}`;
   }
@@ -43,7 +53,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
       metaTitle: `Què fer ${label} aquest ${month} - Agenda ${currentYear}`,
       metaDescription: `Descobreix els esdeveniments imperdibles ${label} aquest ${currentYear}. Concerts, exposicions, i més t'esperen. Suma't a la nostra agenda col·laborativa.`,
       title: `Què fer ${label}. Agenda ${currentYear}`,
-      subTitle: `Explora les millors activitats ${label}: mercats, exposicions, passejades, concerts, i més. Viu intensament ${label} aquest ${month}.`,
+      subTitle: `Explora les millors activitats ${label}: mercats, exposicions, passejades, concerts, i més. Viu intensament ${labelEmpty} aquest ${month}.`,
       canonical: `${siteUrl}/${place}`,
       notFoundText: `Ho sentim, però no hi ha esdeveniments ${label}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`,
     };
@@ -55,7 +65,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
         title: `Què fer ${byDate} ${label}`,
         subTitle: `Aprofita el teu temps i troba el que necessites: el millor del dia al teu abast.`,
         metaTitle: `Què fer ${byDate} ${label}`,
-        metaDescription: `Què fer ${byDate} ${label}. Us oferim tota la informació per gaudir ${label} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar.`,
+        metaDescription: `Què fer ${byDate} ${label}. Us oferim tota la informació per gaudir ${labelEmpty} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar.`,
         canonical: `${siteUrl}/${place}/${byDate}`,
         notFoundText: `Ho sentim, però no hi ha esdeveniments avui ${label}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`,
       };
@@ -64,7 +74,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
         title: `Què fer demà ${label}`,
         subTitle: `Aprofita el teu temps i troba el que necessites: el millor de demà al teu abast.`,
         metaTitle: `Què fer demà ${label}`,
-        metaDescription: `Què fer demà ${label}. Us oferim tota la informació per gaudir ${label} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar.`,
+        metaDescription: `Què fer demà ${label}. Us oferim tota la informació per gaudir ${labelEmpty} i de la seva enorme activitat cultural: cinema, museus, teatre, mercats, familiar.`,
         canonical: `${siteUrl}/${place}/${byDate}`,
         notFoundText: `Ho sentim, però no hi ha esdeveniments demà ${label}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`,
       };
@@ -73,7 +83,7 @@ export function generatePagesData({ currentYear, place, byDate }) {
         title: `Coses per fer ${label} aquesta ${byDate}`,
         subTitle: `Us proposem activitats d'oci i cultura ${label} per a tots els gustos i butxaques.`,
         metaTitle: `Què fer aquesta ${byDate} ${label}`,
-        metaDescription: `Què fer aquesta ${byDate} ${label}. Teniu ganes de gaudir de aquesta setmana? Teatre, cinema, música, art i altres excuses per no parar de descobrir ${label}!`,
+        metaDescription: `Què fer aquesta ${byDate} ${label}. Teniu ganes de gaudir de aquesta setmana? Teatre, cinema, música, art i altres excuses per no parar de descobrir ${labelEmpty}!`,
         canonical: `${siteUrl}/${place}/${byDate}`,
         notFoundText: `Ho sentim, però no hi ha esdeveniments aquesta setmana ${label}. Hem rebuscat en l'agenda i pot ser que també t'agradin aquestes altres opcions.`,
       };

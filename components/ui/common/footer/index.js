@@ -1,14 +1,12 @@
 import React from "react";
-import { SocialIcon } from "react-social-icons";
 import ActiveLink from "@components/ui/common/link";
 import Social from "@components/ui/common/social";
-
 
 const navigation = [
   { name: "Agenda", href: "/", current: false },
   { name: "Publicar", href: "/publica", current: false },
   { name: "Qui som", href: "/qui-som", current: false },
-  { name: "Arxiu", href: "/sitemap", current: false }
+  { name: "Arxiu", href: "/sitemap", current: false },
 ];
 
 [];
@@ -35,7 +33,7 @@ export default function Footer() {
             ))}
           </div>
           <div className="w-full flex justify-center px-6">
-            <a>© {new Date().getFullYear()} Esdeveniments.cat</a>
+            © {new Date().getFullYear()} Esdeveniments.cat
           </div>
         </div>
       </div>
