@@ -10,7 +10,7 @@ export default function App(props) {
 
 export async function getStaticPaths() {
   const { env } = require("@utils/helpers");
-
+  console.log("env", env);
   if (env === "dev") {
     const { CITIES_DATA, BYDATES } = require("@utils/constants");
     const paths = [];
