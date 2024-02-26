@@ -22,10 +22,11 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
     <>
       <Script
         id="google-analytics-gtag"
+        strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
       />
 
-      <Script id="google-analytics-lazy-load">
+      <Script id="google-analytics-lazy-load" strategy="afterInteractive">
         {`
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -38,17 +39,12 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
 
       <Script
         id="google-ads"
-        strategy="lazyOnload"
+        strategy="afterInteractive"
         crossOrigin="anonymous"
         src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GOOGLE_ADS}`}
       />
 
-      <Script
-        src="https://fundingchoicesmessages.google.com/i/pub-2456713018173238?ers=1"
-        strategy="lazyOnload"
-      />
-
-      <Script id="google-adblock" strategy="lazyOnload">
+      <Script id="google-adblock" strategy="afterInteractive">
         {`
           (function() {
             function signalGooglefcPresent() {
@@ -68,6 +64,11 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
           })();
         `}
       </Script>
+
+      <Script
+        src="https://fundingchoicesmessages.google.com/i/pub-2456713018173238?ers=1"
+        strategy="afterInteractive"
+      />
 
       <BaseLayout>
         <Suspense fallback={<></>}>
