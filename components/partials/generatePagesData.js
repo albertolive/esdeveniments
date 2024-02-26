@@ -15,9 +15,9 @@ export function generatePagesData({ currentYear, place, byDate }) {
     } else if (
       ["a", "e", "i", "o", "u", "h"].includes(label.charAt(0).toLowerCase())
     ) {
-      label = `al ${label}`;
-    } else {
       label = `a ${label}`;
+    } else {
+      label = `al ${label}`;
     }
   } else if (type === "town") {
     label = `a ${label}`;
