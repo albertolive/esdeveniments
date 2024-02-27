@@ -25,6 +25,7 @@ class MyDocument extends Document {
             as="font"
             type="font/ttf"
             crossorigin="anonymous"
+            onLoad="this.rel='stylesheet'"
           />
           <link
             rel="preload"
@@ -32,6 +33,7 @@ class MyDocument extends Document {
             as="font"
             type="font/ttf"
             crossorigin="anonymous"
+            onLoad="this.rel='stylesheet'"
           />
         </Head>
         <body>
