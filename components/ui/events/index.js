@@ -339,6 +339,7 @@ function Events({ props, loadMore = true }) {
           )}
         {(isLoading || isValidating) && !isLoadingMore ? (
           <div>
+            <div className="h-[123px]"></div> {/* To reduce layout shift */}
             {[...Array(10)].map((_, i) => (
               <CardLoading key={i} />
             ))}
