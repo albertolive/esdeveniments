@@ -324,7 +324,7 @@ export default function Event(props) {
             </div>
             {/* Small date and title */}
             <div className="w-full flex flex-col justify-start items-start gap-2 px-4">
-              <p className="font-medium">
+              <p className="font-semibold">
                 {formattedEnd ? (
                   <>
                     <time dateTime={formattedStart}>Del {formattedStart}</time>{" "}

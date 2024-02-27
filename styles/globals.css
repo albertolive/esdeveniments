@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/static/fonts/BarlowCondensed-Italic.ttf") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  src: url("/static/fonts/RobotoFlex-Regular.ttf") format("woff2");
+  font-display: swap;
+}
+
 html,
 body {
   height: 100vh;
@@ -82,14 +94,14 @@ h2 {
   font-size: 1.62rem;
   letter-spacing: 0.001rem;
   line-height: 1.6rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 h3 {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 1.38rem;
   letter-spacing: 0.02rem;
   line-height: 1.65rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 p {

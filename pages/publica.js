@@ -304,7 +304,7 @@ export default function Publica() {
       <div className="w-full flex flex-col justify-center items-center px-4 pt-10 pb-14 sm:px-10 sm:w-[580px]">
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col items-center gap-2">
-            <h1 className="text-center italic uppercase font-medium">
+            <h1 className="text-center italic uppercase font-semibold">
               Publica un esdeveniment
             </h1>
             <p className=" text-sm text-center">* camps obligatoris</p>

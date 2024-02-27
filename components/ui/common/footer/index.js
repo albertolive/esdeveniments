@@ -28,7 +28,7 @@ export default function Footer() {
           <div className="flex justify-center items-center gap-6">
             {navigation.map((item) => (
               <ActiveLink href={item.href} key={item.name}>
-                <a className="font-medium">{item.name}</a>
+                <a className="font-semibold">{item.name}</a>
               </ActiveLink>
             ))}
           </div>

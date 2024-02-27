@@ -337,6 +337,14 @@ function Events({ props, loadMore = true }) {
           (noEventsFound || filteredEvents.length === 0) && (
             <NoEventsFound title={notFoundText} />
           )}
+        <>
+          <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4">
+            {title}
+          </h1>
+          <h2 className="text-[16px] font-normal text-blackCorp text-left mb-4 px-4">
+            {subTitle}
+          </h2>
+        </>
         {(isLoading || isValidating) && !isLoadingMore ? (
           <div>
             {[...Array(10)].map((_, i) => (
@@ -344,12 +352,7 @@ function Events({ props, loadMore = true }) {
             ))}
           </div>
         ) : (
-          <List
-            events={filteredEvents}
-            title={title}
-            subTitle={subTitle}
-            hideTitle={noEventsFound || filteredEvents.length === 0}
-          >
+          <List events={filteredEvents}>
             {(event) => <Card key={event.id} event={event} />}
           </List>
         )}
@@ -362,7 +365,7 @@ function Events({ props, loadMore = true }) {
             <div className="h-12 flex justify-center items-center text-center pt-10 pb-14">
               <button
                 type="button"
-                className="w-[120px] bg-whiteCorp flex justify-center items-center gap-2 font-barlow italic uppercase tracking-wider font-medium p-2 border-2 border-bColor rounded-lg hover:bg-primary hover:text-whiteCorp hover:border-whiteCorp ease-in-out duration-300 focus:outline-none"
+                className="w-[120px] bg-whiteCorp flex justify-center items-center gap-2 font-barlow italic uppercase tracking-wider font-semibold p-2 border-2 border-bColor rounded-lg hover:bg-primary hover:text-whiteCorp hover:border-whiteCorp ease-in-out duration-300 focus:outline-none"
                 onClick={handleLoadMore}
               >
                 Carregar més

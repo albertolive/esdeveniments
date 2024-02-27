@@ -118,7 +118,7 @@ const Filters = ({
             }
             aria-hidden="true"
           />
-          <p className="hidden md:block md:font-barlow md:uppercase md:italic md:font-medium">
+          <p className="hidden md:block uppercase italic font-semibold font-barlow">
             Filtres
           </p>
         </div>

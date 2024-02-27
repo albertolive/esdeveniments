@@ -23,7 +23,7 @@ export default function Notify() {
           />
         </div>
         <div className="ml-3">
-          <h3 className="text-md font-medium ">
+          <h3 className="text-md font-semibold ">
             A Cardedeu sempre diem que som un poble ple de cultura. És realment
             així? Descobreix-ho a:{" "}
             <span className="text-md ">
@@ -31,10 +31,9 @@ export default function Notify() {
                 href={"/2022-en-xifres"}
                 prefetch={false}
                 className="text-md font-bold text-[#ECB84A] hover:underline"
-                onClick={sendGA}>
-                
-                  2022 en xifres
-                
+                onClick={sendGA}
+              >
+                2022 en xifres
               </Link>
             </span>
           </h3>
