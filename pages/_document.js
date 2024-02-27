@@ -19,6 +19,20 @@ class MyDocument extends Document {
               src="https://snippet.meticulous.ai/v1/meticulous.js"
             />
           )}
+          <link
+            rel="preload"
+            href="/static/fonts/BarlowCondensed-Italic.ttf"
+            as="font"
+            type="font/ttf"
+            crossorigin
+          />
+          <link
+            rel="preload"
+            href="/static/fonts/RobotoFlex-Regular.ttf"
+            as="font"
+            type="font/ttf"
+            crossorigin
+          />
         </Head>
         <body>
           <Main />
