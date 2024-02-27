@@ -338,7 +338,7 @@ function Events({ props, loadMore = true }) {
             <NoEventsFound title={notFoundText} />
           )}
         <>
-          <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4 lg:tracking-normal tracking-wider">
+          <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4">
             {title}
           </h1>
           <h2 className="text-[16px] font-normal text-blackCorp text-left mb-4 px-4">
