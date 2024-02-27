@@ -4,13 +4,13 @@
 
 @font-face {
   font-family: "Barlow Condensed";
-  src: url("../public/static/fonts/BarlowCondensed-Italic.ttf") format("woff2");
+  src: url("/static/fonts/BarlowCondensed-Italic.ttf") format("woff2");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Roboto Flex";
-  src: url("../public/static/fonts/RobotoFlex-Regular.ttf") format("woff2");
+  src: url("/static/fonts/RobotoFlex-Regular.ttf") format("woff2");
   font-display: swap;
 }
 
@@ -82,7 +82,6 @@ input[type="range"]::-moz-range-thumb {
 }
 
 h1 {
-  font-family: "Barlow Condensed", sans-serif;
   font-size: 1.7rem;
   line-height: 2.1rem;
   font-weight: bold;
