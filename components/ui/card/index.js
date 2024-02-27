@@ -99,7 +99,7 @@ function Card({ event, isLoading }) {
           <div>
             <CalendarIcon className="h-5 w-5" />
           </div>
-          <p className="px-2 font-medium">
+          <p className="px-2 font-semibold">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}

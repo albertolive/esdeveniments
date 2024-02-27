@@ -22,7 +22,7 @@ export default function Notification({
             />
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-blackCorp">
+            <h3 className="text-sm font-semibold text-blackCorp">
               Fantàstic!! L&apos;esdeveniment {title} s&apos;ha creat
               correctament i ja el pot veure tothom!
             </h3>
@@ -61,7 +61,7 @@ export default function Notification({
           )}
         </div>
         <div className="ml-3">
-          <h3 className="text-sm font-medium text-green-800">
+          <h3 className="text-sm font-semibold text-green-800">
             {title}{" "}
             <span className="mt-2 text-sm text-green-700">
               <a className="font-bold" href={`mailto:${url}`}>

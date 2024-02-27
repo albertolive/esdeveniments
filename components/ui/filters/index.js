@@ -20,7 +20,7 @@ const renderButton = ({
     <div
       className={`w-full h-8 flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none ${
         enabled
-          ? "text-primary font-medium border-b-2 border-primary"
+          ? "text-primary font-semibold border-b-2 border-primary"
           : "border-whiteCorp border-b-2 text-blackCorp hover:border-b-2 hover:border-bColor"
       }`}
     >
@@ -118,7 +118,7 @@ const Filters = ({
             }
             aria-hidden="true"
           />
-          <p className="hidden md:block md:font-barlow md:uppercase md:italic md:font-medium">
+          <p className="hidden md:block uppercase italic font-semibold font-barlow">
             Filtres
           </p>
         </div>

@@ -58,7 +58,7 @@ export default function FrequencySelect({ id, value, title, onChange }) {
     <div className="sm:col-span-6">
       <label
         htmlFor="first-name"
-        className="block text-sm font-medium text-gray-700"
+        className="block text-sm font-semibold text-gray-700"
       >
         {title}
       </label>

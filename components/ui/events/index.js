@@ -362,7 +362,7 @@ function Events({ props, loadMore = true }) {
             <div className="h-12 flex justify-center items-center text-center pt-10 pb-14">
               <button
                 type="button"
-                className="w-[120px] bg-whiteCorp flex justify-center items-center gap-2 font-barlow italic uppercase tracking-wider font-medium p-2 border-2 border-bColor rounded-lg hover:bg-primary hover:text-whiteCorp hover:border-whiteCorp ease-in-out duration-300 focus:outline-none"
+                className="w-[120px] bg-whiteCorp flex justify-center items-center gap-2 font-barlow italic uppercase tracking-wider font-semibold p-2 border-2 border-bColor rounded-lg hover:bg-primary hover:text-whiteCorp hover:border-whiteCorp ease-in-out duration-300 focus:outline-none"
                 onClick={handleLoadMore}
               >
                 Carregar més
