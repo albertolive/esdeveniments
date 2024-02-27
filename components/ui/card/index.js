@@ -55,20 +55,18 @@ function Card({ event, isLoading }) {
               </Link>
             </h3>
             {/* WeatherIcon */}
-            <div className="w-1/12 flex justify-end">
+            <div className="w-1/12 flex justify-end h-30">
               {icon && (
-                <div>
-                  <NextImage
-                    alt={description}
-                    src={icon}
-                    width="30"
-                    height="30"
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto",
-                    }}
-                  />
-                </div>
+                <NextImage
+                  alt={description}
+                  src={icon}
+                  width="30"
+                  height="30"
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto",
+                  }}
+                />
               )}
             </div>
           </div>

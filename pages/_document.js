@@ -24,14 +24,14 @@ class MyDocument extends Document {
             href="/static/fonts/BarlowCondensed-Italic.ttf"
             as="font"
             type="font/ttf"
-            crossorigin
+            crossorigin="anonymous"
           />
           <link
             rel="preload"
             href="/static/fonts/RobotoFlex-Regular.ttf"
             as="font"
             type="font/ttf"
-            crossorigin
+            crossorigin="anonymous"
           />
         </Head>
         <body>
