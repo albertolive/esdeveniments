@@ -19,6 +19,7 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
   -o-font-smoothing: antialiased;
@@ -82,7 +83,8 @@ input[type="range"]::-moz-range-thumb {
 
 h1 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  letter-spacing: 0.03rem;
   line-height: 2.1rem;
   font-weight: 600;
 }
