@@ -1,18 +1,9 @@
 import Link from "next/link";
 import Meta from "@components/partials/seo-meta";
 import { siteUrl } from "@config/index";
-import Social from "components/ui/common/social";
 import Image from "next/image";
 
 export default function QuiSom() {
-  const links = {
-    web: "https://www.esdeveniments.cat",
-    twitter: "https://twitter.com/esdeveniments_",
-    instagram: "https://www.instagram.com/esdevenimentscat/",
-    telegram: "https://t.me/esdeveniments",
-    facebook: "https://www.facebook.com/esdeveniments.cat/",
-  };
-
   return (
     <>
       <Meta
@@ -22,7 +13,9 @@ export default function QuiSom() {
       />
       <div className="w-full flex flex-col justify-start items-center gap-10 px-4 pt-8 sm:w-[580px]">
         <div>
-          <h1 className="text-center italic uppercase font-medium">Qui som?</h1>
+          <h1 className="text-center italic uppercase font-semibold">
+            Qui som?
+          </h1>
           <h3 className="text-center italic font-normal text-primary">
             esdeveniments.cat
           </h3>

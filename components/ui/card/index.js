@@ -55,20 +55,18 @@ function Card({ event, isLoading }) {
               </Link>
             </h3>
             {/* WeatherIcon */}
-            <div className="w-1/12 flex justify-end">
+            <div className="w-1/12 flex justify-end h-30">
               {icon && (
-                <div>
-                  <NextImage
-                    alt={description}
-                    src={icon}
-                    width="30"
-                    height="30"
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto",
-                    }}
-                  />
-                </div>
+                <NextImage
+                  alt={description}
+                  src={icon}
+                  width="30"
+                  height="30"
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto",
+                  }}
+                />
               )}
             </div>
           </div>
@@ -99,7 +97,7 @@ function Card({ event, isLoading }) {
           <div>
             <CalendarIcon className="h-5 w-5" />
           </div>
-          <p className="px-2 font-medium">
+          <p className="px-2 font-semibold">
             {event.formattedEnd
               ? `Del ${event.formattedStart} al ${event.formattedEnd}`
               : `${event.nameDay}, ${event.formattedStart}`}

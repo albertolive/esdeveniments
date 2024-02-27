@@ -30,7 +30,7 @@ export default function EditModal({
                   aria-hidden="true"
                 />
                 <div className="flex flex-col">
-                  <p className="font-medium">
+                  <p className="font-semibold">
                     Canvia el títol o altres detalls
                   </p>
                   <p className="text-sm">
@@ -48,7 +48,7 @@ export default function EditModal({
                   aria-hidden="true"
                 />
                 <div className="flex flex-col">
-                  <p className="font-medium">Eliminar</p>
+                  <p className="font-semibold">Eliminar</p>
                   <p className="text-sm">
                     L&apos;esdeveniment no existeix, està duplicat, etc.
                   </p>

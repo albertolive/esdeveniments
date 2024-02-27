@@ -22,7 +22,7 @@ const customStyles = {
     borderColor:
       state.isFocused || state.isSelected ? borderColor : borderColor,
     boxShadow: state.isFocused ? "#000 !important" : "#CCC !important",
-    borderRadius: "0px",
+    borderRadius: "8px",
   }),
   placeholder: (provided) => ({
     ...provided,
@@ -89,7 +89,7 @@ export default function SelectComponent({
       </label>
       <div>
         <CreatableSelect
-          className="border-0"
+          className="p-2 border-0"
           id={id}
           instanceId={id}
           isSearchable
