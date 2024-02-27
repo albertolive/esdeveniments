@@ -337,20 +337,22 @@ function Events({ props, loadMore = true }) {
           (noEventsFound || filteredEvents.length === 0) && (
             <NoEventsFound title={notFoundText} />
           )}
+        <>
+          <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4">
+            {title}
+          </h1>
+          <h2 className="text-[16px] font-normal text-blackCorp text-left mb-4 px-4">
+            {subTitle}
+          </h2>
+        </>
         {(isLoading || isValidating) && !isLoadingMore ? (
           <div>
-            <div className="h-[123px]"></div> {/* To reduce layout shift */}
             {[...Array(10)].map((_, i) => (
               <CardLoading key={i} />
             ))}
           </div>
         ) : (
-          <List
-            events={filteredEvents}
-            title={title}
-            subTitle={subTitle}
-            hideTitle={noEventsFound || filteredEvents.length === 0}
-          >
+          <List events={filteredEvents}>
             {(event) => <Card key={event.id} event={event} />}
           </List>
         )}
