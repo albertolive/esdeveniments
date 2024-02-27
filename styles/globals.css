@@ -4,13 +4,13 @@
 
 @font-face {
   font-family: "Barlow Condensed";
-  src: url("/static/fonts/BarlowCondensed-Regular.ttf") format("woff2");
+  src: url("../public/static/fonts/BarlowCondensed-Regular.ttf") format("woff2");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Roboto Flex";
-  src: url("/static/fonts/RobotoFlex-Regular.ttf") format("woff2");
+  src: url("../public/static/fonts/RobotoFlex-Regular.ttf") format("woff2");
   font-display: swap;
 }
 
