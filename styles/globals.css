@@ -5,13 +5,11 @@
 @font-face {
   font-family: "Barlow Condensed";
   src: url("/static/fonts/BarlowCondensed-Italic.ttf") format("truetype");
-  font-display: swap;
 }
 
 @font-face {
   font-family: "Roboto Flex";
   src: url("/static/fonts/RobotoFlex-Regular.ttf") format("truetype");
-  font-display: swap;
 }
 
 html,
