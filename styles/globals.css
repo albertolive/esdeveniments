@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "Barlow Condensed";
-  src: url("/static/fonts/BarlowCondensed-Italic.ttf") format("woff2");
+  src: url("/static/fonts/BarlowCondensed-Regular.ttf") format("woff2");
   font-display: swap;
 }
 
@@ -82,11 +82,9 @@ input[type="range"]::-moz-range-thumb {
 }
 
 h1 {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.8rem;
-  letter-spacing: 0.03rem;
+  font-size: 1.7rem;
   line-height: 2.1rem;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 h2 {
