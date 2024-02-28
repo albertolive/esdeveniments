@@ -1,6 +1,5 @@
 import "@styles/globals.css";
-
-import { useEffect, memo, Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { BaseLayout } from "@components/ui/layout";
@@ -28,13 +27,13 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
 
       <Script id="google-analytics-lazy-load" strategy="afterInteractive">
         {`
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
-        page_path: window.location.pathname,
-        });
-    `}
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+            page_path: window.location.pathname,
+          });
+        `}
       </Script>
 
       <Script
@@ -50,13 +49,13 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
             function signalGooglefcPresent() {
               if (!window.frames['googlefcPresent']) {
                 if (document.body) {
-                  const iframe = document.createElement('iframe');
-                  iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;';
-                  iframe.style.display = 'none';
-                  iframe.name = 'googlefcPresent';
-                  document.body.appendChild(iframe);
+                 const iframe = document.createElement('iframe');
+                 iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;';
+                 iframe.style.display = 'none';
+                 iframe.name = 'googlefcPresent';
+                 document.body.appendChild(iframe);
                 } else {
-                  setTimeout(signalGooglefcPresent, 0);
+                 setTimeout(signalGooglefcPresent, 0);
                 }
               }
             }
@@ -80,4 +79,4 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
   );
 }
 
-export default memo(EsdevenimentsMainEntry);
+export default EsdevenimentsMainEntry;

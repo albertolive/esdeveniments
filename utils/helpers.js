@@ -162,6 +162,12 @@ export const generateJsonData = (event) => {
     subLocation,
   } = event;
 
+  const images = [
+    imageUploaded,
+    eventImage,
+    `${siteUrl}/static/images/logo-seo-meta.webp`,
+  ].filter(Boolean);
+
   return {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -183,11 +189,7 @@ export const generateJsonData = (event) => {
         addressRegion: "CT",
       },
     },
-    image: [
-      imageUploaded,
-      eventImage,
-      `${siteUrl}/static/images/logo-seo-meta.webp`,
-    ].filter(Boolean),
+    image: images,
     description,
     performer: {
       "@type": "PerformingGroup",
@@ -207,6 +209,7 @@ export const generateJsonData = (event) => {
       validFrom: startDate,
     },
     isAccessibleForFree: true,
+    duration: endDate ? endDate - startDate : null,
   };
 };
 

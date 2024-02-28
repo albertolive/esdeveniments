@@ -7,21 +7,25 @@ class MyDocument extends Document {
   }
 
   render() {
+    const isDevelopmentOrPreview =
+      process.env.NODE_ENV === "development" ||
+      process.env.VERCEL_ENV === "preview";
+    const meticulousScript = isDevelopmentOrPreview ? (
+      // eslint-disable-next-line @next/next/no-sync-scripts
+      <script
+        data-project-id={process.env.NEXT_PUBLIC_METICULOUS_PROJECT_ID}
+        data-is-production-environment="false"
+        src="https://snippet.meticulous.ai/v1/meticulous.js"
+      />
+    ) : null;
+
     return (
       <Html>
         <Head>
-          {(process.env.NODE_ENV === "development" ||
-            process.env.VERCEL_ENV === "preview") && (
-            // eslint-disable-next-line @next/next/no-sync-scripts
-            <script
-              data-project-id={process.env.NEXT_PUBLIC_METICULOUS_PROJECT_ID}
-              data-is-production-environment="false"
-              src="https://snippet.meticulous.ai/v1/meticulous.js"
-            />
-          )}
+          {meticulousScript}
           <link
             rel="preload"
-            href="/static/fonts/BarlowCondensed-Italic.ttf"
+            href="/static/fonts/BarlowCondensed-Regular.ttf"
             as="font"
             type="font/ttf"
             crossorigin="anonymous"
