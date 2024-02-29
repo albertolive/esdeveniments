@@ -332,11 +332,6 @@ function Events({ props, loadMore = true }) {
         </div>
       </div>
       <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
-        {!isLoading &&
-          !isValidating &&
-          (noEventsFound || filteredEvents.length === 0) && (
-            <NoEventsFound title={notFoundText} />
-          )}
         <>
           <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4">
             {title}
@@ -345,6 +340,11 @@ function Events({ props, loadMore = true }) {
             {subTitle}
           </h2>
         </>
+        {!isLoading &&
+          !isValidating &&
+          (noEventsFound || filteredEvents.length === 0) && (
+            <NoEventsFound title={notFoundText} />
+          )}
         {(isLoading || isValidating) && !isLoadingMore ? (
           <div>
             {[...Array(10)].map((_, i) => (

@@ -54,6 +54,37 @@ export const convertTZ = (date, tzString) =>
     })
   );
 
+function calculateDetailedDurationISO8601(start, end) {
+  const differenceInMs = end - start;
+
+  // Convert to days, hours, minutes, and seconds
+  const days = Math.floor(differenceInMs / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (differenceInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const minutes = Math.floor((differenceInMs % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((differenceInMs % (1000 * 60)) / 1000);
+
+  // Build ISO 8601 duration string
+  let duration = "P";
+  if (days > 0) duration += `${days}D`;
+
+  // Only add "T" if there are time components to specify
+  if (hours > 0 || minutes > 0 || seconds > 0) {
+    duration += "T";
+    if (hours > 0) duration += `${hours}H`;
+    if (minutes > 0) duration += `${minutes}M`;
+    if (seconds > 0) duration += `${seconds}S`;
+  }
+
+  // Handle the case where there's no difference between start and end
+  if (duration === "P") {
+    return "PT1H";
+  }
+
+  return duration;
+}
+
 export const getFormattedDate = (start, end) => {
   const startDate = new Date(
     (start && start.date) || (start && start.dateTime) || start
@@ -61,6 +92,7 @@ export const getFormattedDate = (start, end) => {
   const endDate = new Date((end && end.date) || (end && end.dateTime) || end);
   const startDateConverted = convertTZ(startDate, "Europe/Madrid");
   const endDateConverted = convertTZ(endDate, "Europe/Madrid");
+  const duration = calculateDetailedDurationISO8601(startDate, endDate);
 
   const isFullDayEvent = (start && start.date && !start.dateTime) || null;
 
@@ -116,6 +148,7 @@ export const getFormattedDate = (start, end) => {
     isLessThanFiveDays: isLessThanFiveDays(startDate),
     isFullDayEvent,
     isMultipleDays,
+    duration,
   };
 };
 
@@ -160,6 +193,7 @@ export const generateJsonData = (event) => {
     eventImage,
     postalCode,
     subLocation,
+    duration,
   } = event;
 
   const images = [
@@ -209,7 +243,7 @@ export const generateJsonData = (event) => {
       validFrom: startDate,
     },
     isAccessibleForFree: true,
-    duration: endDate ? endDate - startDate : null,
+    duration,
   };
 };
 

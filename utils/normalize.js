@@ -1,4 +1,3 @@
-// import { CATEGORIES } from "./constants";
 const crypto = require("crypto");
 import {
   slug,
@@ -62,6 +61,11 @@ const hasEventImage = (description) => {
 };
 
 export const normalizeEvents = (event, weatherInfo) => {
+  const startDate =
+    (event.start && event.start.dateTime) || event.start.date || null;
+  const endDate =
+    (event.end && event.end.dateTime) || event.end.date || startDate || null;
+
   const {
     originalFormattedStart,
     formattedStart,
@@ -70,9 +74,9 @@ export const normalizeEvents = (event, weatherInfo) => {
     endTime,
     isFullDayEvent,
     nameDay,
-    startDate,
     isMultipleDays,
-  } = getFormattedDate(event.start, event.end);
+    duration,
+  } = getFormattedDate(startDate, endDate);
   const weatherObject = normalizeWeather(startDate, weatherInfo);
   const eventImage = hasEventImage(event.description);
   const locationParts = event.location ? event.location.split(",") : [];
@@ -109,12 +113,8 @@ export const normalizeEvents = (event, weatherInfo) => {
     nameDay,
     tag,
     slug: slug(title, originalFormattedStart, event.id),
-    startDate:
-      (event.start && event.start.dateTime) || event.start.date || null,
-    endDate:
-      (event.end && event.end.dateTime) ||
-      (event.start.end && event.start.end) ||
-      event.start.date,
+    startDate,
+    endDate,
     imageUploaded: imageUploaded
       ? cloudinaryUrl(imageId)
       : eventImage
@@ -127,11 +127,17 @@ export const normalizeEvents = (event, weatherInfo) => {
     coords,
     isMultipleDays,
     postalCode,
+    duration: duration || "PT1H",
   };
 };
 
 export const normalizeEvent = (event) => {
   if (!event || event.error) return null;
+
+  const startDate =
+    (event.start && event.start.dateTime) || event.start.date || null;
+  const endDate =
+    (event.end && event.end.dateTime) || event.end.date || startDate || null;
 
   const {
     originalFormattedStart,
@@ -141,6 +147,7 @@ export const normalizeEvent = (event) => {
     endTime,
     nameDay,
     isFullDayEvent,
+    duration,
   } = getFormattedDate(event.start, event.end);
 
   let title = event.summary ? sanitizeText(event.summary) : "";
@@ -184,12 +191,8 @@ export const normalizeEvent = (event) => {
       : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
     tag,
     slug: slug(title, originalFormattedStart, event.id),
-    startDate:
-      (event.start && event.start.dateTime) || event.start.date || null,
-    endDate:
-      (event.end && event.end.dateTime) ||
-      (event.start.end && event.start.end) ||
-      event.start.date,
+    startDate,
+    endDate,
     imageUploaded: imageUploaded
       ? cloudinaryUrl(imageId)
       : eventImage
@@ -200,6 +203,7 @@ export const normalizeEvent = (event) => {
     isEventFinished: event.end
       ? new Date(event.end.dateTime) < new Date()
       : false,
+    duration: duration || "PT1H",
   };
 };
 

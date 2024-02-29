@@ -92,6 +92,7 @@ const sanitizeInput = (input) =>
     .replace(/(<([^>]+)>)/gi, "") // Remove HTML tags
     .replace(/&nbsp;/gi, " ") // Replace non-breaking spaces
     .replace(/"/gi, "") // Remove double quotes
+    .replace(/\n/gi, " ") // Replace newline characters with space
     .trim(); // Trim leading and trailing spaces
 
 // Helper function to smartly truncate text to a max length without cutting words
@@ -128,7 +129,7 @@ function generateMetaTitle(title, description, location, town) {
     town &&
     metaTitle.length + location.length + town.length + 5 <= 60
   ) {
-    locationTown = sanitizeInput(location + " " + town).trim();
+    locationTown = sanitizeInput(location + ", " + town).trim();
   } else if (location && metaTitle.length + location.length + 3 <= 60) {
     locationTown = sanitizeInput(location).trim();
   }
@@ -231,7 +232,6 @@ export default function Event(props) {
     nameDay,
     formattedStart,
     formattedEnd,
-    tag,
     imageUploaded,
     isEventFinished,
     eventImage,
@@ -270,7 +270,7 @@ export default function Event(props) {
       <Meta
         title={generateMetaTitle(title, "", location, town)}
         description={generateMetaDescription(
-          `${title} - ${nameDay} ${formattedStart} - ${location}`,
+          `${title} - ${nameDay} ${formattedStart} - ${location}, ${town}, ${region}`,
           description
         )}
         canonical={`${siteUrl}/e/${slug}`}
@@ -370,7 +370,7 @@ export default function Event(props) {
                     <div className="w-full flex flex-col justify-start items-start gap-1">
                       <p>{location}</p>{" "}
                       <p>
-                        {postalCode} {town}, {region}
+                        {town}, {region}, {postalCode}
                       </p>
                     </div>
                     <div
