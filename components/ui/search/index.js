@@ -130,7 +130,7 @@ export default function Search({ searchTerm, setSearchTerm }) {
         </div>
         <input
           type="text"
-          className="w-full h-10 border-0 placeholder:text-bColor"
+          className="w-full h-10 border-0 placeholder:text-bColor text-[16px] md:text-sm lg:text-sm"
           placeholder="Cerca qualevol cosa"
           value={inputValue}
           onKeyDown={handleKeyPress}

@@ -65,6 +65,8 @@ export const normalizeEvents = (event, weatherInfo) => {
     (event.start && event.start.dateTime) || event.start.date || null;
   const endDate =
     (event.end && event.end.dateTime) || event.end.date || startDate || null;
+  const isFullDayEvent =
+    (event.start && event.start.date && !event.start.dateTime) || null;
 
   const {
     originalFormattedStart,
@@ -72,7 +74,6 @@ export const normalizeEvents = (event, weatherInfo) => {
     formattedEnd,
     startTime,
     endTime,
-    isFullDayEvent,
     nameDay,
     isMultipleDays,
     duration,
@@ -138,6 +139,8 @@ export const normalizeEvent = (event) => {
     (event.start && event.start.dateTime) || event.start.date || null;
   const endDate =
     (event.end && event.end.dateTime) || event.end.date || startDate || null;
+  const isFullDayEvent =
+    (event.start && event.start.date && !event.start.dateTime) || null;
 
   const {
     originalFormattedStart,
@@ -146,7 +149,6 @@ export const normalizeEvent = (event) => {
     startTime,
     endTime,
     nameDay,
-    isFullDayEvent,
     duration,
   } = getFormattedDate(event.start, event.end);
 

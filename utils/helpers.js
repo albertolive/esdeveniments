@@ -94,8 +94,6 @@ export const getFormattedDate = (start, end) => {
   const endDateConverted = convertTZ(endDate, "Europe/Madrid");
   const duration = calculateDetailedDurationISO8601(startDate, endDate);
 
-  const isFullDayEvent = (start && start.date && !start.dateTime) || null;
-
   let isMultipleDays = false;
   let isSameMonth = false;
   let isSameYear = false;
@@ -146,7 +144,6 @@ export const getFormattedDate = (start, end) => {
         startDateConverted
       : startDateConverted,
     isLessThanFiveDays: isLessThanFiveDays(startDate),
-    isFullDayEvent,
     isMultipleDays,
     duration,
   };
