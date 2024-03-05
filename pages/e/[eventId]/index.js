@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import { useRouter } from "next/router";
@@ -8,11 +8,6 @@ import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
-import ReactHtmlParser from "react-html-parser";
-import ViewCounter from "@components/ui/viewCounter";
-import { siteUrl } from "@config/index";
-import ReportView from "@components/ui/reportView";
-import CardShareButton from "@components/ui/common/cardShareButton";
 import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
 import CloudIcon from "@heroicons/react/outline/CloudIcon";
@@ -20,11 +15,16 @@ import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
 import DocumentIcon from "@heroicons/react/outline/DocumentIcon";
 import ArrowRightIcon from "@heroicons/react/outline/ArrowRightIcon";
 import SpeakerphoneIcon from "@heroicons/react/outline/SpeakerphoneIcon";
-import { Tooltip } from "react-tooltip";
+import ReactHtmlParser from "react-html-parser";
+import ViewCounter from "@components/ui/viewCounter";
+import ReportView from "@components/ui/reportView";
+import CardShareButton from "@components/ui/common/cardShareButton";
+import useOnScreen from "@components/hooks/useOnScreen";
+import { siteUrl } from "@config/index";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
-  noSSR: false,
+  ssr: false,
 });
 
 const Image = dynamic(() => import("@components/ui/common/image"), {
@@ -33,16 +33,19 @@ const Image = dynamic(() => import("@components/ui/common/image"), {
 
 const EditModal = dynamic(() => import("@components/ui/editModal"), {
   loading: () => "",
+  ssr: false,
 });
 
 const Maps = dynamic(() => import("@components/ui/maps"), {
   loading: () => "",
+  ssr: false,
 });
 
 const NoEventFound = dynamic(
   () => import("@components/ui/common/noEventFound"),
   {
     loading: () => "",
+    ssr: false,
   }
 );
 
@@ -50,15 +53,27 @@ const Notification = dynamic(
   () => import("@components/ui/common/notification"),
   {
     loading: () => "",
+    ssr: false,
   }
 );
 
 const Weather = dynamic(() => import("@components/ui/weather"), {
   loading: () => "",
+  ssr: false,
 });
 
 const ImageDefault = dynamic(() => import("@components/ui/imgDefault"), {
   loading: () => "",
+});
+
+const EventsAround = dynamic(() => import("@components/ui/eventsAround"), {
+  loading: () => "",
+  ssr: false,
+});
+
+const Tooltip = dynamic(() => import("@components/ui/tooltip"), {
+  loading: () => "",
+  ssr: false,
 });
 
 function replaceURLs(text) {
@@ -156,6 +171,10 @@ const sendGoogleEvent = (event, obj) =>
   window.gtag("event", event, { ...obj });
 
 export default function Event(props) {
+  const mapsRef = useRef();
+  const eventsAroundRef = useRef();
+  const isMapsVisible = useOnScreen(mapsRef);
+  const isEventsAroundVisible = useOnScreen(eventsAroundRef);
   const { push, query, asPath } = useRouter();
   const { newEvent, edit_suggested = false } = query;
   const [openModal, setOpenModal] = useState(false);
@@ -395,7 +414,9 @@ export default function Event(props) {
             </div>
             {showMap && (
               <div className="w-full flex flex-col justify-center items-end gap-6 overflow-hidden">
-                <Maps location={mapsLocation} />
+                <div ref={mapsRef}>
+                  {isMapsVisible && <Maps location={mapsLocation} />}
+                </div>
                 <div className="w-fit flex justify-end items-center gap-2 px-4 border-b-2 border-whiteCorp hover:border-b-2 hover:border-blackCorp ease-in-out duration-300 cursor-pointer">
                   <button
                     className="flex gap-2"
@@ -469,6 +490,17 @@ export default function Event(props) {
                 <h2>Contingut patrocinat</h2>
                 <AdArticle slot="9643657007" />
               </div>
+            </div>
+            <div
+              ref={eventsAroundRef}
+              className="w-full justify-center items-start gap-2 px-4"
+            >
+              {isEventsAroundVisible && (
+                <>
+                  <h2>Esdeveniments relacionats</h2>
+                  <EventsAround town={town} region={region} />
+                </>
+              )}
             </div>
           </article>
 
