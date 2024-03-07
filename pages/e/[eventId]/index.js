@@ -478,14 +478,7 @@ export default function Event(props) {
                 </div>
               </div>
             </div>
-            {/* Ad */}
-            <div className="w-full h-full flex justify-center items-start px-4 min-h-[250px] gap-2">
-              <SpeakerphoneIcon className="w-5 h-5 mt-1" />
-              <div className="w-11/12 flex flex-col gap-4">
-                <h2>Contingut patrocinat</h2>
-                <AdArticle slot="9643657007" />
-              </div>
-            </div>
+            {/* EventsAround */}
             <div
               ref={eventsAroundRef}
               className="w-full flex justify-center items-start gap-2 px-4"
@@ -504,6 +497,14 @@ export default function Event(props) {
                   </div>
                 </>
               )}
+            </div>
+            {/* Ad */}
+            <div className="w-full h-full flex justify-center items-start px-4 min-h-[250px] gap-2">
+              <SpeakerphoneIcon className="w-5 h-5 mt-1" />
+              <div className="w-11/12 flex flex-col gap-4">
+                <h2>Contingut patrocinat</h2>
+                <AdArticle slot="9643657007" />
+              </div>
             </div>
           </article>
 
