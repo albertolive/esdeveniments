@@ -2,9 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import { useRouter } from "next/router";
-import { useGetEvent } from "@components/hooks/useGetEvent";
-import Meta from "@components/partials/seo-meta";
-import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
@@ -12,11 +9,12 @@ import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
 import CloudIcon from "@heroicons/react/outline/CloudIcon";
 import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
-import DocumentIcon from "@heroicons/react/outline/DocumentIcon";
 import ArrowRightIcon from "@heroicons/react/outline/ArrowRightIcon";
 import SpeakerphoneIcon from "@heroicons/react/outline/SpeakerphoneIcon";
 import ShareIcon from "@heroicons/react/outline/ShareIcon";
-import ReactHtmlParser from "react-html-parser";
+import { useGetEvent } from "@components/hooks/useGetEvent";
+import Meta from "@components/partials/seo-meta";
+import { generateJsonData } from "@utils/helpers";
 import ViewCounter from "@components/ui/viewCounter";
 import ReportView from "@components/ui/reportView";
 import CardShareButton from "@components/ui/common/cardShareButton";
@@ -75,6 +73,10 @@ const EventsAround = dynamic(() => import("@components/ui/eventsAround"), {
 const Tooltip = dynamic(() => import("@components/ui/tooltip"), {
   loading: () => "",
   ssr: false,
+});
+
+const Description = dynamic(() => import("@components/ui/common/description"), {
+  loading: () => "",
 });
 
 function replaceURLs(text) {
@@ -438,15 +440,7 @@ export default function Event(props) {
               </div>
             </div>
             {/* Description */}
-            <div className="w-full flex justify-center items-start gap-2 px-4">
-              <DocumentIcon className="w-5 h-5 mt-1" />
-              <div className="w-11/12 flex flex-col gap-4">
-                <h2>Descripció</h2>
-                <div className="w-full break-words overflow-hidden">
-                  {ReactHtmlParser(description)}
-                </div>
-              </div>
-            </div>
+            <Description description={description} />
             {/* Weather */}
             <div className="w-full flex justify-center items-start gap-2 px-4">
               <CloudIcon className="w-5 h-5 mt-1" />
