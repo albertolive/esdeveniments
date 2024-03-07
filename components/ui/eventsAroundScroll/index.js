@@ -1,13 +1,36 @@
 import React from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { truncateString } from "@utils/helpers";
+import Image from "@components/ui/common/image";
 
-const Image = dynamic(() => import("@components/ui/common/image"), {
-  loading: () => "",
-});
+function EventCardLoading() {
+  return (
+    <div className="flex-none w-40 min-w-[10rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer animate-pulse">
+      {/* Image Placeholder */}
+      <div className="w-full h-32 bg-darkCorp"></div>
+      {/* Title Placeholder */}
+      <div className="p-1">
+        <div className="h-4 bg-darkCorp rounded-md"></div>
+      </div>
+      {/* Location Placeholder */}
+      <div className="p-1">
+        <div className="h-4 bg-darkCorp rounded-md"></div>
+      </div>
+    </div>
+  );
+}
 
-function EventsAroundScroll({ events }) {
+function EventsAroundScroll({ events, loading }) {
+  if (loading) {
+    return (
+      <div className="w-full flex overflow-x-auto py-4 space-x-4">
+        <EventCardLoading />
+        <EventCardLoading />
+        <EventCardLoading />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex overflow-x-auto py-4 space-x-4">
       {events.map((event) => {
@@ -19,9 +42,8 @@ function EventsAroundScroll({ events }) {
             href={`/e/${event.slug}`}
             passHref
             prefetch={false}
-            legacyBehavior
           >
-            <a className="flex-none w-40 min-w-[10rem] flex flex-col bg-white overflow-hidden cursor-pointer">
+            <div className="flex-none w-40 min-w-[10rem] flex flex-col bg-white overflow-hidden cursor-pointer">
               {/* ImageEvent */}
               <div className="w-full h-32 flex justify-center items-center overflow-hidden">
                 <Image
@@ -34,12 +56,18 @@ function EventsAroundScroll({ events }) {
                 />
               </div>
               {/* Title */}
-              <div className="p-2">
+              <div className="p-1">
                 <h3 className="text-sm font-semibold text-ellipsis overflow-hidden whitespace-nowrap">
                   {title}
                 </h3>
               </div>
-            </a>
+              {/* Location */}
+              <div className="p-1">
+                <div className="text-xs font-normal text-ellipsis overflow-hidden whitespace-nowrap">
+                  <span>{event.location}</span>
+                </div>
+              </div>
+            </div>
           </Link>
         );
       })}

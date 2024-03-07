@@ -3,18 +3,16 @@ import ChartBarIcon from "@heroicons/react/outline/ChartBarIcon";
 import { captureException } from "@sentry/nextjs";
 import EventsAroundScroll from "../eventsAroundScroll";
 
-const EventsAround = ({ town, region }) => {
+const EventsAround = ({ id, title, town, region }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  console.log("EventsAround", town, region);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const response = await fetch(
-          `/api/getEvents?q=${town + " " + region}`,
+          `/api/getEventsAround?id=${id}&title=${title}&town=${town}&region=${region}`,
           {
             method: "GET",
             headers: {
@@ -26,45 +24,31 @@ const EventsAround = ({ town, region }) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        if (data.error) {
+          // Handle case where API explicitly returns an error
+          throw new Error(data.error);
+        }
         setEvents(data.events || []);
       } catch (error) {
-        console.error(
-          `Failed to fetch events for "${town}, ${region}": ${error}`
+        const errorMessage = `Failed to fetch around events for "${id} ${title} ${town}, ${region}": ${error}`;
+        console.error(errorMessage);
+        setError(
+          "Ho sentim, però no hem pogut carregar els esdeveniments en aquest moment."
         );
-        setError(error);
-        captureException(
-          new Error(`Failed to fetch events for "${town}, ${region}": ${error}`)
-        );
+        captureException(new Error(errorMessage));
       } finally {
         setLoading(false);
       }
     };
 
     fetchEvents();
-  }, [town, region]);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center">
-        <ChartBarIcon className="animate-spin h-5 w-5 mr-3" />
-        Loading events...
-      </div>
-    );
-  }
+  }, [town, region, id, title]);
 
   if (error) {
-    return <div>Error loading events: {error.message}</div>;
+    return <div>{error}</div>;
   }
 
-  return (
-    <>
-      {events.length > 0 ? (
-        <EventsAroundScroll events={events} />
-      ) : (
-        <p>No events found.</p>
-      )}
-    </>
-  );
+  return <EventsAroundScroll events={events} loading={loading} />;
 };
 
 export default EventsAround;

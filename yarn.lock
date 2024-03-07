@@ -1279,6 +1279,22 @@ commondir@^1.0.1:
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
   integrity sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==
 
+compromise-stats@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/compromise-stats/-/compromise-stats-0.1.0.tgz#a49c8d7b1d89f37607ac1db5d6ec1328654c2c07"
+  integrity sha512-hiZ0IjrPk0oZIudh1PtR5haiUZ3dMgqtaCrMneXQ92KDszdbLfzTp+tDtStPs+ssmgDCZ0Mgb3Wmpr12+skLUA==
+  dependencies:
+    efrt "^2.5.0"
+
+compromise@^14.12.0:
+  version "14.12.0"
+  resolved "https://registry.yarnpkg.com/compromise/-/compromise-14.12.0.tgz#874d2b61a6d0723042e8ab896fb4897bad8a2e81"
+  integrity sha512-IVJ+ZXgm7Nc9Zobgl8glEir9QYJUc241EggW0JjKBdpRXJjvKB2Y7F+tiJ+vrVk9RQkHoQH5QhPgFX5jX+qL7A==
+  dependencies:
+    efrt "2.7.0"
+    grad-school "0.0.5"
+    suffix-thumb "5.0.2"
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -1546,6 +1562,11 @@ ecdsa-sig-formatter@1.0.11, ecdsa-sig-formatter@^1.0.11:
   integrity sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==
   dependencies:
     safe-buffer "^5.0.1"
+
+efrt@2.7.0, efrt@^2.5.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/efrt/-/efrt-2.7.0.tgz#8b021e69f75cfeed3f81ee058aa0c78265793324"
+  integrity sha512-/RInbCy1d4P6Zdfa+TMVsf/ufZVotat5hCw3QXmWtjU+3pFEOvOQ7ibo3aIxyCJw2leIeAMjmPj+1SLJiCpdrQ==
 
 electron-to-chromium@^1.4.477:
   version "1.4.515"
@@ -2312,6 +2333,11 @@ graceful-fs@^4.1.2, graceful-fs@^4.2.4:
   version "4.2.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
+
+grad-school@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/grad-school/-/grad-school-0.0.5.tgz#9e7b2084f3e137965c19b63ef0dfe49867194f43"
+  integrity sha512-rXunEHF9M9EkMydTBux7+IryYXEZinRk6g8OBOGDBzo/qWJjhTxy86i5q7lQYpCLHN8Sqv1XX3OIOc7ka2gtvQ==
 
 grapheme-splitter@^1.0.4:
   version "1.0.4"
@@ -3927,6 +3953,11 @@ sucrase@^3.32.0:
     mz "^2.7.0"
     pirates "^4.0.1"
     ts-interface-checker "^0.1.9"
+
+suffix-thumb@5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/suffix-thumb/-/suffix-thumb-5.0.2.tgz#b38940faddb3ae8b5fd281c7ec5830c25a6b2c9c"
+  integrity sha512-I5PWXAFKx3FYnI9a+dQMWNqTxoRt6vdBdb0O+BJ1sxXCWtSoQCusc13E58f+9p4MYx/qCnEMkD5jac6K2j3dgA==
 
 supports-color@^2.0.0:
   version "2.0.0"

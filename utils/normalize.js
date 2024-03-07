@@ -132,6 +132,60 @@ export const normalizeEvents = (event, weatherInfo) => {
   };
 };
 
+export const normalizeAroundEvents = (event) => {
+  const startDate =
+    (event.start && event.start.dateTime) || event.start.date || null;
+  const endDate =
+    (event.end && event.end.dateTime) || event.end.date || startDate || null;
+  const isFullDayEvent =
+    (event.start && event.start.date && !event.start.dateTime) || null;
+
+  const {
+    originalFormattedStart,
+    formattedStart,
+    formattedEnd,
+    startTime,
+    endTime,
+    nameDay,
+  } = getFormattedDate(startDate, endDate);
+  const eventImage = hasEventImage(event.description);
+  const locationParts = event.location ? event.location.split(",") : [];
+  const town =
+    locationParts.length > 1
+      ? locationParts[locationParts.length - 2].trim()
+      : "";
+  const region =
+    locationParts.length > 0
+      ? locationParts[locationParts.length - 1].trim()
+      : "";
+  const location = locationParts.length > 2 ? locationParts[0].trim() : town;
+  let title = event.summary ? sanitizeText(event.summary) : "";
+
+  const imageUploaded = event.guestsCanModify || false;
+  const imageId = event.id ? event.id.split("_")[0] : event.id;
+
+  return {
+    id: event.id,
+    title,
+    startTime,
+    endTime,
+    isFullDayEvent,
+    location,
+    subLocation: `${town}${town && region ? ", " : ""}${region}`,
+    formattedStart,
+    formattedEnd,
+    nameDay,
+    slug: slug(title, originalFormattedStart, event.id),
+    startDate,
+    endDate,
+    imageUploaded: imageUploaded
+      ? cloudinaryUrl(imageId)
+      : eventImage
+      ? eventImage
+      : null,
+  };
+};
+
 export const normalizeEvent = (event) => {
   if (!event || event.error) return null;
 

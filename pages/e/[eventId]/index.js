@@ -15,6 +15,7 @@ import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
 import DocumentIcon from "@heroicons/react/outline/DocumentIcon";
 import ArrowRightIcon from "@heroicons/react/outline/ArrowRightIcon";
 import SpeakerphoneIcon from "@heroicons/react/outline/SpeakerphoneIcon";
+import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import ReactHtmlParser from "react-html-parser";
 import ViewCounter from "@components/ui/viewCounter";
 import ReportView from "@components/ui/reportView";
@@ -429,7 +430,7 @@ export default function Event(props) {
               </div>
             )}
             {/* Ad */}
-            <div className="w-full h-full flex justify-center items-start px-4 min-h-[280px] gap-2 lg:min-h-[100px]">
+            <div className="w-full h-full flex justify-center items-start px-4 min-h-[250px] gap-2">
               <SpeakerphoneIcon className="w-5 h-5 mt-1" />
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>Contingut patrocinat</h2>
@@ -484,7 +485,7 @@ export default function Event(props) {
               </div>
             </div>
             {/* Ad */}
-            <div className="w-full h-full flex justify-center items-start px-4 min-h-[280px] gap-2 lg:min-h-[100px]">
+            <div className="w-full h-full flex justify-center items-start px-4 min-h-[250px] gap-2">
               <SpeakerphoneIcon className="w-5 h-5 mt-1" />
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>Contingut patrocinat</h2>
@@ -493,12 +494,20 @@ export default function Event(props) {
             </div>
             <div
               ref={eventsAroundRef}
-              className="w-full justify-center items-start gap-2 px-4"
+              className="w-full flex justify-center items-start gap-2 px-4"
             >
               {isEventsAroundVisible && (
                 <>
-                  <h2>Esdeveniments relacionats</h2>
-                  <EventsAround town={town} region={region} />
+                  <ShareIcon className="w-5 h-5 mt-1" />
+                  <div className="w-11/12 flex flex-col gap-4">
+                    <h2>Esdeveniments relacionats</h2>
+                    <EventsAround
+                      id={id}
+                      title={title}
+                      town={town}
+                      region={region}
+                    />
+                  </div>
                 </>
               )}
             </div>
