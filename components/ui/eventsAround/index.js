@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import ChartBarIcon from "@heroicons/react/outline/ChartBarIcon";
 import { captureException } from "@sentry/nextjs";
 import EventsAroundScroll from "../eventsAroundScroll";
 

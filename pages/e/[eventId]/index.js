@@ -203,12 +203,16 @@ export default function Event(props) {
   }, [asPath, data, edit_suggested, newEvent, push, slug, title]);
 
   useEffect(() => {
-    let place = getTownValueByLabel(data.event.town);
+    if (data?.event) {
+      let place = getTownValueByLabel(data.event.town);
 
-    if (!place) place = getTownValueByLabel(data.event.region);
+      if (!place) place = getTownValueByLabel(data.event.region);
 
-    window.localStorage.setItem("place", place);
-  }, [data.event.region, data.event.town]);
+      if (place) {
+        window.localStorage.setItem("place", place);
+      }
+    }
+  }, [data.event, data.event.region, data.event.town]);
 
   const onSendDeleteReason = async () => {
     const { id, title } = data.event;
@@ -427,7 +431,7 @@ export default function Event(props) {
             </div>
             {showMap && (
               <div
-                className="w-full flex flex-col justify-center items-end gap-6 overflow-hidden"
+                className="w-full flex flex-col justify-center items-end gap-6"
                 ref={mapsRef}
               >
                 {isMapsVisible && <Maps location={mapsLocation} />}
