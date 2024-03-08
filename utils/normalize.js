@@ -1,4 +1,3 @@
-const crypto = require("crypto");
 import {
   slug,
   getFormattedDate,
@@ -287,12 +286,3 @@ export const fixArticles = (text) => {
   });
   return newText;
 };
-
-export function createHash(title, url, location, date) {
-  const hash = crypto
-    .createHash("md5")
-    .update(title + url + location + date)
-    .digest("hex");
-
-  return hash;
-}

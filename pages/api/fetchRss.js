@@ -8,7 +8,7 @@ import { CITIES_DATA } from "@utils/constants";
 import { env } from "@utils/helpers";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
-import { createHash } from "@utils/normalize";
+import createHash from "@utils/createHash";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();

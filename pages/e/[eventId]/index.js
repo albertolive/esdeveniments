@@ -14,11 +14,7 @@ import SpeakerphoneIcon from "@heroicons/react/outline/SpeakerphoneIcon";
 import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
-import {
-  generateJsonData,
-  getRegionValueByLabel,
-  getTownValueByLabel,
-} from "@utils/helpers";
+import { generateJsonData, getTownValueByLabel } from "@utils/helpers";
 import ViewCounter from "@components/ui/viewCounter";
 import ReportView from "@components/ui/reportView";
 import CardShareButton from "@components/ui/common/cardShareButton";
@@ -181,7 +177,9 @@ export default function Event(props) {
   const mapsRef = useRef();
   const eventsAroundRef = useRef();
   const isMapsVisible = useOnScreen(mapsRef);
-  const isEventsAroundVisible = useOnScreen(eventsAroundRef);
+  const isEventsAroundVisible = useOnScreen(eventsAroundRef, {
+    freezeOnceVisible: true,
+  });
   const { push, query, asPath } = useRouter();
   const { newEvent, edit_suggested = false } = query;
   const [openModal, setOpenModal] = useState(false);
