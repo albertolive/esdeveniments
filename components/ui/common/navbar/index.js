@@ -19,19 +19,6 @@ const navigation = [
 export default function Navbar() {
   const router = useRouter();
 
-  const navigateToMainPage = () => {
-    localStorage.removeItem("place");
-    localStorage.removeItem("byDate");
-    localStorage.removeItem("distance");
-    localStorage.removeItem("currentPage");
-    localStorage.removeItem("searchTerm");
-    localStorage.removeItem("scrollPosition");
-  };
-
-  const handleLogoClick = () => {
-    navigateToMainPage();
-  };
-
   return (
     <Disclosure
       key={router.asPath}
@@ -45,10 +32,7 @@ export default function Navbar() {
               {/* FirstBar - Logo&LaptopMenu&MenuIcon */}
               <div className="flex justify-around items-center">
                 {/* Logo */}
-                <div
-                  className="flex w-full md:w-1/2 justify-start items-center py-2 px-3 cursor-pointer"
-                  onClick={handleLogoClick}
-                >
+                <div className="flex w-full md:w-1/2 justify-start items-center py-2 px-3 cursor-pointer">
                   <Link href="/">
                     <Image
                       src={logo}
@@ -91,10 +75,7 @@ export default function Navbar() {
               {/* SecondBar - Search&Share&MenuIcon */}
               <div className="fixed h-content bottom-0 left-0 right-0 py-2 bg-whiteCorp flex justify-evenly items-center gap-16 md:hidden">
                 {/* Home */}
-                <div
-                  className="flex justify-center items-center rounded-xl cursor-pointer"
-                  onClick={handleLogoClick}
-                >
+                <div className="flex justify-center items-center rounded-xl cursor-pointer">
                   <ActiveLink href="/">
                     <button
                       type="button"

@@ -67,6 +67,11 @@ function Events({ props, loadMore = true }) {
     shuffleItems,
   });
 
+  const notFound =
+    !isLoading &&
+    !isValidating &&
+    (noEventsFound || filteredEvents.length === 0);
+
   const jsonEvents = events
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));
@@ -87,10 +92,6 @@ function Events({ props, loadMore = true }) {
     setPage((prevPage) => prevPage + 1);
     sendGA();
   }, []);
-
-  const toggleDropdown = useCallback(() => {
-    setOpen(!open);
-  }, [open]);
 
   const filterEventsByDistance = useCallback(
     (events, userLocation) => {
@@ -332,19 +333,17 @@ function Events({ props, loadMore = true }) {
         </div>
       </div>
       <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
-        <>
-          <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4">
-            {title}
-          </h1>
-          <h2 className="text-[16px] font-normal text-blackCorp text-left mb-4 px-4">
-            {subTitle}
-          </h2>
-        </>
-        {!isLoading &&
-          !isValidating &&
-          (noEventsFound || filteredEvents.length === 0) && (
-            <NoEventsFound title={notFoundText} />
-          )}
+        {notFound && <NoEventsFound title={notFoundText} />}
+        {!notFound && (
+          <>
+            <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4">
+              {title}
+            </h1>
+            <h2 className="text-[16px] font-normal text-blackCorp text-left mb-4 px-4">
+              {subTitle}
+            </h2>
+          </>
+        )}
         {(isLoading || isValidating) && !isLoadingMore ? (
           <div>
             {[...Array(10)].map((_, i) => (

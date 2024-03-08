@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import Image from "next/image";
 import { getFormattedDate } from "@utils/helpers";
 import { normalizeWeather } from "@utils/normalize";

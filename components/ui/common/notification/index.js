@@ -1,7 +1,6 @@
 import CheckCircleIcon from "@heroicons/react/solid/CheckCircleIcon";
 import ExclamationCircleIcon from "@heroicons/react/solid/ExclamationCircleIcon";
 import XIcon from "@heroicons/react/solid/XIcon";
-import { siteUrl } from "@config/index";
 
 export default function Notification({
   url,

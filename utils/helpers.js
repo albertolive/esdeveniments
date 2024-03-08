@@ -498,3 +498,11 @@ export const env =
   process.env.VERCEL_ENV !== "production"
     ? "dev"
     : "prod";
+
+export function getRegionFromQuery(q) {
+  const parts = q.split(" ");
+  if (parts.length > 1) {
+    return parts[parts.length - 1];
+  }
+  return "";
+}
