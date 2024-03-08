@@ -1,11 +1,12 @@
 import { captureException } from "@sentry/nextjs";
 import { today, tomorrow, week, weekend, twoWeeksDefault } from "@lib/dates";
 import { getCalendarEvents } from "@lib/helpers";
+import { getRegionFromQuery } from "@utils/helpers";
 
-const noEventsFound = async (events) => {
+const noEventsFound = async (events, query) => {
   const { from, until } = twoWeeksDefault();
-
-  events = await getCalendarEvents({ from, until, maxResults: 7 });
+  const region = getRegionFromQuery(query);
+  events = await getCalendarEvents({ from, until, q: region, maxResults: 7 });
   events = { ...events, noEventsFound: true };
 
   return events;
@@ -27,7 +28,7 @@ const getEvents = async ({ from, until, q, maxResults, shuffleItems }) => {
   }
 
   if (events.noEventsFound) {
-    events = await noEventsFound(events);
+    events = await noEventsFound(events, q);
   }
 
   return events;

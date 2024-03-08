@@ -1,18 +1,14 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 
 const Navbar = dynamic(() => import("@components/ui/common/navbar"), {
-  noSSR: false,
+  ssr: true,
 });
 
 const Footer = dynamic(() => import("@components/ui/common/footer"), {
-  noSSR: false,
+  ssr: true,
 });
-
-// const Notify = dynamic(() => import("@components/ui/common/notify"), {
-//   noSSR: false,
-// });
 
 export default function BaseLayout({ children }) {
   const memoizedChildren = useMemo(() => children, [children]);
@@ -31,7 +27,6 @@ export default function BaseLayout({ children }) {
         />
       </Head>
       <Navbar />
-      {/* <Notify /> */}
       <div className="w-full bg-whiteCorp flex flex-col justify-center items-center overflow-hidden">
         {memoizedChildren}
       </div>

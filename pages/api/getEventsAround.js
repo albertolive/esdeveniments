@@ -21,7 +21,6 @@ async function fetchEvents(queryBatch, fromDate, maxResultsPerKeyword) {
 
 const handler = async (req, res) => {
   const { id, title, town, region } = req.query;
-  console.log("getEventsAround", town, region, title);
   const from = new Date();
   const fromDate = from.toISOString();
   const maxResultsPerKeyword = 2;
@@ -42,6 +41,7 @@ const handler = async (req, res) => {
     let searchQueries = keyPhrases.map((phrase) =>
       `${phrase} ${town} ${region}`.trim()
     );
+
     searchQueries.push(town, region);
 
     // Function to process and batch queries
@@ -65,6 +65,12 @@ const handler = async (req, res) => {
       const broaderQueries = keyPhrases.map((phrase) =>
         `${phrase} ${region}`.trim()
       );
+      await processAndBatchQueries([...broaderQueries, region]);
+    }
+
+    // If not enough results, try broader queries
+    if (allEvents.length < minResultsThreshold) {
+      const broaderQueries = keyPhrases.map((phrase) => phrase.trim());
       await processAndBatchQueries([...broaderQueries, region]);
     }
 

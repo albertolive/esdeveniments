@@ -1,7 +1,7 @@
-import React from "react";
+import { memo } from "react";
 import Link from "next/link";
-import { truncateString } from "@utils/helpers";
 import Image from "@components/ui/common/image";
+import { truncateString } from "@utils/helpers";
 
 const sendEventClickGA = (eventId, eventTitle) => {
   if (typeof window !== "undefined" && window.gtag) {
@@ -17,16 +17,23 @@ const sendEventClickGA = (eventId, eventTitle) => {
 
 function EventCardLoading() {
   return (
-    <div className="flex-none w-40 min-w-[10rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer animate-pulse">
+    <div className="flex-none w-40 min-w-[10rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer mb-10">
       {/* Image Placeholder */}
-      <div className="w-full h-32 bg-darkCorp"></div>
+      <div className="w-full h-32 flex justify-center items-center overflow-hidden animate-fast-pulse">
+        <div className="w-full h-full bg-darkCorp"></div>
+      </div>
       {/* Title Placeholder */}
-      <div className="p-1">
-        <div className="h-4 bg-darkCorp rounded-md"></div>
+      <div className="p-1 pt-4">
+        <div className="w-2/3 h-5 bg-darkCorp rounded-xl animate-fast-pulse"></div>
       </div>
       {/* Location Placeholder */}
       <div className="p-1">
-        <div className="h-4 bg-darkCorp rounded-md"></div>
+        <div className="w-full h-full flex items-start animate-fast-pulse">
+          <div className="h-4 w-4 bg-darkCorp rounded-xl"></div>
+          <div className="w-full h-full flex flex-col justify-center items-start px-2 gap-2">
+            <div className="w-2/3 my-1 bg-darkCorp h-3 rounded-xl"></div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -51,7 +58,7 @@ function EventsAroundScroll({ events, loading }) {
         return (
           <div
             key={event.id}
-            className="flex-none w-40 min-w-[10rem] flex flex-col bg-white overflow-hidden cursor-pointer"
+            className="flex-none w-40 min-w-[10rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer mb-10"
           >
             <Link href={`/e/${event.slug}`} passHref prefetch={false}>
               <div onClick={() => sendEventClickGA(event.id, event.title)}>
@@ -66,13 +73,16 @@ function EventsAroundScroll({ events, loading }) {
                   />
                 </div>
                 {/* Title */}
-                <div className="p-1">
+                <div className="flex pt-2">
+                  <div className="pt-[2px] pr-2">
+                    <div className=" w-2 h-4 bg-gradient-to-r from-primary to-primarydark"></div>
+                  </div>
                   <h3 className="text-sm font-semibold text-ellipsis overflow-hidden whitespace-nowrap">
                     {title}
                   </h3>
                 </div>
                 {/* Location */}
-                <div className="p-1">
+                <div className="pt-1">
                   <div className="text-xs font-normal text-ellipsis overflow-hidden whitespace-nowrap">
                     <span>{event.location}</span>
                   </div>
@@ -86,4 +96,4 @@ function EventsAroundScroll({ events, loading }) {
   );
 }
 
-export default EventsAroundScroll;
+export default memo(EventsAroundScroll);

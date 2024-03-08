@@ -14,7 +14,11 @@ import SpeakerphoneIcon from "@heroicons/react/outline/SpeakerphoneIcon";
 import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
-import { generateJsonData } from "@utils/helpers";
+import {
+  generateJsonData,
+  getRegionValueByLabel,
+  getTownValueByLabel,
+} from "@utils/helpers";
 import ViewCounter from "@components/ui/viewCounter";
 import ReportView from "@components/ui/reportView";
 import CardShareButton from "@components/ui/common/cardShareButton";
@@ -199,6 +203,14 @@ export default function Event(props) {
       localStorage.setItem("asPath", asPath);
     }
   }, [asPath, data, edit_suggested, newEvent, push, slug, title]);
+
+  useEffect(() => {
+    let place = getTownValueByLabel(data.event.town);
+
+    if (!place) place = getTownValueByLabel(data.event.region);
+
+    window.localStorage.setItem("place", place);
+  }, [data.event.region, data.event.town]);
 
   const onSendDeleteReason = async () => {
     const { id, title } = data.event;
@@ -449,6 +461,7 @@ export default function Event(props) {
                 <Weather startDate={startDate} />
               </div>
             </div>
+            <div ref={eventsAroundRef} />
             {/* EditButton */}
             <div className="w-full flex justify-center items-start gap-2 px-4">
               <PencilIcon className="w-5 h-5 mt-1" />
@@ -461,7 +474,7 @@ export default function Event(props) {
                       sendGoogleEvent("open-change-modal");
                     }}
                     type="button"
-                    className="flex justify-start items-center gap-2 ease-in-out duration-300 border-b-2 border-whiteCorp hover:border-blackCorp"
+                    className="gap-2 ease-in-out duration-300 border-b-2 border-whiteCorp hover:border-blackCorp"
                   >
                     <p className="font-medium">Editar</p>
                   </button>
@@ -479,25 +492,20 @@ export default function Event(props) {
               </div>
             </div>
             {/* EventsAround */}
-            <div
-              ref={eventsAroundRef}
-              className="w-full flex justify-center items-start gap-2 px-4"
-            >
-              {isEventsAroundVisible && (
-                <>
-                  <ShareIcon className="w-5 h-5 mt-1" />
-                  <div className="w-11/12 flex flex-col gap-4">
-                    <h2>Esdeveniments relacionats</h2>
-                    <EventsAround
-                      id={id}
-                      title={title}
-                      town={town}
-                      region={region}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
+            {isEventsAroundVisible && (
+              <div className="w-full flex justify-center items-start gap-2 px-4">
+                <ShareIcon className="w-5 h-5 mt-1" />
+                <div className="w-11/12 flex flex-col gap-4">
+                  <h2>Esdeveniments relacionats</h2>
+                  <EventsAround
+                    id={id}
+                    title={title}
+                    town={town}
+                    region={region}
+                  />
+                </div>
+              </div>
+            )}
             {/* Ad */}
             <div className="w-full h-full flex justify-center items-start px-4 min-h-[250px] gap-2">
               <SpeakerphoneIcon className="w-5 h-5 mt-1" />
