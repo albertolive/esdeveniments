@@ -426,10 +426,11 @@ export default function Event(props) {
               </div>
             </div>
             {showMap && (
-              <div className="w-full flex flex-col justify-center items-end gap-6 overflow-hidden">
-                <div ref={mapsRef}>
-                  {isMapsVisible && <Maps location={mapsLocation} />}
-                </div>
+              <div
+                className="w-full flex flex-col justify-center items-end gap-6 overflow-hidden"
+                ref={mapsRef}
+              >
+                {isMapsVisible && <Maps location={mapsLocation} />}
                 <div className="w-fit flex justify-end items-center gap-2 px-4 border-b-2 border-whiteCorp hover:border-b-2 hover:border-blackCorp ease-in-out duration-300 cursor-pointer">
                   <button
                     className="flex gap-2"
