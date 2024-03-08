@@ -463,8 +463,8 @@ export default function Event(props) {
                 <h2>El temps</h2>
                 <Weather startDate={startDate} />
               </div>
+              <span ref={eventsAroundRef} />
             </div>
-            <div ref={eventsAroundRef} />
             {/* EditButton */}
             <div className="w-full flex justify-center items-start gap-2 px-4">
               <PencilIcon className="w-5 h-5 mt-1" />
