@@ -9,7 +9,7 @@ const EventsAround = ({ id, title, town, region }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    sendGoogleEvent("view_events_around");
+    sendGoogleEvent("view_events_around_component");
 
     const fetchEvents = async () => {
       try {
@@ -26,10 +26,12 @@ const EventsAround = ({ id, title, town, region }) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        sendGoogleEvent("view_events_around_data");
         if (data.error) {
           // Handle case where API explicitly returns an error
           throw new Error(data.error);
         }
+
         setEvents(data.events || []);
       } catch (error) {
         const errorMessage = `Failed to fetch around events for "${id} ${title} ${town}, ${region}": ${error}`;
