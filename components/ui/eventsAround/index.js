@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { captureException } from "@sentry/nextjs";
-import EventsAroundScroll from "../eventsAroundScroll";
+import { sendGoogleEvent } from "@utils/analytics";
+import EventsAroundScroll from "@components/ui/eventsAroundScroll";
 
 const EventsAround = ({ id, title, town, region }) => {
   const [events, setEvents] = useState([]);
@@ -8,6 +9,8 @@ const EventsAround = ({ id, title, town, region }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    sendGoogleEvent("view_events_around");
+
     const fetchEvents = async () => {
       try {
         const response = await fetch(

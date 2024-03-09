@@ -2,17 +2,16 @@ import { memo } from "react";
 import Link from "next/link";
 import Image from "@components/ui/common/image";
 import { truncateString } from "@utils/helpers";
+import { sendGoogleEvent } from "@utils/analytics";
 
 const sendEventClickGA = (eventId, eventTitle) => {
-  if (typeof window !== "undefined" && window.gtag) {
-    window.gtag("event", "select_content", {
-      content_type: "event",
-      item_id: eventId,
-      item_name: eventTitle,
-      event_category: "Events Around",
-      event_label: eventTitle,
-    });
-  }
+  sendGoogleEvent("select_content", {
+    content_type: "event",
+    item_id: eventId,
+    item_name: eventTitle,
+    event_category: "Events Around",
+    event_label: eventTitle,
+  });
 };
 
 function EventCardLoading() {

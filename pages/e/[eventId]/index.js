@@ -20,6 +20,7 @@ import ReportView from "@components/ui/reportView";
 import CardShareButton from "@components/ui/common/cardShareButton";
 import useOnScreen from "@components/hooks/useOnScreen";
 import { siteUrl } from "@config/index";
+import { sendGoogleEvent } from "@utils/analytics";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -168,11 +169,6 @@ function generateMetaTitle(title, description, location, town) {
   return metaTitle;
 }
 
-const sendGoogleEvent = (event, obj) =>
-  typeof window !== "undefined" &&
-  window.gtag &&
-  window.gtag("event", event, { ...obj });
-
 export default function Event(props) {
   const mapsRef = useRef();
   const eventsAroundRef = useRef();
@@ -213,6 +209,10 @@ export default function Event(props) {
       }
     }
   }, [data.event, data.event.region, data.event.town]);
+
+  useEffect(() => {
+    sendGoogleEvent("view_event_page");
+  }, []);
 
   const onSendDeleteReason = async () => {
     const { id, title } = data.event;
