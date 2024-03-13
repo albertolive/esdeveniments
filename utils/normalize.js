@@ -43,14 +43,21 @@ export const normalizeWeather = (startDate, weatherInfo) => {
   return weatherObject;
 };
 
-const hasEventImage = (description) => {
-  const regexTraditional =
-    /(http(s?):)([\\/|.|\w|\s|-])*\.(?!html|css|js)(?:jpg|jpeg|gif|png|JPG|PNG)/g;
-  const regexCloudinary = /https?:\/\/res\.cloudinary\.com\/[^<]+/g;
+const extractEventImage = (description) => {
+  // First, try to match the new format with the <span> element
+  const newFormatRegex = /<span class="hidden" data-image="([^"]+)">/;
+  const newFormatMatch = description.match(newFormatRegex);
+  if (newFormatMatch) {
+    return newFormatMatch[1]; // Return the URL from the new format
+  }
 
-  const hasTraditionalImage =
-    description && description.match(regexTraditional);
-  const hasCloudinaryImage = description && description.match(regexCloudinary);
+  // If the new format isn't found, fall back to the old method of finding image URLs
+  const oldFormatRegexTraditional =
+    /(http(s?):)([\\/|.|\w|\s|-])*\.(?!html|css|js)(?:jpg|jpeg|gif|png|JPG|PNG)/g;
+  const oldFormatRegexCloudinary = /https?:\/\/res\.cloudinary\.com\/[^<]+/g;
+
+  const hasTraditionalImage = description.match(oldFormatRegexTraditional);
+  const hasCloudinaryImage = description.match(oldFormatRegexCloudinary);
 
   const imageUrl =
     (hasTraditionalImage && hasTraditionalImage[0]) ||
@@ -58,6 +65,130 @@ const hasEventImage = (description) => {
 
   return imageUrl;
 };
+
+const extractEventURL = (description) => {
+  const newFormatRegex =
+    /<span id="more-info" class="hidden" data-url="([^"]+)">/;
+  const newFormatMatch = description.match(newFormatRegex);
+  if (newFormatMatch) {
+    return newFormatMatch[1]; // Return the URL from the new format
+  }
+
+  const oldFormatRegex =
+    /<a class="text-primary" href="([^"]+)" target="_blank" rel="noopener noreferrer">/;
+  const oldFormatMatch = description.match(oldFormatRegex);
+  if (oldFormatMatch) {
+    return oldFormatMatch[1]; // Return the URL from the old format
+  }
+
+  return null; // Return null if no URL is found in either format
+};
+
+const extractVideoURL = (description) => {
+  // Regular expression to match <iframe> tags and capture the content of the src attribute
+  const iframeRegex = /<iframe[^>]+src="([^"]+)"[^>]*><\/iframe>/;
+
+  const match = iframeRegex.exec(description);
+
+  // If a match is found, return the captured src attribute value (the URL)
+  if (match) {
+    return match[1];
+  }
+
+  return null;
+};
+
+const cleanDescription = (description) => {
+  // Remove <span> elements with data attributes (including data-image)
+  description = description.replace(
+    /<span class="hidden" data-[^>]+><\/span>/g,
+    ""
+  );
+
+  // Remove image links: <a> tags containing <img> tags
+  // This regex looks for <a> tags that contain an <img> tag anywhere inside them
+  const imageLinkRegex =
+    /<a href="[^"]*"[\s\S]*?<img[\s\S]*?src="[^"]*"[\s\S]*?><\/a>/g;
+  description = description.replace(imageLinkRegex, "");
+
+  // Remove old format URL text
+  // This regex is designed to match the specific structure of the old format
+  const oldFormatURLTextRegex =
+    /<br><br><b>Més informació:<\/b><br><a class="text-primary" href="[^"]*" target="_blank" rel="noopener noreferrer">[^<]*<\/a>/g;
+  description = description.replace(oldFormatURLTextRegex, "");
+
+  // Remove content inside <div class="first-image">...</div>
+  const firstImageRegex = /<div class="first-image">(.*?)<\/div>/gs;
+  description = description.replace(firstImageRegex, "");
+
+  // Remove specific HTML structure 2
+  const specificStructure2Regex = /<a href="[^"]*">[^<]*<\/a>/g;
+  description = description.replace(specificStructure2Regex, "");
+
+  // Remove all hyperlinks
+  const linkRegex = /<a\s+(?:[^>]*?\s+)?href="([^"]*)"[^>]*>(.*?)<\/a>/g;
+  description = description.replace(linkRegex, "$2");
+
+  // Remove specific phrases like "Més informació a:" or "Més informació"
+  // The regex uses \s* to match any amount of whitespace, and \:? to optionally match a colon
+  const phrasesToRemoveRegex = /Més informació\s*a?:?\s*\.?/gi;
+  description = description.replace(phrasesToRemoveRegex, "");
+
+  // Remove <iframe> tags (videos)
+  description = description.replace(
+    /<iframe[^>]*src="[^"]*"[^>]*><\/iframe>/g,
+    ""
+  );
+
+  return description.trim(); // Return the cleaned description
+};
+
+function timeUntilEvent(startDateStr, endDateStr) {
+  // Parse the given start and end date-time strings to Date objects
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+
+  // Get the current date-time
+  const now = new Date();
+
+  // Check if the event has already ended
+  if (now > endDate) {
+    return "L'esdeveniment ha finalitzat.";
+  }
+
+  // Determine whether to calculate time until the event starts or ends
+  const calculatingForStart = now < startDate;
+  const relevantDate = calculatingForStart ? startDate : endDate;
+
+  // Calculate the difference in milliseconds
+  const diffInMs = relevantDate - now;
+
+  // Convert milliseconds to hours
+  const diffInHours = diffInMs / (1000 * 60 * 60);
+
+  // Determine the time unit and amount based on the difference
+  if (diffInHours < 24) {
+    // Check for singular "hour"
+    if (Math.round(diffInHours) === 1) {
+      return calculatingForStart ? "Comença en 1 hora" : "Acaba en 1 hora";
+    } else {
+      return calculatingForStart
+        ? `Comença en ${Math.round(diffInHours)} hores`
+        : `Acaba en ${Math.round(diffInHours)} hores`;
+    }
+  } else {
+    // Convert the difference to days
+    const diffInDays = Math.round(diffInHours / 24);
+    // Check for singular "day"
+    if (diffInDays === 1) {
+      return calculatingForStart ? "Comença en 1 dia" : "Acaba en 1 dia";
+    } else {
+      return calculatingForStart
+        ? `Comença en ${diffInDays} dies`
+        : `Acaba en ${diffInDays} dies`;
+    }
+  }
+}
 
 export const normalizeEvents = (event, weatherInfo) => {
   const startDate =
@@ -78,7 +209,7 @@ export const normalizeEvents = (event, weatherInfo) => {
     duration,
   } = getFormattedDate(startDate, endDate);
   const weatherObject = normalizeWeather(startDate, weatherInfo);
-  const eventImage = hasEventImage(event.description);
+  const eventImage = extractEventImage(event.description);
   const locationParts = event.location ? event.location.split(",") : [];
   const town =
     locationParts.length > 1
@@ -147,7 +278,7 @@ export const normalizeAroundEvents = (event) => {
     endTime,
     nameDay,
   } = getFormattedDate(startDate, endDate);
-  const eventImage = hasEventImage(event.description);
+  const eventImage = extractEventImage(event.description);
   const locationParts = event.location ? event.location.split(",") : [];
   const town =
     locationParts.length > 1
@@ -221,10 +352,14 @@ export const normalizeEvent = (event) => {
   const { postalCode = null, label = null } = getTownOptionsWithLabel(town);
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
-  const eventImage = hasEventImage(event.description);
+  const eventImage = extractEventImage(event.description);
+  const eventURL = extractEventURL(event.description);
   const mapsLocation = `${location}, ${town}${
     town && region ? ", " : ""
   }${region}, ${postalCode}`;
+  const description = cleanDescription(event.description);
+  const videoUrl = extractVideoURL(event.description);
+  const timeUntil = timeUntilEvent(startDate, endDate);
 
   return {
     id: event.id,
@@ -241,9 +376,7 @@ export const normalizeEvent = (event) => {
     formattedStart,
     formattedEnd,
     nameDay,
-    description: event.description
-      ? event.description
-      : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
+    description,
     tag,
     slug: slug(title, originalFormattedStart, event.id),
     startDate,
@@ -259,6 +392,9 @@ export const normalizeEvent = (event) => {
       ? new Date(event.end.dateTime) < new Date()
       : false,
     duration: duration || "PT1H",
+    eventURL,
+    videoUrl,
+    timeUntil,
   };
 };
 

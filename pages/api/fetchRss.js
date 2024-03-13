@@ -308,13 +308,13 @@ function getImage($, item, region, town, description) {
 }
 
 function formatDescription(item, description, image) {
-  const { title, url } = getRSSItemData(item);
+  const { url } = getRSSItemData(item);
 
-  const appendUrl = `<br><br><b>Més informació:</b><br><a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
   return `
     <div>${description}</div>
-    ${image ? `<div class="hidden">${image}</div>` : ""}
-    <div>${appendUrl}</div>`;
+    ${image ? `<span class="hidden" data-image="${image}"></span>` : ""}
+    <span id="more-info" class="hidden" data-url="${url}"></span>
+`;
 }
 
 async function scrapeDescription(item, region, town) {
