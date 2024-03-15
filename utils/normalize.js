@@ -64,7 +64,7 @@ const extractEventImage = (description) => {
   return imageUrl;
 };
 
-const extractEventURL = (description) => {
+const extracteventUrl = (description) => {
   const newFormatRegex =
     /<span id="more-info" class="hidden" data-url="([^"]+)">/;
   const newFormatMatch = description.match(newFormatRegex);
@@ -355,7 +355,7 @@ export const normalizeEvent = (event) => {
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
   const eventImage = extractEventImage(event.description);
-  const eventURL = extractEventURL(event.description);
+  const eventUrl = extracteventUrl(event.description);
   const mapsLocation = `${location}, ${town}${
     town && region ? ", " : ""
   }${region}, ${postalCode}`;
@@ -394,7 +394,7 @@ export const normalizeEvent = (event) => {
       ? new Date(event.end.dateTime) < new Date()
       : false,
     duration: duration || "PT1H",
-    eventURL,
+    eventUrl,
     videoUrl,
     timeUntil,
   };
