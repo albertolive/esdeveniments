@@ -307,12 +307,25 @@ function getImage($, item, region, town, description) {
   return image;
 }
 
-function formatDescription(item, description, image) {
+const getVideo = (description) => {
+  const iframeRegex = /<iframe[^>]+src="([^"]+)"[^>]*><\/iframe>/;
+
+  const match = iframeRegex.exec(description);
+
+  if (match) {
+    return match[1];
+  }
+
+  return null;
+};
+
+function formatDescription(item, description, image, video) {
   const { url } = getRSSItemData(item);
 
   return `
     <div>${description}</div>
     ${image ? `<span class="hidden" data-image="${image}"></span>` : ""}
+    ${video ? `<span class="hidden" data-video="${video}"></span>` : ""}
     <span id="more-info" class="hidden" data-url="${url}"></span>
 `;
 }
@@ -334,8 +347,9 @@ async function scrapeDescription(item, region, town) {
 
     const description = getDescription($, item, region, town);
     const image = getImage($, item, region, town, description);
+    const video = getVideo(description);
 
-    return formatDescription(item, description, image);
+    return formatDescription(item, description, image, video);
   } catch (error) {
     const errorMessage = `Error occurred during scraping description for ${url}: ${error.message}`;
     console.error(errorMessage);

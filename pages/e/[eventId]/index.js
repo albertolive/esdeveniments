@@ -233,16 +233,6 @@ export default function Event(props) {
   const title = data.event ? data.event.title : "";
 
   useEffect(() => {
-    if (newEvent || edit_suggested) return;
-
-    if (title !== "CANCELLED" && slug && asPath !== `/e/${slug}`) {
-      // push(slug, undefined, { shallow: true });
-      localStorage.setItem("e slug", `/e/${slug}`);
-      localStorage.setItem("asPath", asPath);
-    }
-  }, [asPath, data, edit_suggested, newEvent, push, slug, title]);
-
-  useEffect(() => {
     if (data?.event) {
       let place = getTownValueByLabel(data.event.town);
 
@@ -252,7 +242,7 @@ export default function Event(props) {
         window.localStorage.setItem("place", place);
       }
     }
-  }, [data.event, data.event.region, data.event.town]);
+  }, [data.event]);
 
   useEffect(() => {
     sendGoogleEvent("view_event_page");

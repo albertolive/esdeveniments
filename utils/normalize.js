@@ -44,14 +44,12 @@ export const normalizeWeather = (startDate, weatherInfo) => {
 };
 
 const extractEventImage = (description) => {
-  // First, try to match the new format with the <span> element
   const newFormatRegex = /<span class="hidden" data-image="([^"]+)">/;
   const newFormatMatch = description.match(newFormatRegex);
   if (newFormatMatch) {
     return newFormatMatch[1]; // Return the URL from the new format
   }
 
-  // If the new format isn't found, fall back to the old method of finding image URLs
   const oldFormatRegexTraditional =
     /(http(s?):)([\\/|.|\w|\s|-])*\.(?!html|css|js)(?:jpg|jpeg|gif|png|JPG|PNG)/g;
   const oldFormatRegexCloudinary = /https?:\/\/res\.cloudinary\.com\/[^<]+/g;
@@ -71,26 +69,30 @@ const extractEventURL = (description) => {
     /<span id="more-info" class="hidden" data-url="([^"]+)">/;
   const newFormatMatch = description.match(newFormatRegex);
   if (newFormatMatch) {
-    return newFormatMatch[1]; // Return the URL from the new format
+    return newFormatMatch[1];
   }
 
   const oldFormatRegex =
     /<a class="text-primary" href="([^"]+)" target="_blank" rel="noopener noreferrer">/;
   const oldFormatMatch = description.match(oldFormatRegex);
   if (oldFormatMatch) {
-    return oldFormatMatch[1]; // Return the URL from the old format
+    return oldFormatMatch[1];
   }
 
-  return null; // Return null if no URL is found in either format
+  return null;
 };
 
 const extractVideoURL = (description) => {
-  // Regular expression to match <iframe> tags and capture the content of the src attribute
+  const newFormatRegex = /<span class="hidden" data-video="([^"]+)">/;
+  const newFormatMatch = description.match(newFormatRegex);
+  if (newFormatMatch) {
+    return newFormatMatch[1];
+  }
+
   const iframeRegex = /<iframe[^>]+src="([^"]+)"[^>]*><\/iframe>/;
 
   const match = iframeRegex.exec(description);
 
-  // If a match is found, return the captured src attribute value (the URL)
   if (match) {
     return match[1];
   }
