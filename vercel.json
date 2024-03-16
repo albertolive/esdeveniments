@@ -1,8 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/test",
-      "schedule": "0 0 * * *"
+      "path": "/api/insertTowns",
+      "schedule": "5 9-20/2 * * *"
     }
   ],
   "functions": {
@@ -16,6 +16,9 @@
       "maxDuration": 300
     },
     "pages/api/scrapeWebsite.js": {
+      "maxDuration": 300
+    },
+    "pages/api/insertTowns.js": {
       "maxDuration": 300
     }
   }

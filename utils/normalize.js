@@ -146,31 +146,25 @@ const cleanDescription = (description) => {
 };
 
 function timeUntilEvent(startDateStr, endDateStr) {
-  // Parse the given start and end date-time strings to Date objects
   const startDate = new Date(startDateStr);
   const endDate = new Date(endDateStr);
 
-  // Get the current date-time
   const now = new Date();
 
-  // Check if the event has already ended
   if (now > endDate) {
     return "L'esdeveniment ha finalitzat.";
   }
 
-  // Determine whether to calculate time until the event starts or ends
   const calculatingForStart = now < startDate;
   const relevantDate = calculatingForStart ? startDate : endDate;
 
-  // Calculate the difference in milliseconds
   const diffInMs = relevantDate - now;
 
-  // Convert milliseconds to hours
   const diffInHours = diffInMs / (1000 * 60 * 60);
 
-  // Determine the time unit and amount based on the difference
+  const diffInDays = Math.round(diffInHours / 24);
+
   if (diffInHours < 24) {
-    // Check for singular "hour"
     if (Math.round(diffInHours) === 1) {
       return calculatingForStart ? "Comença en 1 hora" : "Acaba en 1 hora";
     } else {
@@ -178,10 +172,7 @@ function timeUntilEvent(startDateStr, endDateStr) {
         ? `Comença en ${Math.round(diffInHours)} hores`
         : `Acaba en ${Math.round(diffInHours)} hores`;
     }
-  } else {
-    // Convert the difference to days
-    const diffInDays = Math.round(diffInHours / 24);
-    // Check for singular "day"
+  } else if (diffInDays <= 30) {
     if (diffInDays === 1) {
       return calculatingForStart ? "Comença en 1 dia" : "Acaba en 1 dia";
     } else {
@@ -189,6 +180,34 @@ function timeUntilEvent(startDateStr, endDateStr) {
         ? `Comença en ${diffInDays} dies`
         : `Acaba en ${diffInDays} dies`;
     }
+  } else {
+    const diffInMonths = Math.round(diffInDays / 30);
+
+    if (diffInMonths === 1) {
+      return calculatingForStart ? "Comença en 1 mes" : "Acaba en 1 mes";
+    } else {
+      return calculatingForStart
+        ? `Comença en ${diffInMonths} mesos`
+        : `Acaba en ${diffInMonths} mesos`;
+    }
+  }
+}
+
+function calculateDurationInHours(startDateStr, endDateStr) {
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+
+  if (startDate.toDateString() !== endDate.toDateString()) {
+    return null;
+  }
+
+  const diffInMs = endDate - startDate;
+  const diffInHours = diffInMs / (1000 * 60 * 60);
+
+  if (diffInHours.toFixed(2) === "1.00") {
+    return "1 hora";
+  } else {
+    return `${diffInHours.toFixed(2).replace(".", ",")} hores`;
   }
 }
 
@@ -362,6 +381,7 @@ export const normalizeEvent = (event) => {
   const description = cleanDescription(event.description);
   const videoUrl = extractVideoURL(event.description);
   const timeUntil = timeUntilEvent(startDate, endDate);
+  const durationInHours = calculateDurationInHours(startDate, endDate);
 
   return {
     id: event.id,
@@ -397,6 +417,7 @@ export const normalizeEvent = (event) => {
     eventUrl,
     videoUrl,
     timeUntil,
+    durationInHours,
   };
 };
 

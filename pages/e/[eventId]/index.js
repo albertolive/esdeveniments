@@ -220,7 +220,7 @@ export default function Event(props) {
   const isEventsAroundVisible = useOnScreen(eventsAroundRef, {
     freezeOnceVisible: true,
   });
-  const { push, query, asPath } = useRouter();
+  const { query } = useRouter();
   const { newEvent, edit_suggested = false } = query;
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteReasonModal, setOpenModalDeleteReasonModal] =
@@ -308,6 +308,7 @@ export default function Event(props) {
     eventUrl,
     videoUrl,
     timeUntil,
+    durationInHours,
   } = data.event;
 
   const jsonData = generateJsonData({ ...data.event, imageUploaded });
@@ -501,15 +502,24 @@ export default function Event(props) {
                     {timeUntil}
                   </div>
                 </div>
-                <div className="font-bold">Descobreix més: </div>
-                <a
-                  className="text-primary hover:underline"
-                  href={eventUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {location}
-                </a>
+                {durationInHours && (
+                  <div className="flex justify-start items-center gap-2">
+                    <div className="flex items-center gap-1 font-normal">
+                      Durada aproximada: {durationInHours}
+                    </div>
+                  </div>
+                )}
+                <div className="font-bold">
+                  Enllaç a l&apos;esdeveniment:
+                  <a
+                    className="text-primary hover:underline font-normal ml-1"
+                    href={eventUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {title}
+                  </a>
+                </div>
               </div>
             </div>
             {/* EditButton */}
