@@ -303,7 +303,6 @@ export default function Event(props) {
     formattedStart,
     formattedEnd,
     imageUploaded,
-    isEventFinished,
     eventImage,
     eventUrl,
     videoUrl,
@@ -352,11 +351,6 @@ export default function Event(props) {
       {/* General */}
       <div className="w-full flex justify-center bg-whiteCorp pb-10">
         <div className="w-full flex flex-col justify-center items-center gap-4 sm:w-[520px] md:w-[520px] lg:w-[520px]">
-          {isEventFinished && (
-            <p className="w-full font-medium text-primary">
-              Aquest esdeveniment ha finalitzat
-            </p>
-          )}
           <article className="w-full flex flex-col justify-center items-start gap-8">
             {/* Image */}
             <div className="w-full flex flex-col justify-center items-start gap-4">
