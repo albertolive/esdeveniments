@@ -25,7 +25,7 @@ const handler = async (req, res) => {
   const fromDate = from.toISOString();
   const maxResultsPerKeyword = 2;
   const maxQueriesPerRequest = 50;
-  const minResultsThreshold = 5;
+  const maxEventsLimit = 10;
 
   const nlpEx = nlp.extend(stats);
   const doc = nlpEx(title);
@@ -39,16 +39,18 @@ const handler = async (req, res) => {
 
   try {
     const searchStrategies = [
-      (phrase) => `${phrase} ${region}`.trim(), // First, search with phrase and region
-      (phrase) => `${phrase} ${town} ${region}`.trim(), // Then, expand to phrase, town, and region
+      (phrase) => phrase.trim(), // First, search with phrase
       () => `${town}`.trim(), // Next, just the town
       () => `${region}`.trim(), // Then, just the region
-      (phrase) => phrase.trim(), // Finally, the phrase alone
     ];
 
     // Function to process and batch queries
     const processAndBatchQueries = async (queries) => {
-      for (let i = 0; i < queries.length; i += maxQueriesPerRequest) {
+      for (
+        let i = 0;
+        i < queries.length && allEvents.length < maxEventsLimit;
+        i += maxQueriesPerRequest
+      ) {
         const queryBatch = queries.slice(i, i + maxQueriesPerRequest);
         const batchEvents = await fetchEvents(
           queryBatch,
@@ -56,18 +58,31 @@ const handler = async (req, res) => {
           maxResultsPerKeyword * queryBatch.length
         );
         allEvents = [...allEvents, ...batchEvents];
+        if (allEvents.length >= maxEventsLimit) {
+          break; // Stop fetching more events if we've reached the limit
+        }
       }
     };
 
-    // Iterate through search strategies until enough results are found or all strategies are tried
+    // Iterate through search strategies until enough results are found, all strategies are tried, or the maximum limit is reached
     for (const strategy of searchStrategies) {
-      if (allEvents.length < minResultsThreshold) {
-        const searchQueries = keyPhrases.map(strategy);
-        console.log("searchStrategies", searchQueries);
+      if (allEvents.length < maxEventsLimit) {
+        let searchQueries;
+        if (strategy.length) {
+          // Check if strategy expects an argument
+          searchQueries = keyPhrases.map(strategy);
+        } else {
+          searchQueries = [strategy()]; // Strategy does not expect an argument
+        }
         await processAndBatchQueries(searchQueries);
       } else {
-        break; // Exit the loop if we have enough results
+        break; // Exit the loop if we have reached the maximum number of events
       }
+    }
+
+    // If we have more than the maximum limit of events, trim the list
+    if (allEvents.length > maxEventsLimit) {
+      allEvents = allEvents.slice(0, maxEventsLimit);
     }
 
     // Filter out the event with the same ID as provided in the query
