@@ -59,32 +59,35 @@ function EventsAroundScroll({ events, loading }) {
             key={event.id}
             className="flex-none w-40 min-w-[10rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer mb-10"
           >
-            <Link href={`/e/${event.slug}`} passHref prefetch={false}>
-              <div onClick={() => sendEventClickGA(event.id, event.title)}>
-                {/* ImageEvent */}
-                <div className="w-full h-32 flex justify-center items-center overflow-hidden">
-                  <Image
-                    className="w-full object-cover"
-                    title={event.title}
-                    image={event.imageUploaded}
-                    alt={event.title}
-                    layout="fill"
-                  />
+            <Link
+              href={`/e/${event.slug}`}
+              passHref
+              prefetch={false}
+              onClick={() => sendEventClickGA(event.id, event.title)}
+            >
+              {/* ImageEvent */}
+              <div className="w-full h-32 flex justify-center items-center overflow-hidden">
+                <Image
+                  className="w-full object-cover"
+                  title={event.title}
+                  image={event.imageUploaded}
+                  alt={event.title}
+                  layout="fill"
+                />
+              </div>
+              {/* Title */}
+              <div className="flex pt-2">
+                <div className="pt-[2px] pr-2">
+                  <div className=" w-2 h-4 bg-gradient-to-r from-primary to-primarydark"></div>
                 </div>
-                {/* Title */}
-                <div className="flex pt-2">
-                  <div className="pt-[2px] pr-2">
-                    <div className=" w-2 h-4 bg-gradient-to-r from-primary to-primarydark"></div>
-                  </div>
-                  <h3 className="text-sm font-semibold text-ellipsis overflow-hidden whitespace-nowrap">
-                    {title}
-                  </h3>
-                </div>
-                {/* Location */}
-                <div className="pt-1">
-                  <div className="text-xs font-normal text-ellipsis overflow-hidden whitespace-nowrap">
-                    <span>{event.location}</span>
-                  </div>
+                <h3 className="text-sm font-semibold text-ellipsis overflow-hidden whitespace-nowrap">
+                  {title}
+                </h3>
+              </div>
+              {/* Location */}
+              <div className="pt-1">
+                <div className="text-xs font-normal text-ellipsis overflow-hidden whitespace-nowrap">
+                  <span>{event.location}</span>
                 </div>
               </div>
             </Link>

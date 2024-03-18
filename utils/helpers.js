@@ -191,6 +191,7 @@ export const generateJsonData = (event) => {
     postalCode,
     subLocation,
     duration,
+    videoUrl,
   } = event;
 
   const images = [
@@ -198,6 +199,17 @@ export const generateJsonData = (event) => {
     eventImage,
     `${siteUrl}/static/images/logo-seo-meta.webp`,
   ].filter(Boolean);
+
+  const videoObject = videoUrl
+    ? {
+        "@type": "VideoObject",
+        name: title,
+        contentUrl: videoUrl,
+        description,
+        thumbnailUrl: imageUploaded || eventImage,
+        uploadDate: startDate,
+      }
+    : null;
 
   return {
     "@context": "https://schema.org",
@@ -241,6 +253,7 @@ export const generateJsonData = (event) => {
     },
     isAccessibleForFree: true,
     duration,
+    ...(videoObject ? { video: videoObject } : {}),
   };
 };
 
