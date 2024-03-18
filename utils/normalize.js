@@ -204,6 +204,10 @@ function calculateDurationInHours(startDateStr, endDateStr) {
   const diffInMs = endDate - startDate;
   const diffInHours = diffInMs / (1000 * 60 * 60);
 
+  if (diffInHours.toFixed(2) === "0.00") {
+    return null;
+  }
+
   if (diffInHours.toFixed(2) === "1.00") {
     return "1 hora";
   } else {
