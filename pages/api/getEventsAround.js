@@ -38,11 +38,13 @@ const handler = async (req, res) => {
   let allEvents = [];
 
   try {
-    let searchQueries = keyPhrases.map((phrase) =>
-      `${phrase} ${town} ${region}`.trim()
-    );
-
-    searchQueries.push(town, region);
+    const searchStrategies = [
+      (phrase) => `${phrase} ${region}`.trim(), // First, search with phrase and region
+      (phrase) => `${phrase} ${town} ${region}`.trim(), // Then, expand to phrase, town, and region
+      () => `${town}`.trim(), // Next, just the town
+      () => `${region}`.trim(), // Then, just the region
+      (phrase) => phrase.trim(), // Finally, the phrase alone
+    ];
 
     // Function to process and batch queries
     const processAndBatchQueries = async (queries) => {
@@ -57,29 +59,15 @@ const handler = async (req, res) => {
       }
     };
 
-    // Initial fetch with key phrases
-    await processAndBatchQueries(searchQueries);
-
-    // If not enough results, try broader queries
-    if (allEvents.length < minResultsThreshold) {
-      const broaderQueries = keyPhrases.map((phrase) =>
-        `${phrase} ${region}`.trim()
-      );
-      await processAndBatchQueries([...broaderQueries, region]);
-    }
-
-    // If not enough results, try broader queries
-    if (allEvents.length < minResultsThreshold) {
-      const broaderQueries = keyPhrases.map((phrase) => phrase.trim());
-      await processAndBatchQueries([...broaderQueries, region]);
-    }
-
-    // If no events found, search for events in the town and then the region
-    if (allEvents.length === 0) {
-      await processAndBatchQueries([town]);
-    }
-    if (allEvents.length === 0) {
-      await processAndBatchQueries([region]);
+    // Iterate through search strategies until enough results are found or all strategies are tried
+    for (const strategy of searchStrategies) {
+      if (allEvents.length < minResultsThreshold) {
+        const searchQueries = keyPhrases.map(strategy);
+        console.log("searchStrategies", searchQueries);
+        await processAndBatchQueries(searchQueries);
+      } else {
+        break; // Exit the loop if we have enough results
+      }
     }
 
     // Filter out the event with the same ID as provided in the query

@@ -64,7 +64,7 @@ const extractEventImage = (description) => {
   return imageUrl;
 };
 
-const extracteventUrl = (description) => {
+const extractEventUrl = (description) => {
   const newFormatRegex =
     /<span id="more-info" class="hidden" data-url="([^"]+)">/;
   const newFormatMatch = description.match(newFormatRegex);
@@ -231,6 +231,7 @@ export const normalizeEvents = (event, weatherInfo) => {
   } = getFormattedDate(startDate, endDate);
   const weatherObject = normalizeWeather(startDate, weatherInfo);
   const eventImage = extractEventImage(event.description);
+  const description = cleanDescription(event.description);
   const locationParts = event.location ? event.location.split(",") : [];
   const town =
     locationParts.length > 1
@@ -272,9 +273,7 @@ export const normalizeEvents = (event, weatherInfo) => {
       : eventImage
       ? eventImage
       : null,
-    description: event.description
-      ? event.description
-      : "Cap descripció. Vols afegir-ne una? Escriu-nos i et direm com fer-ho!",
+    description,
     weather: weatherObject,
     coords,
     isMultipleDays,
@@ -374,7 +373,7 @@ export const normalizeEvent = (event) => {
   const imageUploaded = event.guestsCanModify || false;
   const imageId = event.id ? event.id.split("_")[0] : event.id;
   const eventImage = extractEventImage(event.description);
-  const eventUrl = extracteventUrl(event.description);
+  const eventUrl = extractEventUrl(event.description);
   const mapsLocation = `${location}, ${town}${
     town && region ? ", " : ""
   }${region}, ${postalCode}`;
