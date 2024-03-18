@@ -111,6 +111,7 @@ export const CITIES_DATA = new Map([
             imageSelector: ".div_ia.imatge_associada2 img",
             postalCode: "08328",
             coords: { lat: "41.4938", lng: "2.2945" },
+            removeImage: true,
           },
         ],
         [
@@ -175,6 +176,7 @@ export const CITIES_DATA = new Map([
             descriptionSelector: ".cos",
             postalCode: "08360",
             coords: { lat: "41.5905", lng: "2.5812" },
+            removeImage: true,
           },
         ],
         [

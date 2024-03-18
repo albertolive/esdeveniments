@@ -28,14 +28,14 @@ class MyDocument extends Document {
             href="/static/fonts/BarlowCondensed-Regular.ttf"
             as="font"
             type="font/ttf"
-            crossorigin="anonymous"
+            crossOrigin="anonymous"
           />
           <link
             rel="preload"
             href="/static/fonts/RobotoFlex-Regular.ttf"
             as="font"
             type="font/ttf"
-            crossorigin="anonymous"
+            crossOrigin="anonymous"
           />
         </Head>
         <body>
