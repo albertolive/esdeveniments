@@ -27,7 +27,6 @@ export default async function handler(req, res) {
 
     for (const url of urls) {
       await fetchDataForTown(url);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
     const removeDuplicatesUrl = `${siteUrl}/api/removeDuplicates`;
