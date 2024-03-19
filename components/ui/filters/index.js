@@ -122,7 +122,7 @@ const Filters = ({
             Filtres
           </p>
         </div>
-        <div className="w-8/10 h-10 flex justify-center items-center gap-1 sm:gap-2 border-0 placeholder:text-bColor overflow-x-auto">
+        <div className="w-8/10 h-10 flex items-center gap-1 sm:gap-2 border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,

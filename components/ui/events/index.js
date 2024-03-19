@@ -1,6 +1,7 @@
 import { memo, useEffect, useState, useCallback } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
+import NextImage from "next/image";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetEvents } from "@components/hooks/useGetEvents";
@@ -19,7 +20,6 @@ import { CATEGORIES } from "@utils/constants";
 import Search from "@components/ui/search";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 import Imago from "public/static/images/imago-esdeveniments.png";
-import NextImage from "next/image";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -30,8 +30,15 @@ const NoEventsFound = dynamic(
 );
 
 function Events({ props, loadMore = true }) {
+  const isBrowser = typeof window !== "undefined";
+
   // Props destructuring
   const { place: placeProps, byDate: byDateProps } = props;
+
+  const getStoredPage = useCallback(() => {
+    const storedPage = isBrowser && window.localStorage.getItem("currentPage");
+    return storedPage ? parseInt(storedPage) : 1;
+  }, [isBrowser]);
 
   // State
   const [page, setPage] = useState(getStoredPage);
@@ -42,7 +49,6 @@ function Events({ props, loadMore = true }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [userLocation, setUserLocation] = useState(null);
   const [distance, setDistance] = useState("");
-  const [open, setOpen] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [scrollButton, setScrollButton] = useState(false);
@@ -77,21 +83,23 @@ function Events({ props, loadMore = true }) {
     .map((event) => generateJsonData(event));
 
   // Event handlers
-  const scrollToTop = () => {
+
+  const scrollToTop = useCallback(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  };
+  }, []);
 
   const handleLoadMore = useCallback(() => {
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       window.localStorage.setItem("scrollPosition", window.scrollY);
+      window.gtag && window.gtag("event", "load-more-events");
     }
+
     setIsLoadingMore(true);
     setPage((prevPage) => prevPage + 1);
-    sendGA();
-  }, []);
+  }, [isBrowser]);
 
   const filterEventsByDistance = useCallback(
     (events, userLocation) => {
@@ -109,13 +117,12 @@ function Events({ props, loadMore = true }) {
     [distance]
   );
 
-  // Helper function
-  const resetPage = () => {
+  const resetPage = useCallback(() => {
     setPage(1);
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       window.localStorage.setItem("currentPage", "1");
     }
-  };
+  }, [isBrowser]);
 
   const isSticky = useScrollVisibility(30);
 
@@ -127,14 +134,14 @@ function Events({ props, loadMore = true }) {
       resetPage();
       setNavigatedFilterModal(false);
     }
-  }, [shuffleItems, openModal, navigatedFilterModal]);
+  }, [shuffleItems, openModal, navigatedFilterModal, scrollToTop, resetPage]);
 
   useEffect(() => {
     if (distance && !openModal && navigatedFilterModal) {
       scrollToTop();
       resetPage();
     }
-  }, [distance, openModal, navigatedFilterModal]);
+  }, [distance, openModal, navigatedFilterModal, scrollToTop, resetPage]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -200,7 +207,7 @@ function Events({ props, loadMore = true }) {
   }, [distance]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       if (window.performance.navigation.type === 1) {
         window.localStorage.removeItem("scrollPosition");
       } else {
@@ -211,16 +218,15 @@ function Events({ props, loadMore = true }) {
         }
       }
     }
-  }, []);
+  }, [isBrowser]);
 
   useEffect(() => {
     const storedScrollPosition =
-      typeof window !== "undefined" &&
-      window.localStorage.getItem("scrollPosition");
+      isBrowser && window.localStorage.getItem("scrollPosition");
     if (storedScrollPosition) {
       window.scrollTo(0, parseInt(storedScrollPosition));
     }
-  }, [events.length]);
+  }, [events.length, isBrowser]);
 
   useEffect(() => {
     if (events.length > 0) {
@@ -377,16 +383,3 @@ function Events({ props, loadMore = true }) {
 }
 
 export default memo(Events);
-
-// Helper functions
-function getStoredPage() {
-  const storedPage =
-    typeof window !== "undefined" && window.localStorage.getItem("currentPage");
-  return storedPage ? parseInt(storedPage) : 1;
-}
-
-function sendGA() {
-  if (typeof window !== "undefined") {
-    window.gtag && window.gtag("event", "load-more-events");
-  }
-}

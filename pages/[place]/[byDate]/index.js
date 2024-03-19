@@ -50,7 +50,6 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { getCalendarEvents } = require("@lib/helpers");
   const { getPlaceTypeAndLabel } = require("@utils/helpers");
-  const { place, byDate } = params;
   const {
     today,
     tomorrow,
@@ -58,30 +57,29 @@ export async function getStaticProps({ params }) {
     weekend,
     twoWeeksDefault,
   } = require("@lib/dates");
+
+  const { place, byDate } = params;
+
   const dateFunctions = {
     avui: today,
     dema: tomorrow,
     setmana: week,
     "cap-de-setmana": weekend,
   };
-  const selectedFunction = dateFunctions[byDate];
+
+  const selectedFunction = dateFunctions[byDate] || today;
+
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
   const q = type === "town" ? `${label} ${regionLabel}` : label;
 
   const { from, until } = selectedFunction();
-  const { events: todayEvents } = await getCalendarEvents({
-    from,
-    until,
-    q,
-  });
+  let { events } = await getCalendarEvents({ from, until, q });
 
-  let events = todayEvents;
   let noEventsFound = false;
 
   if (events.length === 0) {
     const { from, until } = twoWeeksDefault();
-
-    const { events: nextEvents } = await getCalendarEvents({
+    const nextEventsResult = await getCalendarEvents({
       from,
       until,
       maxResults: 7,
@@ -89,14 +87,12 @@ export async function getStaticProps({ params }) {
     });
 
     noEventsFound = true;
-    events = nextEvents;
+    events = nextEventsResult.events;
   }
-
-  const normalizedEvents = JSON.parse(JSON.stringify(events));
 
   return {
     props: {
-      events: normalizedEvents,
+      events,
       noEventsFound,
       ...params,
       currentYear: new Date().getFullYear(),

@@ -234,15 +234,18 @@ export default function Event(props) {
 
   useEffect(() => {
     if (data?.event) {
-      let place = getTownValueByLabel(data.event.town);
-
-      if (!place) place = getTownValueByLabel(data.event.region);
+      let place =
+        getTownValueByLabel(data.event.town) ||
+        getTownValueByLabel(data.event.region);
 
       if (place) {
-        window.localStorage.setItem("place", place);
+        const currentPage = window.localStorage.getItem("currentPage");
+        if (currentPage !== null && Number(currentPage) === 1) {
+          window.localStorage.setItem("place", place);
+        }
       }
     }
-  }, [data.event]);
+  }, [data?.event]);
 
   useEffect(() => {
     sendGoogleEvent("view_event_page");
