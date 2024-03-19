@@ -250,7 +250,7 @@ export const normalizeEvents = (event, weatherInfo) => {
 
   const tag = null; //CATEGORIES.find((v) => title.includes(v)) || null;
 
-  const { coords, postalCode } = getTownOptionsWithLabel(town);
+  const { coords = null, postalCode } = getTownOptionsWithLabel(town);
 
   if (tag) title = title.replace(`${tag}:`, "").trim();
 
