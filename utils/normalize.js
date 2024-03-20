@@ -272,11 +272,8 @@ export const normalizeEvents = (event, weatherInfo) => {
     slug: slug(title, originalFormattedStart, event.id),
     startDate,
     endDate,
-    imageUploaded: imageUploaded
-      ? cloudinaryUrl(imageId)
-      : eventImage
-      ? eventImage
-      : null,
+    imageUploaded: imageUploaded ? cloudinaryUrl(imageId) : null,
+    eventImage,
     description,
     weather: weatherObject,
     coords,
@@ -332,11 +329,8 @@ export const normalizeAroundEvents = (event) => {
     slug: slug(title, originalFormattedStart, event.id),
     startDate,
     endDate,
-    imageUploaded: imageUploaded
-      ? cloudinaryUrl(imageId)
-      : eventImage
-      ? eventImage
-      : null,
+    imageUploaded: imageUploaded ? cloudinaryUrl(imageId) : null,
+    eventImage,
   };
 };
 
@@ -406,11 +400,7 @@ export const normalizeEvent = (event) => {
     slug: slug(title, originalFormattedStart, event.id),
     startDate,
     endDate,
-    imageUploaded: imageUploaded
-      ? cloudinaryUrl(imageId)
-      : eventImage
-      ? eventImage
-      : null,
+    imageUploaded: imageUploaded ? cloudinaryUrl(imageId) : null,
     eventImage,
     imageId,
     isEventFinished: event.end

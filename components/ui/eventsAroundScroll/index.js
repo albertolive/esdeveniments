@@ -53,6 +53,7 @@ function EventsAroundScroll({ events, loading }) {
     <div className="w-full flex overflow-x-auto py-4 space-x-4">
       {events.map((event) => {
         const title = truncateString(event.title || "", 60);
+        const image = event.imageUploaded || event.eventImage;
 
         return (
           <div
@@ -70,7 +71,7 @@ function EventsAroundScroll({ events, loading }) {
                 <Image
                   className="w-full object-cover"
                   title={event.title}
-                  image={event.imageUploaded}
+                  image={image}
                   alt={event.title}
                   layout="fill"
                 />

@@ -6,21 +6,6 @@ import { captureException } from "@sentry/nextjs";
 
 const SITE_NAME = "Esdeveniments.cat";
 
-function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  while (currentIndex > 1) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-  return array;
-}
-
 const getAllArticles = async (region, town, maxEventsPerDay, untilProp = 7) => {
   const { label: regionLabel } = getPlaceTypeAndLabel(region);
   const { label: townLabel } = getPlaceTypeAndLabel(town);
@@ -67,19 +52,8 @@ const getAllArticles = async (region, town, maxEventsPerDay, untilProp = 7) => {
   }
 };
 
-const selectImage = (item) => {
-  const regex = /(http(s?):)([\\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
-  const hasEventImage = item.description.match(regex);
-  const eventImage = hasEventImage && hasEventImage[0];
-
-  return item.imageUploaded
-    ? item.imageUploaded
-    : eventImage
-    ? eventImage
-    : `${siteUrl}/static/images/logo-seo-meta.webp`;
-};
-
 const buildFeed = (items, region, town) => {
+  const defaultImage = `${siteUrl}/static/images/logo-seo-meta.webp`;
   const { label: regionLabel } = getPlaceTypeAndLabel(region);
   const { label: townLabel } = getPlaceTypeAndLabel(town);
 
@@ -115,7 +89,7 @@ const buildFeed = (items, region, town) => {
       description,
       content: item.mapsLocation,
       date: new Date(item.startDate),
-      image: selectImage(item),
+      image: item.imageUploaded || item.eventImage || defaultImage,
     });
   });
 

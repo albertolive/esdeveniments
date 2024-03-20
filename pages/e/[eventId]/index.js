@@ -177,17 +177,11 @@ function generateMetaTitle(title, description, location, town) {
   return metaTitle;
 }
 
-function renderEventImage(
-  imageUploaded,
-  title,
-  location,
-  nameDay,
-  formattedStart
-) {
-  if (imageUploaded) {
+function renderEventImage(image, title, location, nameDay, formattedStart) {
+  if (image) {
     return (
       <a
-        href={imageUploaded}
+        href={image}
         className="flex justify-center"
         target="_blank"
         rel="image_src noreferrer"
@@ -195,7 +189,7 @@ function renderEventImage(
         <Image
           alt={title}
           title={title}
-          image={imageUploaded}
+          image={image}
           className="w-full object-center object-cover"
           priority={true}
         />
@@ -313,7 +307,9 @@ export default function Event(props) {
     durationInHours,
   } = data.event;
 
-  const jsonData = generateJsonData({ ...data.event, imageUploaded });
+  const image = imageUploaded || eventImage;
+
+  const jsonData = generateJsonData({ ...data.event });
 
   if (title === "CANCELLED") return <NoEventFound />;
 
@@ -338,7 +334,7 @@ export default function Event(props) {
           description
         )}
         canonical={`${siteUrl}/e/${slug}`}
-        imageUploaded={imageUploaded || eventImage}
+        image={image}
         preload="/static/images/gMaps.webp"
       />
       <ReportView slug={slug} />
@@ -361,7 +357,7 @@ export default function Event(props) {
                 <VideoDisplay videoUrl={videoUrl} />
               ) : (
                 renderEventImage(
-                  imageUploaded,
+                  image,
                   title,
                   location,
                   nameDay,
@@ -473,13 +469,7 @@ export default function Event(props) {
             {/* Description */}
             <Description description={description} />
             {videoUrl &&
-              renderEventImage(
-                imageUploaded,
-                title,
-                location,
-                nameDay,
-                formattedStart
-              )}
+              renderEventImage(image, title, location, nameDay, formattedStart)}
             {/* Weather */}
             <div className="w-full flex justify-center items-start gap-2 px-4">
               <CloudIcon className="w-5 h-5 mt-1" />

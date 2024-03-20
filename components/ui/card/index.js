@@ -34,6 +34,7 @@ function Card({ event, isLoading }) {
   const title = truncateString(event.title || "", 60);
   const location = truncateString(event.location || "");
   const subLocation = truncateString(event.subLocation || "", 45);
+  const image = event.imageUploaded || event.eventImage;
 
   return (
     <>
@@ -78,7 +79,7 @@ function Card({ event, isLoading }) {
               date={event.formattedStart}
               location={event.location}
               subLocation={event.subLocation}
-              image={event.imageUploaded}
+              image={image}
               alt={event.title}
               layout="responsive"
               priority={true}
