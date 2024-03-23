@@ -126,6 +126,16 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "arenys-de-munt",
+          {
+            label: "Arenys de Munt",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=arenys-de-munt`,
+            postalCode: "08358",
+            coords: { lat: "41.60897309259838", lng: "2.540454175884264" },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
           "argentona",
           {
             label: "Argentona",
@@ -190,6 +200,26 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "el-masnou",
+          {
+            label: "El Masnou",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=el-masnou`,
+            postalCode: "08320",
+            coords: { lat: "41.48276608612813", lng: "2.311522588574262" },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "malgrat-de-mar",
+          {
+            label: "Malgrat de Mar",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=malgrat-de-mar`,
+            postalCode: "08380",
+            coords: { lat: "41.64667346532037", lng: "2.7425516023358285" },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
           "mataro",
           {
             label: "Mataró",
@@ -220,6 +250,16 @@ export const CITIES_DATA = new Map([
             ...sharedData,
             postalCode: "08317",
             coords: { lat: "41.55750", lng: "2.35583" },
+          },
+        ],
+        [
+          "premia-de-dalt",
+          {
+            label: "Premià de Dalt",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=premia-de-dalt`,
+            postalCode: "08338",
+            coords: { lat: "41.505059765326024", lng: "2.3481186212204306" },
+            getDescriptionFromRss: true,
           },
         ],
         // [
@@ -303,6 +343,26 @@ export const CITIES_DATA = new Map([
             ...sharedData,
             postalCode: "08490",
             coords: { lat: "41.70083", lng: "2.72000" },
+          },
+        ],
+        [
+          "vilassar-de-dalt",
+          {
+            label: "Vilassar de Dalt",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=vilassar-de-dalt`,
+            postalCode: "08339",
+            coords: { lat: "41.517176648217394", lng: "2.3583089588685895" },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "vilassar-de-mar",
+          {
+            label: "Vilassar de Mar",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=vilassar-de-mar`,
+            postalCode: "08340",
+            coords: { lat: "41.50422039690453", lng: "2.3930130407280035" },
+            getDescriptionFromRss: true,
           },
         ],
       ]),
@@ -568,6 +628,26 @@ export const CITIES_DATA = new Map([
             coords: { lat: 41.53389, lng: 2.44222 },
           },
         ],
+        [
+          "bigues-i-riells",
+          {
+            label: "Bigues i Riells",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=bigues-i-riells`,
+            postalCode: "08415",
+            coords: { lat: 41.67657584479664, lng: 2.2255734222191146 },
+            getDescriptionFromRss: true,
+          }
+        ],
+        [
+          "la-roca-del-valles",
+          {
+            label: "La Roca del Vallès",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=la-roca-del-valles`,
+            postalCode: "08430",
+            coords: { lat: 41.58583538424762, lng: 2.3264763420486925 },
+            getDescriptionFromRss: true,
+          }
+        ],
       ]),
     },
   ],
@@ -669,6 +749,140 @@ export const CITIES_DATA = new Map([
       ]),
     },
   ],
-  osona,
-  selva,
+  [
+    "osona",
+    {
+      label: "Osona",
+      towns: new Map([
+        [
+          "l-esquirol",
+          {
+            label: "L'Esquirol",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=l-esquirol`,
+            postalCode: "08511",
+            coords: { lat: 42.03486595361544, lng: 2.3690592801911325 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "olost",
+          {
+            label: "Olost",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=olost`,
+            postalCode: "08516",
+            coords: { lat: 41.986161485717, lng: 2.0962412997274056 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "roda-de-ter",
+          {
+            label: "Roda de Ter",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=roda-de-ter`,
+            postalCode: "08510",
+            coords: { lat: 41.98073426558233, lng: 2.3092071424357914 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "torello",
+          {
+            label: "Torrelló",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=torello`,
+            postalCode: "08570",
+            coords: { lat: 42.04774047487035, lng: 2.2635096140069924 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "viladrau",
+          {
+            label: "Viladrau",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=viladrau`,
+            postalCode: "17406",
+            coords: { lat: 41.847389487561244, lng: 2.389980199969341 },
+            getDescriptionFromRss: true,
+          },
+        ],
+      ]),
+    },
+  ],
+  [
+    "selva",
+    {
+      label: "Selva",
+      towns: new Map([
+        [
+          "amer",
+          {
+            label: "Amer",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=amer`,
+            postalCode: "17170",
+            coords: { lat: 42.01014321520421, lng: 2.601112454161817 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "brunyola",
+          {
+            label: "Brunyola",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=brunyola`,
+            postalCode: "17441",
+            coords: { lat: 41.90433123125433, lng: 2.6844513842053415 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "riudarenes",
+          {
+            label: "Riuadrenes",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=riudarenes`,
+            postalCode: "17421",
+            coords: { lat: 41.82390619969425, lng: 2.716193163543463 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "riudellots-de-la-selva",
+          {
+            label: "Riudellots de la Selva",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=riudellots-de-la-selva`,
+            postalCode: "17457",
+            coords: { lat: 41.9018115982014, lng: 2.80254227832728 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "sant-hilari-sacalm",
+          {
+            label: "Sant Hilari Sacalm",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=sant-hilari-sacalm`,
+            postalCode: "17403",
+            coords: { lat: 41.878838900571715, lng: 2.5112221854007535 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "susqueda",
+          {
+            label: "Susqueda",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=susqueda`,
+            postalCode: "17166",
+            coords: { lat: 42.04051449860147, lng: 2.505313638592133 },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "vidreres",
+          {
+            label: "Vidreres",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=vidreres`,
+            postalCode: "17411",
+            coords: { lat: 41.78881689148823, lng: 2.779212932821845 },
+            getDescriptionFromRss: true,
+          },
+        ],
+      ]),
+    },
+  ],
 ]);
