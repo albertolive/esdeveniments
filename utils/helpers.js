@@ -191,13 +191,22 @@ export const generateJsonData = (event) => {
     postalCode,
     subLocation,
     duration,
+    videoUrl,
   } = event;
 
-  const images = [
-    imageUploaded,
-    eventImage,
-    `${siteUrl}/static/images/logo-seo-meta.webp`,
-  ].filter(Boolean);
+  const defaultImage = `${siteUrl}/static/images/logo-seo-meta.png`;
+  const images = [imageUploaded, eventImage, defaultImage].filter(Boolean);
+
+  const videoObject = videoUrl
+    ? {
+        "@type": "VideoObject",
+        name: title,
+        contentUrl: videoUrl,
+        description,
+        thumbnailUrl: imageUploaded || eventImage || defaultImage,
+        uploadDate: startDate,
+      }
+    : null;
 
   return {
     "@context": "https://schema.org",
@@ -241,6 +250,7 @@ export const generateJsonData = (event) => {
     },
     isAccessibleForFree: true,
     duration,
+    ...(videoObject ? { video: videoObject } : {}),
   };
 };
 
@@ -498,3 +508,11 @@ export const env =
   process.env.VERCEL_ENV !== "production"
     ? "dev"
     : "prod";
+
+export function getRegionFromQuery(q) {
+  const parts = q.split(" ");
+  if (parts.length > 1) {
+    return parts[parts.length - 1];
+  }
+  return "";
+}

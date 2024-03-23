@@ -4,7 +4,7 @@ const RSS = require("rss");
 const { DateTime } = require("luxon");
 import { siteUrl } from "@config/index";
 import { captureException } from "@sentry/nextjs";
-import { createHash } from "@utils/normalize";
+import createHash from "@utils/createHash";
 
 const CITIES = {
   granollers: {

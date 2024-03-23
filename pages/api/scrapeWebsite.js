@@ -1,4 +1,4 @@
-import { createHash } from "@utils/normalize";
+import createHash from "@utils/createHash";
 
 const axios = require("axios");
 const { DateTime } = require("luxon");

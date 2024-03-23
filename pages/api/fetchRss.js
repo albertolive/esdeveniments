@@ -8,7 +8,7 @@ import { CITIES_DATA } from "@utils/constants";
 import { env } from "@utils/helpers";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
-import { createHash } from "@utils/normalize";
+import createHash from "@utils/createHash";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -307,14 +307,27 @@ function getImage($, item, region, town, description) {
   return image;
 }
 
-function formatDescription(item, description, image) {
-  const { title, url } = getRSSItemData(item);
+const getVideo = (description) => {
+  const iframeRegex = /<iframe[^>]+src="([^"]+)"[^>]*><\/iframe>/;
 
-  const appendUrl = `<br><br><b>Més informació:</b><br><a class="text-primary" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>`;
+  const match = iframeRegex.exec(description);
+
+  if (match) {
+    return match[1];
+  }
+
+  return null;
+};
+
+function formatDescription(item, description, image, video) {
+  const { url } = getRSSItemData(item);
+
   return `
     <div>${description}</div>
-    ${image ? `<div class="hidden">${image}</div>` : ""}
-    <div>${appendUrl}</div>`;
+    ${image ? `<span class="hidden" data-image="${image}"></span>` : ""}
+    ${video ? `<span class="hidden" data-video="${video}"></span>` : ""}
+    <span id="more-info" class="hidden" data-url="${url}"></span>
+`;
 }
 
 async function scrapeDescription(item, region, town) {
@@ -334,8 +347,9 @@ async function scrapeDescription(item, region, town) {
 
     const description = getDescription($, item, region, town);
     const image = getImage($, item, region, town, description);
+    const video = getVideo(description);
 
-    return formatDescription(item, description, image);
+    return formatDescription(item, description, image, video);
   } catch (error) {
     const errorMessage = `Error occurred during scraping description for ${url}: ${error.message}`;
     console.error(errorMessage);

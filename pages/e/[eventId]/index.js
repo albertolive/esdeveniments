@@ -1,30 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import { useRouter } from "next/router";
-import { useGetEvent } from "@components/hooks/useGetEvent";
-import Meta from "@components/partials/seo-meta";
-import { generateJsonData } from "@utils/helpers";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import XIcon from "@heroicons/react/outline/XIcon";
 import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
-import ReactHtmlParser from "react-html-parser";
-import ViewCounter from "@components/ui/viewCounter";
-import { siteUrl } from "@config/index";
-import ReportView from "@components/ui/reportView";
-import CardShareButton from "@components/ui/common/cardShareButton";
 import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
 import CloudIcon from "@heroicons/react/outline/CloudIcon";
 import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
-import DocumentIcon from "@heroicons/react/outline/DocumentIcon";
 import ArrowRightIcon from "@heroicons/react/outline/ArrowRightIcon";
 import SpeakerphoneIcon from "@heroicons/react/outline/SpeakerphoneIcon";
-import { Tooltip } from "react-tooltip";
+import ShareIcon from "@heroicons/react/outline/ShareIcon";
+import WebIcon from "@heroicons/react/outline/GlobeAltIcon";
+import { useGetEvent } from "@components/hooks/useGetEvent";
+import Meta from "@components/partials/seo-meta";
+import { generateJsonData, getTownValueByLabel } from "@utils/helpers";
+import ViewCounter from "@components/ui/viewCounter";
+import ReportView from "@components/ui/reportView";
+import CardShareButton from "@components/ui/common/cardShareButton";
+import useOnScreen from "@components/hooks/useOnScreen";
+import { siteUrl } from "@config/index";
+import { sendGoogleEvent } from "@utils/analytics";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
-  noSSR: false,
+  ssr: false,
 });
 
 const Image = dynamic(() => import("@components/ui/common/image"), {
@@ -33,16 +34,19 @@ const Image = dynamic(() => import("@components/ui/common/image"), {
 
 const EditModal = dynamic(() => import("@components/ui/editModal"), {
   loading: () => "",
+  ssr: false,
 });
 
 const Maps = dynamic(() => import("@components/ui/maps"), {
   loading: () => "",
+  ssr: false,
 });
 
 const NoEventFound = dynamic(
   () => import("@components/ui/common/noEventFound"),
   {
     loading: () => "",
+    ssr: false,
   }
 );
 
@@ -50,16 +54,39 @@ const Notification = dynamic(
   () => import("@components/ui/common/notification"),
   {
     loading: () => "",
+    ssr: false,
   }
 );
 
 const Weather = dynamic(() => import("@components/ui/weather"), {
   loading: () => "",
+  ssr: false,
 });
 
 const ImageDefault = dynamic(() => import("@components/ui/imgDefault"), {
   loading: () => "",
 });
+
+const EventsAround = dynamic(() => import("@components/ui/eventsAround"), {
+  loading: () => "",
+  ssr: false,
+});
+
+const Tooltip = dynamic(() => import("@components/ui/tooltip"), {
+  loading: () => "",
+  ssr: false,
+});
+
+const Description = dynamic(() => import("@components/ui/common/description"), {
+  loading: () => "",
+});
+
+const VideoDisplay = dynamic(
+  () => import("@components/ui/common/videoDisplay"),
+  {
+    loading: () => "",
+  }
+);
 
 function replaceURLs(text) {
   if (!text) return;
@@ -150,13 +177,50 @@ function generateMetaTitle(title, description, location, town) {
   return metaTitle;
 }
 
-const sendGoogleEvent = (event, obj) =>
-  typeof window !== "undefined" &&
-  window.gtag &&
-  window.gtag("event", event, { ...obj });
+function renderEventImage(
+  imageUploaded,
+  title,
+  location,
+  nameDay,
+  formattedStart
+) {
+  if (imageUploaded) {
+    return (
+      <a
+        href={imageUploaded}
+        className="flex justify-center"
+        target="_blank"
+        rel="image_src noreferrer"
+      >
+        <Image
+          alt={title}
+          title={title}
+          image={imageUploaded}
+          className="w-full object-center object-cover"
+          priority={true}
+        />
+      </a>
+    );
+  } else {
+    const date = `${nameDay} ${formattedStart}`;
+
+    return (
+      <div className="w-full">
+        <div className="w-full border-t"></div>
+        <ImageDefault date={date} location={location} alt={title} />
+      </div>
+    );
+  }
+}
 
 export default function Event(props) {
-  const { push, query, asPath } = useRouter();
+  const mapsRef = useRef();
+  const eventsAroundRef = useRef();
+  const isMapsVisible = useOnScreen(mapsRef);
+  const isEventsAroundVisible = useOnScreen(eventsAroundRef, {
+    freezeOnceVisible: true,
+  });
+  const { query } = useRouter();
   const { newEvent, edit_suggested = false } = query;
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteReasonModal, setOpenModalDeleteReasonModal] =
@@ -169,14 +233,20 @@ export default function Event(props) {
   const title = data.event ? data.event.title : "";
 
   useEffect(() => {
-    if (newEvent || edit_suggested) return;
+    if (data?.event) {
+      let place = getTownValueByLabel(data.event.town);
 
-    if (title !== "CANCELLED" && slug && asPath !== `/e/${slug}`) {
-      // push(slug, undefined, { shallow: true });
-      localStorage.setItem("e slug", `/e/${slug}`);
-      localStorage.setItem("asPath", asPath);
+      if (!place) place = getTownValueByLabel(data.event.region);
+
+      if (place) {
+        window.localStorage.setItem("place", place);
+      }
     }
-  }, [asPath, data, edit_suggested, newEvent, push, slug, title]);
+  }, [data.event]);
+
+  useEffect(() => {
+    sendGoogleEvent("view_event_page");
+  }, []);
 
   const onSendDeleteReason = async () => {
     const { id, title } = data.event;
@@ -233,25 +303,16 @@ export default function Event(props) {
     formattedStart,
     formattedEnd,
     imageUploaded,
-    isEventFinished,
     eventImage,
+    eventUrl,
+    videoUrl,
+    timeUntil,
+    durationInHours,
   } = data.event;
 
   const jsonData = generateJsonData({ ...data.event, imageUploaded });
 
   if (title === "CANCELLED") return <NoEventFound />;
-
-  function ImgDefault() {
-    const date = `${nameDay} ${formattedStart}`;
-    if (!imageUploaded) {
-      return (
-        <div className="w-full">
-          <div className="w-full border-t"></div>
-          <ImageDefault date={date} location={location} alt={title} />
-        </div>
-      );
-    }
-  }
 
   const handleDirectionsClick = () => {
     window.open(
@@ -290,31 +351,19 @@ export default function Event(props) {
       {/* General */}
       <div className="w-full flex justify-center bg-whiteCorp pb-10">
         <div className="w-full flex flex-col justify-center items-center gap-4 sm:w-[520px] md:w-[520px] lg:w-[520px]">
-          {isEventFinished && (
-            <p className="w-full font-medium text-primary">
-              Aquest esdeveniment ha finalitzat
-            </p>
-          )}
           <article className="w-full flex flex-col justify-center items-start gap-8">
             {/* Image */}
             <div className="w-full flex flex-col justify-center items-start gap-4">
-              {imageUploaded ? (
-                <a
-                  href={imageUploaded}
-                  className="flex justify-center"
-                  target="_blank"
-                  rel="image_src noreferrer"
-                >
-                  <Image
-                    alt={title}
-                    title={title}
-                    image={imageUploaded}
-                    className="w-full object-center object-cover"
-                    priority={true}
-                  />
-                </a>
+              {videoUrl ? (
+                <VideoDisplay videoUrl={videoUrl} />
               ) : (
-                <ImgDefault />
+                renderEventImage(
+                  imageUploaded,
+                  title,
+                  location,
+                  nameDay,
+                  formattedStart
+                )
               )}
               {/* ShareButton */}
               <div className="w-full flex justify-between items-center px-4">
@@ -394,8 +443,11 @@ export default function Event(props) {
               </div>
             </div>
             {showMap && (
-              <div className="w-full flex flex-col justify-center items-end gap-6 overflow-hidden">
-                <Maps location={mapsLocation} />
+              <div
+                className="w-full flex flex-col justify-center items-end gap-6"
+                ref={mapsRef}
+              >
+                {isMapsVisible && <Maps location={mapsLocation} />}
                 <div className="w-fit flex justify-end items-center gap-2 px-4 border-b-2 border-whiteCorp hover:border-b-2 hover:border-blackCorp ease-in-out duration-300 cursor-pointer">
                   <button
                     className="flex gap-2"
@@ -408,7 +460,7 @@ export default function Event(props) {
               </div>
             )}
             {/* Ad */}
-            <div className="w-full h-full flex justify-center items-start px-4 min-h-[280px] gap-2 lg:min-h-[100px]">
+            <div className="w-full h-full flex justify-center items-start px-4 min-h-[250px] gap-2">
               <SpeakerphoneIcon className="w-5 h-5 mt-1" />
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>Contingut patrocinat</h2>
@@ -416,21 +468,52 @@ export default function Event(props) {
               </div>
             </div>
             {/* Description */}
-            <div className="w-full flex justify-center items-start gap-2 px-4">
-              <DocumentIcon className="w-5 h-5 mt-1" />
-              <div className="w-11/12 flex flex-col gap-4">
-                <h2>Descripció</h2>
-                <div className="w-full break-words overflow-hidden">
-                  {ReactHtmlParser(description)}
-                </div>
-              </div>
-            </div>
+            <Description description={description} />
+            {videoUrl &&
+              renderEventImage(
+                imageUploaded,
+                title,
+                location,
+                nameDay,
+                formattedStart
+              )}
             {/* Weather */}
             <div className="w-full flex justify-center items-start gap-2 px-4">
               <CloudIcon className="w-5 h-5 mt-1" />
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>El temps</h2>
                 <Weather startDate={startDate} />
+              </div>
+              <span ref={eventsAroundRef} />
+            </div>
+            {/* More info */}
+            <div className="w-full flex justify-center items-start gap-2 px-4">
+              <WebIcon className="w-5 h-5 mt-1" />
+              <div className="w-11/12 flex flex-col gap-4">
+                <h2>Detalls de l&apos;Esdeveniment</h2>{" "}
+                <div className="flex justify-start items-center gap-2">
+                  <div className="flex items-center gap-1 font-normal">
+                    {timeUntil}
+                  </div>
+                </div>
+                {durationInHours && (
+                  <div className="flex justify-start items-center gap-2">
+                    <div className="flex items-center gap-1 font-normal">
+                      Durada aproximada: {durationInHours}
+                    </div>
+                  </div>
+                )}
+                <div className="font-bold">
+                  Enllaç a l&apos;esdeveniment:
+                  <a
+                    className="text-primary hover:underline font-normal ml-1"
+                    href={eventUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {title}
+                  </a>
+                </div>
               </div>
             </div>
             {/* EditButton */}
@@ -439,16 +522,15 @@ export default function Event(props) {
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>Suggerir un canvi</h2>
                 <div className="w-11/12 flex justify-start items-center gap-2 cursor-pointer">
-                  <button
+                  <div
                     onClick={() => {
                       setOpenModal(true);
                       sendGoogleEvent("open-change-modal");
                     }}
-                    type="button"
-                    className="flex justify-start items-center gap-2 ease-in-out duration-300 border-b-2 border-whiteCorp hover:border-blackCorp"
+                    className="gap-2 ease-in-out duration-300 border-whiteCorp hover:border-blackCorp"
                   >
-                    <p className="font-medium">Editar</p>
-                  </button>
+                    <p className="font-medium flex items-center">Editar</p>
+                  </div>
                   <InfoIcon className="w-5 h-5" data-tooltip-id="edit-button" />
                   <Tooltip id="edit-button">
                     Si després de veure la informació de l&apos;esdeveniment,
@@ -462,8 +544,23 @@ export default function Event(props) {
                 </div>
               </div>
             </div>
+            {/* EventsAround */}
+            {isEventsAroundVisible && (
+              <div className="w-full flex justify-center items-start gap-2 px-4">
+                <ShareIcon className="w-5 h-5 mt-1" />
+                <div className="w-11/12 flex flex-col gap-4">
+                  <h2>Esdeveniments relacionats</h2>
+                  <EventsAround
+                    id={id}
+                    title={title}
+                    town={town}
+                    region={region}
+                  />
+                </div>
+              </div>
+            )}
             {/* Ad */}
-            <div className="w-full h-full flex justify-center items-start px-4 min-h-[280px] gap-2 lg:min-h-[100px]">
+            <div className="w-full h-full flex justify-center items-start px-4 min-h-[250px] gap-2">
               <SpeakerphoneIcon className="w-5 h-5 mt-1" />
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>Contingut patrocinat</h2>
