@@ -6,15 +6,17 @@ import { BaseLayout } from "@components/ui/layout";
 
 function EsdevenimentsMainEntry({ Component, pageProps }) {
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      localStorage.removeItem("currentPage");
-    };
+    if (typeof window !== "undefined") {
+      const handleBeforeUnload = () => {
+        localStorage.removeItem("currentPage");
+      };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }
   }, []);
 
   return (

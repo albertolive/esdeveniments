@@ -43,9 +43,9 @@ function isCacheValid(cachedData) {
 }
 
 // Fetches the RSS feed and returns the parsed data
-async function fetchRSSFeed(rssFeed, town) {
+async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
   try {
-    if (env === "prod") {
+    if (shouldInteractWithKv) {
       // Check if the data is cached
       const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
 
@@ -104,7 +104,7 @@ async function fetchRSSFeed(rssFeed, town) {
     }
 
     // Cache the data
-    if (env === "prod") {
+    if (shouldInteractWithKv) {
       try {
         await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
           timestamp: Date.now(),
@@ -496,13 +496,20 @@ async function createEvent(item, region, town) {
   return event;
 }
 
-async function insertEventToCalendar(event, town, item, processedItems, token) {
+async function insertEventToCalendar(
+  event,
+  town,
+  item,
+  processedItems,
+  token,
+  shouldInteractWithKv
+) {
   if (!debugMode) {
     await postToGoogleCalendar(event, token);
 
     console.log("Inserted new item successfully: " + event.summary);
 
-    if (env === "prod") {
+    if (shouldInteractWithKv) {
       const { guid } = getRSSItemData(item);
 
       const now = Date.now();
@@ -537,7 +544,14 @@ async function handleError(error, town, functionName) {
   throw error;
 }
 
-async function insertItemToCalendar(item, region, town, processedItems, token) {
+async function insertItemToCalendar(
+  item,
+  region,
+  town,
+  processedItems,
+  token,
+  shouldInteractWithKv
+) {
   let event;
   try {
     event = await createEvent(item, region, town);
@@ -546,7 +560,14 @@ async function insertItemToCalendar(item, region, town, processedItems, token) {
   }
 
   try {
-    await insertEventToCalendar(event, town, item, processedItems, token);
+    await insertEventToCalendar(
+      event,
+      town,
+      item,
+      processedItems,
+      token,
+      shouldInteractWithKv
+    );
   } catch (error) {
     handleError(error, town, "insertEventToCalendar");
   }
@@ -557,7 +578,8 @@ async function insertItemToCalendarWithRetry(
   region,
   town,
   processedItems,
-  token
+  token,
+  shouldInteractWithKv
 ) {
   if (!item) return null;
 
@@ -566,7 +588,14 @@ async function insertItemToCalendarWithRetry(
 
   while (retries < MAX_RETRIES) {
     try {
-      await insertItemToCalendar(item, region, town, processedItems, token);
+      await insertItemToCalendar(
+        item,
+        region,
+        town,
+        processedItems,
+        token,
+        shouldInteractWithKv
+      );
       return;
     } catch (error) {
       console.error("Error inserting item to calendar:", error);
@@ -597,7 +626,10 @@ export default async function handler(req, res) {
   const startTime = Date.now();
 
   try {
-    const { region, town } = req.query;
+    const { region, town, disableKvInsert } = req.query;
+    const shouldInteractWithKv = !(
+      env !== "prod" && disableKvInsert === "true"
+    );
 
     // Check if the region parameter is provided
     if (!region) {
@@ -630,12 +662,12 @@ export default async function handler(req, res) {
     }
 
     // Fetch the RSS feed
-    const items = await fetchRSSFeed(rssFeed, town);
+    const items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
 
     // Read the database
     let processedItems = new Map();
 
-    if (env === "prod") {
+    if (shouldInteractWithKv) {
       processedItems = await getProcessedItems(town);
       await cleanProcessedItems(processedItems, town);
     }
@@ -647,10 +679,9 @@ export default async function handler(req, res) {
     const processedItemsSet = new Set(processedItems.keys());
 
     // Filter out already fetched items
-    const newItems =
-      env === "prod"
-        ? items.filter((_, i) => !processedItemsSet.has(itemHashes[i]))
-        : items;
+    const newItems = shouldInteractWithKv
+      ? items.filter((_, i) => !processedItemsSet.has(itemHashes[i]))
+      : items;
 
     // If no new items, log a message
     if (newItems.length === 0) {
@@ -683,7 +714,8 @@ export default async function handler(req, res) {
             region,
             town,
             processedItems,
-            token
+            token,
+            shouldInteractWithKv
           );
           return;
         } catch (error) {

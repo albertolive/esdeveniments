@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import ChartBarIcon from "@heroicons/react/outline/ChartBarIcon";
-import { captureException } from "@sentry/nextjs";
 import { env } from "@utils/helpers";
 
 const ViewCounter = ({ slug, hideText }) => {
@@ -28,7 +27,6 @@ const ViewCounter = ({ slug, hideText }) => {
         } catch (error) {
           const errorMessage = `Failed to fetch views for slug "${slug}": ${error}`;
           console.error(errorMessage);
-          captureException(new Error(errorMessage));
         } finally {
           setLoading(false);
         }

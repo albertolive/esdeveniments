@@ -141,12 +141,7 @@ export default function Edita({ event }) {
   const handleChangeDate = (name, value) => handleFormChange(name, value);
 
   const onSubmit = async () => {
-    const newFormState = createFormState(
-      form,
-      formState.isPristine,
-      null,
-      true
-    );
+    const newFormState = createFormState(form, formState.isPristine);
 
     setFormState(newFormState);
 
@@ -162,7 +157,7 @@ export default function Edita({ event }) {
         body: JSON.stringify({
           ...form,
           location: `${form.location}, ${form.town.label}, ${form.region.label}`,
-          imageUploaded: !!event.imageUploaded,
+          imageUploaded: !!imageToUpload || !!event.imageUploaded,
           isProduction: process.env.NODE_ENV === "production",
         }),
       });
@@ -190,9 +185,9 @@ export default function Edita({ event }) {
       setProgress(Math.round((e.loaded * 100.0) / e.total));
     });
 
-    xhr.onreadystatechange = (e) => {
+    xhr.onreadystatechange = () => {
       if (xhr.readyState == 4 && xhr.status == 200)
-        router.push(goToEventPage(`/${slugifiedTitle}`));
+        router.push(goToEventPage(`/e/${slugifiedTitle}`));
     };
 
     fd.append(

@@ -1,5 +1,5 @@
 import { siteUrl } from "@config/index";
-import { osona, selva } from "@utils/cities";
+import { osona, selva, baixLlobregat } from "@utils/cities";
 
 export const MAX_RESULTS = 15;
 
@@ -123,6 +123,7 @@ export const CITIES_DATA = new Map([
             imageSelector: ".imatge_associada2",
             postalCode: "08350",
             coords: { lat: "41.5819", lng: "2.54936" },
+            removeImage: true,
           },
         ],
         [
@@ -671,4 +672,5 @@ export const CITIES_DATA = new Map([
   ],
   osona,
   selva,
+  baixLlobregat,
 ]);
