@@ -43,7 +43,7 @@ const selva = [
       [
         "riudarenes",
         {
-          label: "Riuadrenes",
+          label: "Riudarenes",
           rssFeed: `${siteUrl}/api/scrapeEvents?city=riudarenes`,
           postalCode: "17421",
           coords: { lat: 41.82390619969425, lng: 2.716193163543463 },
