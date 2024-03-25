@@ -126,6 +126,16 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "arenys-de-munt",
+          {
+            label: "Arenys de Munt",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=arenys-de-munt`,
+            postalCode: "08358",
+            coords: { lat: "41.60897309259838", lng: "2.540454175884264" },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
           "argentona",
           {
             label: "Argentona",
@@ -190,6 +200,26 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "el-masnou",
+          {
+            label: "El Masnou",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=el-masnou`,
+            postalCode: "08320",
+            coords: { lat: "41.48276608612813", lng: "2.311522588574262" },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "malgrat-de-mar",
+          {
+            label: "Malgrat de Mar",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=malgrat-de-mar`,
+            postalCode: "08380",
+            coords: { lat: "41.64667346532037", lng: "2.7425516023358285" },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
           "mataro",
           {
             label: "Mataró",
@@ -220,6 +250,16 @@ export const CITIES_DATA = new Map([
             ...sharedData,
             postalCode: "08317",
             coords: { lat: "41.55750", lng: "2.35583" },
+          },
+        ],
+        [
+          "premia-de-dalt",
+          {
+            label: "Premià de Dalt",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=premia-de-dalt`,
+            postalCode: "08338",
+            coords: { lat: "41.505059765326024", lng: "2.3481186212204306" },
+            getDescriptionFromRss: true,
           },
         ],
         // [
@@ -303,6 +343,26 @@ export const CITIES_DATA = new Map([
             ...sharedData,
             postalCode: "08490",
             coords: { lat: "41.70083", lng: "2.72000" },
+          },
+        ],
+        [
+          "vilassar-de-dalt",
+          {
+            label: "Vilassar de Dalt",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=vilassar-de-dalt`,
+            postalCode: "08339",
+            coords: { lat: "41.517176648217394", lng: "2.3583089588685895" },
+            getDescriptionFromRss: true,
+          },
+        ],
+        [
+          "vilassar-de-mar",
+          {
+            label: "Vilassar de Mar",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=vilassar-de-mar`,
+            postalCode: "08340",
+            coords: { lat: "41.50422039690453", lng: "2.3930130407280035" },
+            getDescriptionFromRss: true,
           },
         ],
       ]),
@@ -567,6 +627,26 @@ export const CITIES_DATA = new Map([
             postalCode: "08410",
             coords: { lat: 41.53389, lng: 2.44222 },
           },
+        ],
+        [
+          "bigues-i-riells",
+          {
+            label: "Bigues i Riells",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=bigues-i-riells`,
+            postalCode: "08415",
+            coords: { lat: 41.67657584479664, lng: 2.2255734222191146 },
+            getDescriptionFromRss: true,
+          }
+        ],
+        [
+          "la-roca-del-valles",
+          {
+            label: "La Roca del Vallès",
+            rssFeed: `${siteUrl}/api/scrapeEvents?city=la-roca-del-valles`,
+            postalCode: "08430",
+            coords: { lat: 41.58583538424762, lng: 2.3264763420486925 },
+            getDescriptionFromRss: true,
+          }
         ],
       ]),
     },

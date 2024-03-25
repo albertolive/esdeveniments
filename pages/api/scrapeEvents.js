@@ -7,7 +7,7 @@ import { captureException } from "@sentry/nextjs";
 import createHash from "@utils/createHash";
 
 const CITIES = {
-  granollers: {
+  "granollers": {
     defaultLocation: "Granollers",
     domain: "https://www.granollers.cat",
     url: "https://www.granollers.cat/agenda",
@@ -16,13 +16,15 @@ const CITIES = {
     titleSelector: "h3 a",
     urlSelector: ".node-event .wrap h3 a",
     dateSelector: ".date-info .date-day",
+    timeSelector: "",
     descriptionSelector: "div > h3",
     imageSelector: ".responsive-image",
     locationSelector: "h4",
     urlImage: "/styles/home_agenda/public/",
-    dateRegex: {regex: /^(\d{1,2})\s+([a-zç]+)(?:\.?)\s+(\d{4})\s+-\s+(\d{2}):(\d{2})h$/i, swapDayMonthOrder: false},
+    dateRegex: {regex: /^(\d{1,2})\s+([a-zA-zçÇ]+)(?:\.?)\s+(\d{4})\s+-\s+(\d{2}):(\d{2})h$/i, swapDayMonthOrder: false},
+    timeRegex: null,
   },
-  biguesiriells: {
+  "bigues-i-riells": {
     defaultLocation: "Bigues i Riells",
     domain: "https://www.biguesiriells.cat",
     url: "https://www.biguesiriells.cat/ca/actualitat-2/agenda-1.htm",
@@ -31,13 +33,15 @@ const CITIES = {
     titleSelector: "h2 a",
     urlSelector: "h2 a",
     dateSelector: ".data",
+    timeSelector: ".row.seccio-detall .text",
     descriptionSelector: "h2 a",
     imageSelector: ".img-fluid",
     locationSelector: "",
     urlImage: "/",
     dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: /Horari: (?:De )?(\d{1,2})\.(\d{2})/i,
   },
-  premiadedalt: {
+  "premia-de-dalt": {
     defaultLocation: "Premià de Dalt",
     domain: "https://www.premiadedalt.cat",
     url: "https://www.premiadedalt.cat/events",
@@ -45,14 +49,16 @@ const CITIES = {
     listSelector: '#content-core > section > article',
     titleSelector: ".tileHeadline > a > span",
     urlSelector: ".tileHeadline > a",
-    dateSelector: ".datedisplay",
+    dateSelector: ".cal_date",
+    timeSelector: ".dtstart",
     descriptionSelector: ".description",
     imageSelector: ".newsImageContainer > a.swipebox > img",
     locationSelector: ".location",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /^([a-zA-zçÇ]+)\s+(\d+)/i, swapDayMonthOrder: true},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  laroca: {
+  "la-roca-del-valles": {
     defaultLocation: "La Roca del Vallès",
     domain: "http://www.laroca.cat",
     url: "http://www.laroca.cat/actualitat/que-esta-passant/agenda",
@@ -61,13 +67,15 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
-    locationSelector: "div.info_cos > div:nth-child(3) > a",
+    locationSelector: ".info_cos .item_info:has(.fa.fa-map-marker)",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  arenysdemunt: {
+  "arenys-de-munt": {
     defaultLocation: "Arenys de Munt",
     domain: "https://www.arenysdemunt.cat",
     url: "https://www.arenysdemunt.cat/actualitat/agenda",
@@ -76,13 +84,15 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: "",
     imageSelector: ".info_cap > img",
     locationSelector: ".dades_contacte > .item_info > span > strong",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  elmasnou: {
+  "el-masnou": {
     defaultLocation: "El Masnou",
     domain: "https://www.elmasnou.cat",
     url: "https://www.elmasnou.cat/actualitat/agenda",
@@ -91,13 +101,15 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
     locationSelector: ".dades_contacte > .item_info > span > strong",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  malgratdemar: {
+  "malgrat-de-mar": {
     defaultLocation: "Malgrat de Mar",
     domain: "https://www.ajmalgrat.cat",
     url: "https://www.ajmalgrat.cat/actualitat/agenda",
@@ -106,13 +118,15 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
     locationSelector: ".dades_contacte > .item_info > span > a > strong",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  vilassardedalt: {
+  "vilassar-de-dalt": {
     defaultLocation: "Vilassar de Dalt",
     domain: "https://www.vilassardedalt.org",
     url: "https://www.vilassardedalt.org/actualitat/agenda",
@@ -121,13 +135,15 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
     locationSelector: ".dades_contacte > .item_info > span > a > strong",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  rodadeter: {
+  "roda-de-ter": {
     defaultLocation: "Roda de Ter",
     domain: "https://www.rodadeter.cat/",
     url: "https://www.rodadeter.cat/actualitat/agenda",
@@ -136,13 +152,15 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
-    locationSelector: ".info_cos > div:nth-child(3)",
+    locationSelector: ".info_cos > .item_info:has(.fa.fa-map-marker)",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  vilassardemar: {
+  "vilassar-de-mar": {
     defaultLocation: "Vilassar de Mar",
     domain: "https://www.vilassardemar.cat",
     url: "https://www.vilassardemar.cat/actualitat/agenda-activitats",
@@ -151,13 +169,15 @@ const CITIES = {
     titleSelector: ".card-body__title",
     urlSelector: ".card-body__title > a",
     dateSelector: ".datetime:nth-child(1)",
+    timeSelector: "",
     descriptionSelector: ".node__content > .field--name-body",
     imageSelector: "figure > img",
     locationSelector: ".location",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\s+(\S+)\s+(\d{4}).*?(\d{1,2}):(\d{2})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\s+([a-zA-zçÇ]+)\s+(\d{4}).*?(\d{1,2}):(\d{2})/i, swapDayMonthOrder: false},
+    timeRegex: null,
   },
-  lesquirol: {
+  "l-esquirol": {
     defaultLocation: "L'esquirol",
     domain: "https://www.lesquirol.cat",
     url: "https://www.lesquirol.cat/ca/agenda",
@@ -166,13 +186,15 @@ const CITIES = {
     titleSelector: "h5 > a",
     urlSelector: "h5 > a",
     dateSelector: ".date-display-single",
+    timeSelector: "",
     descriptionSelector: ".node.node-agenda.view-mode-vista_agenda_principal > div > .col-sm-8 > h2",
     imageSelector: ".field-name-field-images > div > a > img",
     locationSelector: "#block-system-main > div > div > div:nth-child(1) > div > h4",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\s+([a-zç]+)(?:,?)\s+(\d{4})\s+-\s+(\d{2}):(\d{2})$/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\s+([a-zA-zçÇ]+)(?:,?)\s+(\d{4})\s+-\s+(\d{2}):(\d{2})$/i, swapDayMonthOrder: false},
+    timeRegex: null,
   },
-  olost: {
+  "olost": {
     defaultLocation: "Olost",
     domain: "https://www.olost.cat",
     url: "https://www.olost.cat/agenda-virtual",
@@ -181,14 +203,16 @@ const CITIES = {
     titleSelector: ".col-md-8 > h2",
     urlSelector: ".btn.btn-default.pull-right",
     dateSelector: ".col-md-8 > p",
+    timeSelector: ".well.small.text-center > div:has(.fa.fa-clock-o)",
     descriptionSelector: "",
     imageSelector: ".img-responsive.img-thumbnail",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2}) de ([a-zç]+)(?:,?)/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2}) de ([a-zA-zçÇ]+)(?:,?)/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  torello: {
-    defaultLocation: "Torello",
+  "torello": {
+    defaultLocation: "Torelló",
     domain: "https://torello.cat",
     url: "https://torello.cat/agenda-dactivitats/",
     encoding: "utf-8",
@@ -196,13 +220,15 @@ const CITIES = {
     titleSelector: ".ectbe-evt-title > a",
     urlSelector: ".ectbe-evt-title > a",
     dateSelector: ".ectbe-date-area",
+    timeSelector: ".ectbe-evt-time",
     descriptionSelector: ".ectbe-evt-description",
     imageSelector: ".wp-block-image > img",
     locationSelector: ".ectbe-venue-details.ectbe-address",
     urlImage: "/",
-    dateRegex: {regex: /(\d+)\s+(\S+)/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d+)\s+([a-zA-zçÇ]+)/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  viladrau: {
+  "viladrau": {
     defaultLocation: "Viladrau",
     domain: "https://www.viladrau.cat",
     url: "https://www.viladrau.cat/ca/agenda",
@@ -211,13 +237,15 @@ const CITIES = {
     titleSelector: ".agendatitulo > a",
     urlSelector: ".agendatitulo > a",
     dateSelector: "#main > div > div > article > div.field.field-name-field-fechafinal.field-type-datetime.field-label-hidden",
+    timeSelector: ".agendahora",
     descriptionSelector: "",
     imageSelector: "#main > div > div > article > div.field.field-name-field-imageslloc.field-type-image.field-label-hidden > div > div > img",
     locationSelector: ".agendadireccion",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\s+([a-zA-zçÇ]+)(?:,?)\s+(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\s+([a-zA-zçÇ]+)(?:,?)\s+(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{1,2})(?:.(\d{2}))?/i,
   },
-  amer: {
+  "amer": {
     defaultLocation: "Amer",
     domain: "https://amer.cat",
     url: "https://amer.cat/category/agenda-2/",
@@ -226,13 +254,15 @@ const CITIES = {
     titleSelector: ".post_title2 > a",
     urlSelector: ".post_title2 > a",
     dateSelector: ".post_date",
+    timeSelector: "",
     descriptionSelector: ".post_excerpt",
     imageSelector: ".post-thumbnail > img",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: null,
   },
-  brunyola: {
+  "brunyola": {
     defaultLocation: "Brunyola i Sant Martí Sapresa",
     domain: "https://www.brunyola.cat",
     url: "https://www.brunyola.cat/agenda/mes/",
@@ -241,13 +271,15 @@ const CITIES = {
     titleSelector: ".tribe-events-calendar-latest-past__event-title-link.tribe-common-anchor-thin",
     urlSelector: ".tribe-events-calendar-latest-past__event-title-link.tribe-common-anchor-thin",
     dateSelector: ".tribe-events-calendar-latest-past__event-date-tag-datetime",
+    timeSelector: ".tribe-event-date-start",
     descriptionSelector: ".tribe-events-calendar-latest-past__event-description.tribe-common-b2 tribe-common-a11y-hidden",
     imageSelector: ".tribe-events-calendar-latest-past__event-featured-image-link > img",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /^([a-zA-ZçÇ]+)(?:.?)\s+(\d{1,2})\s+(\d{4})$/i, swapDayMonthOrder: true}
+    dateRegex: {regex: /^([a-zA-ZçÇ]+)(?:.?)\s+(\d{1,2})\s+(\d{4})$/i, swapDayMonthOrder: true},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  riudarenes: {
+  "riudarenes": {
     defaultLocation: "Riudarenes",
     domain: "https://ajuntamentderiudarenes.cat",
     url: "https://ajuntamentderiudarenes.cat/informacio-municipal/",
@@ -256,13 +288,15 @@ const CITIES = {
     titleSelector: ".post_title2 > a",
     urlSelector: ".post_title2 > a",
     dateSelector: ".post_date",
+    timeSelector: "",
     descriptionSelector: ".post_excerpt",
     imageSelector: ".post-thumbnail > img",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: null,
   },
-  riudellots: {
+  "riudellots-de-la-selva": {
     defaultLocation: "Riudellots de la Selva",
     domain: "https://www.riudellots.cat/",
     url: "https://www.riudellots.cat/agenda",
@@ -270,14 +304,16 @@ const CITIES = {
     listSelector: 'body > div.wrapper > div.main-content > div > div > div > div.col-lg-9.col-md-8 > div:nth-child(1) > .col-lg-4.col-sm-6',
     titleSelector: ".event-post-content > div > h5 > a",
     urlSelector: ".event-post-content > div > h5 > a",
-    dateSelector: ".event-meta > li:nth-child(1)",
-    descriptionSelector: ".event-post-content > div:nth-child(1) > .text-justify",
+    dateSelector: ".event-meta > li:has(.far.fa-calendar-alt)",
+    timeSelector: ".event-meta > li:has(.far.fa-clock)",
+    descriptionSelector: ".event-post-content > .new-txt > .text-justify",
     imageSelector: ".thumb > img",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /^(\d{1,2})\s+([a-zA-ZçÇ]+)(?:,?)/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /^(\d{1,2})\s+([a-zA-ZçÇ]+)(?:,?)/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  santhilarisacalm: {
+  "sant-hilari-sacalm": {
     defaultLocation: "Sant Hilari Sacalm",
     domain: "https://www.santhilari.cat",
     url: "https://www.santhilari.cat/agenda",
@@ -286,28 +322,32 @@ const CITIES = {
     titleSelector: ".item-medium__description.rows-8 > h2",
     urlSelector: ".item.item-medium--wrapper > a",
     dateSelector: ".date",
+    timeSelector: "",
     descriptionSelector: ".item-medium__description.rows-8 > p",
     imageSelector: ".item-medium__image > img",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /^.*?(\d{1,2})\s*de\s*(\w+)/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /^.*?(\d{1,2})\s*de\s*(\w+)/i, swapDayMonthOrder: false},
+    timeRegex: null,
   },
-  santacolomafarners: {
+  "santa-coloma-de-farners": {
     defaultLocation: "Santa Coloma de Farners",
     domain: "https://www.scf.cat",
-    url: "https://www.scf.cat/ca/agenda.html",
+    url: "https://www.scf.cat/ca/agenda.html?filtre_categories=all&filtre_espais=all&filtre_historic=0&vista=line",
     encoding: "utf-8",
-    listSelector: '#page_content > div.llistat_productes_categoria_nocats.vista-line.no-sidebars > div > div > div',
+    listSelector: '#page_content > div.llistat_productes_categoria_nocats.vista-line.no-sidebars > div > div > div:not(:has(.accions:contains("Finalitzat")))',
     titleSelector: ".titol",
     urlSelector: ".titol",
     dateSelector: ".data.curta",
+    timeSelector: ".data.curta",
     descriptionSelector: ".presentacio",
     imageSelector: "#fitxa_content [id*=\"foto\"]",
     locationSelector: ".espai",
     urlImage: "/",
-    dateRegex: {regex: /^.*?(\d{1,2})\.(\d{1,2})\.(\d{1,2})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /^.*?(\d{1,2})\.(\d{1,2})/i, swapDayMonthOrder: false},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  susqueda: {
+  "susqueda": {
     defaultLocation: "Susqueda",
     domain: "https://susqueda.cat/",
     url: "https://susqueda.cat/agenda/",
@@ -316,13 +356,15 @@ const CITIES = {
     titleSelector: ".post_title2 > a",
     urlSelector: ".post_title2 > a",
     dateSelector: ".post_date",
+    timeSelector: "",
     descriptionSelector: ".post_excerpt",
     imageSelector: "",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})/i, swapDayMonthOrder: false},
+    timeRegex: null,
   },
-  vidreres: {
+  "vidreres": {
     defaultLocation: "Vidreres",
     domain: "https://vidreres.cat",
     url: "https://www.vidreres.cat/agenda/",
@@ -331,13 +373,15 @@ const CITIES = {
     titleSelector: ".tribe-events-calendar-list__event-title-link.tribe-common-anchor-thin",
     urlSelector: ".tribe-events-calendar-list__event-title-link.tribe-common-anchor-thin",
     dateSelector: ".tribe-event-date-start",
+    timeSelector: ".tribe-event-date-start",
     descriptionSelector: ".tribe-events-calendar-list__event-description.tribe-common-b2.tribe-common-a11y-hidden > p",
     imageSelector: "",
     locationSelector: ".tribe-events-calendar-list__event-venue-title.tribe-common-b2--bold",
     urlImage: "/",
-    dateRegex: {regex: /^([a-zA-ZçÇ]+)\s+(\d{1,2})/i, swapDayMonthOrder: true}
+    dateRegex: {regex: /^([a-zA-ZçÇ]+)\s+(\d{1,2})/i, swapDayMonthOrder: true},
+    timeRegex: /(\d{2}):(\d{2})/i,
   },
-  /**montmelo: {
+  /**"montmelo": {
     defaultLocation: "Montmeló",
     domain: "https://www.montmelo.cat",
     url: "https://www.montmelo.cat/actualitat/agenda/",
@@ -350,11 +394,12 @@ const CITIES = {
     imageSelector: "",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /^/i, swapDayMonthOrder: false}
+    dateRegex: {regex: /^/i, swapDayMonthOrder: false},
+    timeRegex: null,
   }**/
 };
 
-function convertToRSSDate(dateString, dateRegex) {
+function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
   const monthMap = {
     gener: "01",
     febrer: "02",
@@ -371,12 +416,13 @@ function convertToRSSDate(dateString, dateRegex) {
   };
 
   const match = dateString.match(dateRegex.regex);
+  const timeMatch = timeString ? timeString.match(timeRegex) : null;
   if (match) {
     const day = !dateRegex.swapDayMonthOrder ? parseInt(match[1], 10) : parseInt(match[2], 10);
     const month = !dateRegex.swapDayMonthOrder ? match[2] : match[1];
     const year = !isNaN(match[3]) ? parseInt(match[3], 10) : new Date().getFullYear();
-    const hour = !isNaN(match[4]) ? parseInt(match[4], 10) : 9;
-    const minute = !isNaN(match[5]) ? parseInt(match[5], 10) : 0;
+    const hour = !isNaN(match[4]) ? parseInt(match[4], 10) : (timeMatch ? timeMatch[1] : 0);
+    const minute = !isNaN(match[5]) ? parseInt(match[5], 10) : (timeMatch ? timeMatch[2] : 0);
 
     const monthNumber = !isNaN(month) ? +month : monthMap[Object.keys(monthMap).find(key => key.includes(month.toLowerCase()))];
     if (!monthNumber) {
@@ -428,39 +474,46 @@ async function fetchHtmlContent(url, selectors) {
 
 }
 
-async function exhaustiveSearch(url, selectors, date, location, description, image) {
+async function exhaustiveSearch(url, selectors, date, time, location, description, image) {
   const {
     locationSelector,
     dateSelector,
+    timeSelector,
     descriptionSelector,
     imageSelector,
   } = selectors;
   const html = await fetchHtmlContent(url, selectors);
   const $ = cheerio.load(html);
 
-  if (!date) date = $(dateSelector).text().trim();
-  if (!location) location = $(locationSelector).text().trim();
-  if (!description) description = $(descriptionSelector).text().trim();
-  if (!image) image = $(imageSelector).attr("src");
-  return {date, location, description, image}
+  if (!date && dateSelector !== "") date = $(dateSelector).text().trim();
+  if (!time && timeSelector !== "") time = $(timeSelector).text().trim();
+  if (!location && locationSelector !== "") location = $(locationSelector).text().trim();
+  if (!description && descriptionSelector !== "") description = $(descriptionSelector).text().trim();
+  if (!image && imageSelector !== "") image = $(imageSelector).attr("src");
+  return {date, time, location, description, image}
 }
 
 async function extractEventDetails(html, selectors) {
   const {
+    defaultLocation,
+    domain,
     listSelector,
     titleSelector,
     urlSelector,
     locationSelector,
     dateSelector,
+    timeSelector,
     descriptionSelector,
     imageSelector,
     dateRegex,
+    timeRegex,
+    urlImage,
   } = selectors;
   const $ = cheerio.load(html);
   const events = [];
   let exhaustiveResults = [];
 
-  const timeout = 60000; // 60 segons
+  const timeout = 120000; // 60 segons
   await new Promise((resolve,reject) => {
     let completed = 0;
     const totalItems = $(listSelector).length;
@@ -468,23 +521,26 @@ async function extractEventDetails(html, selectors) {
       const title = $(element).find(titleSelector).text().trim();
       const url = $(element).find(urlSelector).attr("href");
       let date = $(element).find(dateSelector).text().trim();
+      let time = $(element).find(timeSelector).text().trim();
       let location = $(element).find(locationSelector).text().trim().replace(/\s+/g, ' ');
       let description = $(element).find(descriptionSelector).text().trim();
       let image = $(element).find(imageSelector).attr("src");
-      const rssUrl = (url && url.includes(selectors.domain)) ? url : `${selectors.domain}${url}`;
-      if (url && ((!date && dateSelector !== "") || (!location && locationSelector !== "") || (!description && descriptionSelector !== "") || (!image && imageSelector !== ""))) {
-        exhaustiveResults = await exhaustiveSearch(rssUrl, selectors, date, location, description, image)
+      const rssUrl = (url && url.includes(domain)) ? url : `${domain}${url}`;
+      if (url && ((!date && dateSelector !== "") || (!location && locationSelector !== "") || (!description && descriptionSelector !== "") || (!image && imageSelector !== "") || (!time && timeSelector !== ""))) {
+        exhaustiveResults = await exhaustiveSearch(rssUrl, selectors, date, time, location, description, image)
         if (!date && exhaustiveResults.date) date = exhaustiveResults.date;
+        if (!time && exhaustiveResults.time) time = exhaustiveResults.time;
         if (!location && exhaustiveResults.location) location = exhaustiveResults.location;
         if (!description && exhaustiveResults.description) description = exhaustiveResults.description;
         if (!image && exhaustiveResults.image) image = exhaustiveResults.image;
       }
-      if (!location) location = selectors.defaultLocation;
+      if (!location) location = defaultLocation;
       if(!description) description = title;
       const hash = createHash(title, url, location, date);
-      const rssDate = date && convertToRSSDate(date, dateRegex);
-      const rssImage = image ? (image.includes(selectors.domain) ? image.replace(selectors.urlImage, "/") : `${selectors.domain}${image.replace(selectors.urlImage, "/")}`) : image;
+      const rssDate = date && convertToRSSDate(date,time, dateRegex, timeRegex);
+      const rssImage = image ? (image.includes(domain) ? image.replace(urlImage, "/") : `${domain}${image.replace(urlImage, "/")}`) : image;
 
+      description = description + (rssImage ? ` <div class="hidden">${rssImage}</div>` : "")
       events.push({
         id: hash,
         url: rssUrl,
@@ -498,12 +554,12 @@ async function extractEventDetails(html, selectors) {
       completed++;
 
       if (completed === totalItems) {
-        console.log("Number of scraped events: ", completed + " from " + selectors.defaultLocation);
+        console.log("Number of scraped events: ", completed + " from " + defaultLocation);
         resolve();
       }
     });
     setTimeout(() => {
-      reject(new Error('Execution timeout when ' + selectors.defaultLocation + ' events was scrapping'));
+      reject(new Error('Execution timeout when ' + defaultLocation + ' events was scrapping'));
     }, timeout);
   });
 

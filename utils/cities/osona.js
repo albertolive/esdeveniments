@@ -1,3 +1,5 @@
+import {siteUrl} from "@config/index";
+
 const sharedData = {
   descriptionSelector: ".ddbbtext",
   imageSelector: ".first-image",
@@ -69,6 +71,16 @@ const osona = [
         },
       ],
       [
+        "l-esquirol",
+        {
+          label: "L'Esquirol",
+          rssFeed: `${siteUrl}/api/scrapeEvents?city=l-esquirol`,
+          postalCode: "08511",
+          coords: { lat: 42.03486595361544, lng: 2.3690592801911325 },
+          getDescriptionFromRss: true,
+        },
+      ],
+      [
         "les-masies-de-roda",
         {
           label: "Les Masies de Roda",
@@ -129,6 +141,16 @@ const osona = [
         },
       ],
       [
+        "olost",
+        {
+          label: "Olost",
+          rssFeed: `${siteUrl}/api/scrapeEvents?city=olost`,
+          postalCode: "08516",
+          coords: { lat: 41.986161485717, lng: 2.0962412997274056 },
+          getDescriptionFromRss: true,
+        },
+      ],
+      [
         "oris",
         {
           label: "Orís",
@@ -156,6 +178,16 @@ const osona = [
           postalCode: "08506",
           coords: { lat: "42.1333", lng: "2.25" },
           ...sharedData,
+        },
+      ],
+      [
+        "roda-de-ter",
+        {
+          label: "Roda de Ter",
+          rssFeed: `${siteUrl}/api/scrapeEvents?city=roda-de-ter`,
+          postalCode: "08510",
+          coords: { lat: 41.98073426558233, lng: 2.3092071424357914 },
+          getDescriptionFromRss: true,
         },
       ],
       [
@@ -359,6 +391,26 @@ const osona = [
           postalCode: "08551",
           coords: { lat: "41.8479", lng: "2.2281" },
           ...sharedData,
+        },
+      ],
+      [
+        "torello",
+        {
+          label: "Torrelló",
+          rssFeed: `${siteUrl}/api/scrapeEvents?city=torello`,
+          postalCode: "08570",
+          coords: { lat: 42.04774047487035, lng: 2.2635096140069924 },
+          getDescriptionFromRss: true,
+        },
+      ],
+      [
+        "viladrau",
+        {
+          label: "Viladrau",
+          rssFeed: `${siteUrl}/api/scrapeEvents?city=viladrau`,
+          postalCode: "17406",
+          coords: { lat: 41.847389487561244, lng: 2.389980199969341 },
+          getDescriptionFromRss: true,
         },
       ],
       [
