@@ -1,4 +1,4 @@
-import {siteUrl} from "@config/index";
+import { siteUrl } from "@config/index";
 
 const sharedData = {
   descriptionSelector: ".ddbbtext",
@@ -20,16 +20,17 @@ const selva = [
           getDescriptionFromRss: true,
         },
       ],
-      [
-        "brunyola",
-        {
-          label: "Brunyola",
-          rssFeed: `${siteUrl}/api/scrapeEvents?city=brunyola`,
-          postalCode: "17441",
-          coords: { lat: 41.90433123125433, lng: 2.6844513842053415 },
-          getDescriptionFromRss: true,
-        },
-      ],
+      // Changed agenda, not working atm
+      // [
+      //   "brunyola",
+      //   {
+      //     label: "Brunyola",
+      //     rssFeed: `${siteUrl}/api/scrapeEvents?city=brunyola`,
+      //     postalCode: "17441",
+      //     coords: { lat: 41.90433123125433, lng: 2.6844513842053415 },
+      //     getDescriptionFromRss: true,
+      //   },
+      // ],
       [
         "fogars-de-la-selva",
         {
