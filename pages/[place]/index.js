@@ -47,11 +47,10 @@ export async function getStaticProps({ params }) {
     q: type === "town" ? `${label} ${regionLabel}` : label,
     shuffleItems: true,
   });
-  const normalizedEvents = JSON.parse(JSON.stringify(events));
 
   return {
     props: {
-      events: normalizedEvents,
+      events,
       currentYear: new Date().getFullYear(),
       ...params,
     },

@@ -27,10 +27,12 @@ export const getServerSideProps = async (ctx) => {
         lastmod: new Date().toISOString(),
         changefreq: "daily",
       };
+      const defaultImage = `${siteUrl}/static/images/logo-seo-meta.webp`;
+      const image = data.imageUploaded || data.eventImage || defaultImage;
 
-      if (data.imageUploaded) {
+      if (image) {
         field["image:image"] = `
-          <image:loc>${data.imageUploaded}</image:loc>
+          <image:loc>${image}</image:loc>
           <image:title>${sanitize(data.title)}</image:title>
         `;
       }

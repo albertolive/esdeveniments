@@ -194,7 +194,7 @@ export const generateJsonData = (event) => {
     videoUrl,
   } = event;
 
-  const defaultImage = `${siteUrl}/static/images/logo-seo-meta.png`;
+  const defaultImage = `${siteUrl}/static/images/logo-seo-meta.webp`;
   const images = [imageUploaded, eventImage, defaultImage].filter(Boolean);
 
   const videoObject = videoUrl

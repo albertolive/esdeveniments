@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/insertTowns",
-      "schedule": "5 9-20/2 * * *"
+      "schedule": "5 9-20/1 * * *"
     }
   ],
   "functions": {

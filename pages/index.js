@@ -16,10 +16,9 @@ export async function getStaticProps() {
     maxResults: MAX_RESULTS,
     shuffleItems: true,
   });
-  const normalizedEvents = JSON.parse(JSON.stringify(events));
 
   return {
-    props: { events: normalizedEvents, currentYear: new Date().getFullYear() },
+    props: { events, currentYear: new Date().getFullYear() },
     revalidate: 60,
   };
 }

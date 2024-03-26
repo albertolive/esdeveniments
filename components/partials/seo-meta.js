@@ -2,10 +2,8 @@ import Head from "next/head";
 import { siteUrl } from "@config/index";
 
 const Meta = (props) => {
-  let image = props.imageUploaded
-    ? props.imageUploaded
-    : props.image
-    ? siteUrl + props.image
+  let image = props.image
+    ? props.image
     : `${siteUrl}/static/images/logo-seo-meta.webp`;
 
   return (

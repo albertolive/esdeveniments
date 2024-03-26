@@ -250,7 +250,7 @@ export const normalizeEvents = (event, weatherInfo) => {
 
   const tag = null; //CATEGORIES.find((v) => title.includes(v)) || null;
 
-  const { coords, postalCode } = getTownOptionsWithLabel(town);
+  const { coords = null, postalCode = null } = getTownOptionsWithLabel(town);
 
   if (tag) title = title.replace(`${tag}:`, "").trim();
 
@@ -272,11 +272,8 @@ export const normalizeEvents = (event, weatherInfo) => {
     slug: slug(title, originalFormattedStart, event.id),
     startDate,
     endDate,
-    imageUploaded: imageUploaded
-      ? cloudinaryUrl(imageId)
-      : eventImage
-      ? eventImage
-      : null,
+    imageUploaded: imageUploaded ? cloudinaryUrl(imageId) : null,
+    eventImage,
     description,
     weather: weatherObject,
     coords,
@@ -332,11 +329,8 @@ export const normalizeAroundEvents = (event) => {
     slug: slug(title, originalFormattedStart, event.id),
     startDate,
     endDate,
-    imageUploaded: imageUploaded
-      ? cloudinaryUrl(imageId)
-      : eventImage
-      ? eventImage
-      : null,
+    imageUploaded: imageUploaded ? cloudinaryUrl(imageId) : null,
+    eventImage,
   };
 };
 
@@ -406,11 +400,7 @@ export const normalizeEvent = (event) => {
     slug: slug(title, originalFormattedStart, event.id),
     startDate,
     endDate,
-    imageUploaded: imageUploaded
-      ? cloudinaryUrl(imageId)
-      : eventImage
-      ? eventImage
-      : null,
+    imageUploaded: imageUploaded ? cloudinaryUrl(imageId) : null,
     eventImage,
     imageId,
     isEventFinished: event.end
