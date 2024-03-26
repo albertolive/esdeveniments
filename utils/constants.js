@@ -637,7 +637,7 @@ export const CITIES_DATA = new Map([
             postalCode: "08415",
             coords: { lat: 41.67657584479664, lng: 2.2255734222191146 },
             getDescriptionFromRss: true,
-          }
+          },
         ],
         [
           "la-roca-del-valles",
@@ -647,7 +647,7 @@ export const CITIES_DATA = new Map([
             postalCode: "08430",
             coords: { lat: 41.58583538424762, lng: 2.3264763420486925 },
             getDescriptionFromRss: true,
-          }
+          },
         ],
       ]),
     },
