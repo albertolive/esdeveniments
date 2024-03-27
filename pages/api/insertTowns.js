@@ -27,11 +27,9 @@ export default async function handler(req, res) {
 
     for (const url of urls) {
       await fetchDataForTown(url);
+      axios.get(`${siteUrl}/api/removeDuplicates`);
+      console.log("Duplicates removed successfully");
     }
-
-    const removeDuplicatesUrl = `${siteUrl}/api/removeDuplicates`;
-    await axios.get(removeDuplicatesUrl);
-    console.log("Duplicates removed successfully");
 
     res
       .status(200)

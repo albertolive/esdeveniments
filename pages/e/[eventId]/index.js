@@ -145,29 +145,37 @@ function generateMetaDescription(title, description) {
   return metaDescription;
 }
 
-function generateMetaTitle(title, description, location, town) {
+function generateMetaTitle(title, description, location, town, region) {
   const titleSanitized = sanitizeInput(title);
   let metaTitle = smartTruncate(titleSanitized, 60);
 
-  // Combine location and town, and sanitize the input
   let locationTown = "";
-  if (
-    location &&
-    town &&
-    metaTitle.length + location.length + town.length + 5 <= 60
-  ) {
-    locationTown = sanitizeInput(location + ", " + town).trim();
+  if (location && town) {
+    if (location.trim() === town.trim()) {
+      if (metaTitle.length + location.length + 3 <= 60) {
+        locationTown = sanitizeInput(location).trim();
+      }
+    } else {
+      const combinedLocationTown = location + ", " + town;
+      if (metaTitle.length + combinedLocationTown.length + 5 <= 60) {
+        locationTown = sanitizeInput(combinedLocationTown).trim();
+      }
+    }
   } else if (location && metaTitle.length + location.length + 3 <= 60) {
     locationTown = sanitizeInput(location).trim();
   }
 
-  // Only append location and town if they are not empty and fit within the limit
   if (locationTown) {
     metaTitle = `${metaTitle} - ${locationTown}`;
     metaTitle = smartTruncate(metaTitle, 60);
   }
 
-  // Check if there's enough space and description is provided before appending
+  if (region && metaTitle.length + region.length + 3 <= 60) {
+    const regionSanitized = sanitizeInput(region).trim();
+    metaTitle = `${metaTitle} - ${regionSanitized}`;
+    metaTitle = smartTruncate(metaTitle, 60);
+  }
+
   if (metaTitle.length < 50 && description && description.trim() !== "") {
     const descriptionSanitized = sanitizeInput(description);
     metaTitle = `${metaTitle} - ${descriptionSanitized}`;
@@ -328,7 +336,7 @@ export default function Event(props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
       />
       <Meta
-        title={generateMetaTitle(title, "", location, town)}
+        title={generateMetaTitle(title, "", location, town, region)}
         description={generateMetaDescription(
           `${title} - ${nameDay} ${formattedStart} - ${location}, ${town}, ${region}`,
           description
