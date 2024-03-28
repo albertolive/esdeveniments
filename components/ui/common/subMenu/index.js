@@ -1,7 +1,12 @@
-import { useMemo, useState, useEffect, memo } from "react";
+import { useMemo, useState, useEffect, memo, useRef } from "react";
+import dynamic from "next/dynamic";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
-import FiltersModal from "@components/ui/filtersModal";
 import Filters from "@components/ui/filters";
+import useOnScreen from "@components/hooks/useOnScreen";
+
+const FiltersModal = dynamic(() => import("@components/ui/filtersModal"), {
+  loading: () => "",
+});
 
 function SubMenu({
   place,
@@ -23,7 +28,9 @@ function SubMenu({
   scrollToTop,
   setNavigatedFilterModal,
 }) {
+  const filtersModalRef = useRef();
   const [selectedOption, setSelectedOption] = useState(null);
+  const isFiltersModalVisible = useOnScreen(filtersModalRef);
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
@@ -43,8 +50,11 @@ function SubMenu({
 
   return (
     <>
-      <div className="flex justify-center items-center gap-3">
-        {openModal && (
+      {openModal && (
+        <div
+          className="flex justify-center items-center gap-3"
+          ref={filtersModalRef}
+        >
           <FiltersModal
             openModal={openModal}
             setOpenModal={setOpenModal}
@@ -64,8 +74,8 @@ function SubMenu({
             setSelectedOption={setSelectedOption}
             setNavigatedFilterModal={setNavigatedFilterModal}
           />
-        )}
-      </div>
+        </div>
+      )}
       <Filters
         setOpenModal={setOpenModal}
         place={place}

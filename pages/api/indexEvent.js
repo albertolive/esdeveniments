@@ -35,12 +35,26 @@ export default async function handler(req, res) {
       )}\nResponse status: ${
         err.response.status
       }\nResponse headers: ${JSON.stringify(err.response.headers)}`;
+
+      // Check if the error code is 429 and avoid sending it to Sentry
+      if (err.response.status === 429) {
+        console.error(
+          "Rate limit exceeded, not sending to Sentry:",
+          errorMessage
+        );
+      } else {
+        captureException(new Error(errorMessage));
+      }
     } else if (err.request) {
       errorMessage += `\nRequest: ${JSON.stringify(err.request)}`;
+      // For errors related to the request without a response, still capture them
+      captureException(new Error(errorMessage));
+    } else {
+      // For other types of errors, capture them as well
+      captureException(new Error(errorMessage));
     }
 
     console.error(errorMessage);
-    captureException(new Error(errorMessage));
     res.status(500).json({ error: errorMessage });
   }
 }

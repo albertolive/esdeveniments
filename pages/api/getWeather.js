@@ -1,8 +1,9 @@
 import { getWeather } from "@lib/helpers";
 
-const handler = async (_, res) => {
+const handler = async (req, res) => {
   try {
-    const weather = await getWeather();
+    const { location } = req.query;
+    const weather = await getWeather(false, location);
 
     const now = new Date();
     const startOfDay = new Date(

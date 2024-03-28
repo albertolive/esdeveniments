@@ -232,8 +232,9 @@ export const normalizeEvents = (event, weatherInfo) => {
     nameDay,
     isMultipleDays,
     duration,
+    startDate: startDateStr,
   } = getFormattedDate(startDate, endDate);
-  const weatherObject = normalizeWeather(startDate, weatherInfo);
+  const weatherObject = normalizeWeather(startDateStr, weatherInfo);
   const eventImage = extractEventImage(event.description);
   const description = cleanDescription(event.description);
   const locationParts = event.location ? event.location.split(",") : [];

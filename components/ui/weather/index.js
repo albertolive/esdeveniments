@@ -4,9 +4,9 @@ import { getFormattedDate } from "@utils/helpers";
 import { normalizeWeather } from "@utils/normalize";
 import { useGetWeather } from "@components/hooks/useGetWeather";
 
-export default memo(function Weather({ startDate }) {
+export default memo(function Weather({ startDate, location }) {
   const { isLessThanFiveDays, startDate: start } = getFormattedDate(startDate);
-  const { data, error } = useGetWeather(isLessThanFiveDays);
+  const { data, error } = useGetWeather(isLessThanFiveDays, location);
 
   if (!data || error) return <p>No hi ha dades meteorològiques disponibles.</p>;
 

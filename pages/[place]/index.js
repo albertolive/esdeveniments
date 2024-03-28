@@ -46,6 +46,7 @@ export async function getStaticProps({ params }) {
     until,
     q: type === "town" ? `${label} ${regionLabel}` : label,
     shuffleItems: true,
+    town: type === "town" ? label : "",
   });
 
   return {

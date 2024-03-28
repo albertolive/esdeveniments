@@ -51,7 +51,7 @@ const customStyles = {
   }),
 };
 
-const Input = ({ autoComplete, ...props }) => (
+const Input = ({ ...props }) => (
   <components.Input {...props} autoComplete="new-password" />
 );
 

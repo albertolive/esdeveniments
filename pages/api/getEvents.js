@@ -3,16 +3,30 @@ import { today, tomorrow, week, weekend, twoWeeksDefault } from "@lib/dates";
 import { getCalendarEvents } from "@lib/helpers";
 import { getRegionFromQuery } from "@utils/helpers";
 
-const noEventsFound = async (events, query) => {
+const noEventsFound = async (events, query, town) => {
   const { from, until } = twoWeeksDefault();
-  const region = getRegionFromQuery(query);
-  events = await getCalendarEvents({ from, until, q: region, maxResults: 7 });
+  const q = getRegionFromQuery(query);
+
+  events = await getCalendarEvents({
+    from,
+    until,
+    q,
+    maxResults: 7,
+    town,
+  });
   events = { ...events, noEventsFound: true };
 
   return events;
 };
 
-const getEvents = async ({ from, until, q, maxResults, shuffleItems }) => {
+const getEvents = async ({
+  from,
+  until,
+  q,
+  maxResults,
+  shuffleItems,
+  town,
+}) => {
   let events;
   try {
     events = await getCalendarEvents({
@@ -21,6 +35,7 @@ const getEvents = async ({ from, until, q, maxResults, shuffleItems }) => {
       q,
       maxResults,
       shuffleItems,
+      town,
     });
   } catch (error) {
     console.error(error);
@@ -28,14 +43,14 @@ const getEvents = async ({ from, until, q, maxResults, shuffleItems }) => {
   }
 
   if (events.noEventsFound) {
-    events = await noEventsFound(events, q);
+    events = await noEventsFound(events, q, town);
   }
 
   return events;
 };
 
 const handler = async (req, res) => {
-  const { page, q, maxResults, shuffleItems } = req.query;
+  const { page, q, maxResults, shuffleItems, town } = req.query;
 
   let events = [];
 
@@ -48,6 +63,7 @@ const handler = async (req, res) => {
         q,
         maxResults,
         shuffleItems,
+        town,
       });
       break;
     }
@@ -60,6 +76,7 @@ const handler = async (req, res) => {
         q,
         maxResults,
         shuffleItems,
+        town,
       });
       break;
     }
@@ -71,6 +88,7 @@ const handler = async (req, res) => {
         q,
         maxResults,
         shuffleItems,
+        town,
       });
       break;
     }
@@ -82,17 +100,29 @@ const handler = async (req, res) => {
         q,
         maxResults,
         shuffleItems,
+        town,
       });
       break;
     }
     case "search": {
       const fromSearch = new Date();
-      events = await getEvents({ from: fromSearch, q, shuffleItems });
+      events = await getEvents({
+        from: fromSearch,
+        q,
+        shuffleItems,
+        town,
+      });
       break;
     }
     default: {
       const from = new Date();
-      events = await getEvents({ from, q, maxResults, shuffleItems });
+      events = await getEvents({
+        from,
+        q,
+        maxResults,
+        shuffleItems,
+        town,
+      });
     }
   }
 
