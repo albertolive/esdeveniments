@@ -475,7 +475,7 @@ export default function Event(props) {
               </div>
             </div>
             {/* Description */}
-            <Description description={description} location={location} />
+            <Description description={description} location={town || region} />
             {videoUrl &&
               renderEventImage(image, title, location, nameDay, formattedStart)}
             {/* Weather */}
