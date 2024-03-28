@@ -4,6 +4,10 @@ import { getTownValueByLabel } from "@utils/helpers";
 const CulturalMessage = ({ location }) => {
   const town = getTownValueByLabel(location);
 
+  if (!town) {
+    return null;
+  }
+
   return (
     <p className="mt-2">
       Imagina un lloc on cada dia és una nova descoberta. Això és{" "}

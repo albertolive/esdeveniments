@@ -148,8 +148,9 @@ function generateMetaDescription(title, description) {
 function generateMetaTitle(title, description, location, town, region) {
   const titleSanitized = sanitizeInput(title);
   let metaTitle = smartTruncate(titleSanitized, 60);
-
+  // Determine if location and/or town should be included in the metaTitle
   let locationTown = "";
+
   if (location && town) {
     if (location.trim() === town.trim()) {
       if (metaTitle.length + location.length + 3 <= 60) {
@@ -164,18 +165,18 @@ function generateMetaTitle(title, description, location, town, region) {
   } else if (location && metaTitle.length + location.length + 3 <= 60) {
     locationTown = sanitizeInput(location).trim();
   }
-
+  // Append locationTown to metaTitle if it fits within the character limit
   if (locationTown) {
     metaTitle = `${metaTitle} - ${locationTown}`;
     metaTitle = smartTruncate(metaTitle, 60);
   }
-
+  // Append region to metaTitle if it fits within the character limit
   if (region && metaTitle.length + region.length + 3 <= 60) {
     const regionSanitized = sanitizeInput(region).trim();
     metaTitle = `${metaTitle} - ${regionSanitized}`;
     metaTitle = smartTruncate(metaTitle, 60);
   }
-
+  // Append description to metaTitle if it fits within the character limit
   if (metaTitle.length < 50 && description && description.trim() !== "") {
     const descriptionSanitized = sanitizeInput(description);
     metaTitle = `${metaTitle} - ${descriptionSanitized}`;
@@ -217,8 +218,14 @@ function renderEventImage(image, title, location, nameDay, formattedStart) {
 
 export default function Event(props) {
   const mapsRef = useRef();
+  const weatherRef = useRef();
   const eventsAroundRef = useRef();
+  const editModalRef = useRef();
   const isMapsVisible = useOnScreen(mapsRef);
+  const isWeatherVisible = useOnScreen(weatherRef);
+  const isEditModalVisible = useOnScreen(editModalRef, {
+    freezeOnceVisible: true,
+  });
   const isEventsAroundVisible = useOnScreen(eventsAroundRef, {
     freezeOnceVisible: true,
   });
@@ -479,11 +486,16 @@ export default function Event(props) {
             {videoUrl &&
               renderEventImage(image, title, location, nameDay, formattedStart)}
             {/* Weather */}
-            <div className="w-full flex justify-center items-start gap-2 px-4">
+            <div
+              className="w-full flex justify-center items-start gap-2 px-4"
+              ref={weatherRef}
+            >
               <CloudIcon className="w-5 h-5 mt-1" />
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>El temps</h2>
-                <Weather startDate={startDate} />
+                {isWeatherVisible && (
+                  <Weather startDate={startDate} location={town} />
+                )}
               </div>
               <span ref={eventsAroundRef} />
             </div>
@@ -518,31 +530,39 @@ export default function Event(props) {
               </div>
             </div>
             {/* EditButton */}
-            <div className="w-full flex justify-center items-start gap-2 px-4">
+            <div
+              className="w-full flex justify-center items-start gap-2 px-4"
+              ref={editModalRef}
+            >
               <PencilIcon className="w-5 h-5 mt-1" />
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>Suggerir un canvi</h2>
-                <div className="w-11/12 flex justify-start items-center gap-2 cursor-pointer">
-                  <div
-                    onClick={() => {
-                      setOpenModal(true);
-                      sendGoogleEvent("open-change-modal");
-                    }}
-                    className="gap-2 ease-in-out duration-300 border-whiteCorp hover:border-blackCorp"
-                  >
-                    <p className="font-medium flex items-center">Editar</p>
+                {isEditModalVisible && (
+                  <div className="w-11/12 flex justify-start items-center gap-2 cursor-pointer">
+                    <div
+                      onClick={() => {
+                        setOpenModal(true);
+                        sendGoogleEvent("open-change-modal");
+                      }}
+                      className="gap-2 ease-in-out duration-300 border-whiteCorp hover:border-blackCorp"
+                    >
+                      <p className="font-medium flex items-center">Editar</p>
+                    </div>
+                    <InfoIcon
+                      className="w-5 h-5"
+                      data-tooltip-id="edit-button"
+                    />
+                    <Tooltip id="edit-button">
+                      Si després de veure la informació de l&apos;esdeveniment,
+                      <br />
+                      veus que hi ha alguna dada erronia o vols ampliar la
+                      <br />
+                      informació, pots fer-ho al següent enllaç. Revisarem el
+                      <br />
+                      canvi i actualitzarem l&apos;informació.
+                    </Tooltip>
                   </div>
-                  <InfoIcon className="w-5 h-5" data-tooltip-id="edit-button" />
-                  <Tooltip id="edit-button">
-                    Si després de veure la informació de l&apos;esdeveniment,
-                    <br />
-                    veus que hi ha alguna dada erronia o vols ampliar la
-                    <br />
-                    informació, pots fer-ho al següent enllaç. Revisarem el
-                    <br />
-                    canvi i actualitzarem l&apos;informació.
-                  </Tooltip>
-                </div>
+                )}
               </div>
             </div>
             {/* EventsAround */}
@@ -569,8 +589,7 @@ export default function Event(props) {
               </div>
             </div>
           </article>
-
-          {openModal || openDeleteReasonModal ? (
+          {(isEditModalVisible && openModal) || openDeleteReasonModal ? (
             <EditModal
               openModal={openModal}
               setOpenModal={setOpenModal}

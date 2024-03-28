@@ -93,7 +93,7 @@ export default async function handler(_, res) {
     // Delete duplicates
     let duplicatesDeleted = false;
     let deletedEventSummaries = new Map(); // Map to store the count of deleted events for each summary
-    for (const [key, count] of duplicates) {
+    for (const [key] of duplicates) {
       // Find all events with this key
       const duplicateEvents = events.filter((event) => {
         const eventKey = generateKey(event);
