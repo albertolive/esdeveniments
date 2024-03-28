@@ -630,7 +630,8 @@ export default async function handler(req, res) {
     const shouldInteractWithKv = !(
       env !== "prod" && disableKvInsert === "true"
     );
-
+    console.log("shouldInteractWithKv", shouldInteractWithKv);
+    console.log("env", env);
     // Check if the region parameter is provided
     if (!region) {
       throw new Error("Region parameter is missing");
@@ -666,23 +667,23 @@ export default async function handler(req, res) {
 
     // Read the database
     let processedItems = new Map();
-
+    console.log("items", items);
     if (shouldInteractWithKv) {
       processedItems = await getProcessedItems(town);
       await cleanProcessedItems(processedItems, town);
     }
-
+    console.log("processedItems", processedItems);
     // Pre-compute the hashes for all items
     const itemHashes = items.map(getRSSItemData).map((item) => item.guid);
-
+    console.log("itemHashes", itemHashes);
     // Convert processedItems to a set for faster lookups
     const processedItemsSet = new Set(processedItems.keys());
-
+    console.log("processedItemsSet", processedItemsSet);
     // Filter out already fetched items
     const newItems = shouldInteractWithKv
       ? items.filter((_, i) => !processedItemsSet.has(itemHashes[i]))
       : items;
-
+    console.log("newItems", newItems);
     // If no new items, log a message
     if (newItems.length === 0) {
       const message = `No new items found for ${town}`;
