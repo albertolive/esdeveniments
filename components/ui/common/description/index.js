@@ -1,7 +1,8 @@
 import ReactHtmlParser from "react-html-parser";
 import DocumentIcon from "@heroicons/react/outline/DocumentIcon";
+import CulturalMessage from "../culturalMessage";
 
-export default function Description({ description }) {
+export default function Description({ description, location }) {
   return (
     <div className="w-full flex justify-center items-start gap-2 px-4">
       <DocumentIcon className="w-5 h-5 mt-1" />
@@ -9,6 +10,7 @@ export default function Description({ description }) {
         <h2>Descripció</h2>
         <div className="w-full break-words overflow-hidden">
           {ReactHtmlParser(description)}
+          <CulturalMessage location={location} />
         </div>
       </div>
     </div>
