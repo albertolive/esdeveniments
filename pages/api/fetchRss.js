@@ -667,7 +667,7 @@ export default async function handler(req, res) {
 
     // Read the database
     let processedItems = new Map();
-    console.log("items", items);
+
     if (shouldInteractWithKv) {
       processedItems = await getProcessedItems(town);
       await cleanProcessedItems(processedItems, town);
