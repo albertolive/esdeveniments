@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import XIcon from "@heroicons/react/outline/XIcon";
 
 const RangeInput = ({

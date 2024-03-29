@@ -55,25 +55,27 @@ function SubMenu({
           className="flex justify-center items-center gap-3"
           ref={filtersModalRef}
         >
-          <FiltersModal
-            openModal={openModal}
-            setOpenModal={setOpenModal}
-            place={place}
-            setPlace={setPlace}
-            byDate={byDate}
-            setByDate={setByDate}
-            category={category}
-            setCategory={setCategory}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            userLocation={userLocation}
-            setUserLocation={setUserLocation}
-            distance={distance}
-            setDistance={setDistance}
-            selectedOption={selectedOption}
-            setSelectedOption={setSelectedOption}
-            setNavigatedFilterModal={setNavigatedFilterModal}
-          />
+          {isFiltersModalVisible && (
+            <FiltersModal
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              place={place}
+              setPlace={setPlace}
+              byDate={byDate}
+              setByDate={setByDate}
+              category={category}
+              setCategory={setCategory}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              userLocation={userLocation}
+              setUserLocation={setUserLocation}
+              distance={distance}
+              setDistance={setDistance}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              setNavigatedFilterModal={setNavigatedFilterModal}
+            />
+          )}
         </div>
       )}
       <Filters

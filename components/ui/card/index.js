@@ -8,10 +8,8 @@ import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
 import { truncateString } from "@utils/helpers";
 import useOnScreen from "@components/hooks/useOnScreen";
-
-const Image = dynamic(() => import("@components/ui/common/image"), {
-  loading: () => "",
-});
+import Image from "@components/ui/common/image";
+import ShareButton from "@components/ui/common/cardShareButton";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
@@ -21,13 +19,6 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
 const CardLoading = dynamic(() => import("@components/ui/cardLoading"), {
   loading: () => "",
 });
-
-const ShareButton = dynamic(
-  () => import("@components/ui/common/cardShareButton"),
-  {
-    loading: () => "",
-  }
-);
 
 const ViewCounter = dynamic(() => import("@components/ui/viewCounter"), {
   loading: () => "",
@@ -94,7 +85,7 @@ function Card({ event, isLoading, isPriority }) {
             </div>
           </div>
           {/* ImageEvent */}
-          <div className="p-4 flex justify-center items-center">
+          <div className="p-4 flex justify-center items-center" ref={shareRef}>
             <Image
               className="w-full flex justify-center object-contain"
               title={event.title}
