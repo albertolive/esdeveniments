@@ -40,7 +40,7 @@ export default function Navbar() {
                       alt="Logo Esdeveniments.cat"
                       width={169}
                       height={16}
-                      priority
+                      priority={true}
                     />
                   </Link>
                 </div>
