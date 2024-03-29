@@ -1,7 +1,6 @@
 import "@styles/globals.css";
 import { Suspense, useEffect } from "react";
 import Script from "next/script";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { BaseLayout } from "@components/ui/layout";
 
 function EsdevenimentsMainEntry({ Component, pageProps }) {
@@ -74,7 +73,6 @@ function EsdevenimentsMainEntry({ Component, pageProps }) {
       <BaseLayout>
         <Suspense fallback={<></>}>
           <Component {...pageProps} />
-          <SpeedInsights />
         </Suspense>
       </BaseLayout>
     </>

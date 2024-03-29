@@ -37,6 +37,13 @@ class MyDocument extends Document {
             type="font/ttf"
             crossOrigin="anonymous"
           />
+          <link rel="preconnect" href="https://www.googletagmanager.com" />
+          <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+          <link rel="preconnect" href="https://www.google-analytics.com" />
+          <link
+            rel="preconnect"
+            href="https://fundingchoicesmessages.google.com"
+          />
         </Head>
         <body>
           <Main />
