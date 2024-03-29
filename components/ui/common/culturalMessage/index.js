@@ -10,8 +10,13 @@ const CulturalMessage = ({ location }) => {
   }
 
   const handleNavigation = (town, timeframe) => {
-    const eventLabel = `navigate_to_${town}_${timeframe}`;
-    sendGoogleEvent(eventLabel);
+    sendGoogleEvent("navigate_to", {
+      content_type: "navigation",
+      item_id: `${town}_${timeframe}`,
+      item_name: `${town} ${timeframe}`,
+      event_category: "Navigation",
+      event_label: `navigate_to_${town}_${timeframe}`,
+    });
   };
 
   return (
