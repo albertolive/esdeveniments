@@ -71,6 +71,7 @@ function Events({ props, loadMore = true }) {
     maxResults: shuffleItems ? page * MAX_RESULTS : page * 10,
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
     shuffleItems,
+    town: type === "town" ? label : "",
   });
 
   const notFound =

@@ -84,6 +84,7 @@ export async function getStaticProps({ params }) {
       until,
       maxResults: 7,
       q,
+      town: type === "town" ? label : "",
     });
 
     noEventsFound = true;
