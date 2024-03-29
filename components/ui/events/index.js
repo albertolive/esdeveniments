@@ -359,7 +359,9 @@ function Events({ props, loadMore = true }) {
           </div>
         ) : (
           <List events={filteredEvents}>
-            {(event) => <Card key={event.id} event={event} />}
+            {(event, index) => (
+              <Card key={event.id} event={event} isPriority={index === 0} />
+            )}
           </List>
         )}
         {isLoadingMore && <CardLoading />}

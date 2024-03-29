@@ -1,23 +1,44 @@
-import { memo } from "react";
+import { memo, useRef } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import NextImage from "next/image";
-import Image from "@components/ui/common/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
 import { truncateString } from "@utils/helpers";
-import CardLoading from "@components/ui/cardLoading";
-import ShareButton from "@components/ui/common/cardShareButton";
-import ViewCounter from "@components/ui/viewCounter";
+import useOnScreen from "@components/hooks/useOnScreen";
+
+const Image = dynamic(() => import("@components/ui/common/image"), {
+  loading: () => "",
+});
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => "",
-  noSSR: false,
+  ssr: false,
 });
 
-function Card({ event, isLoading }) {
+const CardLoading = dynamic(() => import("@components/ui/cardLoading"), {
+  loading: () => "",
+});
+
+const ShareButton = dynamic(
+  () => import("@components/ui/common/cardShareButton"),
+  {
+    loading: () => "",
+  }
+);
+
+const ViewCounter = dynamic(() => import("@components/ui/viewCounter"), {
+  loading: () => "",
+  ssr: false,
+});
+
+function Card({ event, isLoading, isPriority }) {
+  const counterRef = useRef();
+  const shareRef = useRef();
+  const isCounterVisible = useOnScreen(counterRef);
+  const isShareVisible = useOnScreen(shareRef);
   const { prefetch } = useRouter();
 
   const handlePrefetch = () => {
@@ -67,6 +88,7 @@ function Card({ event, isLoading }) {
                     maxWidth: "100%",
                     height: "auto",
                   }}
+                  priority={isPriority}
                 />
               )}
             </div>
@@ -82,15 +104,18 @@ function Card({ event, isLoading }) {
               image={image}
               alt={event.title}
               layout="responsive"
-              priority={true}
+              priority={isPriority}
             />
           </div>
         </div>
       </Link>
       {/* ShareButton */}
-      <div className="w-full flex justify-center items-center gap-2 pb-6 px-4">
-        <ShareButton slug={event.slug} />
-        <ViewCounter slug={event.slug} hideText />
+      <div
+        className="w-full flex justify-center items-center gap-2 pb-6 px-4"
+        ref={counterRef}
+      >
+        {isShareVisible && <ShareButton slug={event.slug} />}
+        {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
         {/* Date */}

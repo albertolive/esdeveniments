@@ -1,5 +1,4 @@
 import { siteUrl } from "@config/index";
-import React from "react";
 import {
   FacebookShareButton,
   TwitterShareButton,

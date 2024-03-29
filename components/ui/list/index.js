@@ -4,7 +4,7 @@ function List({ events, children }) {
   return (
     <>
       <section className="flex flex-col justify-center items-center">
-        {events.map((event) => children(event))}
+        {events.map((event, index) => children(event, index))}
       </section>
     </>
   );

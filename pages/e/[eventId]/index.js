@@ -16,7 +16,6 @@ import WebIcon from "@heroicons/react/outline/GlobeAltIcon";
 import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
 import { generateJsonData, getTownValueByLabel } from "@utils/helpers";
-import ViewCounter from "@components/ui/viewCounter";
 import ReportView from "@components/ui/reportView";
 import CardShareButton from "@components/ui/common/cardShareButton";
 import useOnScreen from "@components/hooks/useOnScreen";
@@ -87,6 +86,11 @@ const VideoDisplay = dynamic(
     loading: () => "",
   }
 );
+
+const ViewCounter = dynamic(() => import("@components/ui/viewCounter"), {
+  loading: () => "",
+  ssr: false,
+});
 
 function replaceURLs(text) {
   if (!text) return;
