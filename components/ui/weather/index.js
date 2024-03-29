@@ -5,8 +5,13 @@ import { normalizeWeather } from "@utils/normalize";
 import { useGetWeather } from "@components/hooks/useGetWeather";
 
 export default memo(function Weather({ startDate, location }) {
-  const { isLessThanFiveDays, startDate: start } = getFormattedDate(startDate);
-  const { data, error } = useGetWeather(isLessThanFiveDays, location);
+  const {
+    isLessThanFiveDays,
+    startDate: start,
+    isMultipleDays,
+  } = getFormattedDate(startDate);
+  const showWeather = isMultipleDays || isLessThanFiveDays;
+  const { data, error } = useGetWeather(showWeather, location);
 
   if (!data || error) return <p>No hi ha dades meteorològiques disponibles.</p>;
 
