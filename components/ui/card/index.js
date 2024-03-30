@@ -1,4 +1,4 @@
-import { memo, useRef } from "react";
+import { memo, useRef, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -31,9 +31,14 @@ function Card({ event, isLoading, isPriority }) {
   const isCounterVisible = useOnScreen(counterRef);
   const isShareVisible = useOnScreen(shareRef);
   const { prefetch } = useRouter();
+  const [isCardLoading, setIsCardLoading] = useState(false);
 
   const handlePrefetch = () => {
     prefetch(`/e/${event.slug}`);
+  };
+
+  const handleClick = async () => {
+    setIsCardLoading(true);
   };
 
   if (isLoading) return <CardLoading />;
@@ -50,11 +55,14 @@ function Card({ event, isLoading, isPriority }) {
 
   return (
     <>
-      <Link href={`/e/${event.slug}`} passHref prefetch={false} legacyBehavior>
+      <Link href={`/e/${event.slug}`} passHref prefetch={false}>
         <div
-          className="w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer"
+          className={`w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer ${
+            isCardLoading ? "opacity-50 animate-pulse" : ""
+          }`}
           onMouseEnter={handlePrefetch}
-          onClick={handlePrefetch}
+          onTouchStart={handlePrefetch}
+          onClick={handleClick}
         >
           {/* Title */}
           <div className="bg-whiteCorp h-fit flex justify-between items-start gap-2 pr-4">

@@ -1,15 +1,18 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { getTownValueByLabel } from "@utils/helpers";
 import { sendGoogleEvent } from "@utils/analytics";
 
 const CulturalMessage = ({ location }) => {
+  const { push } = useRouter();
   const town = getTownValueByLabel(location);
 
   if (!town) {
     return null;
   }
 
-  const handleNavigation = (town, timeframe) => {
+  const handleNavigation = async (e, town, timeframe) => {
+    e.preventDefault();
     sendGoogleEvent("navigate_to", {
       content_type: "navigation",
       item_id: `${town}_${timeframe}`,
@@ -17,6 +20,7 @@ const CulturalMessage = ({ location }) => {
       event_category: "Navigation",
       event_label: `navigate_to_${town}_${timeframe}`,
     });
+    await push(e.target.href);
   };
 
   return (
@@ -26,7 +30,7 @@ const CulturalMessage = ({ location }) => {
       esperant ser explorat per tu. Comença la teva aventura{" "}
       <Link
         href={`/${town}/avui`}
-        onClick={() => handleNavigation(town, "avui")}
+        onClick={(e) => handleNavigation(e, town, "avui")}
         className="font-medium text-primary hover:underline"
       >
         avui
@@ -34,7 +38,7 @@ const CulturalMessage = ({ location }) => {
       , descobreix què està passant{" "}
       <Link
         href={`/${town}/dema`}
-        onClick={() => handleNavigation(town, "dema")}
+        onClick={(e) => handleNavigation(e, town, "dema")}
         className="font-medium text-primary hover:underline"
       >
         demà
@@ -42,7 +46,7 @@ const CulturalMessage = ({ location }) => {
       , continua explorant{" "}
       <Link
         href={`/${town}/setmana`}
-        onClick={() => handleNavigation(town, "setmana")}
+        onClick={(e) => handleNavigation(e, town, "setmana")}
         className="font-medium text-primary hover:underline"
       >
         durant la setmana
@@ -50,7 +54,7 @@ const CulturalMessage = ({ location }) => {
       , i culmina amb un{" "}
       <Link
         href={`/${town}/cap-de-setmana`}
-        onClick={() => handleNavigation(town, "cap-de-setmana")}
+        onClick={(e) => handleNavigation(e, town, "cap-de-setmana")}
         className="font-medium text-primary hover:underline"
       >
         cap de setmana espectacular
