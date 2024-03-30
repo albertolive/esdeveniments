@@ -38,7 +38,7 @@ const CulturalMessage = ({ location }) => {
       , descobreix què està passant{" "}
       <Link
         href={`/${town}/dema`}
-        onClick={() => handleNavigation(town, "dema")}
+        onClick={(e) => handleNavigation(e, town, "dema")}
         className="font-medium text-primary hover:underline"
       >
         demà
@@ -46,7 +46,7 @@ const CulturalMessage = ({ location }) => {
       , continua explorant{" "}
       <Link
         href={`/${town}/setmana`}
-        onClick={() => handleNavigation(town, "setmana")}
+        onClick={(e) => handleNavigation(e, town, "setmana")}
         className="font-medium text-primary hover:underline"
       >
         durant la setmana
@@ -54,7 +54,7 @@ const CulturalMessage = ({ location }) => {
       , i culmina amb un{" "}
       <Link
         href={`/${town}/cap-de-setmana`}
-        onClick={() => handleNavigation(town, "cap-de-setmana")}
+        onClick={(e) => handleNavigation(e, town, "cap-de-setmana")}
         className="font-medium text-primary hover:underline"
       >
         cap de setmana espectacular
