@@ -1,6 +1,7 @@
 import { memo, useRef, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import NextImage from "next/image";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
@@ -29,9 +30,14 @@ function Card({ event, isLoading, isPriority }) {
   const shareRef = useRef();
   const isCounterVisible = useOnScreen(counterRef);
   const isShareVisible = useOnScreen(shareRef);
+  const { prefetch } = useRouter();
   const [isCardLoading, setIsCardLoading] = useState(false);
 
-  const handleClick = () => {
+  const handlePrefetch = () => {
+    prefetch(`/e/${event.slug}`);
+  };
+
+  const handleClick = async () => {
     setIsCardLoading(true);
   };
 
@@ -54,6 +60,8 @@ function Card({ event, isLoading, isPriority }) {
           className={`w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer ${
             isCardLoading ? "opacity-50 animate-pulse" : ""
           }`}
+          onMouseEnter={handlePrefetch}
+          onTouchStart={handlePrefetch}
           onClick={handleClick}
         >
           {/* Title */}
