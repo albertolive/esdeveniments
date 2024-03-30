@@ -1,18 +1,9 @@
 import { memo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Image from "@components/ui/common/image";
 import { truncateString } from "@utils/helpers";
 import { sendGoogleEvent } from "@utils/analytics";
-
-const sendEventClickGA = (eventId, eventTitle) => {
-  sendGoogleEvent("select_content", {
-    content_type: "event",
-    item_id: eventId,
-    item_name: eventTitle,
-    event_category: "Events Around",
-    event_label: eventTitle,
-  });
-};
 
 function EventCardLoading() {
   return (
@@ -39,6 +30,20 @@ function EventCardLoading() {
 }
 
 function EventsAroundScroll({ events, loading }) {
+  const { push } = useRouter();
+
+  const sendEventClickGA = async (e, link, eventId, eventTitle) => {
+    e.preventDefault();
+    sendGoogleEvent("select_content", {
+      content_type: "event",
+      item_id: eventId,
+      item_name: eventTitle,
+      event_category: "Events Around",
+      event_label: eventTitle,
+    });
+    await push(link);
+  };
+
   if (loading) {
     return (
       <div className="w-full flex overflow-x-auto py-4 space-x-4">
@@ -54,6 +59,7 @@ function EventsAroundScroll({ events, loading }) {
       {events.map((event) => {
         const title = truncateString(event.title || "", 60);
         const image = event.imageUploaded || event.eventImage;
+        const link = `/e/${event.slug}`;
 
         return (
           <div
@@ -62,9 +68,7 @@ function EventsAroundScroll({ events, loading }) {
           >
             <Link
               href={`/e/${event.slug}`}
-              passHref
-              prefetch={false}
-              onClick={() => sendEventClickGA(event.id, event.title)}
+              onClick={(e) => sendEventClickGA(e, link, event.id, event.title)}
             >
               {/* ImageEvent */}
               <div className="w-full h-32 flex justify-center items-center overflow-hidden">

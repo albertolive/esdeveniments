@@ -1,15 +1,18 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { getTownValueByLabel } from "@utils/helpers";
 import { sendGoogleEvent } from "@utils/analytics";
 
 const CulturalMessage = ({ location }) => {
+  const { push } = useRouter();
   const town = getTownValueByLabel(location);
 
   if (!town) {
     return null;
   }
 
-  const handleNavigation = (town, timeframe) => {
+  const handleNavigation = async (e, town, timeframe) => {
+    e.preventDefault();
     sendGoogleEvent("navigate_to", {
       content_type: "navigation",
       item_id: `${town}_${timeframe}`,
@@ -17,6 +20,7 @@ const CulturalMessage = ({ location }) => {
       event_category: "Navigation",
       event_label: `navigate_to_${town}_${timeframe}`,
     });
+    await push(e.target.href);
   };
 
   return (
@@ -26,7 +30,7 @@ const CulturalMessage = ({ location }) => {
       esperant ser explorat per tu. Comença la teva aventura{" "}
       <Link
         href={`/${town}/avui`}
-        onClick={() => handleNavigation(town, "avui")}
+        onClick={(e) => handleNavigation(e, town, "avui")}
         className="font-medium text-primary hover:underline"
       >
         avui
