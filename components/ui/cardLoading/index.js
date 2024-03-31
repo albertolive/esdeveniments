@@ -1,13 +1,11 @@
-import { memo } from "react";
-
 function CardLoading() {
   return (
     <div className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10">
       {/* Title */}
       <div className="bg-whiteCorp h-fit flex justify-between items-center gap-3">
-      <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
-            <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
-          </div>
+        <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
+          <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
+        </div>
         {/* Title */}
         <div className="w-10/12 flex justify-start items-center animate-fast-pulse">
           <div className="w-2/3 h-5 bg-darkCorp rounded-xl"></div>
@@ -46,4 +44,4 @@ function CardLoading() {
   );
 }
 
-export default memo(CardLoading);
+export default CardLoading;

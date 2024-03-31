@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useCallback } from "react";
+import { memo, useEffect, useState, useCallback, useRef } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import NextImage from "next/image";
@@ -12,24 +12,39 @@ import {
   sendEventToGA,
 } from "@utils/helpers";
 import { MAX_RESULTS, dateFunctions } from "@utils/constants";
-import SubMenu from "@components/ui/common/subMenu";
 import List from "@components/ui/list";
-import Card from "@components/ui/card";
 import CardLoading from "@components/ui/cardLoading";
 import { CATEGORIES } from "@utils/constants";
-import Search from "@components/ui/search";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
+import useOnScreen from "@components/hooks/useOnScreen";
 import Imago from "public/static/images/imago-esdeveniments.png";
+
+const Card = dynamic(() => import("@components/ui/card"), {
+  loading: () => (
+    <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px]">
+      <CardLoading />
+    </div>
+  ),
+});
+
+const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
+  loading: () => "",
+});
+
+const Search = dynamic(() => import("@components/ui/search"), {
+  loading: () => "",
+});
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
   {
     loading: () => "",
-    ssr: false,
   }
 );
 
 function Events({ props, loadMore = true }) {
+  const noEventsFoundRef = useRef();
+  const isNoEventsFoundVisible = useOnScreen(noEventsFoundRef);
   const isBrowser = typeof window !== "undefined";
 
   // Props destructuring
@@ -340,7 +355,12 @@ function Events({ props, loadMore = true }) {
         </div>
       </div>
       <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
-        {notFound && <NoEventsFound title={notFoundText} />}
+        {notFound && (
+          <>
+            <div ref={noEventsFoundRef} />
+            {isNoEventsFoundVisible && <NoEventsFound title={notFoundText} />}
+          </>
+        )}
         {!notFound && (
           <>
             <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4">
