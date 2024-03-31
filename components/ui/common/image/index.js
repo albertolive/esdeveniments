@@ -52,10 +52,10 @@ function ImageComponent({
         src={image}
         alt={title}
         width={500}
-        height={500}
+        height={260}
         loading={priority ? "eager" : "lazy"}
         onError={() => setHasError(true)}
-        quality={75}
+        quality={70}
         style={{
           objectFit: "contain",
         }}

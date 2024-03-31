@@ -8,7 +8,6 @@ import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
 import { truncateString } from "@utils/helpers";
 import useOnScreen from "@components/hooks/useOnScreen";
-import Image from "@components/ui/common/image";
 import ShareButton from "@components/ui/common/cardShareButton";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
@@ -21,6 +20,14 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
 });
 
 const CardLoading = dynamic(() => import("@components/ui/cardLoading"), {
+  loading: () => (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+    </div>
+  ),
+});
+
+const Image = dynamic(() => import("@components/ui/common/image"), {
   loading: () => (
     <div className="flex justify-center items-center w-full">
       <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
@@ -67,7 +74,13 @@ function Card({ event, isLoading, isPriority }) {
 
   return (
     <>
-      <Link href={`/e/${event.slug}`} passHref prefetch={false}>
+      <Link
+        href={`/e/${event.slug}`}
+        passHref
+        prefetch={false}
+        className="w-full"
+        legacyBehavior
+      >
         <div
           className={`w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer ${
             isCardLoading ? "opacity-50 animate-pulse" : ""
@@ -121,7 +134,6 @@ function Card({ event, isLoading, isPriority }) {
         </div>
       </Link>
       {/* ShareButton */}
-      {console.log("isPriority", isPriority)}
       <div
         className="w-full flex justify-center items-center gap-2 pb-6 px-4"
         ref={counterRef}
