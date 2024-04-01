@@ -48,6 +48,7 @@ const renderButton = ({
 );
 
 const Filters = ({
+  openModal,
   setOpenModal,
   place,
   placeProps,
@@ -103,7 +104,13 @@ const Filters = ({
   }, [place, setPlace, setSelectedOption, placeProps, router, setOpenModal]);
 
   return (
-    <div className="w-full bg-whiteCorp flex justify-center items-center px-0">
+    <div
+      className={`w-full bg-whiteCorp flex justify-center items-center px-0 ${
+        openModal
+          ? "opacity-50 animate-pulse text-bColor pointer-events-none"
+          : ""
+      }`}
+    >
       <div className="w-full flex justify-start items-center gap-2 cursor-pointer">
         <div
           onClick={handleOpenModal}

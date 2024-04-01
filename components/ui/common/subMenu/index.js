@@ -2,14 +2,13 @@ import { useMemo, useState, useEffect, memo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import useOnScreen from "@components/hooks/useOnScreen";
-import LoadingScreen from "@components/ui/common/loading";
 
 const Filters = dynamic(() => import("@components/ui/filters"), {
   loading: () => "",
 });
 
 const FiltersModal = dynamic(() => import("@components/ui/filtersModal"), {
-  loading: () => <LoadingScreen />,
+  loading: () => "",
 });
 
 function SubMenu({
@@ -59,7 +58,7 @@ function SubMenu({
           className="flex justify-center items-center gap-3"
           ref={filtersModalRef}
         >
-          {isFiltersModalVisible ? (
+          {isFiltersModalVisible && (
             <FiltersModal
               openModal={openModal}
               setOpenModal={setOpenModal}
@@ -79,10 +78,6 @@ function SubMenu({
               setSelectedOption={setSelectedOption}
               setNavigatedFilterModal={setNavigatedFilterModal}
             />
-          ) : (
-            <div className="flex justify-center items-center gap-3">
-              <LoadingScreen />
-            </div>
           )}
         </div>
       )}

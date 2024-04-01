@@ -4,10 +4,9 @@ import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
 import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
-import LoadingScreen from "@components/ui/common/loading";
 
 const Modal = dynamic(() => import("@components/ui/common/modal"), {
-  loading: () => <LoadingScreen />,
+  loading: () => "",
 });
 
 const Select = dynamic(() => import("@components/ui/common/form/select"), {
