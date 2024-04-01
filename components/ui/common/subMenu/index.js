@@ -59,7 +59,7 @@ function SubMenu({
           className="flex justify-center items-center gap-3"
           ref={filtersModalRef}
         >
-          {isFiltersModalVisible && (
+          {isFiltersModalVisible ? (
             <FiltersModal
               openModal={openModal}
               setOpenModal={setOpenModal}
@@ -79,10 +79,15 @@ function SubMenu({
               setSelectedOption={setSelectedOption}
               setNavigatedFilterModal={setNavigatedFilterModal}
             />
+          ) : (
+            <div className="flex justify-center items-center gap-3">
+              <LoadingScreen />
+            </div>
           )}
         </div>
       )}
       <Filters
+        openModal={openModal}
         setOpenModal={setOpenModal}
         place={place}
         placeProps={placeProps}
