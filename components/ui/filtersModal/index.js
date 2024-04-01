@@ -1,10 +1,17 @@
 import { useMemo, memo, useCallback, useState, useEffect } from "react";
-import Modal from "@components/ui/common/modal";
+import dynamic from "next/dynamic";
 import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
 import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
-import Select from "@components/ui/common/form/select";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
+
+const Modal = dynamic(() => import("@components/ui/common/modal"), {
+  loading: () => "",
+});
+
+const Select = dynamic(() => import("@components/ui/common/form/select"), {
+  loading: () => "",
+});
 
 function FiltersModal({
   openModal,

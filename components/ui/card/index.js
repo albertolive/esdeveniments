@@ -8,16 +8,31 @@ import LocationMarkerIcon from "@heroicons/react/outline/LocationMarkerIcon";
 import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
 import { truncateString } from "@utils/helpers";
 import useOnScreen from "@components/hooks/useOnScreen";
-import Image from "@components/ui/common/image";
 import ShareButton from "@components/ui/common/cardShareButton";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
-  loading: () => "",
+  loading: () => (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+    </div>
+  ),
   ssr: false,
 });
 
 const CardLoading = dynamic(() => import("@components/ui/cardLoading"), {
-  loading: () => "",
+  loading: () => (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+    </div>
+  ),
+});
+
+const Image = dynamic(() => import("@components/ui/common/image"), {
+  loading: () => (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+    </div>
+  ),
 });
 
 const ViewCounter = dynamic(() => import("@components/ui/viewCounter"), {
@@ -28,8 +43,12 @@ const ViewCounter = dynamic(() => import("@components/ui/viewCounter"), {
 function Card({ event, isLoading, isPriority }) {
   const counterRef = useRef();
   const shareRef = useRef();
-  const isCounterVisible = useOnScreen(counterRef);
-  const isShareVisible = useOnScreen(shareRef);
+  const isCounterVisible = useOnScreen(counterRef, {
+    freezeOnceVisible: true,
+  });
+  const isShareVisible = useOnScreen(shareRef, {
+    freezeOnceVisible: true,
+  });
   const { prefetch } = useRouter();
   const [isCardLoading, setIsCardLoading] = useState(false);
 
@@ -55,7 +74,13 @@ function Card({ event, isLoading, isPriority }) {
 
   return (
     <>
-      <Link href={`/e/${event.slug}`} passHref prefetch={false}>
+      <Link
+        href={`/e/${event.slug}`}
+        passHref
+        prefetch={false}
+        className="w-full"
+        legacyBehavior
+      >
         <div
           className={`w-full flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer ${
             isCardLoading ? "opacity-50 animate-pulse" : ""
@@ -113,7 +138,11 @@ function Card({ event, isLoading, isPriority }) {
         className="w-full flex justify-center items-center gap-2 pb-6 px-4"
         ref={counterRef}
       >
-        {isShareVisible && <ShareButton slug={event.slug} />}
+        {isPriority ? (
+          <ShareButton slug={event.slug} />
+        ) : (
+          isShareVisible && <ShareButton slug={event.slug} />
+        )}
         {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
       </div>
       <div className="w-full flex flex-col px-4 gap-3">

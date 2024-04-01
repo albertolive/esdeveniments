@@ -1,8 +1,11 @@
 import { useMemo, useState, useEffect, memo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
-import Filters from "@components/ui/filters";
 import useOnScreen from "@components/hooks/useOnScreen";
+
+const Filters = dynamic(() => import("@components/ui/filters"), {
+  loading: () => "",
+});
 
 const FiltersModal = dynamic(() => import("@components/ui/filtersModal"), {
   loading: () => "",
@@ -79,6 +82,7 @@ function SubMenu({
         </div>
       )}
       <Filters
+        openModal={openModal}
         setOpenModal={setOpenModal}
         place={place}
         placeProps={placeProps}

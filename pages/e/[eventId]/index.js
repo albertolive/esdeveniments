@@ -28,7 +28,11 @@ const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
 });
 
 const Image = dynamic(() => import("@components/ui/common/image"), {
-  loading: () => "",
+  loading: () => (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+    </div>
+  ),
 });
 
 const EditModal = dynamic(() => import("@components/ui/editModal"), {

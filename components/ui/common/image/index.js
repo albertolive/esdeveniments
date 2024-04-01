@@ -1,13 +1,15 @@
-import { useState, memo } from "react";
+import { useState, memo, useRef } from "react";
 import NextImage from "next/image";
 import dynamic from "next/dynamic";
+import useOnScreen from "@components/hooks/useOnScreen";
 
 const ImgDefault = dynamic(() => import("@components/ui/imgDefault"), {
-  loading: () => "",
+  loading: () => (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+    </div>
+  ),
 });
-
-const solidColorPlaceholder =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3Crect fill='%23CCC' width='1' height='1'/%3E%3C/svg%3E";
 
 function ImageComponent({
   title,
@@ -18,19 +20,27 @@ function ImageComponent({
   className = "w-full h-full flex justify-center items-center",
   priority = false,
 }) {
+  const imgDefaultRef = useRef();
+  const isImgDefaultVisible = useOnScreen(imgDefaultRef);
   const [hasError, setHasError] = useState(false);
   const imageClassName = `${className}`;
 
   if (!image || hasError) {
     return (
-      <div className={imageClassName}>
-        <ImgDefault
-          title={title}
-          date={date}
-          location={location}
-          subLocation={subLocation}
-          alt={title}
-        />
+      <div className={imageClassName} ref={imgDefaultRef}>
+        {isImgDefaultVisible ? (
+          <ImgDefault
+            title={title}
+            date={date}
+            location={location}
+            subLocation={subLocation}
+            alt={title}
+          />
+        ) : (
+          <div className="flex justify-center items-center w-full">
+            <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+          </div>
+        )}
       </div>
     );
   }
@@ -42,12 +52,10 @@ function ImageComponent({
         src={image}
         alt={title}
         width={500}
-        height={500}
-        placeholder="blur"
-        blurDataURL={solidColorPlaceholder}
+        height={260}
         loading={priority ? "eager" : "lazy"}
         onError={() => setHasError(true)}
-        quality={75}
+        quality={70}
         style={{
           objectFit: "contain",
         }}
