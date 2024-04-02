@@ -16,14 +16,11 @@ import List from "@components/ui/list";
 import CardLoading from "@components/ui/cardLoading";
 import Card from "@components/ui/card";
 import Search from "@components/ui/search";
+import SubMenu from "@components/ui/common/subMenu";
 import { CATEGORIES } from "@utils/constants";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 import useOnScreen from "@components/hooks/useOnScreen";
 import Imago from "public/static/images/imago-esdeveniments.png";
-
-const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
-  loading: () => "",
-});
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
