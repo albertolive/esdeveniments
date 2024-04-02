@@ -14,18 +14,11 @@ import {
 import { MAX_RESULTS, dateFunctions } from "@utils/constants";
 import List from "@components/ui/list";
 import CardLoading from "@components/ui/cardLoading";
+import Card from "@components/ui/card";
 import { CATEGORIES } from "@utils/constants";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 import useOnScreen from "@components/hooks/useOnScreen";
 import Imago from "public/static/images/imago-esdeveniments.png";
-
-const Card = dynamic(() => import("@components/ui/card"), {
-  loading: () => (
-    <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px]">
-      <CardLoading />
-    </div>
-  ),
-});
 
 const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
   loading: () => "",
