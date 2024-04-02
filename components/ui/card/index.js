@@ -9,6 +9,7 @@ import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
 import { truncateString } from "@utils/helpers";
 import useOnScreen from "@components/hooks/useOnScreen";
 import ShareButton from "@components/ui/common/cardShareButton";
+import Image from "@components/ui/common/image";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => (
@@ -20,14 +21,6 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
 });
 
 const CardLoading = dynamic(() => import("@components/ui/cardLoading"), {
-  loading: () => (
-    <div className="flex justify-center items-center w-full">
-      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
-    </div>
-  ),
-});
-
-const Image = dynamic(() => import("@components/ui/common/image"), {
   loading: () => (
     <div className="flex justify-center items-center w-full">
       <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
