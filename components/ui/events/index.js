@@ -15,16 +15,13 @@ import { MAX_RESULTS, dateFunctions } from "@utils/constants";
 import List from "@components/ui/list";
 import CardLoading from "@components/ui/cardLoading";
 import Card from "@components/ui/card";
+import Search from "@components/ui/search";
 import { CATEGORIES } from "@utils/constants";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 import useOnScreen from "@components/hooks/useOnScreen";
 import Imago from "public/static/images/imago-esdeveniments.png";
 
 const SubMenu = dynamic(() => import("@components/ui/common/subMenu"), {
-  loading: () => "",
-});
-
-const Search = dynamic(() => import("@components/ui/search"), {
   loading: () => "",
 });
 
