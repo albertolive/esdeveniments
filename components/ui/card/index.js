@@ -131,11 +131,7 @@ function Card({ event, isLoading, isPriority }) {
         className="w-full flex justify-center items-center gap-2 pb-6 px-4"
         ref={counterRef}
       >
-        {isPriority ? (
-          <ShareButton slug={event.slug} />
-        ) : (
-          isShareVisible && <ShareButton slug={event.slug} />
-        )}
+        {isShareVisible && <ShareButton slug={event.slug} />}
         {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
