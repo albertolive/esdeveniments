@@ -1,4 +1,4 @@
-import {siteUrl} from "@config/index";
+import { siteUrl } from "@config/index";
 
 const sharedData = {
   descriptionSelector: ".ddbbtext",
@@ -10,16 +10,6 @@ const osona = [
   {
     label: "Osona",
     towns: new Map([
-      [
-        "alpens",
-        {
-          label: "Alpens",
-          rssFeed: "https://www.alpens.cat/rss/12",
-          postalCode: "08507",
-          coords: { lat: "42.1667", lng: "2.2167" },
-          ...sharedData,
-        },
-      ],
       [
         "balenya",
         {
@@ -101,16 +91,6 @@ const osona = [
         },
       ],
       [
-        "lluca",
-        {
-          label: "Lluçà",
-          rssFeed: "https://www.lluca.cat/rss/12",
-          postalCode: "08514",
-          coords: { lat: "42.0333", lng: "2.25" },
-          ...sharedData,
-        },
-      ],
-      [
         "malla",
         {
           label: "Malla",
@@ -157,26 +137,6 @@ const osona = [
           rssFeed: "https://www.oris.cat/rss/12/0/",
           postalCode: "08518",
           coords: { lat: "42.0833", lng: "2.2167" },
-          ...sharedData,
-        },
-      ],
-      [
-        "orista",
-        {
-          label: "Oristà",
-          rssFeed: "https://www.orista.cat/rss/12/0/",
-          postalCode: "08512",
-          coords: { lat: "42", lng: "2.25" },
-          ...sharedData,
-        },
-      ],
-      [
-        "perafita",
-        {
-          label: "Perafita",
-          rssFeed: "https://www.perafita.cat/rss/12",
-          postalCode: "08506",
-          coords: { lat: "42.1333", lng: "2.25" },
           ...sharedData,
         },
       ],
@@ -327,16 +287,6 @@ const osona = [
           rssFeed: "https://www.seva.cat/rss/12",
           postalCode: "08507",
           coords: { lat: "42.1667", lng: "2.2167" },
-          ...sharedData,
-        },
-      ],
-      [
-        "sobremunt",
-        {
-          label: "Sobremunt",
-          rssFeed: "https://www.sobremunt.cat/rss/12",
-          postalCode: "08506",
-          coords: { lat: "42.1333", lng: "2.25" },
           ...sharedData,
         },
       ],

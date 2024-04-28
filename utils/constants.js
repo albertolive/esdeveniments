@@ -407,6 +407,16 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "montmelo",
+          {
+            label: "Montmeló",
+            rssFeed: "https://www.montmelo.cat/rss/12",
+            postalCode: "08160",
+            coords: { lat: "41.551526513055", lng: "2.24819603950155" },
+            ...sharedData,
+          },
+        ],
+        [
           "llissa-de-vall",
           {
             label: "Lliçà de Vall",
@@ -678,6 +688,16 @@ export const CITIES_DATA = new Map([
           },
         ],
         [
+          "gallifa",
+          {
+            label: "Gallifa",
+            rssFeed: "https://www.gallifa.cat/rss/12",
+            postalCode: "08146",
+            coords: { lat: "41.6931569239137", lng: "2.11540352191569" },
+            ...sharedData,
+          },
+        ],
+        [
           "matadepera",
           {
             label: "Matadepera",
@@ -715,6 +735,16 @@ export const CITIES_DATA = new Map([
             ...sharedData,
             postalCode: "08212",
             coords: { lat: 41.67944, lng: 2.05778 },
+          },
+        ],
+        [
+          "santquirze",
+          {
+            label: "Sant Quirze del Vallès",
+            rssFeed: "https://www.ajsantquirze.cat/rss/12",
+            postalCode: "08192",
+            coords: { lat: "41.5330652897843", lng: "2.08074660053644" },
+            ...sharedData,
           },
         ],
         [
