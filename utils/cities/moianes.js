@@ -19,6 +19,16 @@ const moianes = [
         },
       ],
       [
+        "ccmoianes",
+        {
+          label: "Moià",
+          rssFeed: "https://www.ccmoianes.cat/rss/12",
+          postalCode: "08180",
+          coords: { lat: "41.8129142", lng: "2.0971132" },
+          ...sharedData,
+        },
+      ],
+      [
         "monistroldecalders",
         {
           label: "Monistrol de Calders",

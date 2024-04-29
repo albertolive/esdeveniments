@@ -2,6 +2,7 @@ import { useState, memo, useRef } from "react";
 import NextImage from "next/image";
 import dynamic from "next/dynamic";
 import useOnScreen from "@components/hooks/useOnScreen";
+import { env } from "@utils/helpers";
 
 const ImgDefault = dynamic(() => import("@components/ui/imgDefault"), {
   loading: () => (
@@ -61,6 +62,7 @@ function ImageComponent({
         }}
         priority={priority}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        unoptimized={env === "dev"}
       />
     </div>
   );

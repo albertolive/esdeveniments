@@ -6,6 +6,14 @@ import anoia from "./anoia";
 import bages from "./bages";
 import llucanes from "./llucanes";
 import altPenedes from "./altPenedes";
+import garraf from "./garraf";
+import maresme from "./maresme";
+import vallesOccidental from "./vallesOccidental";
+import vallesOriental from "./vallesOriental";
+import baixEmporda from "./baixEmporda";
+import bergueda from "./bergueda";
+import moianes from "./moianes";
+import urgell from "./urgell";
 
 export {
   osona,
@@ -16,4 +24,12 @@ export {
   bages,
   llucanes,
   altPenedes,
+  garraf,
+  maresme,
+  vallesOccidental,
+  vallesOriental,
+  baixEmporda,
+  bergueda,
+  moianes,
+  urgell,
 };
