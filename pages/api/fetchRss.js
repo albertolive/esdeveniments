@@ -1,21 +1,18 @@
-import axios from "axios";
 import { kv } from "@vercel/kv";
 import { load } from "cheerio";
-import Bottleneck from "bottleneck";
 import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
 import { env } from "@utils/helpers";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
-import createHash from "@utils/createHash";
+// import createHash from "@utils/createHash";
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
-const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
 
 // Configuration
-const debugMode = false;
+const debugMode = true;
 const TIMEOUT_LIMIT =
   env === "prod" ? process.env.NEXT_PUBLIC_TIMEOUT_LIMIT : 100000;
 const SAFETY_MARGIN = 1000;
@@ -55,7 +52,13 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
       }
     }
     // Fetch the data
-    const response = await axios.get(rssFeed, { responseType: "arraybuffer" });
+    const response = await fetch(rssFeed);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch RSS data for ${town}: ${response.status}`
+      );
+    }
 
     // Check if the response status is not 200
     if (response.status !== 200) {
@@ -64,7 +67,7 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
       );
     }
 
-    let data;
+    let data = await response.arrayBuffer();
 
     // Check the Content-Type header of the response
     if (
@@ -432,7 +435,7 @@ function getRSSItemData(item) {
   } = item;
 
   if (!guid) {
-    guid = createHash(title, url, location || locationExtra, date);
+    // guid = createHash(title, url, location || locationExtra, date);
   }
 
   return {
@@ -707,21 +710,14 @@ export default async function handler(req, res) {
         break; // Stop processing new items
       }
 
-      await limiter.schedule(async () => {
-        try {
-          await insertItemToCalendarWithRetry(
-            item,
-            region,
-            town,
-            processedItems,
-            token,
-            shouldInteractWithKv
-          );
-          return;
-        } catch (error) {
-          console.error("Error inserting item to calendar:", error);
-        }
-      });
+      await insertItemToCalendarWithRetry(
+        item,
+        region,
+        town,
+        processedItems,
+        token,
+        shouldInteractWithKv
+      );
     }
 
     if (!isTimeout) {

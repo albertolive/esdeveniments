@@ -1,21 +1,21 @@
 import { captureException } from "@sentry/nextjs";
-import Bottleneck from "bottleneck";
-import axios from "axios";
 import { getAuthToken } from "@lib/auth";
 
-const limiter = new Bottleneck({ maxConcurrent: 3, minTime: 500 });
-
 async function deleteEvent(token, eventId, summary) {
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com/events/${eventId}`;
   try {
-    await axios.delete(
-      `https://www.googleapis.com/calendar/v3/calendars/${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com/events/${eventId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     console.log(`Deleted event with ID: ${eventId}, Summary: ${summary}`);
   } catch (err) {
     console.error(
@@ -53,23 +53,26 @@ export default async function handler(_, res) {
     const timeMax = new Date();
     timeMax.setDate(timeMax.getDate() + numDaysAfter);
 
-    // Fetch all events from the calendar
-    const { data } = await axios.get(
-      `https://www.googleapis.com/calendar/v3/calendars/${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com/events`,
-      {
-        params: {
-          timeMin: timeMin.toISOString(),
-          timeMax: timeMax.toISOString(),
-          maxResults: 2500,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    // Construct the URL with query parameters
+    const params = new URLSearchParams({
+      timeMin: timeMin.toISOString(),
+      timeMax: timeMax.toISOString(),
+      maxResults: "2500",
+    });
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${process.env.NEXT_PUBLIC_GOOGLE_CALENDAR}@group.calendar.google.com/events?${params}`;
 
-    const events = data.items;
+    // Fetch all events from the calendar using Fetch API
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const { items: events } = await response.json();
 
     // Create a map to store the count of each event
     const eventCount = new Map();
@@ -77,8 +80,6 @@ export default async function handler(_, res) {
     // Iterate over the events
     for (const event of events) {
       const key = generateKey(event);
-
-      // Increment the count for this event
       eventCount.set(key, (eventCount.get(key) || 0) + 1);
     }
 
@@ -94,24 +95,20 @@ export default async function handler(_, res) {
     let duplicatesDeleted = false;
     let deletedEventSummaries = new Map(); // Map to store the count of deleted events for each summary
     for (const [key] of duplicates) {
-      // Find all events with this key
-      const duplicateEvents = events.filter((event) => {
-        const eventKey = generateKey(event);
+      const duplicateEvents = events.filter(
+        (event) => generateKey(event) === key
+      );
+      duplicateEvents.sort(
+        (a, b) =>
+          new Date(b.start.dateTime || b.start.date) -
+          new Date(a.start.dateTime || a.start.date)
+      );
 
-        return eventKey === key;
-      });
-
-      // Sort the duplicate events by start time in descending order
-      duplicateEvents.sort((a, b) => {
-        const aStartTime = new Date(a.start.dateTime || a.start.date);
-        const bStartTime = new Date(b.start.dateTime || b.start.date);
-        return bStartTime - aStartTime; // For descending order
-      });
-
-      // Delete all but the most recent duplicate event
       for (let i = 1; i < duplicateEvents.length; i++) {
-        await limiter.schedule(() =>
-          deleteEvent(token, duplicateEvents[i].id, duplicateEvents[i].summary)
+        await deleteEvent(
+          token,
+          duplicateEvents[i].id,
+          duplicateEvents[i].summary
         );
         duplicatesDeleted = true;
         deletedEventSummaries.set(
