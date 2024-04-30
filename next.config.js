@@ -10,6 +10,7 @@ const sentryWebpackPluginOptions = {
 };
 
 const nextConfig = {
+  output: "standalone",
   experimental: {
     scrollRestoration: true,
   },
