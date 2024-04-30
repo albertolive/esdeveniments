@@ -103,5 +103,5 @@ export async function getStaticProps({ params }) {
 }
 
 export const config = {
-  runtime: "edge",
+  runtime: "experimental-edge",
 };
