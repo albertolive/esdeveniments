@@ -58,3 +58,7 @@ export default async function handler(req, res) {
     res.status(500).json({ error: errorMessage });
   }
 }
+
+export const config = {
+  runtime: "edge",
+};

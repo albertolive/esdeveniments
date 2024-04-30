@@ -44,3 +44,7 @@ export const getServerSideProps = async (ctx) => {
 };
 
 export default function Site() {}
+
+export const config = {
+  runtime: "experimental-edge",
+};

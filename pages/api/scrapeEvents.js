@@ -770,3 +770,7 @@ export default async function handler(req, res) {
     captureException(error);
   }
 }
+
+export const config = {
+  runtime: "edge",
+};

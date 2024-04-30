@@ -59,3 +59,7 @@ export async function getStaticProps({ params }) {
     revalidate: 60,
   };
 }
+
+export const config = {
+  runtime: "experimental-edge",
+};

@@ -102,3 +102,7 @@ export default async function handler(_, res) {
       .json({ error: `Failed to handle request: ${error.message}` });
   }
 }
+
+export const config = {
+  runtime: "edge",
+};

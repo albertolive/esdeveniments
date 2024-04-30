@@ -380,3 +380,7 @@ export async function getServerSideProps({ params }) {
     props: { event },
   };
 }
+
+export const config = {
+  runtime: "experimental-edge",
+};

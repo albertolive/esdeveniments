@@ -59,3 +59,7 @@ export async function getStaticProps({ params: { town } }) {
   const { label } = getTownOptionsWithoutRegion(town);
   return { props: { town, label } };
 }
+
+export const config = {
+  runtime: "experimental-edge",
+};

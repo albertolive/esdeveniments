@@ -19,3 +19,7 @@ const handler = async (req, res) => {
 };
 
 export default handler;
+
+export const config = {
+  runtime: "edge",
+};

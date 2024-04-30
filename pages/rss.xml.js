@@ -119,3 +119,7 @@ export const getServerSideProps = async (context) => {
 const RssPage = () => null;
 
 export default RssPage;
+
+export const config = {
+  runtime: "experimental-edge",
+};

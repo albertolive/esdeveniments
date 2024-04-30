@@ -407,3 +407,7 @@ export default function Publica() {
     </>
   );
 }
+
+export const config = {
+  runtime: "experimental-edge",
+};

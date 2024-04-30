@@ -138,3 +138,7 @@ export default async function handler(_, res) {
     });
   }
 }
+
+export const config = {
+  runtime: "edge",
+};
