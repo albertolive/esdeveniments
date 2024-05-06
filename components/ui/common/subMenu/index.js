@@ -52,7 +52,7 @@ function SubMenu({
     <>
       {openModal && (
         <div
-          className="flex justify-center items-center gap-3"
+          className="flex justify-center items-center gap-4"
           ref={filtersModalRef}
         >
           {isFiltersModalVisible && (
