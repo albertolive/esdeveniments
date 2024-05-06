@@ -20,6 +20,10 @@ export const useNetworkSpeed = () => {
         setQuality(30); // Lower quality for slower connections
       } else if (connection.effectiveType.includes("3g")) {
         setQuality(50); // Medium quality for 3G
+      } else if (connection.effectiveType.includes("4g")) {
+        setQuality(80); // High quality for 4G
+      } else if (connection.effectiveType.includes("wifi")) {
+        setQuality(100); // Full quality for WiFi
       } else {
         setQuality(70); // Higher quality for 4G and WiFi
       }
