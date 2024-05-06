@@ -17,7 +17,7 @@ const cloudflareLoader = ({ src, width, quality = 70 }) => {
   const normalizedSrc = src.startsWith("/") ? src.slice(1) : src;
   const params = [`width=${width}`, `quality=${quality}`, "format=auto"];
   const paramsString = params.join(",");
-
+  console.log("env", env);
   return env === "prod"
     ? `/cdn-cgi/image/${paramsString}/${normalizedSrc}`
     : src;
