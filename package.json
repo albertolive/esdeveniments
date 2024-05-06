@@ -60,5 +60,6 @@
     "eslint-config-next": "^14.0.3",
     "next-sitemap": "^2.5.28",
     "prettier-eslint": "^15.0.1"
-  }
+  },
+  "packageManager": "yarn@4.1.1"
 }
