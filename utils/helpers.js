@@ -503,18 +503,13 @@ export const sendEventToGA = (filterName, filterValue) => {
   }
 };
 
-console.log("NODE_ENV:", process.env.NODE_ENV);
-console.log("VERCEL_ENV:", process.env.VERCEL_ENV);
-
 export const env =
-  process.env.VERCEL_ENV === "preview" ||
-  process.env.VERCEL_ENV === "development"
+  process.env.NODE_ENV !== "production"
     ? "dev"
-    : process.env.NODE_ENV !== "production"
+    : process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
+      process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
     ? "dev"
     : "prod";
-
-console.log("Determined env:", env);
 
 export function getRegionFromQuery(q) {
   const parts = q.split(" ");
