@@ -48,7 +48,7 @@ const vallesOriental = [
           label: "Montmeló",
           rssFeed: "https://www.montmelo.cat/rss/12",
           postalCode: "08160",
-          coords: { lat: "41.551526513055", lng: "2.24819603950155" },
+          coords: { lat: 41.551526513055, lng: 2.24819603950155 },
           ...sharedData,
         },
       ],
