@@ -14,14 +14,15 @@ const ImgDefault = dynamic(() => import("@components/ui/imgDefault"), {
 });
 
 const cloudflareLoader = ({ src, width, quality = 70 }) => {
-  if (!src) return "";
-  const normalizedSrc = src.startsWith("/") ? src.slice(1) : src;
-  const params = [`width=${width}`, `quality=${quality}`, "format=auto"];
-  const paramsString = params.join(",");
+  return src;
+  // if (!src) return "";
+  // const normalizedSrc = src.startsWith("/") ? src.slice(1) : src;
+  // const params = [`width=${width}`, `quality=${quality}`, "format=auto"];
+  // const paramsString = params.join(",");
 
-  return env === "prod"
-    ? `/cdn-cgi/image/${paramsString}/${normalizedSrc}`
-    : src;
+  // return env === "prod"
+  //   ? `/cdn-cgi/image/${paramsString}/${normalizedSrc}`
+  //   : src;
 };
 
 function ImageComponent({
