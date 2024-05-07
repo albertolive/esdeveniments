@@ -153,42 +153,49 @@ function generateMetaDescription(title, description) {
   return metaDescription;
 }
 
-function generateMetaTitle(title, description, location, town, region) {
-  const titleSanitized = sanitizeInput(title);
-  let metaTitle = smartTruncate(titleSanitized, 60);
-  // Determine if location and/or town should be included in the metaTitle
-  let locationTown = "";
+function sanitizeAndTrim(input) {
+  // Helper function to sanitize and trim input strings
+  return sanitizeInput(input).trim();
+}
 
-  if (location && town) {
-    if (location.trim() === town.trim()) {
-      if (metaTitle.length + location.length + 3 <= 60) {
-        locationTown = sanitizeInput(location).trim();
-      }
-    } else {
-      const combinedLocationTown = location + ", " + town;
-      if (metaTitle.length + combinedLocationTown.length + 5 <= 60) {
-        locationTown = sanitizeInput(combinedLocationTown).trim();
-      }
-    }
-  } else if (location && metaTitle.length + location.length + 3 <= 60) {
-    locationTown = sanitizeInput(location).trim();
+function appendIfFits(base, addition) {
+  // Helper function to append text if it fits within the character limit
+  const potentialTitle = `${base} - ${addition}`;
+  return potentialTitle.length <= 60 ? potentialTitle : base;
+}
+
+function generateMetaTitle(title, description, location, town, region) {
+  const titleSanitized = sanitizeAndTrim(title);
+  let metaTitle = smartTruncate(titleSanitized, 60);
+  let titleParts = [];
+
+  // Add location if available
+  if (location) {
+    titleParts.push(sanitizeAndTrim(location));
   }
-  // Append locationTown to metaTitle if it fits within the character limit
-  if (locationTown) {
-    metaTitle = `${metaTitle} - ${locationTown}`;
-    metaTitle = smartTruncate(metaTitle, 60);
+
+  // Add town if it's distinct from location
+  if (town && sanitizeAndTrim(town) !== titleParts[0]) {
+    titleParts.push(sanitizeAndTrim(town));
   }
-  // Append region to metaTitle if it fits within the character limit
-  if (region && metaTitle.length + region.length + 3 <= 60) {
-    const regionSanitized = sanitizeInput(region).trim();
-    metaTitle = `${metaTitle} - ${regionSanitized}`;
-    metaTitle = smartTruncate(metaTitle, 60);
+
+  // Add region if it's distinct from previous parts
+  if (region && !titleParts.includes(sanitizeAndTrim(region))) {
+    titleParts.push(sanitizeAndTrim(region));
   }
-  // Append description to metaTitle if it fits within the character limit
-  if (metaTitle.length < 50 && description && description.trim() !== "") {
-    const descriptionSanitized = sanitizeInput(description);
-    metaTitle = `${metaTitle} - ${descriptionSanitized}`;
-    metaTitle = smartTruncate(metaTitle, 60);
+
+  // Attempt to append each part of the title if it fits
+  titleParts.forEach((part) => {
+    metaTitle = appendIfFits(metaTitle, part);
+  });
+
+  // Append sanitized description if there's enough space and it's not empty
+  if (
+    description &&
+    sanitizeAndTrim(description) !== "" &&
+    metaTitle.length < 50
+  ) {
+    metaTitle = appendIfFits(metaTitle, sanitizeAndTrim(description));
   }
 
   return metaTitle;

@@ -504,9 +504,10 @@ export const sendEventToGA = (filterName, filterValue) => {
 };
 
 export const env =
-  process.env.NODE_ENV !== "production" ||
-  process.env.VERCEL_ENV === "preview" ||
-  process.env.VERCEL_ENV === "development"
+  process.env.NODE_ENV !== "production"
+    ? "dev"
+    : process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
+      process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
     ? "dev"
     : "prod";
 
