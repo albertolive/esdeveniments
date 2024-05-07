@@ -41,3 +41,6 @@ sitemap-0.xml
 
 # Sentry Auth Token
 .sentryclirc
+
+# Sentry Config File
+.sentryclirc

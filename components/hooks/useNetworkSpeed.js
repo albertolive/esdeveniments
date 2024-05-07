@@ -9,10 +9,12 @@ export const useNetworkSpeed = () => {
       navigator.mozConnection ||
       navigator.webkitConnection;
 
+    if (!connection) {
+      console.log("Network Information API not supported");
+      return; // Exit if the connection API is not supported
+    }
+
     const setConnectionQuality = () => {
-      if (!connection) {
-        return;
-      }
       if (
         connection.effectiveType.includes("slow-2g") ||
         connection.effectiveType.includes("2g")
@@ -25,7 +27,7 @@ export const useNetworkSpeed = () => {
       } else if (connection.effectiveType.includes("wifi")) {
         setQuality(100); // Full quality for WiFi
       } else {
-        setQuality(70); // Higher quality for 4G and WiFi
+        setQuality(70); // Default for other cases
       }
     };
 
@@ -33,7 +35,9 @@ export const useNetworkSpeed = () => {
     connection.addEventListener("change", setConnectionQuality);
 
     return () => {
-      connection.removeEventListener("change", setConnectionQuality);
+      if (connection) {
+        connection.removeEventListener("change", setConnectionQuality);
+      }
     };
   }, []);
 
