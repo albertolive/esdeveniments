@@ -130,7 +130,7 @@ export default function Search({ searchTerm, setSearchTerm }) {
         </div>
         <input
           type="text"
-          className="w-full h-10 border-0 placeholder:text-bColor text-[14px] rounded-tr-full rounded-br-full"
+          className="w-full border-0 placeholder:text-bColor text-[14px] rounded-tr-full rounded-br-full"
           placeholder="Què estàs buscant?"
           value={inputValue}
           onKeyDown={handleKeyPress}
@@ -138,7 +138,7 @@ export default function Search({ searchTerm, setSearchTerm }) {
           onFocus={onFocus}
         />
         {inputValue.length > 0 && (
-          <div className="h-10 flex justify-end items-center cursor-pointer">
+          <div className="flex justify-end items-center cursor-pointer">
             <XIcon
               className="h-4 w-4 text-blackCorp"
               onClick={clearSearchTerm}

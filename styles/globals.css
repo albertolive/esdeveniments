@@ -83,7 +83,7 @@ input[type="range"]::-moz-range-thumb {
 
 h1 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.7rem;
+  font-size: 1.62rem;
   letter-spacing: 0.001rem;
   line-height: 2.1rem;
   font-weight: 600;
@@ -91,14 +91,14 @@ h1 {
 
 h2 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.62rem;
+  font-size: 1.38rem;
   letter-spacing: 0.001rem;
   line-height: 1.6rem;
   font-weight: 600;
 }
 h3 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.38rem;
+  font-size: 1.2rem;
   letter-spacing: 0.02rem;
   line-height: 1.65rem;
   font-weight: 600;

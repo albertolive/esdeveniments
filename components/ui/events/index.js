@@ -341,7 +341,7 @@ function Events({ props, loadMore = true }) {
           />
         </div>
       </div>
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-44">
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-40">
         {notFound && (
           <>
             <div ref={noEventsFoundRef} />
@@ -351,7 +351,7 @@ function Events({ props, loadMore = true }) {
         {!notFound && (
           <>
             <h1 className="uppercase mb-4 px-4">{title}</h1>
-            <h2 className="text-[16px] font-normal text-blackCorp text-left mb-12 px-4">
+            <h2 className="text-[16px] font-normal text-blackCorp text-left mb-10 px-4">
               {subTitle}
             </h2>
           </>

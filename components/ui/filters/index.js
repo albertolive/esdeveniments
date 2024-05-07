@@ -15,10 +15,10 @@ const renderButton = ({
 }) => (
   <div
     key={text}
-    className="w-full h-16 bg-whiteCorp flex justify-center items-center nowrap"
+    className="w-full bg-whiteCorp flex justify-center items-center nowrap"
   >
     <div
-      className={`w-full h-full flex justify-center items-center gap-1 px-2 ease-in-out duration-300 focus:outline-none ${
+      className={`w-full flex justify-center items-center gap-1 px-2 ease-in-out duration-300 focus:outline-none ${
         enabled
           ? "text-blackCorp font-medium"
           : "border-whiteCorp border-b-2 text-bColor hover:bg-darkCorp hover:text-blackCorp"
@@ -108,13 +108,13 @@ const Filters = ({
 
   return (
     <div
-      className={`w-full h-16 bg-whiteCorp flex justify-center items-center border border-bColor border-opacity-50 rounded-full px-4 ${
+      className={`w-full bg-whiteCorp flex justify-center items-center px-4 py-2 ${
         openModal
           ? "opacity-50 animate-pulse text-bColor pointer-events-none"
           : ""
       }`}
     >
-      <div className="w-full flex justify-start items-center gap-2 cursor-pointer">
+      <div className="w-full h-10 flex justify-start items-center gap-2 cursor-pointer">
         <div
           onClick={handleOpenModal}
           type="button"
@@ -132,7 +132,7 @@ const Filters = ({
             Filtres
           </p>
         </div>
-        <div className="w-8/10 h-14 flex items-center gap-1 border-0 placeholder:text-bColor overflow-x-auto rounded-tr-full rounded-br-full">
+        <div className="w-8/10 flex items-center gap-1 border-0 placeholder:text-bColor overflow-x-auto rounded-tr-full rounded-br-full">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,
