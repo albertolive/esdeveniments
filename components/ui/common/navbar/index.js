@@ -38,8 +38,8 @@ export default function Navbar() {
                       src={logo}
                       className="bg-whiteCorp flex justify-center items-center cursor-pointer"
                       alt="Logo Esdeveniments.cat"
-                      width={169}
-                      height={16}
+                      width={190}
+                      height={18}
                       priority={true}
                     />
                   </Link>

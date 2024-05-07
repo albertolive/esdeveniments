@@ -317,7 +317,7 @@ function Events({ props, loadMore = true }) {
             : "top-0 z-10 md:top-10 border-bColor md:border-b-0 shadow-sm md:shadow-none"
         }  flex justify-center items-center pt-2 `}
       >
-        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 pb-2 sm:px-10 sm:w-[580px]">
+        <div className="w-full flex flex-col justify-center items-center md:items-start gap-4 mx-auto px-4 pt-6 pb-4 sm:px-10 sm:w-[580px]">
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <SubMenu
             place={place}
@@ -341,7 +341,7 @@ function Events({ props, loadMore = true }) {
           />
         </div>
       </div>
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-40">
         {notFound && (
           <>
             <div ref={noEventsFoundRef} />
@@ -350,10 +350,8 @@ function Events({ props, loadMore = true }) {
         )}
         {!notFound && (
           <>
-            <h1 className="leading-8 font-semibold text-blackCorp text-left uppercase italic mb-4 px-4">
-              {title}
-            </h1>
-            <h2 className="text-[16px] font-normal text-blackCorp text-left mb-4 px-4">
+            <h1 className="uppercase mb-4 px-4">{title}</h1>
+            <h2 className="text-[16px] font-normal text-blackCorp text-left mb-10 px-4">
               {subTitle}
             </h2>
           </>

@@ -88,7 +88,7 @@ function Card({ event, isLoading, isPriority }) {
               <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             </div>
             {/* Title */}
-            <h3 className="w-11/12 uppercase italic">
+            <h3 className="w-11/12 uppercase">
               <Link href={`/e/${event.slug}`} passHref prefetch={false}>
                 {title}
               </Link>
