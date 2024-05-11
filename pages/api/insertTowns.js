@@ -28,12 +28,7 @@ export default async function handler(req, res) {
       await fetchDataForTown(url);
     }
 
-    await axios.get(`${siteUrl}/api/removeDuplicates`);
-    console.log("Duplicates removed successfully");
-
-    res
-      .status(200)
-      .json({ message: "Data fetched and duplicates removed successfully" });
+    res.status(200).json({ message: "Data fetched and duplicates" });
   } catch (error) {
     console.error(`Error during operation: ${error}`);
     res.status(500).json({ error: "Failed to complete the operation" });
