@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
 
-function usePersistedState(key, defaultValue) {
+function usePersistedState(key, defaultValue, excludeKeys = []) {
   const [state, setState] = useState(() => {
     if (typeof window !== "undefined") {
       const persistedState = window.localStorage.getItem(key);
-      return persistedState !== null
-        ? JSON.parse(persistedState)
-        : defaultValue;
+      if (persistedState !== null) {
+        const parsedState = JSON.parse(persistedState);
+        excludeKeys.forEach((key) => delete parsedState[key]);
+        return { ...defaultValue, ...parsedState };
+      }
     }
     return defaultValue;
   });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(key, JSON.stringify(state));
+      const stateToPersist = { ...state };
+      excludeKeys.forEach((key) => delete stateToPersist[key]);
+      window.localStorage.setItem(key, JSON.stringify(stateToPersist));
     }
-  }, [key, state]);
+  }, [key, state, excludeKeys]);
 
   return [state, setState];
 }

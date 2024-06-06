@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, lazy, useMemo } from "react";
+import { memo, useEffect, useState, useMemo } from "react";
 import NextImage from "next/image";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 import Search from "@components/ui/search";
@@ -18,38 +18,15 @@ const EventsCategorized = dynamic(
 );
 
 function Events() {
-  const {
-    state,
-    setFilter,
-    resetPage,
-    areFiltersActive,
-    setPlace,
-    setByDate,
-    setCategory,
-    setSearchTerm,
-    setDistance,
-  } = useFilters();
+  const { state, setFilter, resetPage, areFiltersActive } = useFilters();
   const isSticky = useScrollVisibility(30);
   const isBrowser = typeof window !== "undefined";
 
   const [isMounted, setIsMounted] = useState(false);
-  console.log("Events");
+
   useEffect(() => {
     setIsMounted(true);
-    if (isBrowser) {
-      const storedPlace = window.localStorage.getItem("place");
-      const storedByDate = window.localStorage.getItem("byDate");
-      const storedCategory = window.localStorage.getItem("category");
-      const storedSearchTerm = window.localStorage.getItem("searchTerm");
-      const storedDistance = window.localStorage.getItem("distance");
-
-      if (storedPlace) setPlace(storedPlace);
-      if (storedByDate) setByDate(storedByDate);
-      if (storedCategory) setCategory(storedCategory);
-      if (storedSearchTerm) setSearchTerm(storedSearchTerm);
-      if (storedDistance) setDistance(storedDistance);
-    }
-  }, [isBrowser, setPlace, setByDate, setCategory, setSearchTerm, setDistance]);
+  }, []);
 
   const hasFilters = useMemo(() => areFiltersActive(), [areFiltersActive]);
 
@@ -73,6 +50,7 @@ function Events() {
         setFilter("SET_SCROLL_BUTTON", window.scrollY > 400);
       };
 
+      handleScroll();
       window.addEventListener("scroll", handleScroll);
       return () => window.removeEventListener("scroll", handleScroll);
     }
@@ -110,7 +88,7 @@ function Events() {
             searchTerm={state.searchTerm}
             setSearchTerm={(value) => setFilter("SET_SEARCHTERM", value)}
           />
-          {isMounted && <SubMenu />}
+          <SubMenu />
         </div>
       </div>
       {isMounted && <>{hasFilters ? <EventsList /> : <EventsCategorized />}</>}

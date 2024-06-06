@@ -57,7 +57,7 @@ function EventsList({ loadMore = true }) {
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
     town: type === "town" ? label : "",
   });
-  console.log(eventsData);
+  console.log("EventsList");
   const {
     events = [],
     currentYear,

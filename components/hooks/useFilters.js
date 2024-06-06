@@ -1,17 +1,56 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   useFilterState,
   useFilterDispatch,
 } from "@components/context/filterContext";
 import { sendEventToGA } from "@utils/helpers";
 
+const persistedStateKeys = [
+  "page",
+  "place",
+  "byDate",
+  "category",
+  "searchTerm",
+  "userLocation",
+  "distance",
+];
+
+const getPersistedState = () => {
+  if (typeof window !== "undefined") {
+    const persistedState = window.localStorage.getItem("filterState");
+    return persistedState ? JSON.parse(persistedState) : {};
+  }
+  return {};
+};
+
+const setPersistedState = (state) => {
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem("filterState", JSON.stringify(state));
+  }
+};
+
 export function useFilters() {
   const state = useFilterState();
   const dispatch = useFilterDispatch();
 
+  useEffect(() => {
+    const persistedState = getPersistedState();
+    Object.keys(persistedState).forEach((key) => {
+      dispatch({
+        type: `SET_${key.toUpperCase()}`,
+        payload: persistedState[key],
+      });
+    });
+  }, [dispatch]);
+
   const setFilter = useCallback(
     (type, payload) => {
       dispatch({ type, payload });
+      const key = type.toLowerCase().replace("set_", "");
+      if (persistedStateKeys.includes(key)) {
+        const newState = { ...getPersistedState(), [key]: payload };
+        setPersistedState(newState);
+      }
       if (type === "SET_PLACE") {
         sendEventToGA("Place", payload);
       }
@@ -29,10 +68,11 @@ export function useFilters() {
   );
 
   const resetPage = useCallback(() => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("currentPage", "1");
-    }
     dispatch({ type: "SET_PAGE", payload: 1 });
+    if (typeof window !== "undefined") {
+      const newState = { ...getPersistedState(), page: 1 };
+      setPersistedState(newState);
+    }
   }, [dispatch]);
 
   const areFiltersActive = useCallback(() => {
@@ -75,7 +115,7 @@ export function useFilters() {
 
   const setSearchTerm = useCallback(
     (value) => {
-      dispatch({ type: "SET_SEARCH_TERM", payload: value });
+      dispatch({ type: "SET_SEARCHTERM", payload: value });
     },
     [dispatch]
   );

@@ -20,6 +20,25 @@ const initialState = {
   currentYear: new Date().getFullYear(),
 };
 
+const persistedStateKeys = [
+  "page",
+  "place",
+  "byDate",
+  "category",
+  "searchTerm",
+  "userLocation",
+  "distance",
+];
+
+const nonPersistedStateKeys = [
+  "openModal",
+  "scrollButton",
+  "navigatedFilterModal",
+  "categorizedEvents",
+  "latestEvents",
+  "currentYear",
+];
+
 function filterReducer(state, action) {
   switch (action.type) {
     case "SET_PAGE":
@@ -55,18 +74,29 @@ function filterReducer(state, action) {
 
 export function FilterProvider({ children, initialState: customInitialState }) {
   const mergedInitialState = { ...initialState, ...customInitialState };
+
   const [persistedState, setPersistedState] = usePersistedState(
     "filterState",
-    mergedInitialState
+    Object.fromEntries(
+      persistedStateKeys.map((key) => [key, mergedInitialState[key]])
+    )
   );
-  const [state, dispatch] = useReducer(filterReducer, persistedState);
+
+  const [nonPersistedState, dispatch] = useReducer(
+    filterReducer,
+    Object.fromEntries(
+      nonPersistedStateKeys.map((key) => [key, mergedInitialState[key]])
+    )
+  );
 
   useEffect(() => {
-    setPersistedState(state);
-  }, [state, setPersistedState]);
+    setPersistedState(persistedState);
+  }, [persistedState, setPersistedState]);
+
+  const combinedState = { ...persistedState, ...nonPersistedState };
 
   return (
-    <FilterStateContext.Provider value={state}>
+    <FilterStateContext.Provider value={combinedState}>
       <FilterDispatchContext.Provider value={dispatch}>
         {children}
       </FilterDispatchContext.Provider>

@@ -1,11 +1,15 @@
-import dynamic from "next/dynamic";
+import { getCalendarEvents } from "@lib/helpers";
+import { getPlaceTypeAndLabel } from "@utils/helpers";
+import { twoWeeksDefault } from "@lib/dates";
+import { FilterProvider } from "@components/context/filterContext";
+import Events from "@components/ui/events";
 
-const Events = dynamic(() => import("@components/ui/eventsList"), {
-  loading: () => "",
-});
-
-export default function App(props) {
-  return <Events props={props} />;
+export default function TownPage(props) {
+  return (
+    <FilterProvider initialState={props.initialState}>
+      <Events />
+    </FilterProvider>
+  );
 }
 
 export async function getStaticPaths() {
@@ -14,14 +18,12 @@ export async function getStaticPaths() {
   const paths = [];
 
   for (const [regionKey, region] of CITIES_DATA) {
-    // Add path for region
     paths.push({
       params: {
         place: regionKey,
       },
     });
 
-    // Add paths for towns
     for (const [townKey] of region.towns) {
       paths.push({
         params: {
@@ -35,9 +37,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const { getCalendarEvents } = require("@lib/helpers");
-  const { getPlaceTypeAndLabel } = require("@utils/helpers");
-  const { twoWeeksDefault } = require("@lib/dates");
   const { from, until } = twoWeeksDefault();
   const { place } = params;
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
@@ -49,13 +48,26 @@ export async function getStaticProps({ params }) {
     town: type === "town" ? label : "",
   });
 
+  const initialState = {
+    page: 1,
+    openModal: false,
+    place,
+    byDate: "",
+    category: "",
+    searchTerm: "",
+    userLocation: null,
+    distance: "",
+    scrollButton: false,
+    navigatedFilterModal: false,
+    categorizedEvents: {},
+    latestEvents: events,
+    currentYear: new Date().getFullYear(),
+  };
+
   return {
     props: {
-      events,
-      currentYear: new Date().getFullYear(),
-      ...params,
+      initialState,
     },
-
     revalidate: 60,
   };
 }

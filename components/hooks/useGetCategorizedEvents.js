@@ -27,7 +27,6 @@ export const useGetCategorizedEvents = ({
       refreshWhenOffline: false,
       suspense: true,
       keepPreviousData: true,
-      revalidateOnMount: false,
     }
   );
 };

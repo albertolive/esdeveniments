@@ -20,14 +20,12 @@ const NoEventsFound = dynamic(
 );
 
 function EventsCategorized() {
-  // Use context for state management
   const { state } = useFilters();
 
-  // State for loading and events data
   const [isLoading, setIsLoading] = useState(true);
   const [eventsData, setEventsData] = useState({
-    categorizedEvents: state.categorizedEvents.events,
-    latestEvents: state.latestEvents,
+    categorizedEvents: state.categorizedEvents.events || {},
+    latestEvents: state.latestEvents || [],
     noEventsFound: false,
     currentYear: state.currentYear,
   });
@@ -48,8 +46,8 @@ function EventsCategorized() {
   useEffect(() => {
     if (fetchedData.categorizedEvents?.events || fetchedData.latestEvents) {
       setEventsData({
-        categorizedEvents: fetchedData.categorizedEvents?.events,
-        latestEvents: fetchedData.latestEvents,
+        categorizedEvents: fetchedData.categorizedEvents?.events || {},
+        latestEvents: fetchedData.latestEvents || [],
         noEventsFound: fetchedData.noEventsFound,
         currentYear: fetchedData.currentYear,
       });
@@ -57,7 +55,7 @@ function EventsCategorized() {
     }
   }, [fetchedData]);
 
-  const jsonEvents = Object.values(eventsData.categorizedEvents)
+  const jsonEvents = Object.values(eventsData.categorizedEvents || {})
     .flatMap((category) => category)
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));

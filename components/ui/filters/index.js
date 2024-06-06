@@ -61,7 +61,6 @@ const Filters = ({ setSelectedOption, scrollToTop }) => {
   const handleByDateClick = useCallback(() => {
     if (state.byDate) {
       setByDate("");
-      window.localStorage.removeItem("byDate");
 
       if (state.byDateProps) {
         router.push(`/${state.placeProps}`);
@@ -73,8 +72,8 @@ const Filters = ({ setSelectedOption, scrollToTop }) => {
     state.byDate,
     state.byDateProps,
     state.placeProps,
-    router,
     setByDate,
+    router,
     setOpenModal,
   ]);
 
@@ -95,7 +94,6 @@ const Filters = ({ setSelectedOption, scrollToTop }) => {
     if (state.place) {
       setPlace("");
       setSelectedOption(undefined);
-      window.localStorage.removeItem("place");
 
       if (state.placeProps) {
         router.push(`/`);
