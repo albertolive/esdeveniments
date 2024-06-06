@@ -1,35 +1,19 @@
-import { useMemo, useState, useEffect, memo, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, memo } from "react";
 import dynamic from "next/dynamic";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import Filters from "@components/ui/filters";
 import useOnScreen from "@components/hooks/useOnScreen";
+import { useFilters } from "@components/hooks/useFilters";
 
 const FiltersModal = dynamic(() => import("@components/ui/filtersModal"), {
   loading: () => "",
 });
 
-function SubMenu({
-  place,
-  placeProps,
-  setPlace,
-  byDate,
-  byDateProps,
-  setByDate,
-  category,
-  setCategory,
-  searchTerm,
-  setSearchTerm,
-  userLocation,
-  setUserLocation,
-  distance,
-  setDistance,
-  openModal,
-  setOpenModal,
-  scrollToTop,
-  setNavigatedFilterModal,
-}) {
+function SubMenu() {
+  const { state, setOpenModal } = useFilters();
   const filtersModalRef = useRef();
   const [selectedOption, setSelectedOption] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
   const isFiltersModalVisible = useOnScreen(filtersModalRef);
 
   const regionsAndCitiesArray = useMemo(
@@ -38,62 +22,42 @@ function SubMenu({
   );
 
   useEffect(() => {
-    if (place) {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (state.place) {
       const regionOption = regionsAndCitiesArray
         .flatMap((group) => group.options)
-        .find((option) => option.value === place);
+        .find((option) => option.value === state.place);
       setSelectedOption(regionOption || null);
     } else {
       setSelectedOption(undefined);
     }
-  }, [place, regionsAndCitiesArray]);
+  }, [state.place, regionsAndCitiesArray]);
 
   return (
     <>
-      {openModal && (
+      {state.openModal && (
         <div
           className="flex justify-center items-center gap-3"
           ref={filtersModalRef}
         >
           {isFiltersModalVisible && (
             <FiltersModal
-              openModal={openModal}
-              setOpenModal={setOpenModal}
-              place={place}
-              setPlace={setPlace}
-              byDate={byDate}
-              setByDate={setByDate}
-              category={category}
-              setCategory={setCategory}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              userLocation={userLocation}
-              setUserLocation={setUserLocation}
-              distance={distance}
-              setDistance={setDistance}
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
-              setNavigatedFilterModal={setNavigatedFilterModal}
             />
           )}
         </div>
       )}
-      <Filters
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-        place={place}
-        placeProps={placeProps}
-        setPlace={setPlace}
-        byDate={byDate}
-        byDateProps={byDateProps}
-        setByDate={setByDate}
-        category={category}
-        setCategory={setCategory}
-        distance={distance}
-        setDistance={setDistance}
-        setSelectedOption={setSelectedOption}
-        scrollToTop={scrollToTop}
-      />
+      {isMounted && (
+        <Filters
+          setSelectedOption={setSelectedOption}
+          scrollToTop={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          setOpenModal={setOpenModal}
+        />
+      )}
     </>
   );
 }

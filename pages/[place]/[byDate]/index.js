@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const Events = dynamic(() => import("@components/ui/events"), {
+const Events = dynamic(() => import("@components/ui/eventsList"), {
   loading: () => "",
 });
 

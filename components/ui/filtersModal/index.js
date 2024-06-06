@@ -1,9 +1,17 @@
-import { useMemo, memo, useCallback, useState, useEffect } from "react";
+import {
+  useMemo,
+  memo,
+  useCallback,
+  useState,
+  useEffect,
+  useContext,
+} from "react";
 import dynamic from "next/dynamic";
 import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
 import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
+import { useFilters } from "@components/hooks/useFilters";
 
 const Modal = dynamic(() => import("@components/ui/common/modal"), {
   loading: () => "",
@@ -13,73 +21,61 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
   loading: () => "",
 });
 
-function FiltersModal({
-  openModal,
-  setOpenModal,
-  place,
-  setPlace,
-  byDate,
-  setByDate,
-  category,
-  setCategory,
-  userLocation,
-  setUserLocation,
-  distance,
-  setDistance,
-  selectedOption,
-  setSelectedOption,
-  setNavigatedFilterModal,
-}) {
+function FiltersModal({ selectedOption, setSelectedOption }) {
+  const { state, setFilter } = useFilters();
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const [userLocationError, setUserLocationError] = useState("");
-  const handleStateChange = useCallback((setState, value) => {
-    setState((prevValue) => (prevValue === value ? "" : value));
-  }, []);
 
   useEffect(() => {
-    if (openModal) {
-      setNavigatedFilterModal(true);
+    if (state.openModal) {
+      setFilter("SET_NAVIGATED_FILTER_MODAL", true);
     }
-  }, [openModal, setNavigatedFilterModal]);
+  }, [state.openModal, setFilter]);
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
     []
   );
 
+  const handleStateChange = useCallback(
+    (type, value) => {
+      setFilter(type, value);
+    },
+    [setFilter]
+  );
+
   const handleByDateChange = useCallback(
     (value) => {
-      if (value === byDate) window.localStorage.removeItem("byDate");
-
-      handleStateChange(setByDate, value);
+      if (value === state.byDate) window.localStorage.removeItem("byDate");
+      handleStateChange("SET_BYDATE", value);
     },
-    [handleStateChange, setByDate, byDate]
+    [state.byDate, handleStateChange]
   );
 
   const handleCategoryChange = useCallback(
     (value) => {
-      handleStateChange(setCategory, value);
+      handleStateChange("SET_CATEGORY", value);
     },
-    [handleStateChange, setCategory]
+    [handleStateChange]
   );
 
   const handlePlaceChange = useCallback(
     ({ value }) => {
       if (!value) window.localStorage.removeItem("place");
 
-      setPlace(value);
+      handleStateChange("SET_PLACE", value);
       setSelectedOption(value);
 
       localStorage.removeItem("currentPage");
       localStorage.removeItem("scrollPosition");
     },
-    [setPlace, setSelectedOption]
+    [handleStateChange, setSelectedOption]
   );
 
   const handleUserLocation = useCallback(
     (value) => {
-      if (userLocation) {
-        handleStateChange(setDistance, value);
+      if (state.userLocation) {
+        handleStateChange("SET_DISTANCE", value);
         return;
       }
 
@@ -94,50 +90,41 @@ function FiltersModal({
               lng: position.coords.longitude,
             };
 
-            setUserLocation(location);
+            handleStateChange("SET_USER_LOCATION", location);
             setUserLocationLoading(false);
-            handleStateChange(setDistance, value);
+            handleStateChange("SET_DISTANCE", value);
           },
           function (error) {
             console.log("Error occurred. Error code: " + error.code);
             switch (error.code) {
               case 1:
                 setUserLocationError(
-                  "Permís denegat. L'usuari no ha permès la sol·licitud de geolocalització."
+                  "Permission denied. The user has denied the request for geolocation."
                 );
                 break;
               case 2:
                 setUserLocationError(
-                  "Posició no disponible. No s'ha pogut obtenir la informació de la ubicació."
+                  "Position unavailable. Location information is unavailable."
                 );
                 break;
               case 3:
                 setUserLocationError(
-                  "Temps d'espera esgotat. La sol·licitud per obtenir la ubicació de l'usuari ha superat el temps d'espera."
+                  "Timeout. The request to get user location timed out."
                 );
                 break;
               default:
-                setUserLocationError("S'ha produït un error desconegut.");
+                setUserLocationError("An unknown error occurred.");
             }
             setUserLocationLoading(false);
           }
         );
       } else {
         console.log("Geolocation is not supported by this browser.");
-        setUserLocationError(
-          "La geolocalització no és compatible amb aquest navegador."
-        );
+        setUserLocationError("Geolocation is not supported by this browser.");
         setUserLocationLoading(false);
       }
     },
-    [
-      userLocation,
-      setUserLocation,
-      setUserLocationLoading,
-      setUserLocationError,
-      handleStateChange,
-      setDistance,
-    ]
+    [state.userLocation, handleStateChange]
   );
 
   const handleDistanceChange = useCallback(
@@ -148,21 +135,24 @@ function FiltersModal({
   );
 
   const disablePlace =
-    distance === undefined || distance !== "" || isNaN(Number(distance));
-  const disableDistance = place || userLocationLoading || userLocationError;
+    state.distance === undefined ||
+    state.distance !== "" ||
+    isNaN(Number(state.distance));
+  const disableDistance =
+    state.place || userLocationLoading || userLocationError;
 
   return (
     <>
       <Modal
-        open={openModal}
-        setOpen={setOpenModal}
-        title="Filtres"
-        actionButton="Aplicar filtres"
+        open={state.openModal}
+        setOpen={(value) => setFilter("SET_MODAL", value)}
+        title="Filters"
+        actionButton="Apply filters"
       >
         <div className="w-full flex flex-col justify-center items-center gap-5 px-6 py-8 my-8">
           <div className="w-full flex flex-col justify-center items-center gap-2 px-6 sm:px-0">
             <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
-              Poblacions
+              Locations
             </p>
             <div className="w-full flex flex-col px-0">
               <Select
@@ -171,7 +161,7 @@ function FiltersModal({
                 value={selectedOption}
                 onChange={handlePlaceChange}
                 isClearable
-                placeholder="població"
+                placeholder="Location"
                 isDisabled={disablePlace}
               />
             </div>
@@ -187,7 +177,7 @@ function FiltersModal({
                   id={value}
                   name="category"
                   value={value}
-                  checkedValue={category}
+                  checkedValue={state.category}
                   onChange={handleCategoryChange}
                   label={value}
                 />
@@ -196,7 +186,7 @@ function FiltersModal({
           </fieldset>
           <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
             <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
-              Data
+              Date
             </p>
             <div className="w-full flex flex-col justify-start items-start gap-x-3 gap-y-3 flex-wrap">
               {BYDATES.map(({ value, label }) => (
@@ -205,7 +195,7 @@ function FiltersModal({
                   id={value}
                   name="byDate"
                   value={value}
-                  checkedValue={byDate}
+                  checkedValue={state.byDate}
                   onChange={handleByDateChange}
                   label={label}
                 />
@@ -214,14 +204,14 @@ function FiltersModal({
           </fieldset>
           <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
             <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
-              Distància
+              Distance
             </p>
             {(userLocationLoading || userLocationError) && (
               <div className="border-t border-bColor py-2">
                 <div className="flex flex-col">
                   {userLocationLoading && (
                     <div className="text-sm text-bColor">
-                      Carregant localització...
+                      Loading location...
                     </div>
                   )}
                   {userLocationError && (
@@ -243,9 +233,9 @@ function FiltersModal({
                 name="distance"
                 min={DISTANCES[0]}
                 max={DISTANCES[DISTANCES.length - 1]}
-                value={distance}
+                value={state.distance}
                 onChange={handleDistanceChange}
-                label="Esdeveniments a"
+                label="Events within"
                 disabled={disableDistance}
               />
             </div>

@@ -6,27 +6,44 @@ export default function ImageUploader({ value, onUpload, progress }) {
   const fileSelect = useRef(null);
   const [imgData, setImgData] = useState(value);
   const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleImageUpload() {
-    if (fileSelect) {
+    if (fileSelect.current) {
       fileSelect.current.click();
     }
   }
 
+  function handleFileValidation(file) {
+    if (!file.type.startsWith("image/")) {
+      setError("El fitxer seleccionat no és una imatge.");
+      return false;
+    }
+    if (file.size > 5000000) {
+      setError("El fitxer és massa gran. Limit de 5 MB.");
+      return false;
+    }
+
+    setError("");
+
+    return true;
+  }
+
   const onChangeImage = (e) => {
     const file = e.target.files[0];
-    updateImage(file);
-    onUpload(file);
+    if (file && handleFileValidation(file)) {
+      updateImage(file);
+      onUpload(file);
+    }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-
     setDragOver(false);
 
     const file = e.dataTransfer.files[0];
-    if (file.type.startsWith("image/")) {
+    if (file && handleFileValidation(file)) {
       updateImage(file);
       onUpload(file);
     }
@@ -47,9 +64,9 @@ export default function ImageUploader({ value, onUpload, progress }) {
       </label>
 
       <div
-        className={`m-2 p-4 border border-bColor rounded-xl cursor-pointer ${
+        className={`m-2 p-4 border ${
           dragOver ? "border-primary" : "border-bColor"
-        }`}
+        } rounded-xl cursor-pointer`}
         onDragOver={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -81,12 +98,13 @@ export default function ImageUploader({ value, onUpload, progress }) {
             onChange={onChangeImage}
           />
         </form>
+        {error && <p className="text-primary text-sm mt-2">{error}</p>}
       </div>
       {imgData && (
-        <div className="flex justigy-center items-start p-4">
+        <div className="flex justify-center items-start p-4">
           <button
             onClick={() => setImgData(null)}
-            className=" bg-whiteCorp rounded-full p-1 hover:bg-primary"
+            className="bg-whiteCorp rounded-full p-1 hover:bg-primary"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
