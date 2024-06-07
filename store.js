@@ -13,12 +13,11 @@ const useStore = create(
       searchTerm: "",
       userLocation: null,
       distance: "",
-      scrollButton: false,
-      navigatedFilterModal: false,
       categorizedEvents: {},
       latestEvents: [],
       currentYear: new Date().getFullYear(),
       scrollPosition: 0,
+      filtersApplied: false,
 
       // State update method
       setState: (key, value) => set(() => ({ [key]: value })),
@@ -50,7 +49,6 @@ const useStore = create(
         searchTerm: state.searchTerm,
         userLocation: state.userLocation,
         distance: state.distance,
-        scrollButton: state.scrollButton,
         currentYear: state.currentYear,
         scrollPosition: state.scrollPosition,
       }),

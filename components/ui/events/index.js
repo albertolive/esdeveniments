@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useCallback } from "react";
 import NextImage from "next/image";
 import dynamic from "next/dynamic";
 import useStore from "@store";
@@ -26,25 +26,20 @@ function debounce(func, wait) {
 }
 
 function Events() {
-  const {
-    place,
-    openModal,
-    navigatedFilterModal,
-    scrollButton,
-    setState,
-    areFiltersActive,
-  } = useStore((state) => ({
-    place: state.place,
-    openModal: state.openModal,
-    navigatedFilterModal: state.navigatedFilterModal,
-    scrollButton: state.scrollButton,
-    setState: state.setState,
-    areFiltersActive: state.areFiltersActive,
-  }));
+  const { place, setState, areFiltersActive, filtersApplied } = useStore(
+    (state) => ({
+      place: state.place,
+      openModal: state.openModal,
+      setState: state.setState,
+      areFiltersActive: state.areFiltersActive,
+      filtersApplied: state.filtersApplied,
+    })
+  );
   const isSticky = useScrollVisibility(30);
   const isBrowser = typeof window !== "undefined";
 
   const [isMounted, setIsMounted] = useState(false);
+  const [scrollIcon, setScrollIcon] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -52,18 +47,30 @@ function Events() {
 
   const hasFilters = areFiltersActive();
   console.log("Events", hasFilters, place);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
+  const resetPage = useCallback(() => {
+    setState("page", 1);
+  }, [setState]);
+
   useEffect(() => {
-    if (isBrowser && !openModal && navigatedFilterModal) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      setState("page", 1);
-      setState("navigatedFilterModal", false);
+    if (isBrowser && filtersApplied) {
+      scrollToTop();
+      resetPage();
+      setState("filtersApplied", false);
     }
-  }, [isBrowser, openModal, navigatedFilterModal, setState]);
+  }, [isBrowser, filtersApplied, scrollToTop, resetPage, setState]);
 
   useEffect(() => {
     if (isBrowser) {
       const handleScroll = debounce(() => {
-        setState("scrollButton", window.scrollY > 400);
+        setScrollIcon(window.scrollY > 400);
       }, 200);
 
       handleScroll();
@@ -79,7 +86,7 @@ function Events() {
           isBrowser && window.scrollTo({ top: 0, behavior: "smooth" })
         }
         className={`w-14 h-14 flex justify-center items-center bg-whiteCorp rounded-md shadow-xl ${
-          scrollButton
+          scrollIcon
             ? "fixed z-10 bottom-28 right-10 flex justify-end animate-appear"
             : "hidden"
         }`}

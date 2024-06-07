@@ -50,19 +50,7 @@ export async function getStaticProps({ params }) {
   });
 
   const initialState = {
-    page: 1,
-    openModal: false,
-    place,
-    byDate: "",
-    category: "",
-    searchTerm: "",
-    userLocation: null,
-    distance: "",
-    scrollButton: false,
-    navigatedFilterModal: false,
-    categorizedEvents: {},
     latestEvents: events,
-    currentYear: new Date().getFullYear(),
   };
 
   return {

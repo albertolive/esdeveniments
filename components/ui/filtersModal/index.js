@@ -1,4 +1,4 @@
-import { useMemo, memo, useCallback, useState, useEffect } from "react";
+import { useMemo, useState, useCallback, useEffect, memo } from "react";
 import dynamic from "next/dynamic";
 import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
@@ -14,7 +14,7 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
   loading: () => "",
 });
 
-function FiltersModal({ selectedOption, setSelectedOption }) {
+function FiltersModal() {
   const {
     openModal,
     place,
@@ -32,57 +32,57 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
     userLocation: state.userLocation,
     setState: state.setState,
   }));
-
+  const [localPlace, setLocalPlace] = useState(place);
+  const [localByDate, setLocalByDate] = useState(byDate);
+  const [localCategory, setLocalCategory] = useState(category);
+  const [localDistance, setLocalDistance] = useState(distance);
+  const [localUserLocation, setLocalUserLocation] = useState(userLocation);
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const [userLocationError, setUserLocationError] = useState("");
-
-  useEffect(() => {
-    if (openModal) {
-      setState("navigatedFilterModal", true);
-    }
-  }, [openModal, setState]);
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
     []
   );
+  const [selectOption, setSelectOption] = useState(null);
 
-  const handleStateChange = useCallback(
-    (key, value) => {
-      setState(key, value);
-    },
-    [setState]
-  );
-
-  const handleByDateChange = useCallback(
-    (value) => {
-      handleStateChange("byDate", value);
-    },
-    [handleStateChange]
-  );
-
-  const handleCategoryChange = useCallback(
-    (value) => {
-      handleStateChange("category", value);
-    },
-    [handleStateChange]
-  );
+  useEffect(() => {
+    if (openModal) {
+      setLocalPlace(place);
+      setLocalByDate(byDate);
+      setLocalCategory(category);
+      setLocalDistance(distance);
+      setLocalUserLocation(userLocation);
+      const regionOption = regionsAndCitiesArray
+        .flatMap((group) => group.options)
+        .find((option) => option.value === place);
+      setSelectOption(regionOption || null);
+    }
+  }, [
+    openModal,
+    place,
+    byDate,
+    category,
+    distance,
+    userLocation,
+    regionsAndCitiesArray,
+  ]);
 
   const handlePlaceChange = useCallback(
     ({ value }) => {
-      handleStateChange("place", value);
-      setSelectedOption(value);
-
-      setState("page", 0);
-      setState("scrollPosition", 0);
+      const regionOption = regionsAndCitiesArray
+        .flatMap((group) => group.options)
+        .find((option) => option.value === value);
+      setLocalPlace(value || "");
+      setSelectOption(regionOption || null);
     },
-    [handleStateChange, setSelectedOption, setState]
+    [regionsAndCitiesArray]
   );
 
   const handleUserLocation = useCallback(
     (value) => {
-      if (userLocation) {
-        handleStateChange("distance", value);
+      if (localUserLocation) {
+        setLocalDistance(value);
         return;
       }
 
@@ -97,9 +97,9 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
               lng: position.coords.longitude,
             };
 
-            handleStateChange("userLocation", location);
+            setLocalUserLocation(location);
             setUserLocationLoading(false);
-            handleStateChange("distance", value);
+            setLocalDistance(value);
           },
           function (error) {
             console.log("Error occurred. Error code: " + error.code);
@@ -131,7 +131,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
         setUserLocationLoading(false);
       }
     },
-    [userLocation, handleStateChange]
+    [localUserLocation]
   );
 
   const handleDistanceChange = useCallback(
@@ -142,8 +142,36 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
   );
 
   const disablePlace =
-    distance === undefined || distance !== "" || isNaN(Number(distance));
-  const disableDistance = place || userLocationLoading || userLocationError;
+    localDistance === undefined ||
+    localDistance !== "" ||
+    isNaN(Number(localDistance));
+  const disableDistance =
+    localPlace || userLocationLoading || userLocationError;
+
+  const applyFilters = () => {
+    setState("place", localPlace);
+    setState("byDate", localByDate);
+    setState("category", localCategory);
+    setState("distance", localDistance);
+    setState("userLocation", localUserLocation);
+    setState("filtersApplied", true);
+    setState("openModal", false);
+
+    if (!localPlace) {
+      setState("place", "");
+    }
+
+    setState("page", 1);
+    setState("scrollPosition", 0);
+  };
+
+  const handleByDateChange = useCallback((value) => {
+    setLocalByDate((prevValue) => (prevValue === value ? "" : value));
+  }, []);
+
+  const handleCategoryChange = useCallback((value) => {
+    setLocalCategory((prevValue) => (prevValue === value ? "" : value));
+  }, []);
 
   return (
     <>
@@ -152,6 +180,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
         setOpen={(value) => setState("openModal", value)}
         title="Filters"
         actionButton="Apply filters"
+        onActionButtonClick={applyFilters}
       >
         <div className="w-full flex flex-col justify-center items-center gap-5 px-6 py-8 my-8">
           <div className="w-full flex flex-col justify-center items-center gap-2 px-6 sm:px-0">
@@ -162,7 +191,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
               <Select
                 id="options"
                 options={regionsAndCitiesArray}
-                value={selectedOption}
+                value={selectOption}
                 onChange={handlePlaceChange}
                 isClearable
                 placeholder="Location"
@@ -181,7 +210,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
                   id={value}
                   name="category"
                   value={value}
-                  checkedValue={category}
+                  checkedValue={localCategory}
                   onChange={handleCategoryChange}
                   label={value}
                 />
@@ -199,7 +228,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
                   id={value}
                   name="byDate"
                   value={value}
-                  checkedValue={byDate}
+                  checkedValue={localByDate}
                   onChange={handleByDateChange}
                   label={label}
                 />
@@ -237,7 +266,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
                 name="distance"
                 min={DISTANCES[0]}
                 max={DISTANCES[DISTANCES.length - 1]}
-                value={distance}
+                value={localDistance}
                 onChange={handleDistanceChange}
                 label="Events within"
                 disabled={disableDistance}

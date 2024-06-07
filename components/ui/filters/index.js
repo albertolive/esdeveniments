@@ -48,7 +48,7 @@ const renderButton = ({
   </div>
 );
 
-const Filters = ({ setSelectedOption, scrollToTop }) => {
+const Filters = () => {
   const router = useRouter();
   const { place, byDate, category, distance, openModal, setState } = useStore(
     (state) => ({
@@ -64,6 +64,7 @@ const Filters = ({ setSelectedOption, scrollToTop }) => {
   const isAnyFilterSelected = () => place || byDate || category || distance;
   const getText = (value, defaultValue) => (value ? value : defaultValue);
   const foundByDate = BYDATES.find((item) => item.value === byDate);
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const handleByDateClick = useCallback(() => {
     if (byDate) {
@@ -89,7 +90,6 @@ const Filters = ({ setSelectedOption, scrollToTop }) => {
   const handlePlaceClick = useCallback(() => {
     if (place) {
       setState("place", "");
-      setSelectedOption(undefined);
 
       if (place) {
         router.push(`/`);
@@ -97,7 +97,7 @@ const Filters = ({ setSelectedOption, scrollToTop }) => {
     } else {
       setState("openModal", true);
     }
-  }, [place, setState, setSelectedOption, router]);
+  }, [place, setState, router]);
 
   return (
     <div

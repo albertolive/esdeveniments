@@ -8,6 +8,7 @@ export default function Modal({
   title,
   children,
   actionButton,
+  onActionButtonClick,
 }) {
   const cancelButtonRef = useRef(null);
 
@@ -61,7 +62,14 @@ export default function Modal({
                       style={{ position: "sticky", bottom: 0 }}
                     >
                       <button
-                        onClick={() => setOpen(false)}
+                        onClick={() => {
+                          if (onActionButtonClick) {
+                            onActionButtonClick();
+                            setOpen(false);
+                          } else {
+                            setOpen(false);
+                          }
+                        }}
                         className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
                       >
                         {actionButton}
