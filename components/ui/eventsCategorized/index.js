@@ -10,7 +10,7 @@ import List from "@components/ui/list";
 import CardLoading from "@components/ui/cardLoading";
 import Card from "@components/ui/card";
 import EventsHorizontalScroll from "@components/ui/eventsHorizontalScroll";
-import { useFilters } from "@components/hooks/useFilters";
+import useStore from "@store";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -20,14 +20,26 @@ const NoEventsFound = dynamic(
 );
 
 function EventsCategorized() {
-  const { state } = useFilters();
+  const {
+    categorizedEvents: initialCategorizedEvents,
+    latestEvents: initialLatestEvents,
+    place,
+    byDate,
+    currentYear,
+  } = useStore((state) => ({
+    categorizedEvents: state.categorizedEvents,
+    latestEvents: state.latestEvents,
+    place: state.place,
+    byDate: state.byDate,
+    currentYear: state.currentYear,
+  }));
 
   const [isLoading, setIsLoading] = useState(true);
   const [eventsData, setEventsData] = useState({
-    categorizedEvents: state.categorizedEvents.events || {},
-    latestEvents: state.latestEvents || [],
+    categorizedEvents: initialCategorizedEvents.events || {},
+    latestEvents: initialLatestEvents || [],
     noEventsFound: false,
-    currentYear: state.currentYear,
+    currentYear,
   });
 
   const {
@@ -36,8 +48,8 @@ function EventsCategorized() {
     error,
   } = useGetCategorizedEvents({
     props: {
-      categorizedEvents: state.categorizedEvents,
-      latestEvents: state.latestEvents,
+      categorizedEvents: initialCategorizedEvents,
+      latestEvents: initialLatestEvents,
     },
     searchTerms: ["Festa Major", "Familiar", "Teatre"],
     maxResults: MAX_RESULTS,
@@ -67,15 +79,15 @@ function EventsCategorized() {
   const { metaTitle, metaDescription, title, subTitle, canonical } =
     generatePagesData({
       currentYear: eventsData.currentYear || new Date().getFullYear(),
-      place: state.place,
-      byDate: state.byDate,
+      place,
+      byDate,
     }) || {};
 
   // Render
   return (
     <>
       <Script
-        id={`${state.place || "catalunya"}-${state.byDate || "all"}-script`}
+        id={`${place || "catalunya"}-${byDate || "all"}-script`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonEvents) }}
       />

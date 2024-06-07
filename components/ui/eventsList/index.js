@@ -15,7 +15,7 @@ import CardLoading from "@components/ui/cardLoading";
 import Card from "@components/ui/card";
 import { CATEGORIES } from "@utils/constants";
 import useOnScreen from "@components/hooks/useOnScreen";
-import { useFilters } from "@components/hooks/useFilters";
+import useStore from "@store";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -25,27 +25,42 @@ const NoEventsFound = dynamic(
 );
 
 function EventsList({ loadMore = true }) {
-  const { state, setCurrentYear } = useFilters();
+  const {
+    place,
+    byDate,
+    category,
+    searchTerm,
+    userLocation,
+    distance,
+    page,
+    scrollPosition,
+    setState,
+  } = useStore((state) => ({
+    place: state.place,
+    byDate: state.byDate,
+    category: state.category,
+    searchTerm: state.searchTerm,
+    userLocation: state.userLocation,
+    distance: state.distance,
+    page: state.page,
+    scrollPosition: state.scrollPosition,
+    setState: state.setState,
+  }));
+
   const noEventsFoundRef = useRef();
   const isNoEventsFoundVisible = useOnScreen(noEventsFoundRef);
   const isBrowser = typeof window !== "undefined";
 
-  const getStoredPage = useCallback(() => {
-    const storedPage = isBrowser && window.localStorage.getItem("currentPage");
-    return storedPage ? parseInt(storedPage) : 1;
-  }, [isBrowser]);
-
   // State
-  const [page, setPage] = useState(getStoredPage);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Derived state
-  const { type, label, regionLabel } = getPlaceTypeAndLabel(state.place);
-  const categoryQuery = state.category ? CATEGORIES[state.category] : "";
-  const sharedQuery = `${state.searchTerm} ${categoryQuery} ${label}`;
-  const pageIndex = dateFunctions[state.byDate] || "all";
+  const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
+  const categoryQuery = category ? CATEGORIES[category] : "";
+  const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
+  const pageIndex = dateFunctions[byDate] || "all";
 
   const {
     data: eventsData = {},
@@ -57,7 +72,7 @@ function EventsList({ loadMore = true }) {
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
     town: type === "town" ? label : "",
   });
-  console.log("EventsList");
+
   const {
     events = [],
     currentYear,
@@ -77,17 +92,17 @@ function EventsList({ loadMore = true }) {
   // Event handlers
   const handleLoadMore = useCallback(() => {
     if (isBrowser) {
-      window.localStorage.setItem("scrollPosition", window.scrollY);
+      setState("scrollPosition", window.scrollY);
       window.gtag && window.gtag("event", "load-more-events");
     }
 
     setIsLoadingMore(true);
-    setPage((prevPage) => prevPage + 1);
-  }, [isBrowser]);
+    setState("page", page + 1);
+  }, [isBrowser, page, setState]);
 
   const filterEventsByDistance = useCallback(
     (events, userLocation) => {
-      if (state.distance === "" || isNaN(state.distance)) return events;
+      if (distance === "" || isNaN(distance)) return events;
 
       return events.filter((event) => {
         if (event.isAd || !event.coords || !userLocation) {
@@ -95,10 +110,10 @@ function EventsList({ loadMore = true }) {
         }
 
         const eventDistance = getDistance(userLocation, event.coords);
-        return eventDistance <= state.distance;
+        return eventDistance <= distance;
       });
     },
-    [state.distance]
+    [distance]
   );
 
   // Effects
@@ -110,25 +125,36 @@ function EventsList({ loadMore = true }) {
 
   useEffect(() => {
     if (events.length > 0) {
-      setFilteredEvents(filterEventsByDistance(events, state.userLocation));
+      setFilteredEvents(filterEventsByDistance(events, userLocation));
     }
-  }, [events, filterEventsByDistance, state.userLocation]);
+  }, [events, filterEventsByDistance, userLocation]);
 
   useEffect(() => {
     setIsLoading(!events && !error && !isValidating);
   }, [events, error, isValidating]);
 
   useEffect(() => {
-    const storedScrollPosition =
-      isBrowser && window.localStorage.getItem("scrollPosition");
-    if (storedScrollPosition) {
-      window.scrollTo(0, parseInt(storedScrollPosition));
+    if (isBrowser) {
+      if (window.performance.navigation.type === 1) {
+        setState("scrollPosition", 0);
+      } else {
+        const storedScrollPosition = scrollPosition;
+        if (storedScrollPosition) {
+          window.scrollTo(0, parseInt(storedScrollPosition));
+        }
+      }
     }
-  }, [events.length, isBrowser]);
+  }, [isBrowser, scrollPosition, setState]);
 
   useEffect(() => {
-    setCurrentYear(currentYear);
-  }, [currentYear, setCurrentYear]);
+    if (scrollPosition) {
+      window.scrollTo(0, parseInt(scrollPosition));
+    }
+  }, [events.length, scrollPosition]);
+
+  useEffect(() => {
+    setState("currentYear", currentYear);
+  }, [currentYear, setState]);
 
   // Error handling
   if (error) return <NoEventsFound title="No events found" />;
@@ -144,15 +170,15 @@ function EventsList({ loadMore = true }) {
   } =
     generatePagesData({
       currentYear,
-      place: state.place,
-      byDate: state.byDate,
+      place,
+      byDate,
     }) || {};
 
   // Render
   return (
     <>
       <Script
-        id={`${state.place || "catalunya"}-${state.byDate || "all"}-script`}
+        id={`${place || "catalunya"}-${byDate || "all"}-script`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonEvents) }}
       />

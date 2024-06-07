@@ -1,15 +1,16 @@
+import { useEffect } from "react";
 import { getCalendarEvents } from "@lib/helpers";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
 import { twoWeeksDefault } from "@lib/dates";
-import { FilterProvider } from "@components/context/filterContext";
 import Events from "@components/ui/events";
+import { initializeStore } from "@utils/initializeStore";
 
-export default function TownPage(props) {
-  return (
-    <FilterProvider initialState={props.initialState}>
-      <Events />
-    </FilterProvider>
-  );
+export default function Home(props) {
+  useEffect(() => {
+    initializeStore(props.initialState);
+  }, [props.initialState]);
+
+  return <Events />;
 }
 
 export async function getStaticPaths() {

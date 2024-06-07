@@ -51,7 +51,8 @@
     "react-tooltip": "^5.26.0",
     "rss": "^1.2.2",
     "swr": "^2.0.3",
-    "tailwindcss": "^3.3.6"
+    "tailwindcss": "^3.3.6",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.1.6",

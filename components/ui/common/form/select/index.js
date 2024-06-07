@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CreatableSelect from "react-select/creatable";
 import { components } from "react-select";
+import useStore from "@store";
 
 const borderColor = "#CCC !important";
 
@@ -66,6 +67,9 @@ export default function SelectComponent({
   isClearable = false,
   placeholder = "una opció",
 }) {
+  const { setState } = useStore((state) => ({
+    setState: state.setState,
+  }));
   const [selectedOption, setSelectedOption] = useState(initialValue);
 
   useEffect(() => {
@@ -77,8 +81,8 @@ export default function SelectComponent({
     onChange(value || "");
 
     if (value === null) {
-      localStorage.removeItem("currentPage");
-      localStorage.removeItem("scrollPosition");
+      setState("page", 1);
+      setState("scrollPosition", 0);
     }
   };
 

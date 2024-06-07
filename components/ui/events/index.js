@@ -1,11 +1,11 @@
-import { memo, useEffect, useState, useMemo } from "react";
+import { memo, useEffect, useState } from "react";
 import NextImage from "next/image";
+import dynamic from "next/dynamic";
+import useStore from "@store";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 import Search from "@components/ui/search";
 import SubMenu from "@components/ui/common/subMenu";
 import Imago from "public/static/images/imago-esdeveniments.png";
-import { useFilters } from "@components/hooks/useFilters";
-import dynamic from "next/dynamic";
 
 const EventsList = dynamic(() => import("@components/ui/eventsList"), {
   loading: () => <p>Loading...</p>,
@@ -17,8 +17,30 @@ const EventsCategorized = dynamic(
   }
 );
 
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
 function Events() {
-  const { state, setFilter, resetPage, areFiltersActive } = useFilters();
+  const {
+    place,
+    openModal,
+    navigatedFilterModal,
+    scrollButton,
+    setState,
+    areFiltersActive,
+  } = useStore((state) => ({
+    place: state.place,
+    openModal: state.openModal,
+    navigatedFilterModal: state.navigatedFilterModal,
+    scrollButton: state.scrollButton,
+    setState: state.setState,
+    areFiltersActive: state.areFiltersActive,
+  }));
   const isSticky = useScrollVisibility(30);
   const isBrowser = typeof window !== "undefined";
 
@@ -28,33 +50,27 @@ function Events() {
     setIsMounted(true);
   }, []);
 
-  const hasFilters = useMemo(() => areFiltersActive(), [areFiltersActive]);
-
+  const hasFilters = areFiltersActive();
+  console.log("Events", hasFilters, place);
   useEffect(() => {
-    if (isBrowser && !state.openModal && state.navigatedFilterModal) {
+    if (isBrowser && !openModal && navigatedFilterModal) {
       window.scrollTo({ top: 0, behavior: "smooth" });
-      resetPage();
-      setFilter("SET_NAVIGATED_FILTER_MODAL", false);
+      setState("page", 1);
+      setState("navigatedFilterModal", false);
     }
-  }, [
-    isBrowser,
-    state.openModal,
-    state.navigatedFilterModal,
-    resetPage,
-    setFilter,
-  ]);
+  }, [isBrowser, openModal, navigatedFilterModal, setState]);
 
   useEffect(() => {
     if (isBrowser) {
-      const handleScroll = () => {
-        setFilter("SET_SCROLL_BUTTON", window.scrollY > 400);
-      };
+      const handleScroll = debounce(() => {
+        setState("scrollButton", window.scrollY > 400);
+      }, 200);
 
       handleScroll();
       window.addEventListener("scroll", handleScroll);
       return () => window.removeEventListener("scroll", handleScroll);
     }
-  }, [isBrowser, setFilter]);
+  }, [isBrowser, setState]);
 
   return (
     <>
@@ -63,7 +79,7 @@ function Events() {
           isBrowser && window.scrollTo({ top: 0, behavior: "smooth" })
         }
         className={`w-14 h-14 flex justify-center items-center bg-whiteCorp rounded-md shadow-xl ${
-          state.scrollButton
+          scrollButton
             ? "fixed z-10 bottom-28 right-10 flex justify-end animate-appear"
             : "hidden"
         }`}
@@ -84,10 +100,7 @@ function Events() {
         } flex justify-center items-center pt-2`}
       >
         <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 pb-2 sm:px-10 sm:w-[580px]">
-          <Search
-            searchTerm={state.searchTerm}
-            setSearchTerm={(value) => setFilter("SET_SEARCHTERM", value)}
-          />
+          <Search />
           <SubMenu />
         </div>
       </div>

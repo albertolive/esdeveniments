@@ -2,6 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@store": [
+        "store.js"
+      ],
       "@pages/*": [
         "pages/*"
       ],

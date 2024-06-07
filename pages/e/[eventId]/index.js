@@ -15,7 +15,7 @@ import ShareIcon from "@heroicons/react/outline/ShareIcon";
 import WebIcon from "@heroicons/react/outline/GlobeAltIcon";
 import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
-import { generateJsonData, getTownValueByLabel } from "@utils/helpers";
+import { generateJsonData } from "@utils/helpers";
 import ReportView from "@components/ui/reportView";
 import CardShareButton from "@components/ui/common/cardShareButton";
 import useOnScreen from "@components/hooks/useOnScreen";
@@ -255,21 +255,6 @@ export default function Event(props) {
   const { data, error } = useGetEvent(props);
   const slug = data.event ? data.event.slug : "";
   const title = data.event ? data.event.title : "";
-
-  useEffect(() => {
-    if (data?.event) {
-      let place =
-        getTownValueByLabel(data.event.town) ||
-        getTownValueByLabel(data.event.region);
-
-      if (place) {
-        const currentPage = window.localStorage.getItem("currentPage");
-        if (currentPage !== null && Number(currentPage) === 1) {
-          window.localStorage.setItem("place", place);
-        }
-      }
-    }
-  }, [data?.event]);
 
   useEffect(() => {
     sendGoogleEvent("view_event_page");

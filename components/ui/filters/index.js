@@ -5,7 +5,7 @@ import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { BYDATES } from "@utils/constants";
 import { getPlaceLabel } from "@utils/helpers";
 import { useRouter } from "next/router";
-import { useFilters } from "@components/hooks/useFilters";
+import useStore from "@store";
 
 const renderButton = ({
   text,
@@ -49,78 +49,67 @@ const renderButton = ({
 );
 
 const Filters = ({ setSelectedOption, scrollToTop }) => {
-  const { state, setOpenModal, setPlace, setByDate, setCategory, setDistance } =
-    useFilters();
   const router = useRouter();
+  const { place, byDate, category, distance, openModal, setState } = useStore(
+    (state) => ({
+      place: state.place,
+      byDate: state.byDate,
+      category: state.category,
+      distance: state.distance,
+      openModal: state.openModal,
+      setState: state.setState,
+    })
+  );
 
-  const isAnyFilterSelected = () =>
-    state.place || state.byDate || state.category || state.distance;
+  const isAnyFilterSelected = () => place || byDate || category || distance;
   const getText = (value, defaultValue) => (value ? value : defaultValue);
-  const foundByDate = BYDATES.find((item) => item.value === state.byDate);
+  const foundByDate = BYDATES.find((item) => item.value === byDate);
 
   const handleByDateClick = useCallback(() => {
-    if (state.byDate) {
-      setByDate("");
-
-      if (state.byDateProps) {
-        router.push(`/${state.placeProps}`);
-      }
+    if (byDate) {
+      setState("byDate", "");
     } else {
-      setOpenModal(true);
+      setState("openModal", true);
     }
-  }, [
-    state.byDate,
-    state.byDateProps,
-    state.placeProps,
-    setByDate,
-    router,
-    setOpenModal,
-  ]);
+  }, [byDate, setState]);
 
   const handleCategoryClick = useCallback(() => {
-    setCategory("");
-  }, [setCategory]);
+    setState("category", "");
+  }, [setState]);
 
   const handleDistanceClick = useCallback(() => {
-    setDistance("");
-  }, [setDistance]);
+    setState("distance", "");
+  }, [setState]);
 
   const handleOnClick = useCallback(
-    (value, fn) => () => value ? fn() : setOpenModal(true),
-    [setOpenModal]
+    (value, fn) => () => value ? fn() : setState("openModal", true),
+    [setState]
   );
 
   const handlePlaceClick = useCallback(() => {
-    if (state.place) {
-      setPlace("");
+    if (place) {
+      setState("place", "");
       setSelectedOption(undefined);
 
-      if (state.placeProps) {
+      if (place) {
         router.push(`/`);
       }
     } else {
-      setOpenModal(true);
+      setState("openModal", true);
     }
-  }, [
-    state.place,
-    state.placeProps,
-    setPlace,
-    setSelectedOption,
-    router,
-    setOpenModal,
-  ]);
+  }, [place, setState, setSelectedOption, router]);
 
   return (
     <div
       className={`w-full bg-whiteCorp flex justify-center items-center px-0 ${
-        state.openModal
+        openModal
           ? "opacity-50 animate-pulse text-bColor pointer-events-none"
           : ""
       }`}
     >
       <div className="w-full flex justify-start items-center gap-2 cursor-pointer">
         <div
-          onClick={() => setOpenModal(true)}
+          onClick={() => setState("openModal", true)}
           type="button"
           className="w-2/10 h-10 mr-3 flex justify-center items-center gap-1 cursor-pointer"
         >
@@ -138,34 +127,31 @@ const Filters = ({ setSelectedOption, scrollToTop }) => {
         </div>
         <div className="w-8/10 h-10 flex items-center gap-1 sm:gap-2 border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
-            text: getText(getPlaceLabel(state.place), "Població"),
-            enabled: state.place,
+            text: getText(getPlaceLabel(place), "Població"),
+            enabled: place,
             onClick: handlePlaceClick,
-            handleOpenModal: () => setOpenModal(true),
+            handleOpenModal: () => setState("openModal", true),
             scrollToTop,
           })}
           {renderButton({
-            text: getText(state.category, "Categoria"),
-            enabled: state.category,
-            onClick: handleOnClick(state.category, handleCategoryClick),
-            handleOpenModal: () => setOpenModal(true),
+            text: getText(category, "Categoria"),
+            enabled: category,
+            onClick: handleOnClick(category, handleCategoryClick),
+            handleOpenModal: () => setState("openModal", true),
             scrollToTop,
           })}
           {renderButton({
             text: getText(foundByDate && foundByDate.label, "Data"),
             enabled: foundByDate,
             onClick: handleOnClick(foundByDate, handleByDateClick),
-            handleOpenModal: () => setOpenModal(true),
+            handleOpenModal: () => setState("openModal", true),
             scrollToTop,
           })}
           {renderButton({
-            text: getText(
-              state.distance ? `${state.distance} km` : null,
-              "Distància"
-            ),
-            enabled: state.distance,
-            onClick: handleOnClick(state.distance, handleDistanceClick),
-            handleOpenModal: () => setOpenModal(true),
+            text: getText(distance ? `${distance} km` : null, "Distància"),
+            enabled: distance,
+            onClick: handleOnClick(distance, handleDistanceClick),
+            handleOpenModal: () => setState("openModal", true),
             scrollToTop,
           })}
         </div>

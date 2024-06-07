@@ -2,35 +2,22 @@ import { getCategorizedEvents, getLatestEvents } from "@lib/helpers";
 import { twoWeeksDefault } from "@lib/dates";
 import { MAX_RESULTS } from "@utils/constants";
 import Events from "@components/ui/events";
-import { FilterProvider } from "@components/context/filterContext";
+import { initializeStore } from "@utils/initializeStore";
+import { useEffect } from "react";
 
 export default function Home(props) {
-  return (
-    <FilterProvider initialState={props.initialState}>
-      <Events props={props} />
-    </FilterProvider>
-  );
+  useEffect(() => {
+    initializeStore(props.initialState);
+  }, [props.initialState]);
+
+  return <Events />;
 }
 
 export async function getServerSideProps() {
   const { from, until } = twoWeeksDefault();
   const searchTerms = ["Festa Major", "Familiar", "Teatre"];
 
-  const initialState = {
-    page: 1,
-    openModal: false,
-    place: "",
-    byDate: "",
-    category: "",
-    searchTerm: "",
-    userLocation: null,
-    distance: "",
-    scrollButton: false,
-    navigatedFilterModal: false,
-    categorizedEvents: {},
-    latestEvents: [],
-    currentYear: new Date().getFullYear(),
-  };
+  const initialState = {};
 
   const [categorizedResult, latestResult] = await Promise.allSettled([
     getCategorizedEvents({

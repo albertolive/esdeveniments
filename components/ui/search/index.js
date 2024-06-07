@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import XIcon from "@heroicons/react/solid/XIcon";
 import SearchIcon from "@heroicons/react/solid/SearchIcon";
-
-const SEARCH_TERM_KEY = "searchTerm";
+import useStore from "@store";
 
 function debounce(func, wait, immediate) {
   let timeout;
@@ -38,8 +37,13 @@ const sendSearchTermGA = (searchTerm) => {
   }
 };
 
-export default function Search({ searchTerm, setSearchTerm }) {
+export default function Search() {
+  const { searchTerm, setState } = useStore((state) => ({
+    searchTerm: state.searchTerm,
+    setState: state.setState,
+  }));
   const [inputValue, setInputValue] = useState(searchTerm);
+
   const searchEvents = useCallback((term) => {
     if (term && term.length > 0) {
       sendSearchTermGA(term);
@@ -47,76 +51,42 @@ export default function Search({ searchTerm, setSearchTerm }) {
   }, []);
 
   useEffect(() => {
-    if (searchTerm.length > 0) {
-      localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(searchTerm));
-    }
+    setInputValue(searchTerm);
   }, [searchTerm]);
 
-  useEffect(() => {
-    let storedTerm = localStorage.getItem(SEARCH_TERM_KEY);
-    try {
-      storedTerm =
-        storedTerm && storedTerm !== "" ? JSON.parse(storedTerm) : null;
-    } catch (e) {
-      console.error(e);
-    }
+  const debouncedChangeHandler = useMemo(
+    () =>
+      debounce((value) => {
+        setState("searchTerm", value);
+        sendSearchTermGA(value);
+      }, 1500),
+    [setState]
+  );
 
-    if (storedTerm) {
-      setSearchTerm(storedTerm);
-      searchEvents(storedTerm);
-    }
-  }, [searchEvents, setSearchTerm]);
+  const handleChange = useCallback(
+    (e) => {
+      const value = e.target.value;
+      setInputValue(value);
+      debouncedChangeHandler(value);
+    },
+    [debouncedChangeHandler]
+  );
 
   const handleKeyPress = useCallback(
     (e) => {
       if (e.key === "Enter") {
         const value = e.target.value;
         sendSearchTermGA(value);
-        setSearchTerm(value);
+        setState("searchTerm", value);
       }
     },
-    [setSearchTerm]
+    [setState]
   );
 
-  useEffect(() => {
-    setInputValue(searchTerm);
-  }, [searchTerm]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedChangeHandler = useCallback(
-    debounce((value) => {
-      setSearchTerm(value);
-      if (value.length === 0) {
-        localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(""));
-      } else {
-        sendSearchTermGA(value);
-        localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(value));
-      }
-    }, 1500),
-    [setSearchTerm, sendSearchTermGA]
-  );
-
-  const handleChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
-    debouncedChangeHandler(value);
-  };
-
-  const clearSearchTerm = () => {
-    setSearchTerm("");
+  const clearSearchTerm = useCallback(() => {
+    setState("searchTerm", "");
     setInputValue("");
-    localStorage.setItem(SEARCH_TERM_KEY, JSON.stringify(""));
-  };
-
-  const onFocus = (e) => {
-    let val = localStorage.getItem(SEARCH_TERM_KEY);
-    try {
-      val = JSON.parse(val);
-    } catch (e) {
-      console.error(e);
-    }
-    e.target.value = val || e.target.value;
-  };
+  }, [setState]);
 
   return (
     <div className="w-full flex justify-center">
@@ -135,7 +105,6 @@ export default function Search({ searchTerm, setSearchTerm }) {
           value={inputValue}
           onKeyDown={handleKeyPress}
           onChange={handleChange}
-          onFocus={onFocus}
         />
         {inputValue.length > 0 && (
           <div className="h-10 flex justify-end items-center cursor-pointer">

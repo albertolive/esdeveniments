@@ -1,17 +1,10 @@
-import {
-  useMemo,
-  memo,
-  useCallback,
-  useState,
-  useEffect,
-  useContext,
-} from "react";
+import { useMemo, memo, useCallback, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
 import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
-import { useFilters } from "@components/hooks/useFilters";
+import useStore from "@store";
 
 const Modal = dynamic(() => import("@components/ui/common/modal"), {
   loading: () => "",
@@ -22,15 +15,32 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
 });
 
 function FiltersModal({ selectedOption, setSelectedOption }) {
-  const { state, setFilter } = useFilters();
+  const {
+    openModal,
+    place,
+    byDate,
+    category,
+    distance,
+    userLocation,
+    setState,
+  } = useStore((state) => ({
+    openModal: state.openModal,
+    place: state.place,
+    byDate: state.byDate,
+    category: state.category,
+    distance: state.distance,
+    userLocation: state.userLocation,
+    setState: state.setState,
+  }));
+
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const [userLocationError, setUserLocationError] = useState("");
 
   useEffect(() => {
-    if (state.openModal) {
-      setFilter("SET_NAVIGATED_FILTER_MODAL", true);
+    if (openModal) {
+      setState("navigatedFilterModal", true);
     }
-  }, [state.openModal, setFilter]);
+  }, [openModal, setState]);
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
@@ -38,44 +48,41 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
   );
 
   const handleStateChange = useCallback(
-    (type, value) => {
-      setFilter(type, value);
+    (key, value) => {
+      setState(key, value);
     },
-    [setFilter]
+    [setState]
   );
 
   const handleByDateChange = useCallback(
     (value) => {
-      if (value === state.byDate) window.localStorage.removeItem("byDate");
-      handleStateChange("SET_BYDATE", value);
+      handleStateChange("byDate", value);
     },
-    [state.byDate, handleStateChange]
+    [handleStateChange]
   );
 
   const handleCategoryChange = useCallback(
     (value) => {
-      handleStateChange("SET_CATEGORY", value);
+      handleStateChange("category", value);
     },
     [handleStateChange]
   );
 
   const handlePlaceChange = useCallback(
     ({ value }) => {
-      if (!value) window.localStorage.removeItem("place");
-
-      handleStateChange("SET_PLACE", value);
+      handleStateChange("place", value);
       setSelectedOption(value);
 
-      localStorage.removeItem("currentPage");
-      localStorage.removeItem("scrollPosition");
+      setState("page", 0);
+      setState("scrollPosition", 0);
     },
-    [handleStateChange, setSelectedOption]
+    [handleStateChange, setSelectedOption, setState]
   );
 
   const handleUserLocation = useCallback(
     (value) => {
-      if (state.userLocation) {
-        handleStateChange("SET_DISTANCE", value);
+      if (userLocation) {
+        handleStateChange("distance", value);
         return;
       }
 
@@ -90,9 +97,9 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
               lng: position.coords.longitude,
             };
 
-            handleStateChange("SET_USER_LOCATION", location);
+            handleStateChange("userLocation", location);
             setUserLocationLoading(false);
-            handleStateChange("SET_DISTANCE", value);
+            handleStateChange("distance", value);
           },
           function (error) {
             console.log("Error occurred. Error code: " + error.code);
@@ -124,7 +131,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
         setUserLocationLoading(false);
       }
     },
-    [state.userLocation, handleStateChange]
+    [userLocation, handleStateChange]
   );
 
   const handleDistanceChange = useCallback(
@@ -135,17 +142,14 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
   );
 
   const disablePlace =
-    state.distance === undefined ||
-    state.distance !== "" ||
-    isNaN(Number(state.distance));
-  const disableDistance =
-    state.place || userLocationLoading || userLocationError;
+    distance === undefined || distance !== "" || isNaN(Number(distance));
+  const disableDistance = place || userLocationLoading || userLocationError;
 
   return (
     <>
       <Modal
-        open={state.openModal}
-        setOpen={(value) => setFilter("SET_MODAL", value)}
+        open={openModal}
+        setOpen={(value) => setState("openModal", value)}
         title="Filters"
         actionButton="Apply filters"
       >
@@ -177,7 +181,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
                   id={value}
                   name="category"
                   value={value}
-                  checkedValue={state.category}
+                  checkedValue={category}
                   onChange={handleCategoryChange}
                   label={value}
                 />
@@ -195,7 +199,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
                   id={value}
                   name="byDate"
                   value={value}
-                  checkedValue={state.byDate}
+                  checkedValue={byDate}
                   onChange={handleByDateChange}
                   label={label}
                 />
@@ -233,7 +237,7 @@ function FiltersModal({ selectedOption, setSelectedOption }) {
                 name="distance"
                 min={DISTANCES[0]}
                 max={DISTANCES[DISTANCES.length - 1]}
-                value={state.distance}
+                value={distance}
                 onChange={handleDistanceChange}
                 label="Events within"
                 disabled={disableDistance}
