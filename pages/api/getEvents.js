@@ -19,14 +19,7 @@ const noEventsFound = async (events, query, town) => {
   return events;
 };
 
-const getEvents = async ({
-  from,
-  until,
-  q,
-  maxResults,
-  shuffleItems,
-  town,
-}) => {
+const getEvents = async ({ from, until, q, maxResults, town }) => {
   let events;
   try {
     events = await getCalendarEvents({
@@ -34,7 +27,6 @@ const getEvents = async ({
       until,
       q,
       maxResults,
-      shuffleItems,
       town,
     });
   } catch (error) {
@@ -50,7 +42,7 @@ const getEvents = async ({
 };
 
 const handler = async (req, res) => {
-  const { page, q, maxResults, shuffleItems, town } = req.query;
+  const { page, q, maxResults, town } = req.query;
 
   let events = [];
 
@@ -62,7 +54,6 @@ const handler = async (req, res) => {
         until: untilToday,
         q,
         maxResults,
-        shuffleItems,
         town,
       });
       break;
@@ -75,7 +66,6 @@ const handler = async (req, res) => {
         until: toTomorrow,
         q,
         maxResults,
-        shuffleItems,
         town,
       });
       break;
@@ -87,7 +77,6 @@ const handler = async (req, res) => {
         until: toWeek,
         q,
         maxResults,
-        shuffleItems,
         town,
       });
       break;
@@ -99,7 +88,6 @@ const handler = async (req, res) => {
         until: toWeekend,
         q,
         maxResults,
-        shuffleItems,
         town,
       });
       break;
@@ -109,7 +97,6 @@ const handler = async (req, res) => {
       events = await getEvents({
         from: fromSearch,
         q,
-        shuffleItems,
         town,
       });
       break;
@@ -120,7 +107,6 @@ const handler = async (req, res) => {
         from,
         q,
         maxResults,
-        shuffleItems,
         town,
       });
     }

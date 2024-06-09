@@ -15,6 +15,7 @@ const useStore = create(
       distance: "",
       categorizedEvents: {},
       latestEvents: [],
+      events: [],
       currentYear: new Date().getFullYear(),
       scrollPosition: 0,
       filtersApplied: false,

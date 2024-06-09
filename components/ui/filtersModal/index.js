@@ -178,14 +178,14 @@ function FiltersModal() {
       <Modal
         open={openModal}
         setOpen={(value) => setState("openModal", value)}
-        title="Filters"
-        actionButton="Apply filters"
+        title="Filtres"
+        actionButton="Aplicar filtres"
         onActionButtonClick={applyFilters}
       >
         <div className="w-full flex flex-col justify-center items-center gap-5 px-6 py-8 my-8">
           <div className="w-full flex flex-col justify-center items-center gap-2 px-6 sm:px-0">
             <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
-              Locations
+              Poblacions
             </p>
             <div className="w-full flex flex-col px-0">
               <Select
@@ -194,7 +194,7 @@ function FiltersModal() {
                 value={selectOption}
                 onChange={handlePlaceChange}
                 isClearable
-                placeholder="Location"
+                placeholder="població"
                 isDisabled={disablePlace}
               />
             </div>
@@ -219,7 +219,7 @@ function FiltersModal() {
           </fieldset>
           <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
             <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
-              Date
+              Data
             </p>
             <div className="w-full flex flex-col justify-start items-start gap-x-3 gap-y-3 flex-wrap">
               {BYDATES.map(({ value, label }) => (
@@ -237,14 +237,14 @@ function FiltersModal() {
           </fieldset>
           <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
             <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
-              Distance
+              Distància
             </p>
             {(userLocationLoading || userLocationError) && (
               <div className="border-t border-bColor py-2">
                 <div className="flex flex-col">
                   {userLocationLoading && (
                     <div className="text-sm text-bColor">
-                      Loading location...
+                      Carregant localització...
                     </div>
                   )}
                   {userLocationError && (
@@ -268,7 +268,7 @@ function FiltersModal() {
                 max={DISTANCES[DISTANCES.length - 1]}
                 value={localDistance}
                 onChange={handleDistanceChange}
-                label="Events within"
+                label="Esdeveniments a"
                 disabled={disableDistance}
               />
             </div>

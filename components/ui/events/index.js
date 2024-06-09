@@ -5,15 +5,16 @@ import useStore from "@store";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 import Search from "@components/ui/search";
 import SubMenu from "@components/ui/common/subMenu";
+import CardLoading from "@components/ui/cardLoading";
 import Imago from "public/static/images/imago-esdeveniments.png";
 
 const EventsList = dynamic(() => import("@components/ui/eventsList"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <CardLoading />,
 });
 const EventsCategorized = dynamic(
   () => import("@components/ui/eventsCategorized"),
   {
-    loading: () => <p>Loading...</p>,
+    loading: () => <CardLoading />,
   }
 );
 

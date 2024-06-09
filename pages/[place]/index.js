@@ -45,12 +45,12 @@ export async function getStaticProps({ params }) {
     from,
     until,
     q: type === "town" ? `${label} ${regionLabel}` : label,
-    shuffleItems: true,
     town: type === "town" ? label : "",
   });
 
   const initialState = {
-    latestEvents: events,
+    place,
+    events,
   };
 
   return {

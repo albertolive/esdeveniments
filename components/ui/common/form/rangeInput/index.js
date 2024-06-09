@@ -14,7 +14,7 @@ const RangeInput = ({
     <div id={id} name={name} className="w-full flex flex-col gap-3">
       <div className="flex justify-start items-center gap-2">
         <label htmlFor={id}>{label}</label>
-        <div className="text-primary font-semibold font-barlow text-lg pb-1">
+        <div className="text-primary font-semibold font-barlow text-lg pb-0.5">
           {value} km
         </div>
         {value && (

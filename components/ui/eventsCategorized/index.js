@@ -35,15 +35,14 @@ function EventsCategorized() {
   }));
 
   const [isLoading, setIsLoading] = useState(true);
-  const [eventsData, setEventsData] = useState({
-    categorizedEvents: initialCategorizedEvents.events || {},
-    latestEvents: initialLatestEvents || [],
-    noEventsFound: false,
-    currentYear,
-  });
 
   const {
-    data: fetchedData = {},
+    data: {
+      categorizedEvents = [],
+      latestEvents = [],
+      noEventsFound = false,
+      allEventsLoaded,
+    } = {},
     isValidating,
     error,
   } = useGetCategorizedEvents({
@@ -54,20 +53,14 @@ function EventsCategorized() {
     searchTerms: ["Festa Major", "Familiar", "Teatre"],
     maxResults: MAX_RESULTS,
   });
+  console.log("EventsCategorized", categorizedEvents, isValidating);
 
+  // Effects
   useEffect(() => {
-    if (fetchedData.categorizedEvents?.events || fetchedData.latestEvents) {
-      setEventsData({
-        categorizedEvents: fetchedData.categorizedEvents?.events || {},
-        latestEvents: fetchedData.latestEvents || [],
-        noEventsFound: fetchedData.noEventsFound,
-        currentYear: fetchedData.currentYear,
-      });
-      setIsLoading(false);
-    }
-  }, [fetchedData]);
+    setIsLoading(!categorizedEvents && !error && !isValidating);
+  }, [categorizedEvents, error, isValidating]);
 
-  const jsonEvents = Object.values(eventsData.categorizedEvents || {})
+  const jsonEvents = Object.values(categorizedEvents || {})
     .flatMap((category) => category)
     .filter(({ isAd }) => !isAd)
     .map((event) => generateJsonData(event));
@@ -78,7 +71,7 @@ function EventsCategorized() {
   // Page data
   const { metaTitle, metaDescription, title, subTitle, canonical } =
     generatePagesData({
-      currentYear: eventsData.currentYear || new Date().getFullYear(),
+      currentYear: currentYear || new Date().getFullYear(),
       place,
       byDate,
     }) || {};
@@ -113,27 +106,37 @@ function EventsCategorized() {
           </div>
         ) : (
           <div className="p-2">
-            {Object.keys(eventsData.categorizedEvents).map(
-              (category) =>
-                eventsData.categorizedEvents[category].length > 0 && (
-                  <div key={category}>
-                    <h1 className="text-lg font-semibold mt-4 mb-2">
-                      {category}
-                    </h1>
-                    <EventsHorizontalScroll
-                      events={eventsData.categorizedEvents[category]}
-                    />
-                  </div>
-                )
-            )}
-            <h1 className="text-lg font-semibold mt-4 mb-2">
-              Altres esdeveniments
-            </h1>
-            <List events={eventsData.latestEvents}>
-              {(event, index) => (
-                <Card key={event.id} event={event} isPriority={index === 0} />
+            {categorizedEvents &&
+              Object.keys(categorizedEvents).length > 0 &&
+              Object.keys(categorizedEvents.events || {}).map(
+                (category) =>
+                  categorizedEvents.events[category]?.length > 0 && (
+                    <div key={category}>
+                      <h1 className="text-lg font-semibold mt-4 mb-2">
+                        {category}
+                      </h1>
+                      <EventsHorizontalScroll
+                        events={categorizedEvents.events[category]}
+                      />
+                    </div>
+                  )
               )}
-            </List>
+            {latestEvents.length > 0 && (
+              <>
+                <h1 className="text-lg font-semibold mt-4 mb-2">
+                  Altres esdeveniments
+                </h1>
+                <List events={latestEvents}>
+                  {(event, index) => (
+                    <Card
+                      key={event.id}
+                      event={event}
+                      isPriority={index === 0}
+                    />
+                  )}
+                </List>
+              </>
+            )}
           </div>
         )}
       </div>

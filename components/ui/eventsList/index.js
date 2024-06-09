@@ -24,8 +24,9 @@ const NoEventsFound = dynamic(
   }
 );
 
-function EventsList({ loadMore = true }) {
+function EventsList() {
   const {
+    events: serverEvents,
     place,
     byDate,
     category,
@@ -34,8 +35,10 @@ function EventsList({ loadMore = true }) {
     distance,
     page,
     scrollPosition,
+    currentYear,
     setState,
   } = useStore((state) => ({
+    events: state.events,
     place: state.place,
     byDate: state.byDate,
     category: state.category,
@@ -44,11 +47,14 @@ function EventsList({ loadMore = true }) {
     distance: state.distance,
     page: state.page,
     scrollPosition: state.scrollPosition,
+    currentYear: state.currentYear,
     setState: state.setState,
   }));
 
   const noEventsFoundRef = useRef();
-  const isNoEventsFoundVisible = useOnScreen(noEventsFoundRef);
+  const isNoEventsFoundVisible = useOnScreen(noEventsFoundRef, {
+    freezeOnceVisible: true,
+  });
   const isBrowser = typeof window !== "undefined";
 
   // State
@@ -63,22 +69,18 @@ function EventsList({ loadMore = true }) {
   const pageIndex = dateFunctions[byDate] || "all";
 
   const {
-    data: eventsData = {},
+    data: { events = [], noEventsFound = false, allEventsLoaded } = {},
     isValidating,
     error,
   } = useGetEvents({
+    props: { events: serverEvents },
     pageIndex,
     maxResults: page * 10,
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
     town: type === "town" ? label : "",
   });
 
-  const {
-    events = [],
-    currentYear,
-    noEventsFound = false,
-    allEventsLoaded,
-  } = eventsData;
+  console.log("events", isValidating, isLoading);
 
   const notFound =
     !isLoading &&
@@ -152,10 +154,6 @@ function EventsList({ loadMore = true }) {
     }
   }, [events.length, scrollPosition]);
 
-  useEffect(() => {
-    setState("currentYear", currentYear);
-  }, [currentYear, setState]);
-
   // Error handling
   if (error) return <NoEventsFound title="No events found" />;
 
@@ -219,7 +217,6 @@ function EventsList({ loadMore = true }) {
         )}
         {isLoadingMore && <CardLoading />}
         {!noEventsFound &&
-          loadMore &&
           filteredEvents.length > 7 &&
           !isLoadingMore &&
           !allEventsLoaded && (

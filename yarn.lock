@@ -5575,7 +5575,7 @@ __metadata:
     react-share: "npm:^5.0.3"
     react-tooltip: "npm:^5.26.0"
     rss: "npm:^1.2.2"
-    swr: "npm:^2.0.3"
+    swr: "npm:^2.2.5"
     tailwindcss: "npm:^3.3.6"
     zustand: "npm:^4.5.2"
   languageName: unknown
@@ -6018,15 +6018,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swr@npm:^2.0.3":
-  version: 2.2.2
-  resolution: "swr@npm:2.2.2"
+"swr@npm:^2.2.5":
+  version: 2.2.5
+  resolution: "swr@npm:2.2.5"
   dependencies:
     client-only: "npm:^0.0.1"
     use-sync-external-store: "npm:^1.2.0"
   peerDependencies:
     react: ^16.11.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/c0de3212b9e6cc0def7a66dc4c621382c473907450e8eed7d2888e38b9d44ee7f820395fc52836d3081164f815757b2ee91107ddef2e968f1c978231d2235160
+  checksum: 10c0/731488d609ac6db60626632e3f76b046f28400b44504b3dfa69231a645127579b1add7a1595e5a6c718e24c80f1399506883bb456ca83c1b621357a0bf5a2a94
   languageName: node
   linkType: hard
 
