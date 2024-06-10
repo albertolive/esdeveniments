@@ -5,10 +5,10 @@ import { twoWeeksDefault } from "@lib/dates";
 import Events from "@components/ui/events";
 import { initializeStore } from "@utils/initializeStore";
 
-export default function Home(props) {
+export default function Place({ initialState }) {
   useEffect(() => {
-    initializeStore(props.initialState);
-  }, [props.initialState]);
+    initializeStore(initialState);
+  }, [initialState]);
 
   return <Events />;
 }
@@ -41,16 +41,32 @@ export async function getStaticProps({ params }) {
   const { from, until } = twoWeeksDefault();
   const { place } = params;
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
-  const { events } = await getCalendarEvents({
+  let { events } = await getCalendarEvents({
     from,
     until,
     q: type === "town" ? `${label} ${regionLabel}` : label,
     town: type === "town" ? label : "",
   });
 
+  let noEventsFound = false;
+
+  if (events.length === 0) {
+    const { from, until } = twoWeeksDefault();
+    const nextEventsResult = await getCalendarEvents({
+      from,
+      until,
+      maxResults: 7,
+      q: label,
+    });
+
+    noEventsFound = true;
+    events = nextEventsResult.events;
+  }
+
   const initialState = {
     place,
     events,
+    noEventsFound,
   };
 
   return {

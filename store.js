@@ -16,6 +16,7 @@ const useStore = create(
       categorizedEvents: {},
       latestEvents: [],
       events: [],
+      noEventsFound: false,
       currentYear: new Date().getFullYear(),
       scrollPosition: 0,
       filtersApplied: false,

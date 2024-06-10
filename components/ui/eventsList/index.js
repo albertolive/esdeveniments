@@ -27,6 +27,7 @@ const NoEventsFound = dynamic(
 function EventsList() {
   const {
     events: serverEvents,
+    noEventsFound: serverNoEventsFound,
     place,
     byDate,
     category,
@@ -39,6 +40,7 @@ function EventsList() {
     setState,
   } = useStore((state) => ({
     events: state.events,
+    noEventsFound: state.noEventsFound,
     place: state.place,
     byDate: state.byDate,
     category: state.category,
@@ -69,7 +71,11 @@ function EventsList() {
   const pageIndex = dateFunctions[byDate] || "all";
 
   const {
-    data: { events = [], noEventsFound = false, allEventsLoaded } = {},
+    data: {
+      events = [],
+      noEventsFound = serverNoEventsFound,
+      allEventsLoaded,
+    } = {},
     isValidating,
     error,
   } = useGetEvents({
@@ -80,7 +86,7 @@ function EventsList() {
     town: type === "town" ? label : "",
   });
 
-  console.log("events", isValidating, isLoading);
+  console.log("events", serverEvents, noEventsFound, serverNoEventsFound);
 
   const notFound =
     !isLoading &&

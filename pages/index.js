@@ -5,15 +5,15 @@ import Events from "@components/ui/events";
 import { initializeStore } from "@utils/initializeStore";
 import { useEffect } from "react";
 
-export default function Home(props) {
+export default function Home({ initialState }) {
   useEffect(() => {
-    initializeStore(props.initialState);
-  }, [props.initialState]);
+    initializeStore(initialState);
+  }, [initialState]);
 
   return <Events />;
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const { from, until } = twoWeeksDefault();
   const searchTerms = ["Festa Major", "Familiar", "Teatre"];
 
@@ -44,5 +44,6 @@ export async function getServerSideProps() {
     props: {
       initialState,
     },
+    revalidate: 60,
   };
 }
