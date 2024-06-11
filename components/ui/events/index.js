@@ -5,16 +5,28 @@ import useStore from "@store";
 import { useScrollVisibility } from "@components/hooks/useScrollVisibility";
 import Search from "@components/ui/search";
 import SubMenu from "@components/ui/common/subMenu";
-import CardLoading from "@components/ui/cardLoading";
 import Imago from "public/static/images/imago-esdeveniments.png";
+import CardLoading from "@components/ui/cardLoading";
+// import EventsList from "@components/ui/eventsList";
 
 const EventsList = dynamic(() => import("@components/ui/eventsList"), {
-  loading: () => <CardLoading />,
+  loading: () => (
+    <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
+      <CardLoading />
+    </div>
+  ),
+  ssr: true,
 });
+
 const EventsCategorized = dynamic(
   () => import("@components/ui/eventsCategorized"),
   {
-    loading: () => <CardLoading />,
+    loading: () => (
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
+        <CardLoading />
+      </div>
+    ),
+    ssr: true,
   }
 );
 
@@ -39,15 +51,10 @@ function Events() {
   const isSticky = useScrollVisibility(30);
   const isBrowser = typeof window !== "undefined";
 
-  const [isMounted, setIsMounted] = useState(false);
   const [scrollIcon, setScrollIcon] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
 
   const hasFilters = areFiltersActive();
-  console.log("Events", hasFilters, place);
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({
@@ -79,6 +86,19 @@ function Events() {
       return () => window.removeEventListener("scroll", handleScroll);
     }
   }, [isBrowser, setState]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const loadComponent = async () => {
+      if (hasFilters) {
+        await import("@components/ui/eventsList");
+      } else {
+        await import("@components/ui/eventsCategorized");
+      }
+      setIsLoading(false);
+    };
+    loadComponent();
+  }, [hasFilters]);
 
   return (
     <>
@@ -112,7 +132,17 @@ function Events() {
           <SubMenu />
         </div>
       </div>
-      {isMounted && <>{hasFilters ? <EventsList /> : <EventsCategorized />}</>}
+      {isLoading ? (
+        <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
+          {[...Array(10)].map((_, i) => (
+            <CardLoading key={i} />
+          ))}
+        </div>
+      ) : hasFilters ? (
+        <EventsList />
+      ) : (
+        <EventsCategorized />
+      )}
     </>
   );
 }

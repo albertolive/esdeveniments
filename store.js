@@ -45,12 +45,6 @@ const useStore = create(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         page: state.page,
-        place: state.place,
-        byDate: state.byDate,
-        category: state.category,
-        searchTerm: state.searchTerm,
-        userLocation: state.userLocation,
-        distance: state.distance,
         currentYear: state.currentYear,
         scrollPosition: state.scrollPosition,
       }),

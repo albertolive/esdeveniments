@@ -71,11 +71,7 @@ function EventsList() {
   const pageIndex = dateFunctions[byDate] || "all";
 
   const {
-    data: {
-      events = [],
-      noEventsFound = serverNoEventsFound,
-      allEventsLoaded,
-    } = {},
+    data: fetchedData = {},
     isValidating,
     error,
   } = useGetEvents({
@@ -86,7 +82,9 @@ function EventsList() {
     town: type === "town" ? label : "",
   });
 
-  console.log("events", serverEvents, noEventsFound, serverNoEventsFound);
+  const events = fetchedData.events?.length ? fetchedData.events : serverEvents;
+  const noEventsFound = fetchedData.noEventsFound ?? serverNoEventsFound;
+  const allEventsLoaded = fetchedData.allEventsLoaded ?? false;
 
   const notFound =
     !isLoading &&

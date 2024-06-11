@@ -37,12 +37,7 @@ function EventsCategorized() {
   const [isLoading, setIsLoading] = useState(true);
 
   const {
-    data: {
-      categorizedEvents = [],
-      latestEvents = [],
-      noEventsFound = false,
-      allEventsLoaded,
-    } = {},
+    data: fetchedData = {},
     isValidating,
     error,
   } = useGetCategorizedEvents({
@@ -53,7 +48,15 @@ function EventsCategorized() {
     searchTerms: ["Festa Major", "Familiar", "Teatre"],
     maxResults: MAX_RESULTS,
   });
-  console.log("EventsCategorized", categorizedEvents, isValidating);
+
+  const categorizedEvents = Object.keys(fetchedData.categorizedEvents || {})
+    .length
+    ? fetchedData.categorizedEvents
+    : initialCategorizedEvents;
+
+  const latestEvents = Object.keys(fetchedData.latestEvents || {}).length
+    ? fetchedData.latestEvents
+    : initialLatestEvents;
 
   // Effects
   useEffect(() => {
