@@ -39,15 +39,12 @@ function debounce(func, wait) {
 }
 
 function Events() {
-  const { place, setState, areFiltersActive, filtersApplied } = useStore(
-    (state) => ({
-      place: state.place,
-      openModal: state.openModal,
-      setState: state.setState,
-      areFiltersActive: state.areFiltersActive,
-      filtersApplied: state.filtersApplied,
-    })
-  );
+  const { setState, areFiltersActive, filtersApplied } = useStore((state) => ({
+    openModal: state.openModal,
+    setState: state.setState,
+    areFiltersActive: state.areFiltersActive,
+    filtersApplied: state.filtersApplied,
+  }));
   const isSticky = useScrollVisibility(30);
   const isBrowser = typeof window !== "undefined";
 
