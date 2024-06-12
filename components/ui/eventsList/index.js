@@ -97,7 +97,15 @@ function EventsList({ events: serverEvents = [] }) {
 
   const jsonEvents = events
     .filter(({ isAd }) => !isAd)
-    .map((event) => generateJsonData(event));
+    .map((event) => {
+      try {
+        return generateJsonData(event);
+      } catch (err) {
+        console.error("Error generating JSON data for event:", err, event);
+        return null;
+      }
+    })
+    .filter(Boolean);
 
   // Event handlers
   const handleLoadMore = useCallback(() => {
@@ -112,7 +120,7 @@ function EventsList({ events: serverEvents = [] }) {
 
   const filterEventsByDistance = useCallback(
     (events, userLocation) => {
-      if (distance === "" || isNaN(distance)) return events;
+      if (!distance || isNaN(distance)) return events;
 
       return events.filter((event) => {
         if (event.isAd || !event.coords || !userLocation) {
@@ -140,7 +148,7 @@ function EventsList({ events: serverEvents = [] }) {
   }, [events, filterEventsByDistance, userLocation]);
 
   useEffect(() => {
-    setIsLoading(!events && !error && !isValidating);
+    setIsLoading(!events && !error && isValidating);
   }, [events, error, isValidating]);
 
   useEffect(() => {
