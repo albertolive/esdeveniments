@@ -10,7 +10,7 @@ export default function ByDate({ initialState }) {
     initializeStore(initialState);
   }, [initialState]);
 
-  return <Events />;
+  return <Events events={initialState.events} />;
 }
 
 export async function getStaticPaths() {

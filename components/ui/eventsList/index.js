@@ -24,9 +24,8 @@ const NoEventsFound = dynamic(
   }
 );
 
-function EventsList() {
+function EventsList({ events: serverEvents = [] }) {
   const {
-    events: serverEvents,
     noEventsFound: serverNoEventsFound,
     place,
     byDate,
@@ -86,8 +85,6 @@ function EventsList() {
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
     town: type === "town" ? label : "",
   });
-
-  console.log("EventsList");
 
   const events = fetchedData.events?.length ? fetchedData.events : serverEvents;
   const noEventsFound = fetchedData.noEventsFound ?? serverNoEventsFound;

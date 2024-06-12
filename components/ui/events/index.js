@@ -38,7 +38,7 @@ function debounce(func, wait) {
   };
 }
 
-function Events() {
+function Events({ events }) {
   const { setState, areFiltersActive, filtersApplied } = useStore((state) => ({
     openModal: state.openModal,
     setState: state.setState,
@@ -136,7 +136,7 @@ function Events() {
           ))}
         </div>
       ) : hasFilters ? (
-        <EventsList />
+        <EventsList events={events} />
       ) : (
         <EventsCategorized />
       )}

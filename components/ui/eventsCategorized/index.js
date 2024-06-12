@@ -54,7 +54,7 @@ function EventsCategorized() {
     ? fetchedData.categorizedEvents
     : initialCategorizedEvents;
 
-  const latestEvents = Object.keys(fetchedData.latestEvents || {}).length
+  const latestEvents = fetchedData.latestEvents?.length
     ? fetchedData.latestEvents
     : initialLatestEvents;
 
@@ -63,10 +63,37 @@ function EventsCategorized() {
     setIsLoading(!categorizedEvents && !error && !isValidating);
   }, [categorizedEvents, error, isValidating]);
 
-  const jsonEvents = Object.values(categorizedEvents || {})
-    .flatMap((category) => category)
-    .filter(({ isAd }) => !isAd)
-    .map((event) => generateJsonData(event));
+  const eventKeys = Object.keys(categorizedEvents.events || {});
+
+  const jsonEvents = [
+    ...eventKeys
+      .flatMap((category) => categorizedEvents.events[category] || [])
+      .filter(({ isAd }) => !isAd)
+      .map((event) => {
+        try {
+          return generateJsonData(event);
+        } catch (err) {
+          console.error("Error generating JSON data for event:", err, event);
+          return null;
+        }
+      })
+      .filter(Boolean),
+    ...latestEvents
+      .filter(({ isAd }) => !isAd)
+      .map((event) => {
+        try {
+          return generateJsonData(event);
+        } catch (err) {
+          console.error(
+            "Error generating JSON data for latest event:",
+            err,
+            event
+          );
+          return null;
+        }
+      })
+      .filter(Boolean),
+  ];
 
   // Error handling
   if (error) return <NoEventsFound title="No events found" />;
@@ -78,7 +105,7 @@ function EventsCategorized() {
       place,
       byDate,
     }) || {};
-  console.log("EventsList");
+  console.log("EventsList", categorizedEvents);
   // Render
   return (
     <>
@@ -109,20 +136,18 @@ function EventsCategorized() {
           </div>
         ) : (
           <div className="p-2">
-            {categorizedEvents &&
-              Object.keys(categorizedEvents).length > 0 &&
-              Object.keys(categorizedEvents.events || {}).map(
-                (category) =>
-                  categorizedEvents.events[category]?.length > 0 && (
-                    <div key={category}>
-                      <h1 className="text-lg font-semibold mt-4 mb-2">
-                        {category}
-                      </h1>
-                      <EventsHorizontalScroll
-                        events={categorizedEvents.events[category]}
-                      />
-                    </div>
-                  )
+            {eventKeys.length > 0 &&
+              eventKeys.map((category) =>
+                categorizedEvents.events[category]?.length > 0 ? (
+                  <div key={category}>
+                    <h1 className="text-lg font-semibold mt-4 mb-2">
+                      {category}
+                    </h1>
+                    <EventsHorizontalScroll
+                      events={categorizedEvents.events[category]}
+                    />
+                  </div>
+                ) : null
               )}
             {latestEvents.length > 0 && (
               <>

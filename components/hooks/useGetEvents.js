@@ -19,7 +19,7 @@ export const useGetEvents = ({
   const hasFallbackData = props?.events?.length > 0;
 
   return useSWR(["/api/getEvents", pageIndex, q, maxResults, town], fetcher, {
-    fallbackData: hasFallbackData ? props : undefined, // Use fallbackData only if props has events
+    fallbackData: hasFallbackData ? props : {}, // Use fallbackData only if props has events
     refreshInterval: refreshInterval ? 300000 : 0,
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
