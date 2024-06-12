@@ -78,7 +78,7 @@ function EventsCategorized() {
       place,
       byDate,
     }) || {};
-
+  console.log("EventsList");
   // Render
   return (
     <>

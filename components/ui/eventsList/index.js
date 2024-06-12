@@ -75,12 +75,19 @@ function EventsList() {
     isValidating,
     error,
   } = useGetEvents({
-    props: { events: serverEvents },
+    props: {
+      events: serverEvents,
+      noEventsFound: serverNoEventsFound,
+      currentYear,
+      allEventsLoaded: false,
+    },
     pageIndex,
     maxResults: page * 10,
     q: type === "town" ? `${sharedQuery} ${regionLabel}` : sharedQuery,
     town: type === "town" ? label : "",
   });
+
+  console.log("EventsList");
 
   const events = fetchedData.events?.length ? fetchedData.events : serverEvents;
   const noEventsFound = fetchedData.noEventsFound ?? serverNoEventsFound;

@@ -35,7 +35,9 @@ function ImageComponent({
   priority = false,
 }) {
   const imgDefaultRef = useRef();
-  const isImgDefaultVisible = useOnScreen(imgDefaultRef);
+  const isImgDefaultVisible = useOnScreen(imgDefaultRef, {
+    freezeOnceVisible: true,
+  });
   const [hasError, setHasError] = useState(false);
   const imageClassName = `${className}`;
   const quality = useNetworkSpeed();

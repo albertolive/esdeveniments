@@ -236,8 +236,12 @@ export default function Event(props) {
   const weatherRef = useRef();
   const eventsAroundRef = useRef();
   const editModalRef = useRef();
-  const isMapsVisible = useOnScreen(mapsRef);
-  const isWeatherVisible = useOnScreen(weatherRef);
+  const isMapsVisible = useOnScreen(mapsRef, {
+    freezeOnceVisible: true,
+  });
+  const isWeatherVisible = useOnScreen(weatherRef, {
+    freezeOnceVisible: true,
+  });
   const isEditModalVisible = useOnScreen(editModalRef, {
     freezeOnceVisible: true,
   });

@@ -14,7 +14,9 @@ function SubMenu() {
   }));
 
   const filtersModalRef = useRef();
-  const isFiltersModalVisible = useOnScreen(filtersModalRef);
+  const isFiltersModalVisible = useOnScreen(filtersModalRef, {
+    freezeOnceVisible: true,
+  });
 
   return (
     <>
