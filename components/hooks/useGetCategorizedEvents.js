@@ -3,9 +3,7 @@ import useSWR, { preload } from "swr";
 
 const fetcher = ([url, searchTerms, maxResults]) =>
   fetch(
-    `${siteUrl}${url}?searchTerms=${searchTerms.join(
-      ","
-    )}&maxResults=${maxResults}`
+    `${url}?searchTerms=${searchTerms.join(",")}&maxResults=${maxResults}`
   ).then((res) => res.json());
 
 export const useGetCategorizedEvents = ({
