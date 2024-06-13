@@ -1,9 +1,9 @@
-import { siteUrl } from "@config/index";
+import { captureException } from "@sentry/nextjs";
 import useSWR, { preload } from "swr";
 
 const fetcher = ([url, pageIndex, q, maxResults, town]) =>
   fetch(
-    `${siteUrl}${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}&town=${town}`
+    `${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}&town=${town}`
   ).then((res) => res.json());
 
 export const useGetEvents = ({
@@ -34,6 +34,7 @@ export const useGetEvents = ({
     errorRetryCount: 3, // Retry up to 3 times
     onError: (error) => {
       console.error("Error fetching events:", error);
+      captureException(error);
     },
   });
 };

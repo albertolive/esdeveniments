@@ -91,7 +91,7 @@ export default function SelectComponent({
       <label htmlFor="first-name" className="text-blackCorp">
         {title}
       </label>
-      <div>
+      <div className="mt-2">
         <CreatableSelect
           id={id}
           instanceId={id}

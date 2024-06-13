@@ -3,7 +3,7 @@ import CardHorizontal from "@components/ui/cardHorizontal";
 
 function EventCardLoading() {
   return (
-    <div className="flex-none w-96 min-w-[24rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer mb-10">
+    <div className="flex-none w-96 min-w-[24rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer">
       {/* Image Placeholder */}
       <div className="w-full h-64 flex justify-center items-center overflow-hidden animate-fast-pulse">
         <div className="w-full h-full bg-darkCorp"></div>
@@ -41,7 +41,7 @@ function EventsHorizontalScroll({ events, loading }) {
       {events.map((event) => (
         <div
           key={event.id}
-          className="flex-none w-96 min-w-[24rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer mb-10"
+          className="flex-none w-96 min-w-[24rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer"
         >
           <CardHorizontal event={event} isPriority={false} />
         </div>

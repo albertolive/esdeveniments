@@ -1,4 +1,4 @@
-import { siteUrl } from "@config/index";
+import { captureException } from "@sentry/nextjs";
 import useSWR, { preload } from "swr";
 
 const fetcher = ([url, searchTerms, maxResults]) =>
@@ -33,6 +33,7 @@ export const useGetCategorizedEvents = ({
       errorRetryCount: 3, // Retry up to 3 times
       onError: (error) => {
         console.error("Error fetching events:", error);
+        captureException(error);
       },
     }
   );

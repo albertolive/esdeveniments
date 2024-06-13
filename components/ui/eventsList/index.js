@@ -201,7 +201,7 @@ function EventsList({ events: serverEvents = [] }) {
         description={metaDescription}
         canonical={canonical}
       />
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-40">
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-32">
         {notFound && (
           <>
             <div ref={noEventsFoundRef} />
@@ -210,10 +210,10 @@ function EventsList({ events: serverEvents = [] }) {
         )}
         {!notFound && (
           <>
-            <h1 className="uppercase mb-4 px-4">{title}</h1>
-            <h2 className="text-[16px] font-normal text-blackCorp text-left mb-10 px-4">
+            <h1 className="uppercase mb-2 px-2">{title}</h1>
+            <p className="text-[16px] font-normal text-blackCorp text-left mb-10 px-2">
               {subTitle}
-            </h2>
+            </p>
           </>
         )}
         {(isLoading || isValidating) && !isLoadingMore ? (

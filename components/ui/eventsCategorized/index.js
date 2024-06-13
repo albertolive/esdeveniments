@@ -119,12 +119,12 @@ function EventsCategorized() {
         description={metaDescription}
         canonical={canonical}
       />
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-40">
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-32">
         <>
-          <h1 className="uppercase mb-4 px-4">{title}</h1>
-          <h2 className="text-[16px] font-normal text-blackCorp text-left mb-10 px-4">
+          <h1 className="uppercase mb-2 px-2">{title}</h1>
+          <p className="text-[16px] font-normal text-blackCorp text-left px-2 font-barlow">
             {subTitle}
-          </h2>
+          </p>
         </>
         {isLoading || isValidating ? (
           <div>
@@ -138,9 +138,7 @@ function EventsCategorized() {
               eventKeys.map((category) =>
                 categorizedEvents.events[category]?.length > 0 ? (
                   <div key={category}>
-                    <h1 className="text-lg font-semibold mt-4 mb-2">
-                      {category}
-                    </h1>
+                    <h2 className="font-semibold mt-4 mb-2">{category}</h2>
                     <EventsHorizontalScroll
                       events={categorizedEvents.events[category]}
                     />
@@ -149,9 +147,9 @@ function EventsCategorized() {
               )}
             {latestEvents.length > 0 && (
               <>
-                <h1 className="text-lg font-semibold mt-4 mb-2">
+                <h2 className="font-semibold mt-4 mb-6">
                   Altres esdeveniments
-                </h1>
+                </h2>
                 <List events={latestEvents}>
                   {(event, index) => (
                     <Card

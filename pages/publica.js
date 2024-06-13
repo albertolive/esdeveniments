@@ -31,6 +31,7 @@ const defaultForm = {
   town: "",
   location: "",
   imageUploaded: null,
+  link: "",
 };
 
 const _createFormState = (
@@ -53,6 +54,7 @@ const createFormState = (
     town,
     location,
     imageUploaded,
+    link,
   },
   isPristine
 ) => {
@@ -102,6 +104,20 @@ const createFormState = (
       true,
       "Data final no pot ser anterior o igual a la data inici"
     );
+  }
+
+  const urlPattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  );
+
+  if (link && !urlPattern.test(link)) {
+    return _createFormState(true, true, "Enllaç no vàlid");
   }
 
   return _createFormState(false);
@@ -320,6 +336,13 @@ export default function Publica() {
             <TextArea
               id="description"
               value={form.description}
+              onChange={handleChange}
+            />
+
+            <Input
+              id="link"
+              title="Enllaç a l'esdeveniment"
+              value={form.link}
               onChange={handleChange}
             />
 

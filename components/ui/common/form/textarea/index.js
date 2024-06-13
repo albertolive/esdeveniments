@@ -4,36 +4,41 @@ import "react-quill/dist/quill.snow.css";
 
 const modules = {
   toolbar: [
-    [{ 'header': [1, 2, false] }],
-    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-    ['link', 'image'],
-    ['clean']
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
   ],
   clipboard: {
-    matchVisual: false
-  }
-}
+    matchVisual: false,
+  },
+};
 
 const formats = [
-  'header',
-  'bold', 'italic', 'underline', 'strike', 'blockquote',
-  'list', 'bullet', 'indent',
-  'link', 'image'
-]
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+];
 
 export default function TextArea({ id, value = "", onChange }) {
   const onChangeContent = (value) => onChange({ target: { name: id, value } });
 
   return (
     <div className="w-full">
-      <label
-        htmlFor="first-name"
-        className="text-blackCorp"
-      >
+      <label htmlFor="first-name" className="text-blackCorp">
         Descripció *
       </label>
-      <div className="p-2">
+      <div className="mt-2">
         <ReactQuill
           id={id}
           theme="snow"
