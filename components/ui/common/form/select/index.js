@@ -93,7 +93,6 @@ export default function SelectComponent({
       </label>
       <div>
         <CreatableSelect
-          className="p-2 border-0"
           id={id}
           instanceId={id}
           isSearchable

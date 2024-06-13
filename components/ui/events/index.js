@@ -11,7 +11,7 @@ import CardLoading from "@components/ui/cardLoading";
 
 const EventsList = dynamic(() => import("@components/ui/eventsList"), {
   loading: () => (
-    <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
+    <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-40">
       <CardLoading />
     </div>
   ),
@@ -22,7 +22,7 @@ const EventsCategorized = dynamic(
   () => import("@components/ui/eventsCategorized"),
   {
     loading: () => (
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
+      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-40">
         <CardLoading />
       </div>
     ),
@@ -124,13 +124,13 @@ function Events({ events }) {
             : "top-0 z-10 md:top-10 border-bColor md:border-b-0 shadow-sm md:shadow-none"
         } flex justify-center items-center pt-2`}
       >
-        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-4 pb-2 sm:px-10 sm:w-[580px]">
+        <div className="w-full flex flex-col justify-center items-center md:items-start gap-4 mx-auto px-2 pt-2 pb-2 sm:px-10 sm:w-[580px]">
           <Search />
           <SubMenu />
         </div>
       </div>
       {isLoading ? (
-        <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-24">
+        <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-40">
           {[...Array(10)].map((_, i) => (
             <CardLoading key={i} />
           ))}

@@ -19,18 +19,21 @@ const renderButton = ({
     className="w-full bg-whiteCorp flex justify-center items-center nowrap"
   >
     <div
-      className={`w-full h-8 flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none ${
+      className={`w-full flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none ${
         enabled
-          ? "text-primary font-medium border-b-2 border-primary"
-          : "border-whiteCorp border-b-2 text-blackCorp hover:border-b-2 hover:border-bColor"
+          ? "text-primary font-medium"
+          : "border-whiteCorp border-b-2 text-blackCorp hover:bg-darkCorp hover:text-blackCorp"
       }`}
     >
-      <span onClick={handleOpenModal} className="w-full text-center">
+      <span
+        onClick={handleOpenModal}
+        className="w-full text-center font-barlow uppercase text-[16px]"
+      >
         {text}
       </span>
       {enabled ? (
         <XIcon
-          className="h-4 w-4"
+          className="h-5 w-5"
           aria-hidden="true"
           onClick={() => {
             onClick();
@@ -39,7 +42,7 @@ const renderButton = ({
         />
       ) : (
         <ChevronDownIcon
-          className="h-4 w-4"
+          className="h-5 w-5"
           aria-hidden="true"
           onClick={onClick}
         />
@@ -101,17 +104,17 @@ const Filters = () => {
 
   return (
     <div
-      className={`w-full bg-whiteCorp flex justify-center items-center px-0 ${
+      className={`w-full bg-whiteCorp flex justify-center items-center px-4 ${
         openModal
           ? "opacity-50 animate-pulse text-bColor pointer-events-none"
           : ""
       }`}
     >
-      <div className="w-full flex justify-start items-center gap-2 cursor-pointer">
+      <div className="w-full h-10 flex justify-start items-center gap-2 cursor-pointer">
         <div
           onClick={() => setState("openModal", true)}
           type="button"
-          className="w-2/10 h-10 mr-3 flex justify-center items-center gap-1 cursor-pointer"
+          className="w-2/10 h-10 mr-3 flex justify-center items-center gap-3 cursor-pointer"
         >
           <AdjustmentsIcon
             className={
@@ -125,7 +128,7 @@ const Filters = () => {
             Filtres
           </p>
         </div>
-        <div className="w-8/10 h-10 flex items-center gap-1 sm:gap-2 border-0 placeholder:text-bColor overflow-x-auto">
+        <div className="w-8/10 flex items-center gap-1 border-0 placeholder:text-bColor rounded-tr-full rounded-br-full">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,

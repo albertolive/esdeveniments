@@ -627,9 +627,7 @@ export default async function handler(req, res) {
 
   try {
     const { region, town, disableKvInsert } = req.query;
-    const shouldInteractWithKv = !(
-      env !== "prod" && disableKvInsert === "true"
-    );
+    const shouldInteractWithKv = false;
 
     // Check if the region parameter is provided
     if (!region) {

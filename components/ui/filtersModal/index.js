@@ -182,9 +182,9 @@ function FiltersModal() {
         actionButton="Aplicar filtres"
         onActionButtonClick={applyFilters}
       >
-        <div className="w-full flex flex-col justify-center items-center gap-5 px-6 py-8 my-8">
-          <div className="w-full flex flex-col justify-center items-center gap-2 px-6 sm:px-0">
-            <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
+        <div className="w-full h-full flex flex-col justify-center items-center gap-5 px-6 py-8">
+          <div className="w-full flex flex-col justify-center items-center gap-4 px-6 sm:px-0">
+            <p className="w-full font-semibold font-barlow uppercase pt-[5px]">
               Poblacions
             </p>
             <div className="w-full flex flex-col px-0">
@@ -200,7 +200,7 @@ function FiltersModal() {
             </div>
           </div>
           <fieldset className="w-full flex flex-col justify-start items-start gap-4 px-6 sm:px-0">
-            <p className="w-full text-primary font-semibold font-barlow uppercase italic">
+            <p className="w-full font-semibold font-barlow uppercase">
               Categories
             </p>
             <div className="w-full h-28 flex flex-col justify-start items-start gap-2 flex-wrap">
@@ -218,7 +218,7 @@ function FiltersModal() {
             </div>
           </fieldset>
           <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
-            <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
+            <p className="w-full font-semibold font-barlow uppercase pt-[5px]">
               Data
             </p>
             <div className="w-full flex flex-col justify-start items-start gap-x-3 gap-y-3 flex-wrap">
@@ -236,7 +236,7 @@ function FiltersModal() {
             </div>
           </fieldset>
           <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
-            <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
+            <p className="w-full font-semibold font-barlow uppercase pt-[5px]">
               Distància
             </p>
             {(userLocationLoading || userLocationError) && (

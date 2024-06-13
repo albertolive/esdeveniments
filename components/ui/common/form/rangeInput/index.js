@@ -11,10 +11,10 @@ const RangeInput = ({
   disabled,
 }) => {
   return (
-    <div id={id} name={name} className="w-full flex flex-col gap-3">
-      <div className="flex justify-start items-center gap-2">
+    <div id={id} name={name} className="w-full flex flex-col gap-4">
+      <div className="w-full flex justify-start items-center gap-2">
         <label htmlFor={id}>{label}</label>
-        <div className="text-primary font-semibold font-barlow text-lg pb-0.5">
+        <div className="flex justify-start items-center text-primary gap-2 font-semibold font-barlow text-lg pb-1">
           {value} km
         </div>
         {value && (

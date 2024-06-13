@@ -25,7 +25,7 @@ export default function Modal({
         onClick={() => setOpen(false)}
       />
       <div className="w-full fixed inset-0 overflow-y-auto">
-        <div className="w-full flex items-center justify-center">
+        <div className="w-full h-screen flex items-center justify-center">
           <Transition.Root show={open} as={Fragment}>
             <Transition.Child
               as={Fragment}
@@ -54,29 +54,29 @@ export default function Modal({
                     </p>
                   </Dialog.Title>
                   {children}
-                </div>
-                {actionButton && (
-                  <div className="w-full flex justify-center items-end fixed bottom-0 left-0 p-8">
-                    <div
-                      className="flex justify-center"
-                      style={{ position: "sticky", bottom: 0 }}
-                    >
-                      <button
-                        onClick={() => {
-                          if (onActionButtonClick) {
-                            onActionButtonClick();
-                            setOpen(false);
-                          } else {
-                            setOpen(false);
-                          }
-                        }}
-                        className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow italic uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+                  {actionButton && (
+                    <div className="w-full flex justify-center items-end bottom-0 left-0 p-4">
+                      <div
+                        className="flex justify-center"
+                        style={{ position: "sticky", bottom: 0 }}
                       >
-                        {actionButton}
-                      </button>
+                        <button
+                          onClick={() => {
+                            if (onActionButtonClick) {
+                              onActionButtonClick();
+                              setOpen(false);
+                            } else {
+                              setOpen(false);
+                            }
+                          }}
+                          className="flex justify-center items-center gap-2 text-blackCorp bg-whiteCorp rounded-xl py-2 px-3 ease-in-out duration-300 border border-darkCorp font-barlow uppercase font-semibold tracking-wide focus:outline-none hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp"
+                        >
+                          {actionButton}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </Transition.Root>
