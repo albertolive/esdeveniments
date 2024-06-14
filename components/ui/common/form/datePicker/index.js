@@ -42,7 +42,7 @@ export default function DatePickerComponent({
   return (
     <>
       <div className="w-full">
-        <label htmlFor="first-name" className="w-full text-blackCorp">
+        <label htmlFor="start-date" className="w-full text-blackCorp">
           Inici *
         </label>
         <div className="w-full mt-2">
@@ -57,7 +57,7 @@ export default function DatePickerComponent({
         </div>
       </div>
       <div className="w-full">
-        <label htmlFor="first-name" className="w-full text-blackCorp">
+        <label htmlFor="end-date" className="w-full text-blackCorp">
           Final *
         </label>
         <div className="w-full mt-2">

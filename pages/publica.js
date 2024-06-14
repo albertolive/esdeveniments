@@ -341,7 +341,7 @@ export default function Publica() {
 
             <Input
               id="link"
-              title="Enllaç a l'esdeveniment"
+              title="Enllaç de l'esdeveniment"
               value={form.link}
               onChange={handleChange}
             />
@@ -388,7 +388,7 @@ export default function Publica() {
           </div>
         </div>
         {formState.isPristine && formState.message && (
-          <div className="p-4 my-3 text-red-700 bg-red-200 rounded-lg text-sm">
+          <div className="p-4 my-3 text-primary rounded-lg text-md">
             {formState.message}
           </div>
         )}

@@ -520,17 +520,19 @@ export default function Event(props) {
                     </div>
                   </div>
                 )}
-                <div className="font-bold">
-                  Enllaç a l&apos;esdeveniment:
-                  <a
-                    className="text-primary hover:underline font-normal ml-1"
-                    href={eventUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {title}
-                  </a>
-                </div>
+                {eventUrl && (
+                  <div className="font-bold">
+                    Enllaç a l&apos;esdeveniment:
+                    <a
+                      className="text-primary hover:underline font-normal ml-1"
+                      href={eventUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {title}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
             {/* EditButton */}
