@@ -1,6 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
+import ChevronRightIcon from "@heroicons/react/solid/ChevronRightIcon";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetCategorizedEvents } from "@components/hooks/useGetCategorizedEvents";
@@ -19,6 +20,13 @@ const NoEventsFound = dynamic(
   }
 );
 
+const categoryNamesMap = {
+  "Festa Major": "Festes Majors",
+  Festival: "Festivals",
+  Familiar: "Familiar",
+  Teatre: "Teatre i Arts Escèniques",
+};
+
 function EventsCategorized() {
   const {
     categorizedEvents: initialCategorizedEvents,
@@ -26,12 +34,14 @@ function EventsCategorized() {
     place,
     byDate,
     currentYear,
+    setState,
   } = useStore((state) => ({
     categorizedEvents: state.categorizedEvents,
     latestEvents: state.latestEvents,
     place: state.place,
     byDate: state.byDate,
     currentYear: state.currentYear,
+    setState: state.setState,
   }));
 
   const [isLoading, setIsLoading] = useState(true);
@@ -45,7 +55,7 @@ function EventsCategorized() {
       categorizedEvents: initialCategorizedEvents,
       latestEvents: initialLatestEvents,
     },
-    searchTerms: ["Festa Major", "Familiar", "Teatre"],
+    searchTerms: ["Festa Major", "Festival", "Familiar", "Teatre"],
     maxResults: MAX_RESULTS,
   });
 
@@ -95,16 +105,23 @@ function EventsCategorized() {
       .filter(Boolean),
   ];
 
-  // Error handling
-  if (error) return <NoEventsFound title="No events found" />;
-
   // Page data
-  const { metaTitle, metaDescription, title, subTitle, canonical } =
+  const {
+    metaTitle,
+    metaDescription,
+    title,
+    subTitle,
+    canonical,
+    notFoundText,
+  } =
     generatePagesData({
       currentYear: currentYear || new Date().getFullYear(),
       place,
       byDate,
     }) || {};
+
+  // Error handling
+  if (error) return <NoEventsFound title={notFoundText} />;
 
   // Render
   return (
@@ -119,7 +136,7 @@ function EventsCategorized() {
         description={metaDescription}
         canonical={canonical}
       />
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-32">
+      <div className="w-full flex-col justify-center items-center sm:w-[580px] mt-32">
         <>
           <h1 className="uppercase mb-2 px-2">{title}</h1>
           <p className="text-[16px] font-normal text-blackCorp text-left px-2 font-barlow">
@@ -127,18 +144,31 @@ function EventsCategorized() {
           </p>
         </>
         {isLoading || isValidating ? (
-          <div>
+          <>
             {[...Array(10)].map((_, i) => (
               <CardLoading key={i} />
             ))}
-          </div>
+          </>
         ) : (
           <div className="p-2">
             {eventKeys.length > 0 &&
               eventKeys.map((category) =>
                 categorizedEvents.events[category]?.length > 0 ? (
                   <div key={category}>
-                    <h2 className="font-semibold mt-4 mb-2">{category}</h2>
+                    <div className="flex justify-between mt-4 mb-2">
+                      <h2 className="font-semibold">
+                        {categoryNamesMap[category] || category}
+                      </h2>
+                      <div
+                        className="flex justify-between items-center cursor-pointer text-primary"
+                        onClick={() => setState("category", category)}
+                      >
+                        <div className="flex items-center">
+                          Veure més
+                          <ChevronRightIcon className="w-5 h-5" />
+                        </div>
+                      </div>
+                    </div>
                     <EventsHorizontalScroll
                       events={categorizedEvents.events[category]}
                     />

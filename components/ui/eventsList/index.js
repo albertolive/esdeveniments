@@ -170,9 +170,6 @@ function EventsList({ events: serverEvents = [] }) {
     }
   }, [events.length, scrollPosition]);
 
-  // Error handling
-  if (error) return <NoEventsFound title="No events found" />;
-
   // Page data
   const {
     metaTitle,
@@ -188,6 +185,9 @@ function EventsList({ events: serverEvents = [] }) {
       byDate,
     }) || {};
 
+  // Error handling
+  if (error) return <NoEventsFound title={notFoundText} />;
+
   // Render
   return (
     <>
@@ -201,7 +201,7 @@ function EventsList({ events: serverEvents = [] }) {
         description={metaDescription}
         canonical={canonical}
       />
-      <div className="w-full flex-col justify-center items-center sm:px-10 sm:w-[580px] mt-32">
+      <div className="w-full flex-col justify-center items-center sm:w-[580px] mt-32">
         {notFound && (
           <>
             <div ref={noEventsFoundRef} />

@@ -31,7 +31,7 @@ const defaultForm = {
   town: "",
   location: "",
   imageUploaded: null,
-  link: "",
+  eventUrl: "",
 };
 
 const _createFormState = (
@@ -54,7 +54,7 @@ const createFormState = (
     town,
     location,
     imageUploaded,
-    link,
+    eventUrl,
   },
   isPristine
 ) => {
@@ -116,7 +116,7 @@ const createFormState = (
     "i"
   );
 
-  if (link && !urlPattern.test(link)) {
+  if (eventUrl && !urlPattern.test(eventUrl)) {
     return _createFormState(true, true, "Enllaç no vàlid");
   }
 
@@ -340,9 +340,9 @@ export default function Publica() {
             />
 
             <Input
-              id="link"
+              id="eventUrl"
               title="Enllaç de l'esdeveniment"
-              value={form.link}
+              value={form.eventUrl}
               onChange={handleChange}
             />
 
