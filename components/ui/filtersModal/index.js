@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback, useEffect, memo } from "react";
 import dynamic from "next/dynamic";
 import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
-import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
+import { BYDATES, CATEGORY_NAMES_MAP, DISTANCES } from "@utils/constants";
 import { generateRegionsAndTownsOptions } from "@utils/helpers";
 import useStore from "@store";
 
@@ -204,7 +204,7 @@ function FiltersModal() {
               Categories
             </p>
             <div className="w-full h-28 flex flex-col justify-start items-start gap-2 flex-wrap">
-              {Object.entries(CATEGORIES).map(([value]) => (
+              {Object.entries(CATEGORY_NAMES_MAP).map(([value]) => (
                 <RadioInput
                   key={value}
                   id={value}

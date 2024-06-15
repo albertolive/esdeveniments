@@ -51,7 +51,7 @@ function EventsList({ events: serverEvents = [] }) {
     currentYear: state.currentYear,
     setState: state.setState,
   }));
-
+  console.log("category", category);
   const noEventsFoundRef = useRef();
   const isNoEventsFoundVisible = useOnScreen(noEventsFoundRef, {
     freezeOnceVisible: true,
@@ -65,7 +65,7 @@ function EventsList({ events: serverEvents = [] }) {
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
-  const categoryQuery = category ? CATEGORIES[category] : "";
+  const categoryQuery = category ? CATEGORIES[category] || category : "";
   const sharedQuery = `${searchTerm} ${categoryQuery} ${label}`;
   const pageIndex = dateFunctions[byDate] || "all";
 
@@ -142,9 +142,13 @@ function EventsList({ events: serverEvents = [] }) {
   }, [events]);
 
   useEffect(() => {
-    if (events.length > 0) {
-      setFilteredEvents(filterEventsByDistance(events, userLocation));
-    }
+    const filtered = filterEventsByDistance(events, userLocation);
+    setFilteredEvents((prevFilteredEvents) => {
+      if (JSON.stringify(prevFilteredEvents) !== JSON.stringify(filtered)) {
+        return filtered;
+      }
+      return prevFilteredEvents;
+    });
   }, [events, filterEventsByDistance, userLocation]);
 
   useEffect(() => {
@@ -211,7 +215,7 @@ function EventsList({ events: serverEvents = [] }) {
         {!notFound && (
           <>
             <h1 className="uppercase mb-2 px-2">{title}</h1>
-            <p className="text-[16px] font-normal text-blackCorp text-left mb-10 px-2">
+            <p className="text-[16px] font-normal text-blackCorp text-left mb-10 px-2 font-barlow">
               {subTitle}
             </p>
           </>

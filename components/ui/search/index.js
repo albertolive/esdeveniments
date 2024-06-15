@@ -100,7 +100,7 @@ export default function Search() {
         </div>
         <input
           type="text"
-          className="w-full border-0 placeholder:text-bColor text-[14px] rounded-tr-full rounded-br-full"
+          className="w-full border-0 placeholder:text-bColor text-[16px] rounded-tr-full rounded-br-full"
           placeholder="Què estàs buscant?"
           value={inputValue}
           onKeyDown={handleKeyPress}

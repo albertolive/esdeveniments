@@ -12,6 +12,7 @@ import CardLoading from "@components/ui/cardLoading";
 import Card from "@components/ui/card";
 import EventsHorizontalScroll from "@components/ui/eventsHorizontalScroll";
 import useStore from "@store";
+import { SEARCH_TERMS_SUBSET, CATEGORY_NAMES_MAP } from "@utils/constants";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -19,13 +20,6 @@ const NoEventsFound = dynamic(
     loading: () => "",
   }
 );
-
-const categoryNamesMap = {
-  "Festa Major": "Festes Majors",
-  Festival: "Festivals",
-  Familiar: "Familiar",
-  Teatre: "Teatre i Arts Escèniques",
-};
 
 function EventsCategorized() {
   const {
@@ -55,7 +49,7 @@ function EventsCategorized() {
       categorizedEvents: initialCategorizedEvents,
       latestEvents: initialLatestEvents,
     },
-    searchTerms: ["Festa Major", "Festival", "Familiar", "Teatre"],
+    searchTerms: SEARCH_TERMS_SUBSET,
     maxResults: MAX_RESULTS,
   });
 
@@ -157,7 +151,7 @@ function EventsCategorized() {
                   <div key={category}>
                     <div className="flex justify-between mt-4 mb-2">
                       <h2 className="font-semibold">
-                        {categoryNamesMap[category] || category}
+                        {CATEGORY_NAMES_MAP[category] || category}
                       </h2>
                       <div
                         className="flex justify-between items-center cursor-pointer text-primary"
