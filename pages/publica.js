@@ -317,7 +317,7 @@ export default function Publica() {
         description="Publica un acte cultural - Esdeveniments.cat"
         canonical={`${siteUrl}/publica`}
       />
-      <div className="w-full flex flex-col justify-center items-center pt-2 pb-14 sm:w-[580px] md:w-[768px] lg:w-[1024px]">
+      <div className="w-full flex flex-col justify-center items-center pt-2 pb-14 sm:w-[580px] md:w-[768px] lg:w-[1024px] px-4 md:px-0">
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col items-center gap-2">
             <h1 className="text-center italic uppercase font-semibold">
@@ -397,7 +397,7 @@ export default function Publica() {
           <button
             disabled={isLoading}
             onClick={onSubmit}
-            className={`text-blackCorp bg-whiteCorp bg-primary hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp border-blackCorp rounded-xl py-3 px-6 ease-in-out duration-300 border focus:outline-none font-barlow italic uppercase font-semibold tracking-wide ${
+            className={`text-blackCorp bg-whiteCorp hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp border-blackCorp rounded-xl py-3 px-6 ease-in-out duration-300 border focus:outline-none font-barlow italic uppercase font-semibold tracking-wide ${
               isLoading ? "opacity-50" : "opacity-100"
             }`}
           >

@@ -123,7 +123,7 @@ function Events({ events, hasServerFilters }) {
             : "top-0 z-10 md:top-10 border-bColor md:border-b-0 shadow-sm md:shadow-none"
         } flex justify-center items-center pt-2`}
       >
-        <div className="w-full flex flex-col justify-center items-center md:items-start gap-4 mx-auto px-2 pt-2 pb-2 sm:w-[580px] md:w-[768px] lg:w-[1024px]">
+        <div className="w-full flex flex-col justify-center items-center md:items-start mx-auto px-2 pt-2 pb-2 sm:w-[580px] md:w-[768px] lg:w-[1024px]">
           <Search />
           <SubMenu />
         </div>

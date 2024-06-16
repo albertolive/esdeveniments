@@ -37,7 +37,7 @@ export default function Modal({
               leaveTo="opacity-0"
             >
               <Dialog.Panel className="w-full flex justify-center items-center">
-                <div className="w-full h-screen flex flex-col justify-center items-center sm:w-[500px] bg-whiteCorp rounded-lg shadow-xl p-4 relative">
+                <div className="w-full flex flex-col justify-center items-center sm:w-[500px] bg-whiteCorp rounded-lg shadow-xl p-4 relative">
                   <button
                     ref={cancelButtonRef}
                     onClick={() => setOpen(false)}
@@ -49,9 +49,9 @@ export default function Modal({
                     as="h3"
                     className="absolute top-0 text-center font-semibold p-3"
                   >
-                    <p className="text-center font-barlow uppercase italic">
+                    <h2 className="text-center font-barlow uppercase italic">
                       {title}
-                    </p>
+                    </h2>
                   </Dialog.Title>
                   {children}
                   {actionButton && (

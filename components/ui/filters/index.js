@@ -104,10 +104,8 @@ const Filters = () => {
 
   return (
     <div
-      className={`w-full bg-whiteCorp flex justify-center items-center ${
-        openModal
-          ? "opacity-50 animate-pulse text-bColor pointer-events-none"
-          : ""
+      className={`w-full bg-whiteCorp flex justify-center items-center mt-2 ${
+        openModal ? "opacity-50 animate-pulse pointer-events-none" : ""
       }`}
     >
       <div className="w-full h-10 flex justify-start items-center cursor-pointer">
