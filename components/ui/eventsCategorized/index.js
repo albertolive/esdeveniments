@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import ChevronRightIcon from "@heroicons/react/solid/ChevronRightIcon";
@@ -62,9 +62,28 @@ function EventsCategorized() {
     ? fetchedData.latestEvents
     : initialLatestEvents;
 
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
+  const onCategoryClick = useCallback(
+    (category) => {
+      setState("category", category);
+      scrollToTop();
+    },
+    [setState, scrollToTop]
+  );
+
   // Effects
   useEffect(() => {
-    setIsLoading(!categorizedEvents && !error && !isValidating);
+    const shouldLoad =
+      Object.keys(categorizedEvents).length === 0 && !error && !isValidating;
+    setIsLoading((prevLoading) =>
+      prevLoading !== shouldLoad ? shouldLoad : prevLoading
+    );
   }, [categorizedEvents, error, isValidating]);
 
   const eventKeys = Object.keys(categorizedEvents.events || {});
@@ -155,7 +174,7 @@ function EventsCategorized() {
                       </h2>
                       <div
                         className="flex justify-between items-center cursor-pointer text-primary"
-                        onClick={() => setState("category", category)}
+                        onClick={() => onCategoryClick(category)}
                       >
                         <div className="flex items-center">
                           Veure més

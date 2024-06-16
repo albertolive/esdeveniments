@@ -19,7 +19,7 @@ const renderButton = ({
     className="w-full bg-whiteCorp flex justify-center items-center nowrap"
   >
     <div
-      className={`w-full flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none font-medium mt-1.5 ${
+      className={`w-full flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none font-medium ${
         enabled
           ? "text-primary"
           : "border-whiteCorp text-blackCorp hover:bg-darkCorp hover:text-blackCorp"
@@ -114,7 +114,7 @@ const Filters = () => {
         <div
           onClick={() => setState("openModal", true)}
           type="button"
-          className="w-2/10 h-10 mr-3 flex justify-center items-center gap-3 cursor-pointer"
+          className="mr-3 flex justify-center items-center gap-3 cursor-pointer"
         >
           <AdjustmentsIcon
             className={

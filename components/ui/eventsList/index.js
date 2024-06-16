@@ -51,7 +51,7 @@ function EventsList({ events: serverEvents = [] }) {
     currentYear: state.currentYear,
     setState: state.setState,
   }));
-  console.log("category", category);
+
   const noEventsFoundRef = useRef();
   const isNoEventsFoundVisible = useOnScreen(noEventsFoundRef, {
     freezeOnceVisible: true,
@@ -131,7 +131,8 @@ function EventsList({ events: serverEvents = [] }) {
         return eventDistance <= distance;
       });
     },
-    [distance]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [distance, userLocation]
   );
 
   // Effects
@@ -142,18 +143,23 @@ function EventsList({ events: serverEvents = [] }) {
   }, [events]);
 
   useEffect(() => {
-    const filtered = filterEventsByDistance(events, userLocation);
-    setFilteredEvents((prevFilteredEvents) => {
-      if (JSON.stringify(prevFilteredEvents) !== JSON.stringify(filtered)) {
-        return filtered;
-      }
-      return prevFilteredEvents;
-    });
+    if (events.length > 0) {
+      const filtered = filterEventsByDistance(events, userLocation);
+      setFilteredEvents((prevFilteredEvents) => {
+        if (JSON.stringify(prevFilteredEvents) !== JSON.stringify(filtered)) {
+          return filtered;
+        }
+        return prevFilteredEvents;
+      });
+    }
   }, [events, filterEventsByDistance, userLocation]);
 
   useEffect(() => {
-    setIsLoading(!events && !error && isValidating);
-  }, [events, error, isValidating]);
+    const shouldLoad = events.length === 0 && !error && isValidating;
+    setIsLoading((prevLoading) =>
+      prevLoading !== shouldLoad ? shouldLoad : prevLoading
+    );
+  }, [events.length, error, isValidating]);
 
   useEffect(() => {
     if (isBrowser) {
