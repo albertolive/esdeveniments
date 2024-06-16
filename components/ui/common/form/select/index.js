@@ -88,7 +88,7 @@ export default function SelectComponent({
 
   return (
     <div className="w-full">
-      <label htmlFor="first-name" className="text-blackCorp">
+      <label htmlFor="first-name" className="text-blackCorp font-bold">
         {title}
       </label>
       <div className="mt-2">

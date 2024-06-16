@@ -211,7 +211,7 @@ function EventsList({ events: serverEvents = [] }) {
         description={metaDescription}
         canonical={canonical}
       />
-      <div className="w-full flex-col justify-center items-center sm:w-[580px] mt-32">
+      <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
         {notFound && (
           <>
             <div ref={noEventsFoundRef} />

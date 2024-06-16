@@ -104,7 +104,7 @@ const Filters = () => {
 
   return (
     <div
-      className={`w-full bg-whiteCorp flex justify-center items-center px-4 ${
+      className={`w-full bg-whiteCorp flex justify-center items-center ${
         openModal
           ? "opacity-50 animate-pulse text-bColor pointer-events-none"
           : ""
@@ -124,7 +124,7 @@ const Filters = () => {
             }
             aria-hidden="true"
           />
-          <p className="hidden md:block uppercase italic font-semibold font-barlow">
+          <p className="hidden md:block uppercase italic font-semibold font-barlow text-[16px]">
             Filtres
           </p>
         </div>

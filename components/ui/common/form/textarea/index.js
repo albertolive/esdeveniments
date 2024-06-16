@@ -7,7 +7,7 @@ export default function TextArea({ id, value = "", onChange }) {
 
   return (
     <div className="w-full">
-      <label htmlFor={id} className="text-blackCorp">
+      <label htmlFor={id} className="text-blackCorp font-bold">
         Descripció *
       </label>
       <div className="mt-2">

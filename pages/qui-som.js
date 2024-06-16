@@ -11,7 +11,7 @@ export default function QuiSom() {
         description="Qui som? - Esdeveniments.cat és una iniciativa ciutadana per veure en un cop d'ull tots els actes culturals que es fan a Catalunya."
         canonical={`${siteUrl}/qui-som`}
       />
-      <div className="w-full flex flex-col justify-start items-center gap-10 px-4 pt-8 sm:w-[580px]">
+      <div className="w-full flex flex-col justify-start items-center gap-10 px-4 pt-8 sm:w-[580px] md:w-[768px] lg:w-[1024px]">
         <div>
           <h1 className="text-center italic uppercase font-semibold">
             Qui som?
@@ -49,11 +49,11 @@ export default function QuiSom() {
             <div className="w-[200px] h-[414px] bg-whiteCorp rounded-md shadow-xl">
               <div className="h-[185px] overflow-hidden">
                 <Image
-                    className="object-cover object-top rounded-t-md"
-                    src="/static/images/linkedin_albert.jpeg"
-                    alt="Albert Olivé Corbella"
-                    width={200}
-                    height={200}
+                  className="object-cover object-top rounded-t-md"
+                  src="/static/images/linkedin_albert.jpeg"
+                  alt="Albert Olivé Corbella"
+                  width={200}
+                  height={200}
                 />
               </div>
               <div className="w-full flex flex-col justify-center items-center gap-6 py-8">
@@ -66,8 +66,8 @@ export default function QuiSom() {
                   <p className="w-full text-sm font-semibold">CTO Fundador</p>
                 </div>
                 <a
-                    href="https://www.linkedin.com/in/albertolivecorbella/"
-                    className="w-full text-center hover:bg-primary hover:text-whiteCorp font-bold px-4 py-3 my-3 ease-in-out duration-300 cursor-pointer"
+                  href="https://www.linkedin.com/in/albertolivecorbella/"
+                  className="w-full text-center hover:bg-primary hover:text-whiteCorp font-bold px-4 py-3 my-3 ease-in-out duration-300 cursor-pointer"
                 >
                   <p>LinkedIn</p>
                 </a>
@@ -76,11 +76,11 @@ export default function QuiSom() {
             <div className="w-[200px] h-[414px] bg-whiteCorp rounded-md shadow-xl">
               <div className="h-[185px] overflow-hidden">
                 <Image
-                    className="object-cover object-top rounded-t-md"
-                    src="/static/images/linkedin_andreu.jpeg"
-                    alt="Andreu Benitez Moreno"
-                    width={200}
-                    height={200}
+                  className="object-cover object-top rounded-t-md"
+                  src="/static/images/linkedin_andreu.jpeg"
+                  alt="Andreu Benitez Moreno"
+                  width={200}
+                  height={200}
                 />
               </div>
               <div className="w-full flex flex-col justify-center items-center gap-6 py-8">
@@ -93,8 +93,8 @@ export default function QuiSom() {
                   <p className="w-full text-sm font-semibold">Co-Fundador</p>
                 </div>
                 <a
-                    href="https://www.linkedin.com/in/andreubenitezmoreno/"
-                    className="w-full text-center hover:bg-primary hover:text-whiteCorp font-bold px-4 py-3 my-3 ease-in-out duration-300 cursor-pointer"
+                  href="https://www.linkedin.com/in/andreubenitezmoreno/"
+                  className="w-full text-center hover:bg-primary hover:text-whiteCorp font-bold px-4 py-3 my-3 ease-in-out duration-300 cursor-pointer"
                 >
                   <p>LinkedIn</p>
                 </a>
@@ -103,11 +103,11 @@ export default function QuiSom() {
             <div className="w-[200px] h-[414px] bg-whiteCorp rounded-md shadow-xl">
               <div className="h-[185px] overflow-hidden">
                 <Image
-                    className="object-cover object-top rounded-t-md"
-                    src="/static/images/linkedin_gerard.jpg"
-                    alt="Gerard Rovellat Carbó"
-                    width={200}
-                    height={200}
+                  className="object-cover object-top rounded-t-md"
+                  src="/static/images/linkedin_gerard.jpg"
+                  alt="Gerard Rovellat Carbó"
+                  width={200}
+                  height={200}
                 />
               </div>
               <div className="w-full flex flex-col justify-center items-center gap-6 py-8">
@@ -116,12 +116,14 @@ export default function QuiSom() {
                   <h2>Gerard Rovellat Carbó</h2>
                 </div>
                 <div className="w-full flex flex-col justify-start items-start px-4">
-                  <p className="w-full">Software Engineer | Backend Developer</p>
+                  <p className="w-full">
+                    Software Engineer | Backend Developer
+                  </p>
                   <p className="w-full text-sm font-semibold">Co-Fundador</p>
                 </div>
                 <a
-                    href="https://www.linkedin.com/in/gerardrovellatcarbo/"
-                    className="w-full text-center hover:bg-primary hover:text-whiteCorp font-bold px-4 py-3 my-3 ease-in-out duration-300 cursor-pointer"
+                  href="https://www.linkedin.com/in/gerardrovellatcarbo/"
+                  className="w-full text-center hover:bg-primary hover:text-whiteCorp font-bold px-4 py-3 my-3 ease-in-out duration-300 cursor-pointer"
                 >
                   <p>LinkedIn</p>
                 </a>

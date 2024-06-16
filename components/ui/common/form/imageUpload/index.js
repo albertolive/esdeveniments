@@ -59,7 +59,7 @@ export default function ImageUploader({ value, onUpload, progress }) {
 
   return (
     <div className="w-full text-blackCorp">
-      <label htmlFor="first-name" className="text-blackCorp">
+      <label htmlFor="first-name" className="text-blackCorp font-bold">
         Imatge *
       </label>
 

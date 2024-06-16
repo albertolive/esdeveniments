@@ -7,11 +7,10 @@ import Search from "@components/ui/search";
 import SubMenu from "@components/ui/common/subMenu";
 import Imago from "public/static/images/imago-esdeveniments.png";
 import CardLoading from "@components/ui/cardLoading";
-// import EventsList from "@components/ui/eventsList";
 
 const EventsList = dynamic(() => import("@components/ui/eventsList"), {
   loading: () => (
-    <div className="w-full flex-col justify-center items-center sm:w-[580px] mt-32">
+    <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
       <CardLoading />
     </div>
   ),
@@ -22,7 +21,7 @@ const EventsCategorized = dynamic(
   () => import("@components/ui/eventsCategorized"),
   {
     loading: () => (
-      <div className="w-full flex-col justify-center items-center sm:w-[580px] mt-32">
+      <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
         <CardLoading />
       </div>
     ),
@@ -38,7 +37,7 @@ function debounce(func, wait) {
   };
 }
 
-function Events({ events }) {
+function Events({ events, hasServerFilters }) {
   const { setState, areFiltersActive, filtersApplied } = useStore((state) => ({
     openModal: state.openModal,
     setState: state.setState,
@@ -51,7 +50,7 @@ function Events({ events }) {
   const [scrollIcon, setScrollIcon] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const hasFilters = areFiltersActive();
+  const hasFilters = hasServerFilters || areFiltersActive();
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({
@@ -124,13 +123,13 @@ function Events({ events }) {
             : "top-0 z-10 md:top-10 border-bColor md:border-b-0 shadow-sm md:shadow-none"
         } flex justify-center items-center pt-2`}
       >
-        <div className="w-full flex flex-col justify-center items-center md:items-start gap-4 mx-auto px-2 pt-2 pb-2 sm:px-10 sm:w-[580px]">
+        <div className="w-full flex flex-col justify-center items-center md:items-start gap-4 mx-auto px-2 pt-2 pb-2 sm:w-[580px] md:w-[768px] lg:w-[1024px]">
           <Search />
           <SubMenu />
         </div>
       </div>
       {isLoading ? (
-        <div className="w-full flex-col justify-center items-center sm:w-[580px] mt-32">
+        <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
           {[...Array(10)].map((_, i) => (
             <CardLoading key={i} />
           ))}

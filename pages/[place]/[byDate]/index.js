@@ -10,7 +10,12 @@ export default function ByDate({ initialState }) {
     initializeStore(initialState);
   }, [initialState]);
 
-  return <Events events={initialState.events} />;
+  return (
+    <Events
+      events={initialState.events}
+      hasServerFilters={initialState.hasServerFilters}
+    />
+  );
 }
 
 export async function getStaticPaths() {
@@ -104,6 +109,7 @@ export async function getStaticProps({ params }) {
     byDate,
     events,
     noEventsFound,
+    hasServerFilters: true,
   };
 
   return {

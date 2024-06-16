@@ -149,7 +149,7 @@ function EventsCategorized() {
         description={metaDescription}
         canonical={canonical}
       />
-      <div className="w-full flex-col justify-center items-center sm:w-[580px] mt-32">
+      <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
         <>
           <h1 className="uppercase mb-2 px-2">{title}</h1>
           <p className="text-[16px] font-normal text-blackCorp text-left px-2 font-barlow">
