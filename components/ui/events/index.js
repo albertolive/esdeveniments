@@ -7,27 +7,29 @@ import Search from "@components/ui/search";
 import SubMenu from "@components/ui/common/subMenu";
 import Imago from "public/static/images/imago-esdeveniments.png";
 import CardLoading from "@components/ui/cardLoading";
+import EventsList from "@components/ui/eventsList";
+import EventsCategorized from "@components/ui/eventsCategorized";
 
-const EventsList = dynamic(() => import("@components/ui/eventsList"), {
-  loading: () => (
-    <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
-      <CardLoading />
-    </div>
-  ),
-  ssr: true,
-});
+// const EventsList = dynamic(() => import("@components/ui/eventsList"), {
+//   loading: () => (
+//     <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
+//       <CardLoading />
+//     </div>
+//   ),
+//   ssr: true,
+// });
 
-const EventsCategorized = dynamic(
-  () => import("@components/ui/eventsCategorized"),
-  {
-    loading: () => (
-      <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
-        <CardLoading />
-      </div>
-    ),
-    ssr: true,
-  }
-);
+// const EventsCategorized = dynamic(
+//   () => import("@components/ui/eventsCategorized"),
+//   {
+//     loading: () => (
+//       <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
+//         <CardLoading />
+//       </div>
+//     ),
+//     ssr: true,
+//   }
+// );
 
 function debounce(func, wait) {
   let timeout;
