@@ -3,6 +3,8 @@ import { getCategorizedEvents, getLatestEvents } from "@lib/helpers";
 import { twoWeeksDefault } from "@lib/dates";
 import { MAX_RESULTS, SEARCH_TERMS_SUBSET } from "@utils/constants";
 import Events from "@components/ui/events";
+import EventsCategorized from "@components/ui/eventsCategorized";
+import EventsList from "@components/ui/eventsList";
 import { initializeStore } from "@utils/initializeStore";
 
 export default function Home({ initialState }) {
@@ -10,7 +12,12 @@ export default function Home({ initialState }) {
     initializeStore(initialState);
   }, [initialState]);
 
-  return <Events />;
+  return (
+    <Events
+      InitialComponent={EventsCategorized}
+      SecondaryComponent={EventsList}
+    />
+  );
 }
 
 export async function getStaticProps() {
