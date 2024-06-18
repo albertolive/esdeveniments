@@ -1,9 +1,14 @@
 import { captureException } from "@sentry/nextjs";
-import { postToGoogleCalendar } from "@lib/apiHelpers";
+import { updateGoogleCalendarEvent } from "@lib/apiHelpers";
 
 const handler = async (req, res) => {
   try {
+    if (req.method !== "PUT") {
+      return res.status(405).json({ message: "Method Not Allowed" });
+    }
+
     const {
+      id,
       title,
       description,
       location,
@@ -13,11 +18,17 @@ const handler = async (req, res) => {
       eventUrl,
     } = req.body;
 
+    const cleanedDescription = description.replace(
+      /<span id="more-info" class="hidden" data-url="[^"]*"><\/span>/gi,
+      ""
+    );
+
     const enhancedDescription = eventUrl
-      ? `${description}<span id="more-info" class="hidden" data-url="${eventUrl}"></span>`
-      : description;
+      ? `${cleanedDescription}<span id="more-info" class="hidden" data-url="${eventUrl}"></span>`
+      : cleanedDescription;
 
     const event = {
+      id,
       summary: title,
       description: enhancedDescription,
       location,
@@ -31,21 +42,23 @@ const handler = async (req, res) => {
       },
       guestsCanInviteOthers: imageUploaded,
       guestsCanModify: imageUploaded,
+      isProduction: process.env.NODE_ENV === "production",
+      calendarId: process.env.NEXT_PUBLIC_GOOGLE_CALENDAR,
     };
 
     try {
-      const { data } = await postToGoogleCalendar(event);
+      const { data } = await updateGoogleCalendarEvent(id, event);
 
-      console.log("Inserted new item successfully: " + title);
+      console.log("Updated event successfully: " + title);
       res.status(200).json(data);
     } catch (error) {
-      const errorMessage = `Error inserting item to calendar in postEvent API: ${error.message}`;
+      const errorMessage = `Error updating event in editEvent API: ${error.message}`;
       console.error(errorMessage);
       captureException(new Error(errorMessage));
       throw new Error(errorMessage);
     }
   } catch (error) {
-    const errorMessage = `Error in postEvent API: ${error.message}`;
+    const errorMessage = `Error in editEvent API: ${error.message}`;
     console.error(errorMessage);
     captureException(new Error(errorMessage));
     res.status(500).json({ error: errorMessage });

@@ -61,6 +61,8 @@ export const MONTHS_URL = [
 ];
 
 export const CATEGORIES = {
+  "Festes Majors": "Festa Major",
+  Festivals: "Festival",
   Familiar: "Familiar",
   Música: "Música",
   Cinema: "Cinema",
@@ -68,8 +70,21 @@ export const CATEGORIES = {
   Exposicions: "Exposició",
   Fires: "Fira",
   Espectacles: "Espectacles",
-  "Festa Major": "Festa Major",
 };
+
+export const SEARCH_TERMS_SUBSET = [
+  "Festa Major",
+  "Festival",
+  "Familiar",
+  "Música",
+];
+
+export const CATEGORY_NAMES_MAP = Object.fromEntries(
+  Object.entries(CATEGORIES).map(([displayName, searchTerm]) => [
+    searchTerm,
+    displayName,
+  ])
+);
 
 export const BYDATES = [
   { value: "avui", label: "Avui" },

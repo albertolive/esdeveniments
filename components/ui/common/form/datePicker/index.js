@@ -42,13 +42,10 @@ export default function DatePickerComponent({
   return (
     <>
       <div className="w-full">
-        <label
-          htmlFor="first-name"
-          className="w-full text-blackCorp"
-        >
+        <label htmlFor="start-date" className="w-full text-blackCorp font-bold">
           Inici *
         </label>
-        <div className="w-full p-2">
+        <div className="w-full mt-2">
           <DateComponent
             selected={startDate}
             onChange={onChangeStart}
@@ -60,13 +57,10 @@ export default function DatePickerComponent({
         </div>
       </div>
       <div className="w-full">
-        <label
-          htmlFor="first-name"
-          className="w-full text-blackCorp"
-        >
+        <label htmlFor="end-date" className="w-full text-blackCorp font-bold">
           Final *
         </label>
-        <div className="w-full p-2">
+        <div className="w-full mt-2">
           <DateComponent
             selected={endDate}
             onChange={onChangeEnd}
@@ -155,7 +149,7 @@ const ButtonInput = forwardRef(({ value, onClick }, ref) => {
       onClick={onClick}
       ref={ref}
       type="button"
-      className="w-full p-2 border border-bColor rounded-xl text-blackCorp
+      className="w-full p-2.5 border border-bColor rounded-xl text-blackCorp
       sm:text-sm"
     >
       {value}

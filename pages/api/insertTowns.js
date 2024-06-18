@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       await fetchDataForTown(url);
     }
 
-    res.status(200).json({ message: "Data fetched and duplicates" });
+    res.status(200).json({ message: "Data fetched" });
   } catch (error) {
     console.error(`Error during operation: ${error}`);
     res.status(500).json({ error: "Failed to complete the operation" });

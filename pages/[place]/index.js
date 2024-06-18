@@ -1,11 +1,21 @@
-import dynamic from "next/dynamic";
+import { useEffect } from "react";
+import { getCalendarEvents } from "@lib/helpers";
+import { getPlaceTypeAndLabel } from "@utils/helpers";
+import { twoWeeksDefault } from "@lib/dates";
+import Events from "@components/ui/events";
+import { initializeStore } from "@utils/initializeStore";
 
-const Events = dynamic(() => import("@components/ui/events"), {
-  loading: () => "",
-});
+export default function Place({ initialState }) {
+  useEffect(() => {
+    initializeStore(initialState);
+  }, [initialState]);
 
-export default function App(props) {
-  return <Events props={props} />;
+  return (
+    <Events
+      events={initialState.events}
+      hasServerFilters={initialState.hasServerFilters}
+    />
+  );
 }
 
 export async function getStaticPaths() {
@@ -14,14 +24,12 @@ export async function getStaticPaths() {
   const paths = [];
 
   for (const [regionKey, region] of CITIES_DATA) {
-    // Add path for region
     paths.push({
       params: {
         place: regionKey,
       },
     });
 
-    // Add paths for towns
     for (const [townKey] of region.towns) {
       paths.push({
         params: {
@@ -35,27 +43,42 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const { getCalendarEvents } = require("@lib/helpers");
-  const { getPlaceTypeAndLabel } = require("@utils/helpers");
-  const { twoWeeksDefault } = require("@lib/dates");
   const { from, until } = twoWeeksDefault();
   const { place } = params;
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);
-  const { events } = await getCalendarEvents({
+  let { events } = await getCalendarEvents({
     from,
     until,
     q: type === "town" ? `${label} ${regionLabel}` : label,
-    shuffleItems: true,
     town: type === "town" ? label : "",
   });
 
+  let noEventsFound = false;
+
+  if (events.length === 0) {
+    const { from, until } = twoWeeksDefault();
+    const nextEventsResult = await getCalendarEvents({
+      from,
+      until,
+      maxResults: 7,
+      q: label,
+    });
+
+    noEventsFound = true;
+    events = nextEventsResult.events;
+  }
+
+  const initialState = {
+    place,
+    events,
+    noEventsFound,
+    hasServerFilters: true,
+  };
+
   return {
     props: {
-      events,
-      currentYear: new Date().getFullYear(),
-      ...params,
+      initialState,
     },
-
     revalidate: 60,
   };
 }

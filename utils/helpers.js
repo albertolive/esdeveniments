@@ -1,4 +1,4 @@
-import { DAYS, MONTHS, CITIES_DATA, BYDATES } from "./constants";
+import { DAYS, MONTHS, CITIES_DATA, BYDATES, CATEGORIES } from "./constants";
 import { siteUrl } from "@config/index";
 
 const isLessThanFiveDays = (date) => {
@@ -517,4 +517,8 @@ export function getRegionFromQuery(q) {
     return parts[parts.length - 1];
   }
   return "";
+}
+
+export function findCategoryKeyByValue(value) {
+  return Object.keys(CATEGORIES).find((key) => CATEGORIES[key] === value);
 }
