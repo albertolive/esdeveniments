@@ -38,7 +38,7 @@ function EventsCategorized({ events: serverEvents = [] }) {
     setState: state.setState,
   }));
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(serverEvents.length === 0);
 
   const {
     data: fetchedData = {},

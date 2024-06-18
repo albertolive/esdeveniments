@@ -5,6 +5,17 @@ import { twoWeeksDefault } from "@lib/dates";
 import { MAX_RESULTS, SEARCH_TERMS_SUBSET } from "@utils/constants";
 import { initializeStore } from "@utils/initializeStore";
 
+const CardLoadingExtended = dynamic(
+  () => import("@components/ui/cardLoadingExtended"),
+  {
+    loading: () => (
+      <div className="flex justify-center items-center w-full">
+        <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+      </div>
+    ),
+  }
+);
+
 const Events = dynamic(() => import("@components/ui/events"), {
   ssr: true,
 });
@@ -17,6 +28,7 @@ const EventsCategorized = dynamic(
 );
 
 const EventsList = dynamic(() => import("@components/ui/eventsList"), {
+  loading: () => <CardLoadingExtended />,
   ssr: false,
 });
 
