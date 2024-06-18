@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
 import { BYDATES, CATEGORY_NAMES_MAP, DISTANCES } from "@utils/constants";
-import { generateRegionsAndTownsOptions } from "@utils/helpers";
+import { generateRegionsAndTownsOptions, sendEventToGA } from "@utils/helpers";
 import useStore from "@store";
 
 const Modal = dynamic(() => import("@components/ui/common/modal"), {
@@ -155,14 +155,17 @@ function FiltersModal() {
     setState("distance", localDistance);
     setState("userLocation", localUserLocation);
     setState("filtersApplied", true);
-    setState("openModal", false);
+
+    sendEventToGA("Place", localPlace);
+    sendEventToGA("ByDate", localByDate);
+    sendEventToGA("Category", localCategory);
+    sendEventToGA("Distance", localDistance);
 
     if (!localPlace) {
       setState("place", "");
     }
 
-    setState("page", 1);
-    setState("scrollPosition", 0);
+    setState("openModal", false);
   };
 
   const handleByDateChange = useCallback((value) => {

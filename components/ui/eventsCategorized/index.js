@@ -5,7 +5,7 @@ import ChevronRightIcon from "@heroicons/react/solid/ChevronRightIcon";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetCategorizedEvents } from "@components/hooks/useGetCategorizedEvents";
-import { generateJsonData } from "@utils/helpers";
+import { generateJsonData, sendEventToGA } from "@utils/helpers";
 import { MAX_RESULTS } from "@utils/constants";
 import List from "@components/ui/list";
 import CardLoading from "@components/ui/cardLoading";
@@ -72,6 +72,7 @@ function EventsCategorized() {
   const onCategoryClick = useCallback(
     (category) => {
       setState("category", category);
+      sendEventToGA("Category", category);
       scrollToTop();
     },
     [setState, scrollToTop]

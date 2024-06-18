@@ -494,7 +494,7 @@ export function generateTownUrls(region) {
 }
 
 export const sendEventToGA = (filterName, filterValue) => {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && filterName && filterValue) {
     window.gtag &&
       window.gtag("event", "filter_used", {
         filter_name: filterName,
