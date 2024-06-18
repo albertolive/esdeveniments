@@ -21,7 +21,7 @@ const NoEventsFound = dynamic(
   }
 );
 
-function EventsCategorized() {
+function EventsCategorized({ events: serverEvents = [] }) {
   const {
     categorizedEvents: initialCategorizedEvents,
     latestEvents: initialLatestEvents,
@@ -46,7 +46,7 @@ function EventsCategorized() {
     error,
   } = useGetCategorizedEvents({
     props: {
-      categorizedEvents: initialCategorizedEvents,
+      categorizedEvents: serverEvents || initialCategorizedEvents,
       latestEvents: initialLatestEvents,
     },
     searchTerms: SEARCH_TERMS_SUBSET,

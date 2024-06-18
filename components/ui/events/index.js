@@ -16,6 +16,7 @@ function debounce(func, wait) {
 
 function Events({
   events,
+  categorizedEvents,
   hasServerFilters,
   CategorizedComponent,
   ListComponent,
@@ -99,7 +100,7 @@ function Events({
       {hasFilters ? (
         <ListComponent events={events} />
       ) : (
-        <CategorizedComponent />
+        <CategorizedComponent events={categorizedEvents} />
       )}
     </>
   );
