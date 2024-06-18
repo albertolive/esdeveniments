@@ -5,6 +5,7 @@ import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { BYDATES } from "@utils/constants";
 import { getPlaceLabel } from "@utils/helpers";
 import { useRouter } from "next/router";
+import useStore from "@store";
 
 const renderButton = ({
   text,
@@ -18,18 +19,21 @@ const renderButton = ({
     className="w-full bg-whiteCorp flex justify-center items-center nowrap"
   >
     <div
-      className={`w-full h-8 flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none ${
+      className={`w-full flex justify-center items-center gap-1 px-1 ease-in-out duration-300 focus:outline-none font-medium ${
         enabled
-          ? "text-primary font-medium border-b-2 border-primary"
-          : "border-whiteCorp border-b-2 text-blackCorp hover:border-b-2 hover:border-bColor"
+          ? "text-primary"
+          : "border-whiteCorp text-blackCorp hover:bg-darkCorp hover:text-blackCorp"
       }`}
     >
-      <span onClick={handleOpenModal} className="w-full text-center">
+      <span
+        onClick={handleOpenModal}
+        className="w-full text-center font-barlow uppercase text-[16px]"
+      >
         {text}
       </span>
       {enabled ? (
         <XIcon
-          className="h-4 w-4"
+          className="h-5 w-5"
           aria-hidden="true"
           onClick={() => {
             onClick();
@@ -38,7 +42,7 @@ const renderButton = ({
         />
       ) : (
         <ChevronDownIcon
-          className="h-4 w-4"
+          className="h-5 w-5"
           aria-hidden="true"
           onClick={onClick}
         />
@@ -47,75 +51,68 @@ const renderButton = ({
   </div>
 );
 
-const Filters = ({
-  openModal,
-  setOpenModal,
-  place,
-  placeProps,
-  setPlace,
-  byDate,
-  byDateProps,
-  setByDate,
-  category,
-  setCategory,
-  distance,
-  setDistance,
-  setSelectedOption,
-  scrollToTop,
-}) => {
+const Filters = () => {
   const router = useRouter();
+  const { place, byDate, category, distance, openModal, setState } = useStore(
+    (state) => ({
+      place: state.place,
+      byDate: state.byDate,
+      category: state.category,
+      distance: state.distance,
+      openModal: state.openModal,
+      setState: state.setState,
+    })
+  );
+
   const isAnyFilterSelected = () => place || byDate || category || distance;
   const getText = (value, defaultValue) => (value ? value : defaultValue);
   const foundByDate = BYDATES.find((item) => item.value === byDate);
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const handleByDateClick = useCallback(() => {
     if (byDate) {
-      setByDate("");
-      window.localStorage.removeItem("byDate");
-
-      if (byDateProps) {
-        router.push(`/${placeProps}`);
-      }
+      setState("byDate", "");
     } else {
-      setOpenModal(true);
+      setState("openModal", true);
     }
-  }, [byDate, byDateProps, placeProps, router, setByDate, setOpenModal]);
-  const handleCategoryClick = useCallback(() => setCategory(""), [setCategory]);
-  const handleDistanceClick = useCallback(() => setDistance(""), [setDistance]);
+  }, [byDate, setState]);
+
+  const handleCategoryClick = useCallback(() => {
+    setState("category", "");
+  }, [setState]);
+
+  const handleDistanceClick = useCallback(() => {
+    setState("distance", "");
+  }, [setState]);
 
   const handleOnClick = useCallback(
-    (value, fn) => () => value ? fn() : setOpenModal(true),
-    [setOpenModal]
+    (value, fn) => () => value ? fn() : setState("openModal", true),
+    [setState]
   );
-  const handleOpenModal = useCallback(() => setOpenModal(true), [setOpenModal]);
 
   const handlePlaceClick = useCallback(() => {
     if (place) {
-      setPlace("");
-      setSelectedOption(undefined);
-      window.localStorage.removeItem("place");
+      setState("place", "");
 
-      if (placeProps) {
+      if (place) {
         router.push(`/`);
       }
     } else {
-      setOpenModal(true);
+      setState("openModal", true);
     }
-  }, [place, setPlace, setSelectedOption, placeProps, router, setOpenModal]);
+  }, [place, setState, router]);
 
   return (
     <div
-      className={`w-full bg-whiteCorp flex justify-center items-center px-0 ${
-        openModal
-          ? "opacity-50 animate-pulse text-bColor pointer-events-none"
-          : ""
+      className={`w-full bg-whiteCorp flex justify-center items-center mt-2 ${
+        openModal ? "opacity-50 animate-pulse pointer-events-none" : ""
       }`}
     >
-      <div className="w-full flex justify-start items-center gap-2 cursor-pointer">
+      <div className="w-full h-10 flex justify-start items-center cursor-pointer">
         <div
-          onClick={handleOpenModal}
+          onClick={() => setState("openModal", true)}
           type="button"
-          className="w-2/10 h-10 mr-3 flex justify-center items-center gap-1 cursor-pointer"
+          className="mr-3 flex justify-center items-center gap-3 cursor-pointer"
         >
           <AdjustmentsIcon
             className={
@@ -125,37 +122,37 @@ const Filters = ({
             }
             aria-hidden="true"
           />
-          <p className="hidden md:block uppercase italic font-semibold font-barlow">
+          <p className="hidden md:block uppercase italic font-semibold font-barlow text-[16px]">
             Filtres
           </p>
         </div>
-        <div className="w-8/10 h-10 flex items-center gap-1 sm:gap-2 border-0 placeholder:text-bColor overflow-x-auto">
+        <div className="w-8/10 flex items-center gap-1 border-0 placeholder:text-bColor overflow-x-auto">
           {renderButton({
             text: getText(getPlaceLabel(place), "Població"),
             enabled: place,
             onClick: handlePlaceClick,
-            handleOpenModal,
+            handleOpenModal: () => setState("openModal", true),
             scrollToTop,
           })}
           {renderButton({
             text: getText(category, "Categoria"),
             enabled: category,
             onClick: handleOnClick(category, handleCategoryClick),
-            handleOpenModal,
+            handleOpenModal: () => setState("openModal", true),
             scrollToTop,
           })}
           {renderButton({
-            text: getText(foundByDate && foundByDate.label, "Data"),
+            text: getText(foundByDate?.label, "Data"),
             enabled: foundByDate,
             onClick: handleOnClick(foundByDate, handleByDateClick),
-            handleOpenModal,
+            handleOpenModal: () => setState("openModal", true),
             scrollToTop,
           })}
           {renderButton({
             text: getText(distance ? `${distance} km` : null, "Distància"),
             enabled: distance,
             onClick: handleOnClick(distance, handleDistanceClick),
-            handleOpenModal,
+            handleOpenModal: () => setState("openModal", true),
             scrollToTop,
           })}
         </div>

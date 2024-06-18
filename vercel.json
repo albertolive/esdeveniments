@@ -3,6 +3,10 @@
     {
       "path": "/api/insertTowns",
       "schedule": "5 8-19/1 * * *"
+    },
+    {
+      "path": "/api/removeDuplicates",
+      "schedule": "15 8-19/1 * * *"
     }
   ],
   "functions": {

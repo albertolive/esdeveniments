@@ -20,20 +20,23 @@ const AdCard = dynamic(() => import("@components/ui/adCard"), {
   ssr: false,
 });
 
-const CardLoading = dynamic(() => import("@components/ui/cardLoading"), {
-  loading: () => (
-    <div className="flex justify-center items-center w-full">
-      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
-    </div>
-  ),
-});
+const CardHorizontalLoading = dynamic(
+  () => import("@components/ui/cardLoading"),
+  {
+    loading: () => (
+      <div className="flex justify-center items-center w-full">
+        <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+      </div>
+    ),
+  }
+);
 
 const ViewCounter = dynamic(() => import("@components/ui/viewCounter"), {
   loading: () => "",
   ssr: false,
 });
 
-function Card({ event, isLoading, isPriority }) {
+function CardHorizontal({ event, isLoading, isPriority }) {
   const counterRef = useRef();
   const shareRef = useRef();
   const isCounterVisible = useOnScreen(counterRef, {
@@ -53,16 +56,16 @@ function Card({ event, isLoading, isPriority }) {
     setIsCardLoading(true);
   };
 
-  if (isLoading) return <CardLoading />;
+  if (isLoading) return <CardHorizontalLoading />;
 
   if (event.isAd) {
     return <AdCard event={event} />;
   }
 
   const { description, icon } = event.weather || {};
-  const title = truncateString(event.title || "", 75);
-  const location = truncateString(event.location || "");
-  const subLocation = truncateString(event.subLocation || "", 45);
+  const title = truncateString(event.title || "", 30);
+  const location = truncateString(event.location || "", 30);
+  const subLocation = truncateString(event.subLocation || "", 30);
   const image = event.imageUploaded || event.eventImage;
 
   return (
@@ -88,7 +91,7 @@ function Card({ event, isLoading, isPriority }) {
               <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             </div>
             {/* Title */}
-            <h3 className="w-11/12 uppercase">
+            <h3 className="w-11/12 uppercase whitespace-nowrap overflow-hidden text-ellipsis">
               <Link href={`/e/${event.slug}`} passHref prefetch={false}>
                 {title}
               </Link>
@@ -112,17 +115,18 @@ function Card({ event, isLoading, isPriority }) {
           </div>
           {/* ImageEvent */}
           <div className="p-4 flex justify-center items-center" ref={shareRef}>
-            <Image
-              className="w-full flex justify-center object-contain"
-              title={event.title}
-              date={event.formattedStart}
-              location={event.location}
-              subLocation={event.subLocation}
-              image={image}
-              alt={event.title}
-              layout="responsive"
-              priority={isPriority}
-            />
+            <div className="w-full h-64 relative">
+              <Image
+                className="w-full h-64 object-cover"
+                title={event.title}
+                date={event.formattedStart}
+                location={event.location}
+                subLocation={event.subLocation}
+                image={image}
+                alt={event.title}
+                priority={isPriority}
+              />
+            </div>
           </div>
         </div>
       </Link>
@@ -156,12 +160,12 @@ function Card({ event, isLoading, isPriority }) {
             <LocationMarkerIcon className="h-5 w-5" />
           </div>
           <div className="h-full flex flex-col justify-start items-start px-2">
-            <span>{location}</span>
-            <span>{subLocation}</span>
+            <span className="truncate max-w-full">{location}</span>
+            <span className="truncate max-w-full">{subLocation}</span>
           </div>
         </div>
         {/* hour */}
-        <div className="flex justify-start items-center mb-12">
+        <div className="flex justify-start items-center">
           <ClockIcon className="h-5 w-5" />
           <p className="px-2">
             {event.isFullDayEvent
@@ -175,4 +179,4 @@ function Card({ event, isLoading, isPriority }) {
   );
 }
 
-export default memo(Card);
+export default memo(CardHorizontal);

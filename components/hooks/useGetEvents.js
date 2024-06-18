@@ -1,9 +1,9 @@
-import { siteUrl } from "@config/index";
+import { captureException } from "@sentry/nextjs";
 import useSWR, { preload } from "swr";
 
-const fetcher = ([url, pageIndex, q, maxResults, shuffleItems, town]) =>
+const fetcher = ([url, pageIndex, q, maxResults, town]) =>
   fetch(
-    `${siteUrl}${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}&shuffleItems=${shuffleItems}&town=${town}`
+    `${url}?page=${pageIndex}&q=${q}&maxResults=${maxResults}&town=${town}`
   ).then((res) => res.json());
 
 export const useGetEvents = ({
@@ -12,26 +12,29 @@ export const useGetEvents = ({
   q = "",
   refreshInterval = true,
   maxResults = 10,
-  shuffleItems = false,
   town = "",
 }) => {
-  preload(
-    ["/api/getEvents", pageIndex, q, maxResults, shuffleItems, town],
-    fetcher
-  );
+  preload(["/api/getEvents", pageIndex, q, maxResults, town], fetcher);
 
-  return useSWR(
-    ["/api/getEvents", pageIndex, q, maxResults, shuffleItems, town],
-    fetcher,
-    {
-      fallbackData: props,
-      refreshInterval: refreshInterval ? 300000 : 0,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
-      refreshWhenOffline: false,
-      suspense: true,
-      keepPreviousData: true,
-      revalidateOnMount: false,
-    }
-  );
+  const hasFallbackData = props?.events?.length > 0;
+
+  return useSWR(["/api/getEvents", pageIndex, q, maxResults, town], fetcher, {
+    fallbackData: hasFallbackData ? props : {}, // Use fallbackData only if props has events
+    refreshInterval: refreshInterval ? 300000 : 0,
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+    revalidateIfStale: true, // Revalidate if data is stale
+    refreshWhenOffline: false,
+    suspense: true,
+    keepPreviousData: true,
+    revalidateOnMount: !hasFallbackData, // Avoid revalidating on mount
+    dedupingInterval: 2000, // Deduplicate requests within 2 seconds
+    focusThrottleInterval: 5000, // Throttle focus revalidation to every 5 seconds
+    errorRetryInterval: 5000, // Retry errors every 5 seconds
+    errorRetryCount: 3, // Retry up to 3 times
+    onError: (error) => {
+      console.error("Error fetching events:", error);
+      captureException(error);
+    },
+  });
 };

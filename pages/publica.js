@@ -31,6 +31,7 @@ const defaultForm = {
   town: "",
   location: "",
   imageUploaded: null,
+  eventUrl: "",
 };
 
 const _createFormState = (
@@ -53,6 +54,7 @@ const createFormState = (
     town,
     location,
     imageUploaded,
+    eventUrl,
   },
   isPristine
 ) => {
@@ -102,6 +104,20 @@ const createFormState = (
       true,
       "Data final no pot ser anterior o igual a la data inici"
     );
+  }
+
+  const urlPattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  );
+
+  if (eventUrl && !urlPattern.test(eventUrl)) {
+    return _createFormState(true, true, "Enllaç no vàlid");
   }
 
   return _createFormState(false);
@@ -301,7 +317,7 @@ export default function Publica() {
         description="Publica un acte cultural - Esdeveniments.cat"
         canonical={`${siteUrl}/publica`}
       />
-      <div className="w-full flex flex-col justify-center items-center px-4 pt-10 pb-14 sm:px-10 sm:w-[580px]">
+      <div className="w-full flex flex-col justify-center items-center pt-2 pb-14 sm:w-[580px] md:w-[768px] lg:w-[1024px] px-4 md:px-0">
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col items-center gap-2">
             <h1 className="text-center italic uppercase font-semibold">
@@ -309,7 +325,7 @@ export default function Publica() {
             </h1>
             <p className=" text-sm text-center">* camps obligatoris</p>
           </div>
-          <div className="w-full flex flex-col justify-center items-center gap-y-4 pt-4">
+          <div className="w-full flex flex-col justify-center items-center gap-y-4 pt-4 sm:w-[580px] md:w-[768px] lg:w-[1024px]">
             <Input
               id="title"
               title="Títol *"
@@ -320,6 +336,13 @@ export default function Publica() {
             <TextArea
               id="description"
               value={form.description}
+              onChange={handleChange}
+            />
+
+            <Input
+              id="eventUrl"
+              title="Enllaç de l'esdeveniment"
+              value={form.eventUrl}
               onChange={handleChange}
             />
 
@@ -365,7 +388,7 @@ export default function Publica() {
           </div>
         </div>
         {formState.isPristine && formState.message && (
-          <div className="p-4 my-3 text-red-700 bg-red-200 rounded-lg text-sm">
+          <div className="p-4 my-3 text-primary rounded-lg text-md">
             {formState.message}
           </div>
         )}
@@ -374,7 +397,7 @@ export default function Publica() {
           <button
             disabled={isLoading}
             onClick={onSubmit}
-            className={`text-whiteCorp bg-primary rounded-xl py-3 px-6 ease-in-out duration-300 border border-whiteCorp focus:outline-none font-barlow italic uppercase font-semibold tracking-wide ${
+            className={`text-blackCorp bg-whiteCorp hover:bg-primary hover:border-whiteCorp hover:text-whiteCorp border-blackCorp rounded-xl py-3 px-6 ease-in-out duration-300 border focus:outline-none font-barlow italic uppercase font-semibold tracking-wide ${
               isLoading ? "opacity-50" : "opacity-100"
             }`}
           >

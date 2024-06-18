@@ -24,7 +24,6 @@ const getAllArticles = async (region, town, maxEventsPerDay, untilProp = 7) => {
       normalizeRss: true,
       filterByDate: true,
       maxResults: 1000,
-      shuffleItems: true,
     });
 
     const shuffledEvents = events;

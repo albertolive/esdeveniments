@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 
@@ -11,8 +10,6 @@ const Footer = dynamic(() => import("@components/ui/common/footer"), {
 });
 
 export default function BaseLayout({ children }) {
-  const memoizedChildren = useMemo(() => children, [children]);
-
   return (
     <>
       <Head>
@@ -28,7 +25,7 @@ export default function BaseLayout({ children }) {
       </Head>
       <Navbar />
       <div className="w-full bg-whiteCorp flex flex-col justify-center items-center overflow-hidden">
-        {memoizedChildren}
+        {children}
       </div>
       <Footer />
     </>

@@ -33,10 +33,11 @@ const defaultForm = {
   town: "",
   location: "",
   imageUploaded: null,
+  eventUrl: "",
 };
 
 const createFormState = (
-  { title, description, startDate, endDate, region, town, location },
+  { title, description, startDate, endDate, region, town, location, eventUrl },
   isPristine
 ) => {
   if (!isPristine) {
@@ -86,6 +87,20 @@ const createFormState = (
       true,
       "Data final no pot ser anterior o igual a la data inici"
     );
+  }
+
+  const urlPattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  );
+
+  if (eventUrl && !urlPattern.test(eventUrl)) {
+    return _createFormState(true, true, "Enllaç no vàlid");
   }
 
   return _createFormState(false);
@@ -148,28 +163,44 @@ export default function Edita({ event }) {
     if (!newFormState.isDisabled) {
       setIsLoadingEdit(true);
 
-      const rawResponse = await fetch(process.env.NEXT_PUBLIC_EDIT_EVENT, {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...form,
-          location: `${form.location}, ${form.town.label}, ${form.region.label}`,
-          imageUploaded: !!imageToUpload || !!event.imageUploaded,
-          isProduction: process.env.NODE_ENV === "production",
-        }),
-      });
+      try {
+        const rawResponse = await fetch("/api/editEvent", {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...form,
+            location: `${form.location}, ${form.town.label}, ${form.region.label}`,
+            imageUploaded: !!imageToUpload || !!event.imageUploaded,
+          }),
+        });
 
-      await rawResponse.json();
+        await rawResponse.json();
 
-      const { formattedStart } = getFormattedDate(form.startDate, form.endDate);
-      const slugifiedTitle = slug(form.title, formattedStart, form.id);
+        const { formattedStart } = getFormattedDate(
+          form.startDate,
+          form.endDate
+        );
+        const slugifiedTitle = slug(form.title, formattedStart, form.id);
 
-      imageToUpload
-        ? uploadFile(form.id, slugifiedTitle)
-        : router.push(goToEventPage(`/e/${slugifiedTitle}`));
+        if (imageToUpload) {
+          uploadFile(form.id, slugifiedTitle);
+        } else {
+          router.push(goToEventPage(`/e/${slugifiedTitle}`));
+        }
+      } catch (error) {
+        console.error("Error updating event:", error);
+        setIsLoadingEdit(false);
+        setFormState(
+          _createFormState(
+            true,
+            true,
+            "Hi ha hagut un error, torna-ho a provar més tard o contacta amb nosaltres."
+          )
+        );
+      }
     }
   };
 
@@ -180,14 +211,14 @@ export default function Edita({ event }) {
     xhr.open("POST", url, true);
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
-    // Update progress (can be used to show progress indicator)
     xhr.upload.addEventListener("progress", (e) => {
       setProgress(Math.round((e.loaded * 100.0) / e.total));
     });
 
     xhr.onreadystatechange = () => {
-      if (xhr.readyState == 4 && xhr.status == 200)
+      if (xhr.readyState == 4 && xhr.status == 200) {
         router.push(goToEventPage(`/e/${slugifiedTitle}`));
+      }
     };
 
     fd.append(
@@ -235,6 +266,15 @@ export default function Edita({ event }) {
               value={form.description || event.description}
               onChange={handleChange}
             />
+
+            {event.eventUrl && (
+              <Input
+                id="eventUrl"
+                title="Enllaç de l'esdeveniment"
+                value={form.eventUrl || event.eventUrl}
+                onChange={handleChange}
+              />
+            )}
 
             {event.imageUploaded ? (
               <div className="sm:col-span-6">

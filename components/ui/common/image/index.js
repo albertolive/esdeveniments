@@ -35,7 +35,9 @@ function ImageComponent({
   priority = false,
 }) {
   const imgDefaultRef = useRef();
-  const isImgDefaultVisible = useOnScreen(imgDefaultRef);
+  const isImgDefaultVisible = useOnScreen(imgDefaultRef, {
+    freezeOnceVisible: true,
+  });
   const [hasError, setHasError] = useState(false);
   const imageClassName = `${className}`;
   const quality = useNetworkSpeed();
@@ -63,7 +65,7 @@ function ImageComponent({
   return (
     <div className={imageClassName} style={{ position: "relative" }}>
       <NextImage
-        className="object-contain"
+        className="object-cover"
         loader={({ src, width }) => cloudflareLoader({ src, width, quality })}
         src={image}
         alt={title}
@@ -73,7 +75,7 @@ function ImageComponent({
         onError={() => setHasError(true)}
         quality={quality}
         style={{
-          objectFit: "contain",
+          objectFit: "cover",
         }}
         priority={priority}
         sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 25vw"
