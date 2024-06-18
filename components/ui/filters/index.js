@@ -142,7 +142,7 @@ const Filters = () => {
             scrollToTop,
           })}
           {renderButton({
-            text: getText(foundByDate && foundByDate.label, "Data"),
+            text: getText(foundByDate?.label, "Data"),
             enabled: foundByDate,
             onClick: handleOnClick(foundByDate, handleByDateClick),
             handleOpenModal: () => setState("openModal", true),

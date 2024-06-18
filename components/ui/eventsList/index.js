@@ -111,7 +111,7 @@ function EventsList({ events: serverEvents = [] }) {
   const handleLoadMore = useCallback(() => {
     if (isBrowser) {
       setState("scrollPosition", window.scrollY);
-      window.gtag && window.gtag("event", "load-more-events");
+      window.gtag?.("event", "load-more-events");
     }
 
     setIsLoadingMore(true);

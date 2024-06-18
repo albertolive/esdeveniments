@@ -144,7 +144,7 @@ function FiltersModal() {
   const disablePlace =
     localDistance === undefined ||
     localDistance !== "" ||
-    isNaN(Number(localDistance));
+    Number.isNaN(Number(localDistance));
   const disableDistance =
     localPlace || userLocationLoading || userLocationError;
 

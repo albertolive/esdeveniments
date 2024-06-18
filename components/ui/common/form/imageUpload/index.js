@@ -15,12 +15,23 @@ export default function ImageUploader({ value, onUpload, progress }) {
   }
 
   function handleFileValidation(file) {
-    if (!file.type.startsWith("image/")) {
-      setError("El fitxer seleccionat no és una imatge.");
+    const acceptedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/webp",
+    ];
+
+    if (!acceptedImageTypes.includes(file.type)) {
+      setError(
+        "El fitxer seleccionat no és una imatge suportada. Si us plau, carregueu un fitxer en format JPEG, PNG, JPG, o WEBP."
+      );
       return false;
     }
     if (file.size > 5000000) {
-      setError("El fitxer és massa gran. Limit de 5 MB.");
+      setError(
+        "La mida de l'imatge supera el límit permès de 5 MB. Si us plau, trieu una imatge més petita."
+      );
       return false;
     }
 
@@ -59,7 +70,7 @@ export default function ImageUploader({ value, onUpload, progress }) {
 
   return (
     <div className="w-full text-blackCorp">
-      <label htmlFor="first-name" className="text-blackCorp font-bold">
+      <label htmlFor="image" className="text-blackCorp font-bold">
         Imatge *
       </label>
 
@@ -107,6 +118,7 @@ export default function ImageUploader({ value, onUpload, progress }) {
             className="bg-whiteCorp rounded-full p-1 hover:bg-primary"
           >
             <svg
+              title="Esborra imatge"
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-blackCorp hover:text-whiteCorp"
               fill="none"
