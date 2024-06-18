@@ -49,9 +49,9 @@ export default function Modal({
                     as="h3"
                     className="absolute top-0 text-center font-semibold p-3"
                   >
-                    <h2 className="text-center font-barlow uppercase italic">
+                    <h3 className="text-center font-barlow uppercase italic">
                       {title}
-                    </h2>
+                    </h3>
                   </Dialog.Title>
                   {children}
                   {actionButton && (

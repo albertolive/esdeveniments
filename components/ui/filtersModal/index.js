@@ -204,12 +204,12 @@ function FiltersModal() {
               Categories
             </p>
             <div className="w-full h-28 flex flex-col justify-start items-start gap-2 flex-wrap">
-              {Object.entries(CATEGORY_NAMES_MAP).map(([value]) => (
+              {Object.entries(CATEGORY_NAMES_MAP).map(([key, value]) => (
                 <RadioInput
-                  key={value}
-                  id={value}
+                  key={key}
+                  id={key}
                   name="category"
-                  value={value}
+                  value={key}
                   checkedValue={localCategory}
                   onChange={handleCategoryChange}
                   label={value}

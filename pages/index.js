@@ -1,9 +1,9 @@
+import { useEffect } from "react";
 import { getCategorizedEvents, getLatestEvents } from "@lib/helpers";
 import { twoWeeksDefault } from "@lib/dates";
-import { MAX_RESULTS } from "@utils/constants";
+import { MAX_RESULTS, SEARCH_TERMS_SUBSET } from "@utils/constants";
 import Events from "@components/ui/events";
 import { initializeStore } from "@utils/initializeStore";
-import { useEffect } from "react";
 
 export default function Home({ initialState }) {
   useEffect(() => {
@@ -15,13 +15,12 @@ export default function Home({ initialState }) {
 
 export async function getStaticProps() {
   const { from, until } = twoWeeksDefault();
-  const searchTerms = ["Festa Major", "Familiar", "Teatre"];
 
   const initialState = {};
 
   const [categorizedResult, latestResult] = await Promise.allSettled([
     getCategorizedEvents({
-      searchTerms,
+      searchTerms: SEARCH_TERMS_SUBSET,
       from,
       until,
       maxResults: MAX_RESULTS,
