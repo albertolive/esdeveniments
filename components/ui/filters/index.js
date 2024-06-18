@@ -3,7 +3,7 @@ import XIcon from "@heroicons/react/solid/XIcon";
 import ChevronDownIcon from "@heroicons/react/solid/ChevronDownIcon";
 import AdjustmentsIcon from "@heroicons/react/outline/AdjustmentsIcon";
 import { BYDATES } from "@utils/constants";
-import { getPlaceLabel } from "@utils/helpers";
+import { getPlaceLabel, findCategoryKeyByValue } from "@utils/helpers";
 import { useRouter } from "next/router";
 import useStore from "@store";
 
@@ -135,7 +135,10 @@ const Filters = () => {
             scrollToTop,
           })}
           {renderButton({
-            text: getText(category, "Categoria"),
+            text: getText(
+              category ? findCategoryKeyByValue(category) : category,
+              "Categoria"
+            ),
             enabled: category,
             onClick: handleOnClick(category, handleCategoryClick),
             handleOpenModal: () => setState("openModal", true),

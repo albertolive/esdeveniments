@@ -76,7 +76,7 @@ export const SEARCH_TERMS_SUBSET = [
   "Festa Major",
   "Festival",
   "Familiar",
-  "Teatre",
+  "Música",
 ];
 
 export const CATEGORY_NAMES_MAP = Object.fromEntries(
