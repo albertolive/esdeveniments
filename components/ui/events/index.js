@@ -17,8 +17,8 @@ function debounce(func, wait) {
 function Events({
   events,
   hasServerFilters,
-  InitialComponent,
-  SecondaryComponent,
+  CategorizedComponent,
+  ListComponent,
 }) {
   const { setState, areFiltersActive, filtersApplied } = useStore((state) => ({
     openModal: state.openModal,
@@ -97,9 +97,9 @@ function Events({
         </div>
       </div>
       {hasFilters ? (
-        <SecondaryComponent events={events} />
+        <ListComponent events={events} />
       ) : (
-        <InitialComponent />
+        <CategorizedComponent />
       )}
     </>
   );

@@ -1,9 +1,14 @@
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { getCalendarEvents } from "@lib/helpers";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
 import { initializeStore } from "@utils/initializeStore";
 import { today, tomorrow, week, weekend, twoWeeksDefault } from "@lib/dates";
 import Events from "@components/ui/events";
+import EventsList from "@components/ui/eventsList";
+
+const EventsCategorized = lazy(() =>
+  import("@components/ui/eventsCategorized")
+);
 
 export default function ByDate({ initialState }) {
   useEffect(() => {
@@ -14,13 +19,15 @@ export default function ByDate({ initialState }) {
     <Events
       events={initialState.events}
       hasServerFilters={initialState.hasServerFilters}
+      ListComponent={EventsList}
+      CategorizedComponent={EventsCategorized}
     />
   );
 }
 
 export async function getStaticPaths() {
   if (
-    process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
+    (false && process.env.NEXT_PUBLIC_VERCEL_ENV === "preview") ||
     process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
   ) {
     const { CITIES_DATA, BYDATES } = require("@utils/constants");

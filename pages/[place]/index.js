@@ -1,9 +1,14 @@
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { getCalendarEvents } from "@lib/helpers";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
+import { initializeStore } from "@utils/initializeStore";
 import { twoWeeksDefault } from "@lib/dates";
 import Events from "@components/ui/events";
-import { initializeStore } from "@utils/initializeStore";
+import EventsList from "@components/ui/eventsList";
+
+const EventsCategorized = lazy(() =>
+  import("@components/ui/eventsCategorized")
+);
 
 export default function Place({ initialState }) {
   useEffect(() => {
@@ -14,6 +19,8 @@ export default function Place({ initialState }) {
     <Events
       events={initialState.events}
       hasServerFilters={initialState.hasServerFilters}
+      ListComponent={EventsList}
+      CategorizedComponent={EventsCategorized}
     />
   );
 }

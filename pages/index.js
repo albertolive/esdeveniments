@@ -1,11 +1,12 @@
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { getCategorizedEvents, getLatestEvents } from "@lib/helpers";
 import { twoWeeksDefault } from "@lib/dates";
 import { MAX_RESULTS, SEARCH_TERMS_SUBSET } from "@utils/constants";
 import Events from "@components/ui/events";
 import EventsCategorized from "@components/ui/eventsCategorized";
-import EventsList from "@components/ui/eventsList";
 import { initializeStore } from "@utils/initializeStore";
+
+const EventsList = lazy(() => import("@components/ui/eventsList"));
 
 export default function Home({ initialState }) {
   useEffect(() => {
@@ -14,8 +15,8 @@ export default function Home({ initialState }) {
 
   return (
     <Events
-      InitialComponent={EventsCategorized}
-      SecondaryComponent={EventsList}
+      CategorizedComponent={EventsCategorized}
+      ListComponent={EventsList}
     />
   );
 }
