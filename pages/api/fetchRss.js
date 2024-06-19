@@ -42,19 +42,6 @@ function isCacheValid(cachedData) {
   );
 }
 
-function getCircularReplacer() {
-  const seen = new WeakSet();
-  return (key, value) => {
-    if (typeof value === "object" && value !== null) {
-      if (seen.has(value)) {
-        return;
-      }
-      seen.add(value);
-    }
-    return value;
-  };
-}
-
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
   try {
@@ -147,7 +134,7 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
 }
 
 function handleFetchError(err, rssFeed, town) {
-  let errorMessage = `An error occurred while fetching the RSS feed of ${town}: `;
+  let errorMessage = `An error occurred while fetching the RSS feed of ${town} (${rssFeed}): `;
 
   if (axios.isAxiosError(err)) {
     errorMessage += `AxiosError: ${err.message}\n`;
@@ -164,7 +151,11 @@ function handleFetchError(err, rssFeed, town) {
       errorMessage += `Data: ${responseData}\n`;
     } else if (err.request) {
       errorMessage += `No response received\n`;
-      errorMessage += `Request: ${JSON.stringify(err.request)}\n`;
+      errorMessage += `Request: ${JSON.stringify(err.request, (key, value) => {
+        // Avoid circular structure by filtering out 'socket'
+        if (key === "socket") return undefined;
+        return value;
+      })}\n`;
     } else {
       errorMessage += `Error setting up request: ${err.message}\n`;
     }
