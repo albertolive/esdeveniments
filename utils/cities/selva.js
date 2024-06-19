@@ -9,6 +9,7 @@ const selva = [
   "selva",
   {
     label: "Selva",
+    province: "Girona",
     towns: new Map([
       [
         "amer",

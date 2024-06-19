@@ -9,6 +9,7 @@ const maresme = [
   "maresme",
   {
     label: "Maresme",
+    province: "barcelona",
     towns: new Map([
       [
         "alella",

@@ -7,6 +7,7 @@ const llucanes = [
   "llucanes",
   {
     label: "Lluçanès",
+    province: "barcelona",
     towns: new Map([
       [
         "alpens",

@@ -9,6 +9,7 @@ const osona = [
   "osona",
   {
     label: "Osona",
+    province: "barcelona",
     towns: new Map([
       [
         "balenya",

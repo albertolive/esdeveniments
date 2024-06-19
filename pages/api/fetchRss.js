@@ -153,20 +153,18 @@ function handleFetchError(err, rssFeed, town) {
     errorMessage += `AxiosError: ${err.message}\n`;
     if (err.response) {
       errorMessage += `Status: ${err.response.status}\n`;
-      errorMessage += `Headers: ${JSON.stringify(
-        err.response.headers,
-        getCircularReplacer()
-      )}\n`;
-      errorMessage += `Data: ${JSON.stringify(
-        err.response.data,
-        getCircularReplacer()
-      )}\n`;
+      errorMessage += `Headers: ${JSON.stringify(err.response.headers)}\n`;
+
+      // Handle Buffer data
+      let responseData = err.response.data;
+      if (Buffer.isBuffer(responseData)) {
+        responseData = responseData.toString("utf8");
+      }
+
+      errorMessage += `Data: ${responseData}\n`;
     } else if (err.request) {
       errorMessage += `No response received\n`;
-      errorMessage += `Request: ${JSON.stringify(
-        err.request,
-        getCircularReplacer()
-      )}\n`;
+      errorMessage += `Request: ${JSON.stringify(err.request)}\n`;
     } else {
       errorMessage += `Error setting up request: ${err.message}\n`;
     }
@@ -482,12 +480,17 @@ async function scrapeLocation(item, region, town) {
 }
 
 function ensureISOFormat(dateString) {
-  // Check if the dateString is in ISO 8601 format
   const isoFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$/;
+
+  if (typeof dateString !== "string") {
+    dateString = String(dateString);
+  }
+
   if (!isoFormat.test(dateString)) {
     // If not, replace the space with 'T'
     dateString = dateString.replace(" ", "T");
   }
+
   return dateString;
 }
 

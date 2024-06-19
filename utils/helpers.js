@@ -468,20 +468,22 @@ function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
-export function generateTownUrls(region) {
+export function generateTownUrls(province) {
   const baseUrl = `${siteUrl}/api/fetchRss`;
   let urls = [];
 
-  if (region) {
-    // If region is provided, generate URLs for towns in that region
-    if (CITIES_DATA.has(region)) {
-      for (let town of CITIES_DATA.get(region).towns.keys()) {
-        let url = `${baseUrl}?region=${region}&town=${town}`;
-        urls.push(url);
+  if (province) {
+    // If province is provided, generate URLs for towns in that province
+    for (let [region, regionData] of CITIES_DATA) {
+      if (regionData.province === province) {
+        for (let town of regionData.towns.keys()) {
+          let url = `${baseUrl}?region=${region}&town=${town}`;
+          urls.push(url);
+        }
       }
     }
   } else {
-    // If no region is provided, generate URLs for all towns from all regions
+    // If no province is provided, generate URLs for all towns
     for (let [region, regionData] of CITIES_DATA) {
       for (let town of regionData.towns.keys()) {
         let url = `${baseUrl}?region=${region}&town=${town}`;

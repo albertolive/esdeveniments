@@ -7,6 +7,7 @@ const bergueda = [
   "bergueda",
   {
     label: "Berguedà",
+    province: "barcelona",
     towns: new Map([
       [
         "borreda",

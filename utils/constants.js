@@ -107,6 +107,7 @@ export const CITIES_DATA = new Map([
     "barcelones",
     {
       label: "Barcelonès",
+      province: "barcelona",
       towns: new Map([
         [
           "barcelona",

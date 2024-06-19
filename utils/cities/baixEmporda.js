@@ -7,6 +7,7 @@ const baixEmporda = [
   "baix-emporda",
   {
     label: "Baix Empordà",
+    province: "Girona",
     towns: new Map([
       [
         "palafrugell",

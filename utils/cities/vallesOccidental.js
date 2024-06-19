@@ -7,6 +7,7 @@ const vallesOccidental = [
   "valles-occidental",
   {
     label: "Vallès Occidental",
+    province: "barcelona",
     towns: new Map([
       [
         "martorelles",
