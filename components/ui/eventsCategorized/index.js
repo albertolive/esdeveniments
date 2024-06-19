@@ -21,7 +21,7 @@ const NoEventsFound = dynamic(
   }
 );
 
-function EventsCategorized() {
+function EventsCategorized({ events: serverEvents = [] }) {
   const {
     categorizedEvents: initialCategorizedEvents,
     latestEvents: initialLatestEvents,
@@ -38,7 +38,7 @@ function EventsCategorized() {
     setState: state.setState,
   }));
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(serverEvents.length === 0);
 
   const {
     data: fetchedData = {},
@@ -46,7 +46,7 @@ function EventsCategorized() {
     error,
   } = useGetCategorizedEvents({
     props: {
-      categorizedEvents: initialCategorizedEvents,
+      categorizedEvents: serverEvents || initialCategorizedEvents,
       latestEvents: initialLatestEvents,
     },
     searchTerms: SEARCH_TERMS_SUBSET,
@@ -151,12 +151,25 @@ function EventsCategorized() {
         canonical={canonical}
       />
       <div className="w-full flex-col justify-center items-center sm:w-[580px] md:w-[768px] lg:w-[1024px] mt-32">
-        <>
-          <h1 className="uppercase mb-2 px-2">{title}</h1>
-          <p className="text-[16px] font-normal text-blackCorp text-left px-2 font-barlow">
-            {subTitle}
-          </p>
-        </>
+        {isLoading || isValidating ? (
+          <div className="flex flex-col">
+            {/* Title */}
+            <div className="uppercase mb-2 px-2 animate-fast-pulse">
+              <div className="w-2/3 h-5 bg-darkCorp rounded-xl"></div>
+            </div>
+            {/* Subtitle */}
+            <div className="text-[16px] font-normal text-blackCorp text-left px-2 font-barlow animate-fast-pulse">
+              <div className="w-full h-4 bg-darkCorp rounded-xl"></div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h1 className="uppercase mb-2 px-2">{title}</h1>
+            <p className="text-[16px] font-normal text-blackCorp text-left px-2 font-barlow">
+              {subTitle}
+            </p>
+          </>
+        )}
         {isLoading || isValidating ? (
           <>
             {[...Array(10)].map((_, i) => (

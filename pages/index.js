@@ -1,16 +1,49 @@
+import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { getCategorizedEvents, getLatestEvents } from "@lib/helpers";
 import { twoWeeksDefault } from "@lib/dates";
 import { MAX_RESULTS, SEARCH_TERMS_SUBSET } from "@utils/constants";
-import Events from "@components/ui/events";
 import { initializeStore } from "@utils/initializeStore";
+
+const CardLoadingExtended = dynamic(
+  () => import("@components/ui/cardLoadingExtended"),
+  {
+    loading: () => (
+      <div className="flex justify-center items-center w-full">
+        <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+      </div>
+    ),
+  }
+);
+
+const Events = dynamic(() => import("@components/ui/events"), {
+  ssr: true,
+});
+
+const EventsCategorized = dynamic(
+  () => import("@components/ui/eventsCategorized"),
+  {
+    ssr: true,
+  }
+);
+
+const EventsList = dynamic(() => import("@components/ui/eventsList"), {
+  loading: () => <CardLoadingExtended />,
+  ssr: false,
+});
 
 export default function Home({ initialState }) {
   useEffect(() => {
     initializeStore(initialState);
   }, [initialState]);
 
-  return <Events />;
+  return (
+    <Events
+      categorizedEvents={initialState.categorizedEvents}
+      CategorizedComponent={EventsCategorized}
+      ListComponent={EventsList}
+    />
+  );
 }
 
 export async function getStaticProps() {

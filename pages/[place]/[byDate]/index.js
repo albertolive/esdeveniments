@@ -1,9 +1,36 @@
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { getCalendarEvents } from "@lib/helpers";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
 import { initializeStore } from "@utils/initializeStore";
 import { today, tomorrow, week, weekend, twoWeeksDefault } from "@lib/dates";
-import Events from "@components/ui/events";
+
+const CardLoadingExtended = dynamic(
+  () => import("@components/ui/cardLoadingExtended"),
+  {
+    loading: () => (
+      <div className="flex justify-center items-center w-full">
+        <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+      </div>
+    ),
+  }
+);
+
+const Events = dynamic(() => import("@components/ui/events"), {
+  ssr: true,
+});
+
+const EventsCategorized = dynamic(
+  () => import("@components/ui/eventsCategorized"),
+  {
+    loading: () => <CardLoadingExtended />,
+    ssr: false,
+  }
+);
+
+const EventsList = dynamic(() => import("@components/ui/eventsList"), {
+  ssr: true,
+});
 
 export default function ByDate({ initialState }) {
   useEffect(() => {
@@ -14,13 +41,15 @@ export default function ByDate({ initialState }) {
     <Events
       events={initialState.events}
       hasServerFilters={initialState.hasServerFilters}
+      ListComponent={EventsList}
+      CategorizedComponent={EventsCategorized}
     />
   );
 }
 
 export async function getStaticPaths() {
   if (
-    process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
+    (false && process.env.NEXT_PUBLIC_VERCEL_ENV === "preview") ||
     process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
   ) {
     const { CITIES_DATA, BYDATES } = require("@utils/constants");

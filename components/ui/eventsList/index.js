@@ -61,7 +61,7 @@ function EventsList({ events: serverEvents = [] }) {
   // State
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(serverEvents.length === 0);
 
   // Derived state
   const { type, label, regionLabel } = getPlaceTypeAndLabel(place);

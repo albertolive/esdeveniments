@@ -1,9 +1,36 @@
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { getCalendarEvents } from "@lib/helpers";
 import { getPlaceTypeAndLabel } from "@utils/helpers";
-import { twoWeeksDefault } from "@lib/dates";
-import Events from "@components/ui/events";
 import { initializeStore } from "@utils/initializeStore";
+import { twoWeeksDefault } from "@lib/dates";
+
+const CardLoadingExtended = dynamic(
+  () => import("@components/ui/cardLoadingExtended"),
+  {
+    loading: () => (
+      <div className="flex justify-center items-center w-full">
+        <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+      </div>
+    ),
+  }
+);
+
+const Events = dynamic(() => import("@components/ui/events"), {
+  ssr: true,
+});
+
+const EventsCategorized = dynamic(
+  () => import("@components/ui/eventsCategorized"),
+  {
+    loading: () => <CardLoadingExtended />,
+    ssr: false,
+  }
+);
+
+const EventsList = dynamic(() => import("@components/ui/eventsList"), {
+  ssr: true,
+});
 
 export default function Place({ initialState }) {
   useEffect(() => {
@@ -14,6 +41,8 @@ export default function Place({ initialState }) {
     <Events
       events={initialState.events}
       hasServerFilters={initialState.hasServerFilters}
+      ListComponent={EventsList}
+      CategorizedComponent={EventsCategorized}
     />
   );
 }

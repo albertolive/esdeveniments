@@ -1,6 +1,6 @@
 function CardLoading() {
   return (
-    <div className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mb-10">
+    <div className="flex flex-col justify-center bg-whiteCorp overflow-hidden cursor-pointer mt-4 mb-2">
       {/* Title */}
       <div className="bg-whiteCorp h-fit flex justify-between items-center gap-3">
         <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
