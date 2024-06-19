@@ -42,6 +42,19 @@ function isCacheValid(cachedData) {
   );
 }
 
+function getCircularReplacer() {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+}
+
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
   try {
@@ -140,11 +153,20 @@ function handleFetchError(err, rssFeed, town) {
     errorMessage += `AxiosError: ${err.message}\n`;
     if (err.response) {
       errorMessage += `Status: ${err.response.status}\n`;
-      errorMessage += `Headers: ${JSON.stringify(err.response.headers)}\n`;
-      errorMessage += `Data: ${JSON.stringify(err.response.data)}\n`;
+      errorMessage += `Headers: ${JSON.stringify(
+        err.response.headers,
+        getCircularReplacer()
+      )}\n`;
+      errorMessage += `Data: ${JSON.stringify(
+        err.response.data,
+        getCircularReplacer()
+      )}\n`;
     } else if (err.request) {
       errorMessage += `No response received\n`;
-      errorMessage += `Request: ${JSON.stringify(err.request._options)}\n`;
+      errorMessage += `Request: ${JSON.stringify(
+        err.request,
+        getCircularReplacer()
+      )}\n`;
     } else {
       errorMessage += `Error setting up request: ${err.message}\n`;
     }
