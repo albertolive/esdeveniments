@@ -138,6 +138,7 @@ function handleFetchError(err, rssFeed, town) {
 
   if (axios.isAxiosError(err)) {
     errorMessage += `AxiosError: ${err.message}\n`;
+
     if (err.response) {
       errorMessage += `Status: ${err.response.status}\n`;
       errorMessage += `Headers: ${JSON.stringify(err.response.headers)}\n`;
@@ -151,11 +152,7 @@ function handleFetchError(err, rssFeed, town) {
       errorMessage += `Data: ${responseData}\n`;
     } else if (err.request) {
       errorMessage += `No response received\n`;
-      errorMessage += `Request: ${JSON.stringify(err.request, (key, value) => {
-        // Avoid circular structure by filtering out 'socket'
-        if (key === "socket") return undefined;
-        return value;
-      })}\n`;
+      errorMessage += `Request Path: ${err.request.path}\n`;
     } else {
       errorMessage += `Error setting up request: ${err.message}\n`;
     }
