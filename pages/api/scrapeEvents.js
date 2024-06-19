@@ -484,7 +484,7 @@ const CITIES = {
     },
     timeRegex: /(\d{2}):(\d{2})/i,
   },
-  "badalona": {
+  badalona: {
     defaultLocation: "Badalona",
     domain: "https://www.badalona.cat",
     url: "https://www.badalona.cat/ca/actualitat/agenda/",
@@ -497,7 +497,7 @@ const CITIES = {
     timeSelector: "",
     descriptionSelector: "#parent-fieldname-text",
     imageSelector: ".img-responsive",
-    locationSelector: '[itemprop=\"location\"]',
+    locationSelector: '[itemprop="location"]',
     urlImage: "/preview",
     dateRegex: {
       regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})/i,
@@ -510,14 +510,18 @@ const CITIES = {
     domain: "https://www.cerdanyola.cat",
     url: "https://www.cerdanyola.cat/agenda",
     encoding: "utf-8",
-    listSelector: "#block-views-activitats-block-27 > div > div.view-content > div",
+    listSelector:
+      "#block-views-activitats-block-27 > div > div.view-content > div",
     titleSelector: "h2 > a",
     urlSelector: "h2 > a",
-    dateSelector: "#block-system-main > div > div.field.field-name-field-event-day.field-type-datetime.field-label-hidden > div > div > span",
+    dateSelector:
+      "#block-system-main > div > div.field.field-name-field-event-day.field-type-datetime.field-label-hidden > div > div > span",
     dateAttr: "",
     timeSelector: ".col-xs-12.col-sm-3.col-md-3.col-lg-2 > div > span",
-    descriptionSelector: "div.col-xs-12.col-sm-9.col-md-9.col-lg-10 > p:nth-child(3)",
-    imageSelector: "#block-system-main > div > div.field.field-name-field-image.field-type-image.field-label-hidden > div > div > img",
+    descriptionSelector:
+      "div.col-xs-12.col-sm-9.col-md-9.col-lg-10 > p:nth-child(3)",
+    imageSelector:
+      "#block-system-main > div > div.field.field-name-field-image.field-type-image.field-label-hidden > div > div > img",
     locationSelector: "",
     urlImage: "/",
     dateRegex: {
@@ -526,7 +530,7 @@ const CITIES = {
     },
     timeRegex: /(\d{2}):(\d{2})/i,
   },
-  "bot": {
+  bot: {
     defaultLocation: "Bot",
     domain: "https://bot.altanet.org/",
     url: "https://bot.altanet.org/agenda",
@@ -538,7 +542,8 @@ const CITIES = {
     dateAttr: "",
     timeSelector: ".infoagenda",
     descriptionSelector: ".field-type-text-with-summary > div > div",
-    imageSelector: "#block-system-main > div > div > div.field.field-name-body.field-type-text-with-summary.field-label-hidden > div > div > p:has(img) > img",
+    imageSelector:
+      "#block-system-main > div > div > div.field.field-name-body.field-type-text-with-summary.field-label-hidden > div > div > p:has(img) > img",
     locationSelector: ".lloc",
     urlImage: "/",
     dateRegex: {
@@ -559,7 +564,8 @@ const CITIES = {
     dateAttr: "",
     timeSelector: ".infoagenda > li",
     descriptionSelector: ".field-type-text-with-summary",
-    imageSelector: "#block-system-main > div > div > div.field.field-name-body.field-type-text-with-summary.field-label-hidden > div > div > p > img",
+    imageSelector:
+      "#block-system-main > div > div > div.field.field-name-body.field-type-text-with-summary.field-label-hidden > div > div > p > img",
     locationSelector: "",
     urlImage: "/",
     dateRegex: {
@@ -568,7 +574,7 @@ const CITIES = {
     },
     timeRegex: /(\d{1,2}):(\d{2})/i,
   },
-  "altafulla": {
+  altafulla: {
     defaultLocation: "Altafulla",
     domain: "https://www.altafulla.cat",
     url: "https://www.altafulla.cat/agenda-altafulla",
@@ -589,7 +595,7 @@ const CITIES = {
     },
     timeRegex: /(\d{1,2}):(\d{2})/i,
   },
-  "tarragona": {
+  tarragona: {
     defaultLocation: "Tarragona",
     domain: "https://www.tarragona.cat/",
     url: "https://www.tarragona.cat/la-ciutat/agenda/agenda",
@@ -597,11 +603,14 @@ const CITIES = {
     listSelector: ".llistatAvui > dl",
     titleSelector: "dd > a",
     urlSelector: "dd > a",
-    dateSelector: "#parent-fieldname-text > div > div.eventGroup > div.eventDetails.vcard > .camp:has(.dtstart) > .text",
+    dateSelector:
+      "#parent-fieldname-text > div > div.eventGroup > div.eventDetails.vcard > .camp:has(.dtstart) > .text",
     dateAttr: "",
     timeSelector: "#parent-fieldname-startDate > span",
-    descriptionSelector: "#parent-fieldname-text > .main-wrapper > div:nth-child(1)",
-    imageSelector: "#parent-fieldname-text > div > div.eventGroup > div.image-wrapper.horizontal > a > img",
+    descriptionSelector:
+      "#parent-fieldname-text > .main-wrapper > div:nth-child(1)",
+    imageSelector:
+      "#parent-fieldname-text > div > div.eventGroup > div.image-wrapper.horizontal > a > img",
     locationSelector: ".GeoLocation",
     urlImage: "/",
     dateRegex: {
@@ -609,7 +618,7 @@ const CITIES = {
       swapDayMonthOrder: false,
     },
     timeRegex: /(\d{1,2}):(\d{2})/i,
-  }
+  },
 };
 
 function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
@@ -724,10 +733,11 @@ async function exhaustiveSearch(
   const html = await fetchHtmlContent(url, selectors);
   const $ = cheerio.load(html);
 
-  if (!date && dateSelector !== ""){
-    date = dateAttr !== ""
+  if (!date && dateSelector !== "") {
+    date =
+      dateAttr !== ""
         ? $(dateSelector).attr(dateAttr).trim()
-        : $(dateSelector).text().trim()
+        : $(dateSelector).text().trim();
   }
   if (!time && timeSelector !== "") time = $(timeSelector).text().trim();
   if (!location && locationSelector !== "")
@@ -765,9 +775,10 @@ async function extractEventDetails(html, selectors) {
     $(listSelector).each(async (_, element) => {
       const title = $(element).find(titleSelector).text().trim();
       const url = $(element).find(urlSelector).attr("href");
-      let date = dateAttr !== ""
+      let date =
+        dateAttr !== ""
           ? $(element).find(dateSelector).attr(dateAttr).trim()
-          : $(element).find(dateSelector).text().trim() ;
+          : $(element).find(dateSelector).text().trim();
       let time = $(element).find(timeSelector).text().trim();
       let location = $(element)
         .find(locationSelector)

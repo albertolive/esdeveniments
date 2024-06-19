@@ -1,5 +1,5 @@
-import { siteUrl } from "@config/index";
 import {
+  barcelones,
   osona,
   selva,
   baixLlobregat,
@@ -16,6 +16,7 @@ import {
   bergueda,
   moianes,
   urgell,
+  tarragones,
 } from "@utils/cities";
 
 export const MAX_RESULTS = 15;
@@ -103,28 +104,7 @@ export const dateFunctions = {
 export const DISTANCES = [1, 5, 10, 30, 50];
 
 export const CITIES_DATA = new Map([
-  [
-    "barcelones",
-    {
-      label: "Barcelonès",
-      province: "barcelona",
-      towns: new Map([
-        [
-          "barcelona",
-          {
-            label: "Barcelona",
-            rssFeed: `${siteUrl}/api/scrapeWebsite`,
-            descriptionSelector: ".cos",
-            imageSelector: ".img-destacada",
-            postalCode: "08001",
-            coords: { lat: 41.390205, lng: 2.154007 },
-            sanitizeUrl: true,
-            getDescriptionFromRss: true,
-          },
-        ],
-      ]),
-    },
-  ],
+  barcelones,
   osona,
   selva,
   baixLlobregat,
@@ -141,4 +121,5 @@ export const CITIES_DATA = new Map([
   bergueda,
   moianes,
   urgell,
+  tarragones,
 ]);
