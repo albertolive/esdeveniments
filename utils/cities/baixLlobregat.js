@@ -7,6 +7,7 @@ const baixLlobregat = [
   "baix-llobregat",
   {
     label: "Baix Llobregat",
+    province: "barcelona",
     towns: new Map([
       [
         "begues",

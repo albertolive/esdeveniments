@@ -7,6 +7,7 @@ const altPenedes = [
   "alt-penedes",
   {
     label: "Alt Penedès",
+    province: "barcelona",
     towns: new Map([
       [
         "castellvidelamarca",

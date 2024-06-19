@@ -16,6 +16,7 @@ const CITIES = {
     titleSelector: "h3 a",
     urlSelector: ".node-event .wrap h3 a",
     dateSelector: ".date-info .date-day",
+    dateAttr: "",
     timeSelector: "",
     descriptionSelector: "div > h3",
     imageSelector: ".responsive-image",
@@ -38,6 +39,7 @@ const CITIES = {
     titleSelector: "h2 a",
     urlSelector: "h2 a",
     dateSelector: ".data",
+    dateAttr: "",
     timeSelector: ".row.seccio-detall .text",
     descriptionSelector: "h2 a",
     imageSelector: ".img-fluid",
@@ -58,6 +60,7 @@ const CITIES = {
     titleSelector: ".tileHeadline > a > span",
     urlSelector: ".tileHeadline > a",
     dateSelector: ".cal_date",
+    dateAttr: "",
     timeSelector: ".dtstart",
     descriptionSelector: ".description",
     imageSelector: ".newsImageContainer > a.swipebox > img",
@@ -75,6 +78,7 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    dateAttr: "",
     timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
@@ -95,6 +99,7 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    dateAttr: "",
     timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: "",
     imageSelector: ".info_cap > img",
@@ -115,6 +120,7 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    dateAttr: "",
     timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
@@ -135,6 +141,7 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    dateAttr: "",
     timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
@@ -155,6 +162,7 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    dateAttr: "",
     timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
@@ -175,6 +183,7 @@ const CITIES = {
     titleSelector: ".info_cos > a > .titol",
     urlSelector: ".info_cos > a",
     dateSelector: ".data_inicial",
+    dateAttr: "",
     timeSelector: ".info_cos > .item_info:has(.fa.fa-clock-o)",
     descriptionSelector: ".text-maquetat",
     imageSelector: ".info_cap > img",
@@ -195,6 +204,7 @@ const CITIES = {
     titleSelector: ".card-body__title",
     urlSelector: ".card-body__title > a",
     dateSelector: ".datetime:nth-child(1)",
+    dateAttr: "",
     timeSelector: "",
     descriptionSelector: ".node__content > .field--name-body",
     imageSelector: "figure > img",
@@ -216,6 +226,7 @@ const CITIES = {
     titleSelector: "h5 > a",
     urlSelector: "h5 > a",
     dateSelector: ".date-display-single",
+    dateAttr: "",
     timeSelector: "",
     descriptionSelector:
       ".node.node-agenda.view-mode-vista_agenda_principal > div > .col-sm-8 > h2",
@@ -239,6 +250,7 @@ const CITIES = {
     titleSelector: ".col-md-8 > h2",
     urlSelector: ".btn.btn-default.pull-right",
     dateSelector: ".col-md-8 > p",
+    dateAttr: "",
     timeSelector: ".well.small.text-center > div:has(.fa.fa-clock-o)",
     descriptionSelector: "",
     imageSelector: ".img-responsive.img-thumbnail",
@@ -259,6 +271,7 @@ const CITIES = {
     titleSelector: ".ectbe-evt-title > a",
     urlSelector: ".ectbe-evt-title > a",
     dateSelector: ".ectbe-date-area",
+    dateAttr: "",
     timeSelector: ".ectbe-evt-time",
     descriptionSelector: ".ectbe-evt-description",
     imageSelector: ".wp-block-image > img",
@@ -277,6 +290,7 @@ const CITIES = {
     urlSelector: ".agendatitulo > a",
     dateSelector:
       "#main > div > div > article > div.field.field-name-field-fechafinal.field-type-datetime.field-label-hidden",
+    dateAttr: "",
     timeSelector: ".agendahora",
     descriptionSelector: "",
     imageSelector:
@@ -299,6 +313,7 @@ const CITIES = {
     titleSelector: ".post_title2 > a",
     urlSelector: ".post_title2 > a",
     dateSelector: ".post_date",
+    dateAttr: "",
     timeSelector: "",
     descriptionSelector: ".post_excerpt",
     imageSelector: ".post-thumbnail > img",
@@ -322,6 +337,7 @@ const CITIES = {
     urlSelector:
       ".tribe-events-calendar-latest-past__event-title-link.tribe-common-anchor-thin",
     dateSelector: ".tribe-events-calendar-latest-past__event-date-tag-datetime",
+    dateAttr: "",
     timeSelector: ".tribe-event-date-start",
     descriptionSelector:
       ".tribe-events-calendar-latest-past__event-description.tribe-common-b2 tribe-common-a11y-hidden",
@@ -345,6 +361,7 @@ const CITIES = {
     titleSelector: ".post_title2 > a",
     urlSelector: ".post_title2 > a",
     dateSelector: ".post_date",
+    dateAttr: "",
     timeSelector: "",
     descriptionSelector: ".post_excerpt",
     imageSelector: ".post-thumbnail > img",
@@ -366,6 +383,7 @@ const CITIES = {
     titleSelector: ".event-post-content > div > h5 > a",
     urlSelector: ".event-post-content > div > h5 > a",
     dateSelector: ".event-meta > li:has(.far.fa-calendar-alt)",
+    dateAttr: "",
     timeSelector: ".event-meta > li:has(.far.fa-clock)",
     descriptionSelector: ".event-post-content > .new-txt > .text-justify",
     imageSelector: ".thumb > img",
@@ -387,6 +405,7 @@ const CITIES = {
     titleSelector: ".item-medium__description.rows-8 > h2",
     urlSelector: ".item.item-medium--wrapper > a",
     dateSelector: ".date",
+    dateAttr: "",
     timeSelector: "",
     descriptionSelector: ".item-medium__description.rows-8 > p",
     imageSelector: ".item-medium__image > img",
@@ -408,6 +427,7 @@ const CITIES = {
     titleSelector: ".titol",
     urlSelector: ".titol",
     dateSelector: ".data.curta",
+    dateAttr: "",
     timeSelector: ".data.curta",
     descriptionSelector: ".presentacio",
     imageSelector: '#fitxa_content [id*="foto"]',
@@ -426,6 +446,7 @@ const CITIES = {
     titleSelector: ".post_title2 > a",
     urlSelector: ".post_title2 > a",
     dateSelector: ".post_date",
+    dateAttr: "",
     timeSelector: "",
     descriptionSelector: ".post_excerpt",
     imageSelector: "",
@@ -449,6 +470,7 @@ const CITIES = {
     urlSelector:
       ".tribe-events-calendar-list__event-title-link.tribe-common-anchor-thin",
     dateSelector: ".tribe-event-date-start",
+    dateAttr: "",
     timeSelector: ".tribe-event-date-start",
     descriptionSelector:
       ".tribe-events-calendar-list__event-description.tribe-common-b2.tribe-common-a11y-hidden > p",
@@ -462,22 +484,141 @@ const CITIES = {
     },
     timeRegex: /(\d{2}):(\d{2})/i,
   },
-  /**"montmelo": {
-    defaultLocation: "Montmeló",
-    domain: "https://www.montmelo.cat",
-    url: "https://www.montmelo.cat/actualitat/agenda/",
+  badalona: {
+    defaultLocation: "Badalona",
+    domain: "https://www.badalona.cat",
+    url: "https://www.badalona.cat/ca/actualitat/agenda/",
     encoding: "utf-8",
-    listSelector: '.article-list > li',
-    titleSelector: ".title",
-    urlSelector: "",
-    dateSelector: "",
-    descriptionSelector: "",
-    imageSelector: "",
+    listSelector: ".events-wrapper > ul > li",
+    titleSelector: ".eventItem__title",
+    urlSelector: ".eventItem__title",
+    dateSelector: ".eventItem__date",
+    dateAttr: "datetime",
+    timeSelector: "",
+    descriptionSelector: "#parent-fieldname-text",
+    imageSelector: ".img-responsive",
+    locationSelector: '[itemprop="location"]',
+    urlImage: "/preview",
+    dateRegex: {
+      regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})/i,
+      swapDayMonthOrder: false,
+    },
+    timeRegex: null,
+  },
+  "cerdanyola-del-valles": {
+    defaultLocation: "Cerdanyola del Vallès",
+    domain: "https://www.cerdanyola.cat",
+    url: "https://www.cerdanyola.cat/agenda",
+    encoding: "utf-8",
+    listSelector:
+      "#block-views-activitats-block-27 > div > div.view-content > div",
+    titleSelector: "h2 > a",
+    urlSelector: "h2 > a",
+    dateSelector:
+      "#block-system-main > div > div.field.field-name-field-event-day.field-type-datetime.field-label-hidden > div > div > span",
+    dateAttr: "",
+    timeSelector: ".col-xs-12.col-sm-3.col-md-3.col-lg-2 > div > span",
+    descriptionSelector:
+      "div.col-xs-12.col-sm-9.col-md-9.col-lg-10 > p:nth-child(3)",
+    imageSelector:
+      "#block-system-main > div > div.field.field-name-field-image.field-type-image.field-label-hidden > div > div > img",
     locationSelector: "",
     urlImage: "/",
-    dateRegex: {regex: /^/i, swapDayMonthOrder: false},
-    timeRegex: null,
-  }**/
+    dateRegex: {
+      regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})/i,
+      swapDayMonthOrder: false,
+    },
+    timeRegex: /(\d{2}):(\d{2})/i,
+  },
+  bot: {
+    defaultLocation: "Bot",
+    domain: "https://bot.altanet.org/",
+    url: "https://bot.altanet.org/agenda",
+    encoding: "utf-8",
+    listSelector: "#block-system-main > div > div > div.view-content > div",
+    titleSelector: "h2 > a",
+    urlSelector: "h2 > a",
+    dateSelector: ".infoagenda",
+    dateAttr: "",
+    timeSelector: ".infoagenda",
+    descriptionSelector: ".field-type-text-with-summary > div > div",
+    imageSelector:
+      "#block-system-main > div > div > div.field.field-name-body.field-type-text-with-summary.field-label-hidden > div > div > p:has(img) > img",
+    locationSelector: ".lloc",
+    urlImage: "/",
+    dateRegex: {
+      regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i,
+      swapDayMonthOrder: false,
+    },
+    timeRegex: /(\d{2}):(\d{2})/i,
+  },
+  "la-nou-de-gaia": {
+    defaultLocation: "La Nou de Gaià",
+    domain: "https://noudegaia.altanet.org/",
+    url: "https://noudegaia.altanet.org/agenda",
+    encoding: "utf-8",
+    listSelector: ".view-content > div",
+    titleSelector: ".field-name-title > div > div > h2 > a",
+    urlSelector: ".field-name-title > div > div > h2 > a",
+    dateSelector: ".infoagenda > li > b",
+    dateAttr: "",
+    timeSelector: ".infoagenda > li",
+    descriptionSelector: ".field-type-text-with-summary",
+    imageSelector:
+      "#block-system-main > div > div > div.field.field-name-body.field-type-text-with-summary.field-label-hidden > div > div > p > img",
+    locationSelector: "",
+    urlImage: "/",
+    dateRegex: {
+      regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i,
+      swapDayMonthOrder: false,
+    },
+    timeRegex: /(\d{1,2}):(\d{2})/i,
+  },
+  altafulla: {
+    defaultLocation: "Altafulla",
+    domain: "https://www.altafulla.cat",
+    url: "https://www.altafulla.cat/agenda-altafulla",
+    encoding: "utf-8",
+    listSelector: ".container-fluid > .row.display-flex > div",
+    titleSelector: ".line-2 > h4",
+    urlSelector: "a",
+    dateSelector: ".line-3",
+    dateAttr: "",
+    timeSelector: ".line-3",
+    descriptionSelector: "",
+    imageSelector: ".image-noticia > img",
+    locationSelector: "",
+    urlImage: "/",
+    dateRegex: {
+      regex: /^(\d{1,2})\s+([a-zA-zçÇ]+)\s+(\d{4})/i,
+      swapDayMonthOrder: false,
+    },
+    timeRegex: /(\d{1,2}):(\d{2})/i,
+  },
+  tarragona: {
+    defaultLocation: "Tarragona",
+    domain: "https://www.tarragona.cat/",
+    url: "https://www.tarragona.cat/la-ciutat/agenda/agenda",
+    encoding: "utf-8",
+    listSelector: ".llistatAvui > dl",
+    titleSelector: "dd > a",
+    urlSelector: "dd > a",
+    dateSelector:
+      "#parent-fieldname-text > div > div.eventGroup > div.eventDetails.vcard > .camp:has(.dtstart) > .text",
+    dateAttr: "",
+    timeSelector: "#parent-fieldname-startDate > span",
+    descriptionSelector:
+      "#parent-fieldname-text > .main-wrapper > div:nth-child(1)",
+    imageSelector:
+      "#parent-fieldname-text > div > div.eventGroup > div.image-wrapper.horizontal > a > img",
+    locationSelector: ".GeoLocation",
+    urlImage: "/",
+    dateRegex: {
+      regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})/i,
+      swapDayMonthOrder: false,
+    },
+    timeRegex: /(\d{1,2}):(\d{2})/i,
+  },
 };
 
 function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
@@ -584,6 +725,7 @@ async function exhaustiveSearch(
   const {
     locationSelector,
     dateSelector,
+    dateAttr,
     timeSelector,
     descriptionSelector,
     imageSelector,
@@ -591,7 +733,12 @@ async function exhaustiveSearch(
   const html = await fetchHtmlContent(url, selectors);
   const $ = cheerio.load(html);
 
-  if (!date && dateSelector !== "") date = $(dateSelector).text().trim();
+  if (!date && dateSelector !== "") {
+    date =
+      dateAttr !== ""
+        ? $(dateSelector).attr(dateAttr).trim()
+        : $(dateSelector).text().trim();
+  }
   if (!time && timeSelector !== "") time = $(timeSelector).text().trim();
   if (!location && locationSelector !== "")
     location = $(locationSelector).text().trim();
@@ -610,6 +757,7 @@ async function extractEventDetails(html, selectors) {
     urlSelector,
     locationSelector,
     dateSelector,
+    dateAttr,
     timeSelector,
     descriptionSelector,
     imageSelector,
@@ -620,7 +768,6 @@ async function extractEventDetails(html, selectors) {
   const $ = cheerio.load(html);
   const events = [];
   let exhaustiveResults = [];
-
   const timeout = 120000; // 60 segons
   await new Promise((resolve, reject) => {
     let completed = 0;
@@ -628,7 +775,10 @@ async function extractEventDetails(html, selectors) {
     $(listSelector).each(async (_, element) => {
       const title = $(element).find(titleSelector).text().trim();
       const url = $(element).find(urlSelector).attr("href");
-      let date = $(element).find(dateSelector).text().trim();
+      let date =
+        dateAttr !== ""
+          ? $(element).find(dateSelector).attr(dateAttr).trim()
+          : $(element).find(dateSelector).text().trim();
       let time = $(element).find(timeSelector).text().trim();
       let location = $(element)
         .find(locationSelector)

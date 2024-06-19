@@ -7,6 +7,7 @@ const bages = [
   "bages",
   {
     label: "Bages",
+    province: "barcelona",
     towns: new Map([
       [
         "aguilardesegarra",

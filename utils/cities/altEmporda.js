@@ -7,6 +7,7 @@ const altEmporda = [
   "alt-emporda",
   {
     label: "Alt Empordà",
+    province: "girona",
     towns: new Map([
       [
         "figueres",

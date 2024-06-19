@@ -47,7 +47,7 @@ const handler = async (req, res) => {
     };
 
     try {
-      const { data } = await updateGoogleCalendarEvent(id, event);
+      const { data } = await updateGoogleCalendarEvent(event);
 
       console.log("Updated event successfully: " + title);
       res.status(200).json(data);

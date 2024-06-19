@@ -90,7 +90,7 @@ const createFormState = (
   }
 
   const urlPattern = new RegExp(
-    "^(https?:\\/\\/)?" + // protocol
+    "^(https:\\/\\/)" + // strictly require https protocol
       "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" + // domain name
       "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
       "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
@@ -100,7 +100,11 @@ const createFormState = (
   );
 
   if (eventUrl && !urlPattern.test(eventUrl)) {
-    return _createFormState(true, true, "Enllaç no vàlid");
+    return _createFormState(
+      true,
+      true,
+      "Enllaç no vàlid, ha de començar amb https"
+    );
   }
 
   return _createFormState(false);

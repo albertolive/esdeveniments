@@ -7,6 +7,7 @@ const urgell = [
   "urgell",
   {
     label: "Pla d'Urgell",
+    province: "lleida",
     towns: new Map([
       [
         "horta",

@@ -7,6 +7,7 @@ const moianes = [
   "moianes",
   {
     label: "Moianès",
+    province: "barcelona",
     towns: new Map([
       [
         "collsuspina",

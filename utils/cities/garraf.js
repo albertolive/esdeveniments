@@ -7,6 +7,7 @@ const garraf = [
   "garraf",
   {
     label: "Garraf",
+    province: "barcelona",
     towns: new Map([
       [
         "ccgarraf",

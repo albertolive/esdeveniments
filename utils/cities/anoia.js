@@ -7,6 +7,7 @@ const anoia = [
   "anoia",
   {
     label: "Anoia",
+    province: "barcelona",
     towns: new Map([
       [
         "el-bruc",

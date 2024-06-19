@@ -42,6 +42,19 @@ function isCacheValid(cachedData) {
   );
 }
 
+function getCircularReplacer() {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+}
+
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
   try {
@@ -54,13 +67,17 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
         return cachedData.data;
       }
     }
-    // Fetch the data
-    const response = await axios.get(rssFeed, { responseType: "arraybuffer" });
+
+    // Fetch the data with increased timeout and detailed logging
+    const response = await axios.get(rssFeed, {
+      responseType: "arraybuffer",
+      timeout: 30000,
+    });
 
     // Check if the response status is not 200
     if (response.status !== 200) {
       throw new Error(
-        `Failed to fetch Rss data for ${town}: ${response.status}`
+        `Failed to fetch RSS data for ${town}: ${response.status}`
       );
     }
 
@@ -125,11 +142,70 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
 
     return data;
   } catch (err) {
-    console.error(
-      `An error occurred while fetching the RSS feed of ${town}: ${err}`
-    );
-    // Throw a custom error
-    throw new RSSFeedError(`Failed to fetch RSS feed: ${err}`);
+    handleFetchError(err, rssFeed, town);
+  }
+}
+
+function handleFetchError(err, rssFeed, town) {
+  let errorMessage = `An error occurred while fetching the RSS feed of ${town}: `;
+
+  if (axios.isAxiosError(err)) {
+    errorMessage += `AxiosError: ${err.message}\n`;
+    if (err.response) {
+      errorMessage += `Status: ${err.response.status}\n`;
+      errorMessage += `Headers: ${JSON.stringify(err.response.headers)}\n`;
+
+      // Handle Buffer data
+      let responseData = err.response.data;
+      if (Buffer.isBuffer(responseData)) {
+        responseData = responseData.toString("utf8");
+      }
+
+      errorMessage += `Data: ${responseData}\n`;
+    } else if (err.request) {
+      errorMessage += `No response received\n`;
+      errorMessage += `Request: ${JSON.stringify(err.request)}\n`;
+    } else {
+      errorMessage += `Error setting up request: ${err.message}\n`;
+    }
+  } else {
+    errorMessage += `${err.message}\n`;
+  }
+
+  console.error(errorMessage);
+  captureException(new RSSFeedError(errorMessage));
+  throw new RSSFeedError(errorMessage);
+}
+
+// Retry Logic
+async function fetchRSSFeedWithRetry(
+  rssFeed,
+  town,
+  shouldInteractWithKv,
+  retries = 3
+) {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      return await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
+    } catch (error) {
+      if (attempt < retries - 1) {
+        console.warn(
+          `Retrying to fetch RSS feed for ${town}, attempt ${attempt + 1}`
+        );
+        await delay((attempt + 1) * 2000); // Exponential backoff
+      } else {
+        // Graceful fallback if all retries fail
+        console.error(
+          `Failed to fetch RSS feed for ${town} after ${retries} attempts: ${error.message}`
+        );
+        captureException(
+          new Error(
+            `Failed to fetch RSS feed for ${town} after ${retries} attempts: ${error.message}`
+          )
+        );
+        return []; // Return an empty array or a default response
+      }
+    }
   }
 }
 
@@ -404,12 +480,17 @@ async function scrapeLocation(item, region, town) {
 }
 
 function ensureISOFormat(dateString) {
-  // Check if the dateString is in ISO 8601 format
   const isoFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$/;
+
+  if (typeof dateString !== "string") {
+    dateString = String(dateString);
+  }
+
   if (!isoFormat.test(dateString)) {
     // If not, replace the space with 'T'
     dateString = dateString.replace(" ", "T");
   }
+
   return dateString;
 }
 
@@ -662,7 +743,13 @@ export default async function handler(req, res) {
     }
 
     // Fetch the RSS feed
-    const items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
+    console.log(`Fetching RSS feed for ${town}: ${rssFeed}`);
+
+    const items = await fetchRSSFeedWithRetry(
+      rssFeed,
+      town,
+      shouldInteractWithKv
+    );
 
     // Read the database
     let processedItems = new Map();

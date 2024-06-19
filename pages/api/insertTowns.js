@@ -21,8 +21,12 @@ export default async function handler(req, res) {
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
+  const { province } = req.query;
+
   try {
-    const { data: urls } = await axios.get(`${siteUrl}/api/getTowns`);
+    const { data: urls } = await axios.get(
+      `${siteUrl}/api/getTowns?province=${province}`
+    );
 
     for (const url of urls) {
       await fetchDataForTown(url);

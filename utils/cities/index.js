@@ -14,6 +14,8 @@ import baixEmporda from "./baixEmporda";
 import bergueda from "./bergueda";
 import moianes from "./moianes";
 import urgell from "./urgell";
+import barcelones from "./barcelones";
+import tarragones from "./tarragones";
 
 export {
   osona,
@@ -32,4 +34,6 @@ export {
   bergueda,
   moianes,
   urgell,
+  barcelones,
+  tarragones,
 };
