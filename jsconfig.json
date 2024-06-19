@@ -2,14 +2,33 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@pages/*": ["pages/*"],
-      "@components/*": ["components/*"],
-      "@styles/*": ["styles/*"],
-      "@content/*": ["content/*"],
-      "@utils/*": ["utils/*"],
-      "@lib/*": ["lib/*"],
-      "@config/*": ["config/*"],
-      "@public/*": ["public/*"]
+      "@store": [
+        "store.js"
+      ],
+      "@pages/*": [
+        "pages/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@styles/*": [
+        "styles/*"
+      ],
+      "@content/*": [
+        "content/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@lib/*": [
+        "lib/*"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+      "@public/*": [
+        "public/*"
+      ]
     }
   }
 }

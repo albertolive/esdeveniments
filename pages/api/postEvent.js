@@ -3,11 +3,23 @@ import { postToGoogleCalendar } from "@lib/apiHelpers";
 
 const handler = async (req, res) => {
   try {
-    const { title, description, location, startDate, endDate, imageUploaded } =
-      req.body;
+    const {
+      title,
+      description,
+      location,
+      startDate,
+      endDate,
+      imageUploaded,
+      eventUrl,
+    } = req.body;
+
+    const enhancedDescription = eventUrl
+      ? `${description}<span id="more-info" class="hidden" data-url="${eventUrl}"></span>`
+      : description;
+
     const event = {
       summary: title,
-      description,
+      description: enhancedDescription,
       location,
       start: {
         dateTime: startDate,

@@ -60,7 +60,7 @@ function Card({ event, isLoading, isPriority }) {
   }
 
   const { description, icon } = event.weather || {};
-  const title = truncateString(event.title || "", 60);
+  const title = truncateString(event.title || "", 75);
   const location = truncateString(event.location || "");
   const subLocation = truncateString(event.subLocation || "", 45);
   const image = event.imageUploaded || event.eventImage;
@@ -88,7 +88,7 @@ function Card({ event, isLoading, isPriority }) {
               <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             </div>
             {/* Title */}
-            <h3 className="w-11/12 uppercase italic">
+            <h3 className="w-11/12 uppercase">
               <Link href={`/e/${event.slug}`} passHref prefetch={false}>
                 {title}
               </Link>

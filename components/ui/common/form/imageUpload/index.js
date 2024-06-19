@@ -6,27 +6,55 @@ export default function ImageUploader({ value, onUpload, progress }) {
   const fileSelect = useRef(null);
   const [imgData, setImgData] = useState(value);
   const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleImageUpload() {
-    if (fileSelect) {
+    if (fileSelect.current) {
       fileSelect.current.click();
     }
   }
 
+  function handleFileValidation(file) {
+    const acceptedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/webp",
+    ];
+
+    if (!acceptedImageTypes.includes(file.type)) {
+      setError(
+        "El fitxer seleccionat no és una imatge suportada. Si us plau, carregueu un fitxer en format JPEG, PNG, JPG, o WEBP."
+      );
+      return false;
+    }
+    if (file.size > 5000000) {
+      setError(
+        "La mida de l'imatge supera el límit permès de 5 MB. Si us plau, trieu una imatge més petita."
+      );
+      return false;
+    }
+
+    setError("");
+
+    return true;
+  }
+
   const onChangeImage = (e) => {
     const file = e.target.files[0];
-    updateImage(file);
-    onUpload(file);
+    if (file && handleFileValidation(file)) {
+      updateImage(file);
+      onUpload(file);
+    }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-
     setDragOver(false);
 
     const file = e.dataTransfer.files[0];
-    if (file.type.startsWith("image/")) {
+    if (file && handleFileValidation(file)) {
       updateImage(file);
       onUpload(file);
     }
@@ -42,14 +70,14 @@ export default function ImageUploader({ value, onUpload, progress }) {
 
   return (
     <div className="w-full text-blackCorp">
-      <label htmlFor="first-name" className="text-blackCorp">
+      <label htmlFor="image" className="text-blackCorp font-bold">
         Imatge *
       </label>
 
       <div
-        className={`m-2 p-4 border border-bColor rounded-xl cursor-pointer ${
+        className={`mt-2 border ${
           dragOver ? "border-primary" : "border-bColor"
-        }`}
+        } rounded-xl cursor-pointer`}
         onDragOver={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -81,14 +109,16 @@ export default function ImageUploader({ value, onUpload, progress }) {
             onChange={onChangeImage}
           />
         </form>
+        {error && <p className="text-primary text-sm mt-2">{error}</p>}
       </div>
       {imgData && (
-        <div className="flex justigy-center items-start p-4">
+        <div className="flex justify-center items-start p-4">
           <button
             onClick={() => setImgData(null)}
-            className=" bg-whiteCorp rounded-full p-1 hover:bg-primary"
+            className="bg-whiteCorp rounded-full p-1 hover:bg-primary"
           >
             <svg
+              title="Esborra imatge"
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-blackCorp hover:text-whiteCorp"
               fill="none"

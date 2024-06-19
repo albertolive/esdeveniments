@@ -1,9 +1,10 @@
-import { useMemo, memo, useCallback, useState, useEffect } from "react";
+import { useMemo, useState, useCallback, useEffect, memo } from "react";
 import dynamic from "next/dynamic";
 import RadioInput from "@components/ui/common/form/radioInput";
 import RangeInput from "@components/ui/common/form/rangeInput";
-import { BYDATES, CATEGORIES, DISTANCES } from "@utils/constants";
-import { generateRegionsAndTownsOptions } from "@utils/helpers";
+import { BYDATES, CATEGORY_NAMES_MAP, DISTANCES } from "@utils/constants";
+import { generateRegionsAndTownsOptions, sendEventToGA } from "@utils/helpers";
+import useStore from "@store";
 
 const Modal = dynamic(() => import("@components/ui/common/modal"), {
   loading: () => "",
@@ -13,73 +14,75 @@ const Select = dynamic(() => import("@components/ui/common/form/select"), {
   loading: () => "",
 });
 
-function FiltersModal({
-  openModal,
-  setOpenModal,
-  place,
-  setPlace,
-  byDate,
-  setByDate,
-  category,
-  setCategory,
-  userLocation,
-  setUserLocation,
-  distance,
-  setDistance,
-  selectedOption,
-  setSelectedOption,
-  setNavigatedFilterModal,
-}) {
+function FiltersModal() {
+  const {
+    openModal,
+    place,
+    byDate,
+    category,
+    distance,
+    userLocation,
+    setState,
+  } = useStore((state) => ({
+    openModal: state.openModal,
+    place: state.place,
+    byDate: state.byDate,
+    category: state.category,
+    distance: state.distance,
+    userLocation: state.userLocation,
+    setState: state.setState,
+  }));
+  const [localPlace, setLocalPlace] = useState(place);
+  const [localByDate, setLocalByDate] = useState(byDate);
+  const [localCategory, setLocalCategory] = useState(category);
+  const [localDistance, setLocalDistance] = useState(distance);
+  const [localUserLocation, setLocalUserLocation] = useState(userLocation);
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const [userLocationError, setUserLocationError] = useState("");
-  const handleStateChange = useCallback((setState, value) => {
-    setState((prevValue) => (prevValue === value ? "" : value));
-  }, []);
-
-  useEffect(() => {
-    if (openModal) {
-      setNavigatedFilterModal(true);
-    }
-  }, [openModal, setNavigatedFilterModal]);
 
   const regionsAndCitiesArray = useMemo(
     () => generateRegionsAndTownsOptions(),
     []
   );
+  const [selectOption, setSelectOption] = useState(null);
 
-  const handleByDateChange = useCallback(
-    (value) => {
-      if (value === byDate) window.localStorage.removeItem("byDate");
-
-      handleStateChange(setByDate, value);
-    },
-    [handleStateChange, setByDate, byDate]
-  );
-
-  const handleCategoryChange = useCallback(
-    (value) => {
-      handleStateChange(setCategory, value);
-    },
-    [handleStateChange, setCategory]
-  );
+  useEffect(() => {
+    if (openModal) {
+      setLocalPlace(place);
+      setLocalByDate(byDate);
+      setLocalCategory(category);
+      setLocalDistance(distance);
+      setLocalUserLocation(userLocation);
+      const regionOption = regionsAndCitiesArray
+        .flatMap((group) => group.options)
+        .find((option) => option.value === place);
+      setSelectOption(regionOption || null);
+    }
+  }, [
+    openModal,
+    place,
+    byDate,
+    category,
+    distance,
+    userLocation,
+    regionsAndCitiesArray,
+  ]);
 
   const handlePlaceChange = useCallback(
     ({ value }) => {
-      if (!value) window.localStorage.removeItem("place");
-
-      setPlace(value);
-      setSelectedOption(value);
-
-      localStorage.removeItem("currentPage");
-      localStorage.removeItem("scrollPosition");
+      const regionOption = regionsAndCitiesArray
+        .flatMap((group) => group.options)
+        .find((option) => option.value === value);
+      setLocalPlace(value || "");
+      setSelectOption(regionOption || null);
     },
-    [setPlace, setSelectedOption]
+    [regionsAndCitiesArray]
   );
 
   const handleUserLocation = useCallback(
     (value) => {
-      if (userLocation) {
-        handleStateChange(setDistance, value);
+      if (localUserLocation) {
+        setLocalDistance(value);
         return;
       }
 
@@ -94,50 +97,41 @@ function FiltersModal({
               lng: position.coords.longitude,
             };
 
-            setUserLocation(location);
+            setLocalUserLocation(location);
             setUserLocationLoading(false);
-            handleStateChange(setDistance, value);
+            setLocalDistance(value);
           },
           function (error) {
             console.log("Error occurred. Error code: " + error.code);
             switch (error.code) {
               case 1:
                 setUserLocationError(
-                  "Permís denegat. L'usuari no ha permès la sol·licitud de geolocalització."
+                  "Permission denied. The user has denied the request for geolocation."
                 );
                 break;
               case 2:
                 setUserLocationError(
-                  "Posició no disponible. No s'ha pogut obtenir la informació de la ubicació."
+                  "Position unavailable. Location information is unavailable."
                 );
                 break;
               case 3:
                 setUserLocationError(
-                  "Temps d'espera esgotat. La sol·licitud per obtenir la ubicació de l'usuari ha superat el temps d'espera."
+                  "Timeout. The request to get user location timed out."
                 );
                 break;
               default:
-                setUserLocationError("S'ha produït un error desconegut.");
+                setUserLocationError("An unknown error occurred.");
             }
             setUserLocationLoading(false);
           }
         );
       } else {
         console.log("Geolocation is not supported by this browser.");
-        setUserLocationError(
-          "La geolocalització no és compatible amb aquest navegador."
-        );
+        setUserLocationError("Geolocation is not supported by this browser.");
         setUserLocationLoading(false);
       }
     },
-    [
-      userLocation,
-      setUserLocation,
-      setUserLocationLoading,
-      setUserLocationError,
-      handleStateChange,
-      setDistance,
-    ]
+    [localUserLocation]
   );
 
   const handleDistanceChange = useCallback(
@@ -148,27 +142,59 @@ function FiltersModal({
   );
 
   const disablePlace =
-    distance === undefined || distance !== "" || isNaN(Number(distance));
-  const disableDistance = place || userLocationLoading || userLocationError;
+    localDistance === undefined ||
+    localDistance !== "" ||
+    Number.isNaN(Number(localDistance));
+  const disableDistance =
+    localPlace || userLocationLoading || userLocationError;
+
+  const applyFilters = () => {
+    setState("place", localPlace);
+    setState("byDate", localByDate);
+    setState("category", localCategory);
+    setState("distance", localDistance);
+    setState("userLocation", localUserLocation);
+    setState("filtersApplied", true);
+
+    sendEventToGA("Place", localPlace);
+    sendEventToGA("ByDate", localByDate);
+    sendEventToGA("Category", localCategory);
+    sendEventToGA("Distance", localDistance);
+
+    if (!localPlace) {
+      setState("place", "");
+    }
+
+    setState("openModal", false);
+  };
+
+  const handleByDateChange = useCallback((value) => {
+    setLocalByDate((prevValue) => (prevValue === value ? "" : value));
+  }, []);
+
+  const handleCategoryChange = useCallback((value) => {
+    setLocalCategory((prevValue) => (prevValue === value ? "" : value));
+  }, []);
 
   return (
     <>
       <Modal
         open={openModal}
-        setOpen={setOpenModal}
+        setOpen={(value) => setState("openModal", value)}
         title="Filtres"
         actionButton="Aplicar filtres"
+        onActionButtonClick={applyFilters}
       >
-        <div className="w-full flex flex-col justify-center items-center gap-5 px-6 py-8 my-8">
-          <div className="w-full flex flex-col justify-center items-center gap-2 px-6 sm:px-0">
-            <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
+        <div className="w-full h-full flex flex-col justify-center items-center gap-5 py-8">
+          <div className="w-full flex flex-col justify-center items-center gap-4">
+            <p className="w-full font-semibold font-barlow uppercase pt-[5px]">
               Poblacions
             </p>
             <div className="w-full flex flex-col px-0">
               <Select
                 id="options"
                 options={regionsAndCitiesArray}
-                value={selectedOption}
+                value={selectOption}
                 onChange={handlePlaceChange}
                 isClearable
                 placeholder="població"
@@ -176,26 +202,26 @@ function FiltersModal({
               />
             </div>
           </div>
-          <fieldset className="w-full flex flex-col justify-start items-start gap-4 px-6 sm:px-0">
-            <p className="w-full text-primary font-semibold font-barlow uppercase italic">
+          <fieldset className="w-full flex flex-col justify-start items-start gap-4">
+            <p className="w-full font-semibold font-barlow uppercase">
               Categories
             </p>
             <div className="w-full h-28 flex flex-col justify-start items-start gap-2 flex-wrap">
-              {Object.entries(CATEGORIES).map(([value]) => (
+              {Object.entries(CATEGORY_NAMES_MAP).map(([key, value]) => (
                 <RadioInput
-                  key={value}
-                  id={value}
+                  key={key}
+                  id={key}
                   name="category"
-                  value={value}
-                  checkedValue={category}
+                  value={key}
+                  checkedValue={localCategory}
                   onChange={handleCategoryChange}
                   label={value}
                 />
               ))}
             </div>
           </fieldset>
-          <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
-            <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
+          <fieldset className="w-full flex flex-col justify-start items-start gap-6">
+            <p className="w-full font-semibold font-barlow uppercase pt-[5px]">
               Data
             </p>
             <div className="w-full flex flex-col justify-start items-start gap-x-3 gap-y-3 flex-wrap">
@@ -205,15 +231,15 @@ function FiltersModal({
                   id={value}
                   name="byDate"
                   value={value}
-                  checkedValue={byDate}
+                  checkedValue={localByDate}
                   onChange={handleByDateChange}
                   label={label}
                 />
               ))}
             </div>
           </fieldset>
-          <fieldset className="w-full flex flex-col justify-start items-start gap-6 px-6 sm:px-0">
-            <p className="w-full text-primary font-semibold font-barlow uppercase italic pt-[5px]">
+          <fieldset className="w-full flex flex-col justify-start items-start gap-6">
+            <p className="w-full font-semibold font-barlow uppercase pt-[5px]">
               Distància
             </p>
             {(userLocationLoading || userLocationError) && (
@@ -243,7 +269,7 @@ function FiltersModal({
                 name="distance"
                 min={DISTANCES[0]}
                 max={DISTANCES[DISTANCES.length - 1]}
-                value={distance}
+                value={localDistance}
                 onChange={handleDistanceChange}
                 label="Esdeveniments a"
                 disabled={disableDistance}

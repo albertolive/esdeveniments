@@ -95,7 +95,9 @@ const handler = async (req, res) => {
     allEvents = allEvents.filter(
       (event) => event.id.toString() !== id.toString()
     );
-    allEvents = allEvents.map((event) => normalizeAroundEvents(event));
+    allEvents = allEvents
+      .map((event) => normalizeAroundEvents(event))
+      .filter((event) => event.eventImage !== null);
 
     res.setHeader("Cache-Control", "public, max-age=900, must-revalidate");
     res.setHeader("Content-Type", "application/json");

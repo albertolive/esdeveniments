@@ -7,8 +7,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        roboto: "Roboto Flex",
-        barlow: "Barlow Condensed",
+        roboto: ["Roboto Flex", "sans-serif"],
+        barlow: ["Barlow Condensed", "sans-serif"],
       },
       screens: {
         xs: "360px",
@@ -55,7 +55,7 @@ module.exports = {
       primarydark: "#C8033F",
       primarySoft: "#FF003750",
       whiteCorp: "#ffffff",
-      darkCorp: "#E8E8E8",
+      darkCorp: "#F7F7F7",
       blackCorp: "#454545",
       bColor: "#cccccc",
     },

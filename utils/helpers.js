@@ -1,4 +1,4 @@
-import { DAYS, MONTHS, CITIES_DATA, BYDATES } from "./constants";
+import { DAYS, MONTHS, CITIES_DATA, BYDATES, CATEGORIES } from "./constants";
 import { siteUrl } from "@config/index";
 
 const isLessThanFiveDays = (date) => {
@@ -468,20 +468,22 @@ function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
-export function generateTownUrls(region) {
+export function generateTownUrls(province) {
   const baseUrl = `${siteUrl}/api/fetchRss`;
   let urls = [];
 
-  if (region) {
-    // If region is provided, generate URLs for towns in that region
-    if (CITIES_DATA.has(region)) {
-      for (let town of CITIES_DATA.get(region).towns.keys()) {
-        let url = `${baseUrl}?region=${region}&town=${town}`;
-        urls.push(url);
+  if (province) {
+    // If province is provided, generate URLs for towns in that province
+    for (let [region, regionData] of CITIES_DATA) {
+      if (regionData.province === province) {
+        for (let town of regionData.towns.keys()) {
+          let url = `${baseUrl}?region=${region}&town=${town}`;
+          urls.push(url);
+        }
       }
     }
   } else {
-    // If no region is provided, generate URLs for all towns from all regions
+    // If no province is provided, generate URLs for all towns
     for (let [region, regionData] of CITIES_DATA) {
       for (let town of regionData.towns.keys()) {
         let url = `${baseUrl}?region=${region}&town=${town}`;
@@ -494,7 +496,7 @@ export function generateTownUrls(region) {
 }
 
 export const sendEventToGA = (filterName, filterValue) => {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && filterName && filterValue) {
     window.gtag &&
       window.gtag("event", "filter_used", {
         filter_name: filterName,
@@ -504,9 +506,10 @@ export const sendEventToGA = (filterName, filterValue) => {
 };
 
 export const env =
-  process.env.NODE_ENV !== "production" ||
-  process.env.VERCEL_ENV === "preview" ||
-  process.env.VERCEL_ENV === "development"
+  process.env.NODE_ENV !== "production"
+    ? "dev"
+    : process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
+      process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
     ? "dev"
     : "prod";
 
@@ -516,4 +519,8 @@ export function getRegionFromQuery(q) {
     return parts[parts.length - 1];
   }
   return "";
+}
+
+export function findCategoryKeyByValue(value) {
+  return Object.keys(CATEGORIES).find((key) => CATEGORIES[key] === value);
 }

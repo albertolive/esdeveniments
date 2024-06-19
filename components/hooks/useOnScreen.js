@@ -7,6 +7,11 @@ function useOnScreen(ref, options = {}) {
   const frozenRef = useRef(false);
 
   useEffect(() => {
+    if (!("IntersectionObserver" in window)) {
+      console.warn("IntersectionObserver is not supported by this browser.");
+      return;
+    }
+
     const currentRef = ref.current;
     if (!currentRef) {
       return;

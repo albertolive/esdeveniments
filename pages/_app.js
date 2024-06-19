@@ -1,23 +1,9 @@
 import "@styles/globals.css";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import Script from "next/script";
 import { BaseLayout } from "@components/ui/layout";
 
 function EsdevenimentsMainEntry({ Component, pageProps }) {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const handleBeforeUnload = () => {
-        localStorage.removeItem("currentPage");
-      };
-
-      window.addEventListener("beforeunload", handleBeforeUnload);
-
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }
-  }, []);
-
   return (
     <>
       <Script

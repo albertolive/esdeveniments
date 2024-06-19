@@ -1,8 +1,24 @@
 {
   "crons": [
     {
-      "path": "/api/insertTowns",
+      "path": "/api/insertTowns?province=barcelona",
       "schedule": "5 8-19/1 * * *"
+    },
+    {
+      "path": "/api/insertTowns?province=girona",
+      "schedule": "10 8-19/1 * * *"
+    },
+    {
+      "path": "/api/insertTowns?province=tarragona",
+      "schedule": "15 8-19/1 * * *"
+    },
+    {
+      "path": "/api/insertTowns?province=lleida",
+      "schedule": "20 8-19/1 * * *"
+    },
+    {
+      "path": "/api/removeDuplicates",
+      "schedule": "25 8-19/1 * * *"
     }
   ],
   "functions": {
