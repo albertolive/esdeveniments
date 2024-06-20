@@ -1,4 +1,5 @@
 import https from "https";
+import dns from "dns";
 import axios from "axios";
 import { kv } from "@vercel/kv";
 import { load } from "cheerio";
@@ -10,10 +11,6 @@ import { env } from "@utils/helpers";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
 import createHash from "@utils/createHash";
-
-const agent = new https.Agent({
-  rejectUnauthorized: false,
-});
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -50,6 +47,14 @@ function isCacheValid(cachedData) {
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
   try {
+    dns.lookup("www.oris.cat", (err, address, family) => {
+      if (err) {
+        console.error("DNS lookup failed:", err.message);
+      } else {
+        console.log("DNS lookup result:", address, family);
+      }
+    });
+
     if (shouldInteractWithKv) {
       // Check if the data is cached
       const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
@@ -60,12 +65,20 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
       }
     }
 
+    const agent = new https.Agent({
+      rejectUnauthorized: false,
+      keepAlive: true,
+      timeout: 30000,
+    });
+
     // Fetch the data with increased timeout and detailed logging
     const response = await axios.get(rssFeed, {
       responseType: "arraybuffer",
       timeout: 60000,
       httpsAgent: agent,
     });
+
+    console.log("Fetched RSS data successfully");
 
     // Check if the response status is not 200
     if (response.status !== 200) {
