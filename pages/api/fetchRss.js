@@ -189,7 +189,7 @@ async function fetchRSSFeedWithRetry(
   rssFeed,
   town,
   shouldInteractWithKv,
-  retries = 3
+  retries = 1
 ) {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
