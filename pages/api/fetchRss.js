@@ -1,3 +1,4 @@
+import https from "https";
 import axios from "axios";
 import { kv } from "@vercel/kv";
 import { load } from "cheerio";
@@ -9,6 +10,10 @@ import { env } from "@utils/helpers";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
 import createHash from "@utils/createHash";
+
+const agent = new https.Agent({
+  rejectUnauthorized: false,
+});
 
 const { XMLParser } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -58,7 +63,8 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
     // Fetch the data with increased timeout and detailed logging
     const response = await axios.get(rssFeed, {
       responseType: "arraybuffer",
-      timeout: 30000,
+      timeout: 60000,
+      httpsAgent: agent,
     });
 
     // Check if the response status is not 200
@@ -138,7 +144,6 @@ function handleFetchError(err, rssFeed, town) {
 
   if (axios.isAxiosError(err)) {
     errorMessage += `AxiosError: ${err.message}\n`;
-
     if (err.response) {
       errorMessage += `Status: ${err.response.status}\n`;
       errorMessage += `Headers: ${JSON.stringify(err.response.headers)}\n`;
@@ -148,11 +153,12 @@ function handleFetchError(err, rssFeed, town) {
       if (Buffer.isBuffer(responseData)) {
         responseData = responseData.toString("utf8");
       }
-
       errorMessage += `Data: ${responseData}\n`;
     } else if (err.request) {
       errorMessage += `No response received\n`;
       errorMessage += `Request Path: ${err.request.path}\n`;
+      errorMessage += `Request Hostname: ${err.request.hostname}\n`;
+      errorMessage += `Request Port: ${err.request.port}\n`;
     } else {
       errorMessage += `Error setting up request: ${err.message}\n`;
     }
