@@ -54,6 +54,12 @@
     },
     "pages/api/api-undici.js": {
       "maxDuration": 300
+    },
+    "pages/api/api-undici-custom.js": {
+      "maxDuration": 300
+    },
+    "pages/api/api-undici-close-connection.js": {
+      "maxDuration": 300
     }
   }
 }
