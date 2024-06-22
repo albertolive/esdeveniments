@@ -36,6 +36,24 @@
     },
     "pages/api/insertTowns.js": {
       "maxDuration": 300
+    },
+    "pages/api/api-axios.js": {
+      "maxDuration": 300
+    },
+    "pages/api/api-node-fetch.js": {
+      "maxDuration": 300
+    },
+    "pages/api/api-https.js": {
+      "maxDuration": 300
+    },
+    "pages/api/api-circuit-breaker.js": {
+      "maxDuration": 300
+    },
+    "pages/api/api-http.js": {
+      "maxDuration": 300
+    },
+    "pages/api/api-undici.js": {
+      "maxDuration": 300
     }
   }
 }

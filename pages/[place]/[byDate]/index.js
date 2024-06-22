@@ -20,6 +20,7 @@ export default function ByDate({ initialState }) {
 
 export async function getStaticPaths() {
   if (
+    false ||
     process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
     process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
   ) {
