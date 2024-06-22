@@ -1,5 +1,4 @@
 import https from "https";
-import dns from "dns";
 import axios from "axios";
 import { kv } from "@vercel/kv";
 import { load } from "cheerio";
@@ -47,14 +46,6 @@ function isCacheValid(cachedData) {
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
   try {
-    dns.lookup("www.oris.cat", (err, address, family) => {
-      if (err) {
-        console.error("DNS lookup failed:", err.message);
-      } else {
-        console.log("DNS lookup result:", address, family);
-      }
-    });
-
     if (shouldInteractWithKv) {
       // Check if the data is cached
       const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
@@ -68,7 +59,7 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
     const agent = new https.Agent({
       rejectUnauthorized: false,
       keepAlive: true,
-      timeout: 30000,
+      timeout: 60000,
     });
 
     // Fetch the data with increased timeout and detailed logging
@@ -557,9 +548,19 @@ async function createEvent(item, region, town) {
     dateTime = DateTime.fromISO(ensureISOFormat(date), dateTimeParams);
   }
 
+  if (!dateTime.isValid) {
+    console.error("Invalid start date:", pubDate || date.from || date);
+    return null; // or handle the error as needed
+  }
+
   const endDateTime = hasToDate
     ? DateTime.fromRFC2822(date.to, dateTimeParams)
     : dateTime.plus({ hours: 1 });
+
+  if (!endDateTime.isValid) {
+    console.error("Invalid end date:", date.to);
+    return null; // or handle the error as needed
+  }
 
   const isFullDayEvent = dateTime.toFormat("HH:mm:ss") === "00:00:00";
 

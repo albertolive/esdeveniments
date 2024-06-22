@@ -52,6 +52,7 @@
     "rss": "^1.2.2",
     "swr": "^2.2.5",
     "tailwindcss": "^3.3.6",
+    "undici": "^6.19.2",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
