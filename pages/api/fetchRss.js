@@ -55,10 +55,7 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
       // }
     }
 
-    const edgeApiUrl = new URL(
-      "/api/getRss",
-      "https://esdeveniments-git-tes-issue-esdeveniments.vercel.app"
-    );
+    const edgeApiUrl = new URL("/api/getRss", siteUrl);
     edgeApiUrl.searchParams.append("rssFeed", rssFeed);
 
     const response = await fetch(edgeApiUrl.toString());
@@ -186,10 +183,7 @@ function getBaseUrl(url) {
 async function fetchAndDecodeHtml(url, sanitizeUrl = true) {
   try {
     const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
-    const edgeApiUrl = new URL(
-      "/api/getDescription",
-      "https://esdeveniments-git-tes-issue-esdeveniments.vercel.app"
-    );
+    const edgeApiUrl = new URL("/api/getDescription", siteUrl);
     edgeApiUrl.searchParams.append("itemUrl", sanitizedUrl);
 
     const response = await fetch(edgeApiUrl.toString());
