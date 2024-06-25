@@ -36,14 +36,6 @@
     },
     "pages/api/insertTowns.js": {
       "maxDuration": 300
-    },
-    "pages/api/getDescription.js": {
-      "runtime": "edge",
-      "maxDuration": 30
-    },
-    "pages/api/getRss.js": {
-      "runtime": "edge",
-      "maxDuration": 30
     }
   }
 }
