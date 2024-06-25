@@ -10,8 +10,6 @@ import { postToGoogleCalendar } from "@lib/apiHelpers";
 import createHash from "@utils/createHash";
 import { siteUrl } from "@config/index";
 
-const { XMLParser } = require("fast-xml-parser");
-const parser = new XMLParser();
 const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
 
 // Configuration
