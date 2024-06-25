@@ -1,5 +1,3 @@
-import https from "https";
-import axios from "axios";
 import { kv } from "@vercel/kv";
 import { load } from "cheerio";
 import Bottleneck from "bottleneck";
@@ -186,19 +184,32 @@ function getBaseUrl(url) {
 }
 
 async function fetchAndDecodeHtml(url, sanitizeUrl = true) {
-  const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
-  const response = await fetch(sanitizedUrl);
-  const arrayBuffer = await response.arrayBuffer();
+  try {
+    const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
+    const edgeApiUrl = new URL(
+      "/api/getDescription",
+      "https://esdeveniments-git-tes-issue-esdeveniments.vercel.app"
+    );
+    edgeApiUrl.searchParams.append("itemUrl", sanitizedUrl);
 
-  let decoder = new TextDecoder("utf-8");
-  let html = decoder.decode(arrayBuffer);
+    const response = await fetch(edgeApiUrl.toString());
 
-  if (html.includes("�")) {
-    decoder = new TextDecoder("iso-8859-1");
-    html = decoder.decode(arrayBuffer);
+    if (!response.ok) {
+      throw new Error(`Edge API error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+
+    return html;
+  } catch (error) {
+    console.error(
+      `Failed to fetch and decode HTML from ${url}: ${error.message}`
+    );
+    captureException(error); // Log the error to Sentry
+    throw new Error(
+      `Failed to fetch and decode HTML from ${url}: ${error.message}`
+    );
   }
-
-  return html;
 }
 
 function sanitize(url) {
