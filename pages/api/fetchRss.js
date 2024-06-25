@@ -57,7 +57,10 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
       // }
     }
 
-    const edgeApiUrl = new URL("/api/getRss", siteUrl);
+    const edgeApiUrl = new URL(
+      "/api/getRss",
+      "https://esdeveniments-git-tes-issue-esdeveniments.vercel.app"
+    );
     edgeApiUrl.searchParams.append("rssFeed", rssFeed);
 
     const response = await fetch(edgeApiUrl.toString());
