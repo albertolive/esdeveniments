@@ -47,10 +47,10 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
       // Check if the data is cached
       const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
 
-      // if (isCacheValid(cachedData)) {
-      //   console.log(`Returning cached data for ${town}`);
-      //   return cachedData.data;
-      // }
+      if (isCacheValid(cachedData)) {
+        console.log(`Returning cached data for ${town}`);
+        return cachedData.data;
+      }
     }
 
     const edgeApiUrl = new URL("/api/getRss", siteUrl);
