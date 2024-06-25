@@ -2855,14 +2855,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:^4.2.2":
-  version: 4.2.7
-  resolution: "fast-xml-parser@npm:4.2.7"
+"fast-xml-parser@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "fast-xml-parser@npm:4.4.0"
   dependencies:
     strnum: "npm:^1.0.5"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10c0/0681922d95713062ec6205fd41be503890c474a45831c39502e72fccf0b0bd88c49d2c2fa79c6d24d432573631d515967fd17938bcedf230cb134c291cbbbf5e
+  checksum: 10c0/ce32fad713471a40bea67959894168f297a5dd0aba64b89a2abc71a4fec0b1ae1d49c2dd8d8719ca8beeedf477824358c8a486b360b9f3ef12abc2e355d11318
   languageName: node
   linkType: hard
 
@@ -5462,7 +5462,7 @@ __metadata:
     date-fns-tz: "npm:^2.0.0"
     eslint: "npm:8.34.0"
     eslint-config-next: "npm:^14.0.3"
-    fast-xml-parser: "npm:^4.2.2"
+    fast-xml-parser: "npm:^4.4.0"
     feed: "npm:^4.2.2"
     google-auth-library: "npm:^9.4.2"
     luxon: "npm:^3.4.3"

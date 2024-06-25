@@ -56,68 +56,17 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
       }
     }
 
-    const agent = new https.Agent({
-      rejectUnauthorized: false,
-      keepAlive: true,
-      timeout: 60000,
-    });
+    const edgeApiUrl = new URL("/api/getRss", process.env.NEXT_PUBLIC_BASE_URL);
+    edgeApiUrl.searchParams.append("rssFeed", rssFeed);
 
-    // Fetch the data with increased timeout and detailed logging
-    const response = await axios.get(rssFeed, {
-      responseType: "arraybuffer",
-      timeout: 60000,
-      httpsAgent: agent,
-    });
+    const response = await fetch(edgeApiUrl.toString());
 
-    console.log("Fetched RSS data successfully");
-
-    // Check if the response status is not 200
-    if (response.status !== 200) {
-      throw new Error(
-        `Failed to fetch RSS data for ${town}: ${response.status}`
-      );
+    if (!response.ok) {
+      throw new Error(`Edge API error! status: ${response.status}`);
     }
 
-    let data;
+    const data = await response.json();
 
-    // Check the Content-Type header of the response
-    if (
-      response.headers["content-type"] &&
-      response.headers["content-type"].includes("application/json")
-    ) {
-      // If the Content-Type is JSON, parse the response data as JSON
-      data = JSON.parse(response.data);
-    } else {
-      // If the Content-Type is not JSON, decode the response data
-      let decoder = new TextDecoder("utf-8");
-      data = decoder.decode(response.data);
-
-      // If the decoded data contains unusual characters, try ISO-8859-1
-      if (data.includes("�")) {
-        decoder = new TextDecoder("iso-8859-1");
-        data = decoder.decode(response.data);
-      }
-    }
-
-    // If data is not an array, it means that it's an RSS feed
-    if (!Array.isArray(data)) {
-      const json = parser.parse(data);
-
-      // Validate the data
-      if (
-        !json ||
-        !json.rss ||
-        !json.rss.channel ||
-        !Array.isArray(json.rss.channel.item)
-      ) {
-        console.log("Invalid RSS data format or no items in feed");
-        return [];
-      }
-
-      data = json.rss.channel.item;
-    }
-
-    // Cache the data
     if (shouldInteractWithKv) {
       try {
         await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
@@ -146,65 +95,15 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
 function handleFetchError(err, rssFeed, town) {
   let errorMessage = `An error occurred while fetching the RSS feed of ${town} (${rssFeed}): `;
 
-  if (axios.isAxiosError(err)) {
-    errorMessage += `AxiosError: ${err.message}\n`;
-    if (err.response) {
-      errorMessage += `Status: ${err.response.status}\n`;
-      errorMessage += `Headers: ${JSON.stringify(err.response.headers)}\n`;
-
-      // Handle Buffer data
-      let responseData = err.response.data;
-      if (Buffer.isBuffer(responseData)) {
-        responseData = responseData.toString("utf8");
-      }
-      errorMessage += `Data: ${responseData}\n`;
-    } else if (err.request) {
-      errorMessage += `No response received\n`;
-      errorMessage += `Request Path: ${err.request.path}\n`;
-      errorMessage += `Request Hostname: ${err.request.hostname}\n`;
-      errorMessage += `Request Port: ${err.request.port}\n`;
-    } else {
-      errorMessage += `Error setting up request: ${err.message}\n`;
-    }
-  } else {
+  if (err instanceof Error) {
     errorMessage += `${err.message}\n`;
+  } else {
+    errorMessage += `${String(err)}\n`;
   }
 
   console.error(errorMessage);
   captureException(new RSSFeedError(errorMessage));
   throw new RSSFeedError(errorMessage);
-}
-
-// Retry Logic
-async function fetchRSSFeedWithRetry(
-  rssFeed,
-  town,
-  shouldInteractWithKv,
-  retries = 1
-) {
-  for (let attempt = 0; attempt < retries; attempt++) {
-    try {
-      return await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
-    } catch (error) {
-      if (attempt < retries - 1) {
-        console.warn(
-          `Retrying to fetch RSS feed for ${town}, attempt ${attempt + 1}`
-        );
-        await delay((attempt + 1) * 2000); // Exponential backoff
-      } else {
-        // Graceful fallback if all retries fail
-        console.error(
-          `Failed to fetch RSS feed for ${town} after ${retries} attempts: ${error.message}`
-        );
-        captureException(
-          new Error(
-            `Failed to fetch RSS feed for ${town} after ${retries} attempts: ${error.message}`
-          )
-        );
-        return []; // Return an empty array or a default response
-      }
-    }
-  }
 }
 
 async function getProcessedItems(town) {
@@ -753,11 +652,7 @@ export default async function handler(req, res) {
     // Fetch the RSS feed
     console.log(`Fetching RSS feed for ${town}: ${rssFeed}`);
 
-    const items = await fetchRSSFeedWithRetry(
-      rssFeed,
-      town,
-      shouldInteractWithKv
-    );
+    const items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
 
     // Read the database
     let processedItems = new Map();
