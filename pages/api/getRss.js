@@ -10,7 +10,7 @@ const parser = new XMLParser();
 export default async function handler(req) {
   const { searchParams } = new URL(req.url);
   const rssFeed = searchParams.get("rssFeed");
-
+  console.log("rssFeed", rssFeed);
   if (!rssFeed) {
     const error = new Error("RSS feed URL is required");
     captureException(error);
@@ -50,7 +50,7 @@ export default async function handler(req) {
         headers: { "Content-Type": "application/json" },
       });
     }
-
+    console.log("json.rss.channel.item", json.rss.channel.item);
     return new Response(JSON.stringify(json.rss.channel.item), {
       status: 200,
       headers: { "Content-Type": "application/json" },
