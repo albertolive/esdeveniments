@@ -37,29 +37,13 @@
     "pages/api/insertTowns.js": {
       "maxDuration": 300
     },
-    "pages/api/api-axios.js": {
-      "maxDuration": 300
+    "pages/api/getDescription.js": {
+      "runtime": "edge",
+      "maxDuration": 30
     },
-    "pages/api/api-node-fetch.js": {
-      "maxDuration": 300
-    },
-    "pages/api/api-https.js": {
-      "maxDuration": 300
-    },
-    "pages/api/api-circuit-breaker.js": {
-      "maxDuration": 300
-    },
-    "pages/api/api-http.js": {
-      "maxDuration": 300
-    },
-    "pages/api/api-undici.js": {
-      "maxDuration": 300
-    },
-    "pages/api/api-undici-custom.js": {
-      "maxDuration": 300
-    },
-    "pages/api/api-undici-close-connection.js": {
-      "maxDuration": 300
+    "pages/api/getRss.js": {
+      "runtime": "edge",
+      "maxDuration": 30
     }
   }
 }
