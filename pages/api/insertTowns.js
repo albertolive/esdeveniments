@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
   try {
     const { data: urls } = await axios.get(
-      `${siteUrl}/api/getTowns?province=${province}`
+      `${siteUrl}/api/getTowns?province=${province || ""}`
     );
 
     for (const url of urls) {
