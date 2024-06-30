@@ -10,45 +10,45 @@ import { postToGoogleCalendar } from "@lib/apiHelpers";
 import createHash from "@utils/createHash";
 import { siteUrl } from "@config/index";
 
-const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
-
 // Configuration
-const debugMode = false;
-const TIMEOUT_LIMIT =
-  env === "prod" ? process.env.NEXT_PUBLIC_TIMEOUT_LIMIT : 100000;
-const SAFETY_MARGIN = 1000;
-const PROCESSED_ITEMS_KEY = "processedItems";
-const RSS_FEED_CACHE_KEY = "rssFeedCache";
-const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
-const RSS_FEED_CACHE_MAX_AGE = 3 * 60 * 60 * 1000; // 3 hours
+const CONFIG = {
+  debugMode: false,
+  timeoutLimit: env === "prod" ? process.env.NEXT_PUBLIC_TIMEOUT_LIMIT : 100000,
+  safetyMargin: 1000,
+  processedItemsKey: "processedItems",
+  rssFeedCacheKey: "rssFeedCache",
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  rssFeedCacheMaxAge: 3 * 60 * 60 * 1000, // 3 hours
+};
+
+const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
 
 // Utility function to log errors
 function logError(error, town, context) {
-  const errorMessage = `Error in ${context} for town ${town}: ${error.message}`;
+  const errorMessage = `Error in ${context} for town ${town || "Unknown"}: ${
+    error.message
+  }`;
   console.error(errorMessage);
   captureException(new Error(errorMessage), {
-    tags: { town, context },
+    tags: { town: town || "Unknown", context },
     extra: { originalError: error },
   });
 }
 
 // Utility function to delay execution
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Utility function to check cache validity
-function isCacheValid(cachedData) {
-  return (
-    cachedData && Date.now() - cachedData.timestamp < RSS_FEED_CACHE_MAX_AGE
-  );
-}
+const isCacheValid = (cachedData) =>
+  cachedData && Date.now() - cachedData.timestamp < CONFIG.rssFeedCacheMaxAge;
 
 // Fetches the RSS feed and returns the parsed data
 async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
   try {
     if (shouldInteractWithKv) {
-      const cachedData = await kv.get(`${env}_${town}_${RSS_FEED_CACHE_KEY}`);
+      const cachedData = await kv.get(
+        `${env}_${town}_${CONFIG.rssFeedCacheKey}`
+      );
       if (isCacheValid(cachedData)) {
         console.log(`Returning cached data for ${town}`);
         return cachedData.data;
@@ -66,13 +66,12 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
     const data = await response.json();
     if (shouldInteractWithKv) {
       try {
-        await kv.set(`${env}_${town}_${RSS_FEED_CACHE_KEY}`, {
+        await kv.set(`${env}_${town}_${CONFIG.rssFeedCacheKey}`, {
           timestamp: Date.now(),
           data,
         });
       } catch (err) {
         logError(err, town, "caching RSS feed");
-        throw new Error(`Failed to cache RSS feed: ${err.message}`);
       }
     }
 
@@ -80,7 +79,7 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
     return data;
   } catch (err) {
     logError(err, town, "fetching RSS feed");
-    throw new Error(`Failed to fetch RSS feed: ${err.message}`);
+    return [];
   }
 }
 
@@ -88,12 +87,12 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
 async function getProcessedItems(town) {
   try {
     const processedItems = await kv.get(
-      `${env}_${town}_${PROCESSED_ITEMS_KEY}`
+      `${env}_${town}_${CONFIG.processedItemsKey}`
     );
     return processedItems ? new Map(processedItems) : new Map();
   } catch (err) {
     logError(err, town, "getting processed items");
-    throw new Error(`Failed to get processed items: ${err.message}`);
+    return new Map();
   }
 }
 
@@ -101,10 +100,11 @@ async function getProcessedItems(town) {
 async function setProcessedItems(processedItems, town) {
   try {
     console.log(`Setting processed items for ${town}`);
-    await kv.set(`${env}_${town}_${PROCESSED_ITEMS_KEY}`, [...processedItems]);
+    await kv.set(`${env}_${town}_${CONFIG.processedItemsKey}`, [
+      ...processedItems,
+    ]);
   } catch (err) {
     logError(err, town, "setting processed items");
-    throw new Error(`Failed to set processed items: ${err.message}`);
   }
 }
 
@@ -113,8 +113,7 @@ async function removeExpiredItems(processedItems) {
   const now = Date.now();
   let removedItemsCount = 0;
   for (const [item, timestamp] of processedItems) {
-    if (now - timestamp > MAX_AGE) {
-      console.log(`Removing item ${item} from processed items`);
+    if (now - timestamp > CONFIG.maxAge) {
       processedItems.delete(item);
       removedItemsCount++;
     }
@@ -160,7 +159,7 @@ function getBaseUrl(url) {
 }
 
 // Fetches and decodes HTML content
-async function fetchAndDecodeHtml(url, sanitizeUrl = true, town) {
+async function fetchAndDecodeHtml(url, sanitizeUrl = true, town = "Unknown") {
   try {
     const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
     const edgeApiUrl = new URL("/api/getDescription", siteUrl);
@@ -171,13 +170,10 @@ async function fetchAndDecodeHtml(url, sanitizeUrl = true, town) {
       throw new Error(`Edge API error! status: ${response.status}`);
     }
 
-    const html = await response.text();
-    return html;
+    return await response.text();
   } catch (error) {
     logError(error, town, "fetching and decoding HTML");
-    throw new Error(
-      `Failed to fetch and decode HTML from ${url}: ${error.message}`
-    );
+    return null;
   }
 }
 
@@ -290,15 +286,16 @@ function formatDescription(item, description, image, video) {
 
 // Scrapes the description of an item
 async function scrapeDescription(item, region, town) {
-  let url;
   try {
-    url = getRSSItemData(item).url;
+    const url = getRSSItemData(item).url;
     if (!url) {
       return null;
     }
 
     const { sanitizeUrl } = getTownData(region, town);
     const html = await fetchAndDecodeHtml(url, sanitizeUrl, town);
+    if (!html) return null;
+
     const $ = load(html);
     const description = getDescription($, item, region, town);
     const image = getImage($, item, region, town, description);
@@ -307,13 +304,12 @@ async function scrapeDescription(item, region, town) {
     return formatDescription(item, description, image, video);
   } catch (error) {
     logError(error, town, "scraping description");
-    throw error;
+    return null;
   }
 }
 
 // Scrapes the location of an item
 async function scrapeLocation(item, region, town) {
-  let url;
   try {
     const { locationSelector } = getTownData(region, town);
     const {
@@ -321,11 +317,12 @@ async function scrapeLocation(item, region, town) {
       location: itemLocation,
       locationExtra,
     } = getRSSItemData(item);
-    url = itemUrl;
     const location = itemLocation || locationExtra;
     if (location) return location;
 
-    const html = await fetchAndDecodeHtml(url);
+    const html = await fetchAndDecodeHtml(itemUrl, true, town);
+    if (!html) return null;
+
     const $ = load(html);
 
     let locationElement = $(locationSelector).find("p").first().text();
@@ -346,7 +343,7 @@ async function scrapeLocation(item, region, town) {
     return locationElement ? locationElement.trim() : location;
   } catch (error) {
     logError(error, town, "scraping location");
-    throw error;
+    return null;
   }
 }
 
@@ -424,7 +421,7 @@ async function createEvent(item, region, town) {
       pubDate || date.from || date
     }`;
     logError(new Error(errorMessage), town, "createEvent");
-    throw new Error(errorMessage);
+    return null;
   }
 
   const endDateTime = hasToDate
@@ -434,7 +431,7 @@ async function createEvent(item, region, town) {
   if (!endDateTime.isValid) {
     const errorMessage = `Invalid date format for event ending at ${date.to}`;
     logError(new Error(errorMessage), town, "createEvent");
-    throw new Error(errorMessage);
+    return null;
   }
 
   const isFullDayEvent = dateTime.toFormat("HH:mm:ss") === "00:00:00";
@@ -469,7 +466,7 @@ async function insertEventToCalendar(
   shouldInteractWithKv
 ) {
   try {
-    if (!debugMode) {
+    if (!CONFIG.debugMode) {
       await postToGoogleCalendar(event, token);
       console.log("Inserted new item successfully: " + event.summary);
 
@@ -485,7 +482,7 @@ async function insertEventToCalendar(
     }
   } catch (error) {
     logError(error, town, "insertEventToCalendar");
-    throw error;
+    // Don't throw, allow processing to continue
   }
 }
 
@@ -500,17 +497,19 @@ async function insertItemToCalendar(
 ) {
   try {
     const event = await createEvent(item, region, town);
-    await insertEventToCalendar(
-      event,
-      town,
-      item,
-      processedItems,
-      token,
-      shouldInteractWithKv
-    );
+    if (event) {
+      await insertEventToCalendar(
+        event,
+        town,
+        item,
+        processedItems,
+        token,
+        shouldInteractWithKv
+      );
+    }
   } catch (error) {
     logError(error, town, "insertItemToCalendar");
-    throw error;
+    // Don't throw, allow processing to continue
   }
 }
 
@@ -523,7 +522,7 @@ async function insertItemToCalendarWithRetry(
   token,
   shouldInteractWithKv
 ) {
-  if (!item) return null;
+  if (!item) return;
 
   const MAX_RETRIES = 3;
   let retries = 0;
@@ -550,11 +549,9 @@ async function insertItemToCalendarWithRetry(
         `insertItemToCalendarWithRetry attempt ${retries + 1}`
       );
       retries++;
-      await delay(Math.pow(2, retries) * 1000); // 2 seconds, 4 seconds, 8 seconds, etc.
+      await delay(Math.pow(2, retries) * 1000);
     }
   }
-
-  return null;
 }
 
 // Retrieves town data from the constants
@@ -564,15 +561,41 @@ function getTownData(region, town) {
   return { regionLabel, ...townData };
 }
 
+const processItems = async (
+  items,
+  region,
+  town,
+  processedItems,
+  token,
+  shouldInteractWithKv
+) => {
+  return Promise.all(
+    items.map(async (item) => {
+      try {
+        return limiter.schedule(() =>
+          insertItemToCalendarWithRetry(
+            item,
+            region,
+            town,
+            processedItems,
+            token,
+            shouldInteractWithKv
+          )
+        );
+      } catch (error) {
+        logError(error, town, `processing item ${item.guid}`);
+        return false;
+      }
+    })
+  );
+};
+
 // Main handler function for the API
 export default async function handler(req, res) {
-  const startTime = Date.now();
-  try {
-    const { region, town, disableKvInsert } = req.query;
-    const shouldInteractWithKv = !(
-      env !== "prod" && disableKvInsert === "true"
-    );
+  const { region, town, disableKvInsert } = req.query;
+  const shouldInteractWithKv = !(env !== "prod" && disableKvInsert === "true");
 
+  try {
     if (!region) throw new Error("Region parameter is missing");
     if (!town) throw new Error("Town parameter is missing");
     if (!CITIES_DATA.has(region)) throw new Error("Region not found");
@@ -601,48 +624,28 @@ export default async function handler(req, res) {
     if (newItems.length === 0) {
       const message = `No new items found for ${town}`;
       console.log(message);
-      res.status(200).json(message);
+      res.status(200).json({ message });
       return;
     }
 
     const token = await getAuthToken();
-    let isTimeout = false;
+    const results = await processItems(
+      newItems,
+      region,
+      town,
+      processedItems,
+      token,
+      shouldInteractWithKv
+    );
+    const processedCount = results.filter(Boolean).length;
 
-    for (const item of newItems) {
-      const elapsedTime = Date.now() - startTime;
-      if (elapsedTime > TIMEOUT_LIMIT - SAFETY_MARGIN) {
-        console.log(
-          "Approaching timeout limit, stopping processing of new items"
-        );
-        isTimeout = true;
-        break;
-      }
-
-      await limiter.schedule(async () => {
-        try {
-          await insertItemToCalendarWithRetry(
-            item,
-            region,
-            town,
-            processedItems,
-            token,
-            shouldInteractWithKv
-          );
-        } catch (error) {
-          logError(error, town, "inserting item to calendar");
-        }
-      });
-    }
-
-    if (!isTimeout) {
-      console.log(`Finished processing items for ${town}`);
-    } else {
-      console.log(`Stopped processing items for ${town} due to timeout`);
-    }
-
-    res.status(200).json(newItems);
+    const message = `Finished processing ${processedCount} items for ${town}`;
+    console.log(message);
+    res
+      .status(200)
+      .json({ message, processedCount, totalItems: newItems.length });
   } catch (err) {
-    logError(err, req.query.town, "handler");
+    logError(err, town || "Unknown", "handler");
     res.status(500).json({ error: `An error occurred: ${err.message}` });
   }
 }
