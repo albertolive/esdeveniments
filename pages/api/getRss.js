@@ -136,6 +136,14 @@ function handleError(error, rssFeed) {
       message = `Unexpected error: ${error.message}. Please try again or contact support if the issue persists.`;
   }
 
+  console.error(`Error handling RSS feed (${rssFeed}):`, {
+    status,
+    message,
+    errorName: error.name,
+    errorMessage: error.message,
+    stack: error.stack,
+  });
+
   return new Response(JSON.stringify({ error: message, items: [] }), {
     status,
     headers: HEADERS_JSON,
