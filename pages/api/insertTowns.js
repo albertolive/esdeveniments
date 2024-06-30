@@ -1,9 +1,10 @@
 import axios from "axios";
 import { CITIES_DATA } from "@utils/constants";
 import { captureException } from "@sentry/nextjs";
+import { siteUrl } from "@config/index";
 
 function generateTownUrls(province) {
-  const baseUrl = `https://www.esdeveniments.cat/api/fetchRss`;
+  const baseUrl = `${siteUrl}/api/fetchRss`;
   return Array.from(CITIES_DATA.entries())
     .filter(([, regionData]) => !province || regionData.province === province)
     .flatMap(([region, regionData]) =>
@@ -19,23 +20,47 @@ function generateTownUrls(province) {
 async function processTown(url) {
   const { town, region } = Object.fromEntries(new URL(url).searchParams);
   try {
-    console.log(`Processing ${town} in ${region}`);
-    const response = await axios.get(url, {
-      timeout: 30000, // 30 second timeout
-    });
-    console.log(`Processed ${town} in ${region}`);
-    return { success: true, town, region, data: response.data };
+    await axios.get(url, { timeout: 10000 });
+    return { success: true, town, region };
   } catch (error) {
-    console.error(`Error processing ${town} in ${region}: ${error.message}`);
-    captureException(error, {
-      extra: {
-        town,
-        region,
-        url,
-      },
-    });
+    captureException(error, { extra: { town, region, url } });
     return { success: false, error: error.message, town, region };
   }
+}
+
+async function processInBatches(urls, batchSize, startTime, timeLimit) {
+  const results = [];
+  for (let i = 0; i < urls.length; i += batchSize) {
+    if (Date.now() - startTime > timeLimit) break;
+    const batch = urls.slice(i, i + batchSize);
+    const batchResults = await Promise.all(batch.map(processTown));
+    results.push(...batchResults);
+  }
+  return results;
+}
+
+function generateSummary(urls, results, totalTime) {
+  const processed = results.length;
+  const successes = results.filter((r) => r.success);
+  const errors = results.filter((r) => !r.success);
+
+  return {
+    message:
+      processed === urls.length
+        ? "All towns processed"
+        : "Partial towns processed (time limit reached)",
+    totalTowns: urls.length,
+    townsProcessed: processed,
+    percentageProcessed: ((processed / urls.length) * 100).toFixed(2) + "%",
+    successCount: successes.length,
+    errorCount: errors.length,
+    processingTime: totalTime.toFixed(2),
+    errors: errors.map((e) => ({
+      town: e.town,
+      region: e.region,
+      error: e.error,
+    })),
+  };
 }
 
 export default async function handler(req, res) {
@@ -45,75 +70,23 @@ export default async function handler(req, res) {
   }
 
   const { province } = req.query;
-  const concurrencyLimit = parseInt(req.query.concurrency) || 5; // Reduced default concurrency
-
   const startTime = Date.now();
   const timeLimit = 4.5 * 60 * 1000; // 4.5 minutes in milliseconds
+  const batchSize = 5; // Process 5 towns concurrently
+
+  const urls = generateTownUrls(province);
+
+  let results = [];
 
   try {
-    const urls = generateTownUrls(province);
-    console.log(
-      `Processing ${urls.length} towns for province: ${province || "all"}`
-    );
-
-    const results = [];
-    let processed = 0;
-
-    while (processed < urls.length) {
-      const remainingTime = timeLimit - (Date.now() - startTime);
-      if (remainingTime <= 0) {
-        console.warn("Time limit reached. Stopping further processing.");
-        break;
-      }
-
-      const chunk = urls.slice(processed, processed + concurrencyLimit);
-      const chunkResults = await Promise.all(chunk.map(processTown));
-
-      results.push(...chunkResults);
-
-      processed += chunk.length;
-      console.log(
-        `Processed ${processed}/${urls.length} towns (${(
-          (processed / urls.length) *
-          100
-        ).toFixed(2)}%)`
-      );
-    }
-
+    results = await processInBatches(urls, batchSize, startTime, timeLimit);
+  } catch (error) {
+    captureException(error);
+  } finally {
     const totalTime = (Date.now() - startTime) / 1000;
-    console.log(`Operation completed in ${totalTime.toFixed(2)} seconds`);
 
-    const successes = results.filter((r) => r.success);
-    const errors = results.filter((r) => !r.success);
-
-    const summary = {
-      message:
-        processed === urls.length
-          ? "All towns processed"
-          : "Partial towns processed (time limit reached)",
-      province: province || "all",
-      totalTowns: urls.length,
-      townsProcessed: processed,
-      successCount: successes.length,
-      errorCount: errors.length,
-      processingTime: totalTime,
-      errors: errors.map((e) => ({
-        town: e.town,
-        region: e.region,
-        error: e.error,
-      })),
-    };
-
-    console.log("Operation summary:", JSON.stringify(summary, null, 2));
+    const summary = generateSummary(urls, results, totalTime);
 
     res.status(200).json(summary);
-  } catch (error) {
-    console.error(`Error during operation: ${error}`);
-    captureException(error);
-    res.status(500).json({
-      error: "Failed to complete the operation",
-      province: province || "all",
-      details: error.message,
-    });
   }
 }
