@@ -5,6 +5,10 @@ export const config = {
   runtime: "edge",
 };
 
+const USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
+const HEADERS_JSON = { "Content-Type": "application/json" };
+
 const parser = new XMLParser();
 
 class HTTPError extends Error {
@@ -56,10 +60,7 @@ export default async function handler(req) {
     }
 
     const response = await fetchWithTimeout(rssFeed, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-      },
+      headers: { "User-Agent": USER_AGENT },
     });
 
     if (!response.ok) {
@@ -87,14 +88,14 @@ export default async function handler(req) {
         JSON.stringify({ message: "No items found in the feed", items: [] }),
         {
           status: 200,
-          headers: { "Content-Type": "application/json" },
+          headers: HEADERS_JSON,
         }
       );
     }
 
     return new Response(JSON.stringify({ items }), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: HEADERS_JSON,
     });
   } catch (error) {
     return handleError(error, rssFeed);
@@ -132,6 +133,6 @@ function handleError(error, rssFeed) {
 
   return new Response(JSON.stringify({ error: message, items: [] }), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: HEADERS_JSON,
   });
 }
