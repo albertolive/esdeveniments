@@ -111,24 +111,29 @@ function handleError(error, rssFeed) {
   switch (true) {
     case error instanceof ValidationError:
       status = 400;
-      message = error.message;
+      message = `Invalid input: ${error.message}. Please provide a valid RSS feed URL.`;
       break;
     case error instanceof HTTPError:
-      status = error.status >= 500 ? 502 : 400;
-      message =
-        error.status >= 500 ? "RSS feed server error" : "Invalid RSS feed URL";
+      if (error.status >= 500) {
+        status = 502;
+        message = `RSS feed server error (HTTP ${error.status}): The server is not responding correctly. Please try again later.`;
+      } else {
+        status = 400;
+        message = `RSS feed access error (HTTP ${error.status}): The feed URL is invalid or inaccessible. Please check the URL and your internet connection.`;
+      }
       break;
     case error instanceof ParseError:
       status = 422;
-      message = "Failed to parse RSS feed";
+      message = `RSS feed parsing error: ${error.message}. The feed may be malformed or in an unsupported format.`;
       break;
     case error.name === "AbortError":
       status = 504;
-      message = "Request timed out";
+      message =
+        "Request timeout: The RSS feed took too long to respond. The feed might be slow or temporarily unavailable.";
       break;
     default:
       status = 500;
-      message = "An unexpected error occurred";
+      message = `Unexpected error: ${error.message}. Please try again or contact support if the issue persists.`;
   }
 
   return new Response(JSON.stringify({ error: message, items: [] }), {
