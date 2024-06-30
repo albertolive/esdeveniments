@@ -691,24 +691,30 @@ function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
 async function fetchHtmlContent(url, selectors) {
   const { encoding } = selectors;
 
-  let retries = 3; // Nr of retries
-  let delay = 1000; // Delay in ms
+  let retries = 3;
+  let delay = 1000;
 
   while (retries > 0) {
     try {
-      const response = await axios.get(url, { responseType: "arraybuffer" });
+      const response = await axios.get(url, {
+        responseType: "arraybuffer",
+        timeout: 10000,
+      });
       const decoder = new TextDecoder(encoding);
       return decoder.decode(response.data);
     } catch (error) {
       retries--;
-      console.error("Error fetching HTML content, retries left: ", retries);
+      console.error(
+        `Error fetching HTML content for ${url}, retries left: ${retries}`,
+        error
+      );
       if (retries === 0) {
         throw new Error(
-          "Error fetching HTML content response status: ",
-          error.status
+          `Error fetching HTML content for ${url}: ${error.message}`
         );
       }
       await new Promise((resolve) => setTimeout(resolve, delay));
+      delay *= 2; // Exponential backoff
     }
   }
 }
@@ -767,95 +773,85 @@ async function extractEventDetails(html, selectors) {
   } = selectors;
   const $ = cheerio.load(html);
   const events = [];
-  let exhaustiveResults = [];
-  const timeout = 120000; // 60 segons
-  await new Promise((resolve, reject) => {
-    let completed = 0;
-    const totalItems = $(listSelector).length;
-    $(listSelector).each(async (_, element) => {
-      const title = $(element).find(titleSelector).text().trim();
-      const url = $(element).find(urlSelector).attr("href");
-      let date =
-        dateAttr !== ""
-          ? $(element).find(dateSelector).attr(dateAttr).trim()
-          : $(element).find(dateSelector).text().trim();
-      let time = $(element).find(timeSelector).text().trim();
-      let location = $(element)
-        .find(locationSelector)
-        .text()
-        .trim()
-        .replace(/\s+/g, " ");
-      let description = $(element).find(descriptionSelector).text().trim();
-      let image = $(element).find(imageSelector).attr("src");
-      const rssUrl = url && url.includes(domain) ? url : `${domain}${url}`;
-      if (
-        url &&
-        ((!date && dateSelector !== "") ||
-          (!location && locationSelector !== "") ||
-          (!description && descriptionSelector !== "") ||
-          (!image && imageSelector !== "") ||
-          (!time && timeSelector !== ""))
-      ) {
-        exhaustiveResults = await exhaustiveSearch(
-          rssUrl,
-          selectors,
-          date,
-          time,
+
+  const items = $(listSelector).toArray();
+
+  await Promise.all(
+    items.map(async (element) => {
+      try {
+        const title = $(element).find(titleSelector).text().trim();
+        const url = $(element).find(urlSelector).attr("href");
+        let date =
+          dateAttr !== ""
+            ? $(element).find(dateSelector).attr(dateAttr)?.trim()
+            : $(element).find(dateSelector).text().trim();
+        let time = $(element).find(timeSelector).text().trim();
+        let location = $(element)
+          .find(locationSelector)
+          .text()
+          .trim()
+          .replace(/\s+/g, " ");
+        let description = $(element).find(descriptionSelector).text().trim();
+        let image = $(element).find(imageSelector).attr("src");
+        const rssUrl = url && url.includes(domain) ? url : `${domain}${url}`;
+
+        if (
+          url &&
+          ((!date && dateSelector !== "") ||
+            (!location && locationSelector !== "") ||
+            (!description && descriptionSelector !== "") ||
+            (!image && imageSelector !== "") ||
+            (!time && timeSelector !== ""))
+        ) {
+          const exhaustiveResults = await exhaustiveSearch(
+            rssUrl,
+            selectors,
+            date,
+            time,
+            location,
+            description,
+            image
+          );
+          if (!date && exhaustiveResults.date) date = exhaustiveResults.date;
+          if (!time && exhaustiveResults.time) time = exhaustiveResults.time;
+          if (!location && exhaustiveResults.location)
+            location = exhaustiveResults.location;
+          if (!description && exhaustiveResults.description)
+            description = exhaustiveResults.description;
+          if (!image && exhaustiveResults.image)
+            image = exhaustiveResults.image;
+        }
+
+        if (!location) location = defaultLocation;
+        if (!description) description = title;
+        const hash = createHash(title, url, location, date);
+        const rssDate =
+          date && convertToRSSDate(date, time, dateRegex, timeRegex);
+        const rssImage = image
+          ? image.includes(domain)
+            ? image.replace(urlImage, "/")
+            : `${domain}${image.replace(urlImage, "/")}`
+          : image;
+
+        description += rssImage ? ` <div class="hidden">${rssImage}</div>` : "";
+        events.push({
+          id: hash,
+          url: rssUrl,
+          title,
           location,
+          date: rssDate,
           description,
-          image
-        );
-        if (!date && exhaustiveResults.date) date = exhaustiveResults.date;
-        if (!time && exhaustiveResults.time) time = exhaustiveResults.time;
-        if (!location && exhaustiveResults.location)
-          location = exhaustiveResults.location;
-        if (!description && exhaustiveResults.description)
-          description = exhaustiveResults.description;
-        if (!image && exhaustiveResults.image) image = exhaustiveResults.image;
+          image: rssImage,
+        });
+      } catch (error) {
+        console.error(`Error processing event: ${error.message}`);
       }
-      if (!location) location = defaultLocation;
-      if (!description) description = title;
-      const hash = createHash(title, url, location, date);
-      const rssDate =
-        date && convertToRSSDate(date, time, dateRegex, timeRegex);
-      const rssImage = image
-        ? image.includes(domain)
-          ? image.replace(urlImage, "/")
-          : `${domain}${image.replace(urlImage, "/")}`
-        : image;
+    })
+  );
 
-      description =
-        description +
-        (rssImage ? ` <div class="hidden">${rssImage}</div>` : "");
-      events.push({
-        id: hash,
-        url: rssUrl,
-        title,
-        location,
-        date: rssDate,
-        description,
-        image: rssImage,
-      });
-
-      completed++;
-
-      if (completed === totalItems) {
-        console.log(
-          "Number of scraped events: ",
-          completed + " from " + defaultLocation
-        );
-        resolve();
-      }
-    });
-    setTimeout(() => {
-      reject(
-        new Error(
-          "Execution timeout when " + defaultLocation + " events was scrapping"
-        )
-      );
-    }, timeout);
-  });
-
+  console.log(
+    `Number of scraped events: ${events.length} from ${defaultLocation}`
+  );
   return events;
 }
 
@@ -888,17 +884,19 @@ async function createEventRss(city) {
   const cityData = CITIES[city];
 
   if (!cityData) {
-    throw new Error("Invalid city");
+    console.error(`Invalid city: ${city}`);
+    captureException(new Error(`Invalid city: ${city}`));
+    return null;
   }
 
   try {
     const html = await fetchHtmlContent(cityData.url, cityData);
     const events = await extractEventDetails(html, cityData);
-    const rssXml = createRssFeed(events, city);
-    return rssXml;
+    return createRssFeed(events, city);
   } catch (error) {
-    console.error("Error creating RSS feed:", error);
-    throw new Error("Failed to create RSS feed", error);
+    console.error(`Error creating RSS feed for ${city}:`, error);
+    captureException(error);
+    return null;
   }
 }
 
@@ -910,13 +908,35 @@ export default async function handler(req, res) {
     return;
   }
 
-  try {
-    const rssXml = await createEventRss(city);
-    res.status(200).send(rssXml);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to create RSS feed", details: error });
-    captureException(error);
+  const cities = city.split(",");
+  const results = {};
+
+  for (const singleCity of cities) {
+    try {
+      const rssXml = await createEventRss(singleCity);
+      if (rssXml) {
+        results[singleCity] = rssXml;
+      } else {
+        results[singleCity] = null;
+      }
+    } catch (error) {
+      console.error(`Error processing city ${singleCity}:`, error);
+      captureException(error);
+      results[singleCity] = null;
+    }
+  }
+
+  const successfulCities = Object.keys(results).filter(
+    (c) => results[c] !== null
+  );
+
+  if (successfulCities.length > 0) {
+    if (successfulCities.length === 1) {
+      res.status(200).send(results[successfulCities[0]]);
+    } else {
+      res.status(200).json(results);
+    }
+  } else {
+    res.status(500).json({ error: "Failed to create RSS feed for all cities" });
   }
 }
