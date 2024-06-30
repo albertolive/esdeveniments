@@ -19,16 +19,6 @@ const urgell = [
           ...sharedData,
         },
       ],
-      [
-        "monistroldecalders",
-        {
-          label: "Monistrol de Calders",
-          rssFeed: "https://www.monistroldecalders.cat/rss/12",
-          postalCode: "08275",
-          coords: { lat: 41.7606040452777, lng: 2.01389293556143 },
-          ...sharedData,
-        },
-      ],
     ]),
   },
 ];

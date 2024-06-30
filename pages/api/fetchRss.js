@@ -60,7 +60,9 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
 
     const response = await fetch(edgeApiUrl.toString());
     if (!response.ok) {
-      throw new Error(`Edge API error! status: ${response.status}`);
+      throw new Error(
+        `Error fetching rss feed edge. status: ${response.status}`
+      );
     }
 
     const data = await response.json();
@@ -482,7 +484,6 @@ async function insertEventToCalendar(
     }
   } catch (error) {
     logError(error, town, "insertEventToCalendar");
-    // Don't throw, allow processing to continue
   }
 }
 
@@ -509,7 +510,6 @@ async function insertItemToCalendar(
     }
   } catch (error) {
     logError(error, town, "insertItemToCalendar");
-    // Don't throw, allow processing to continue
   }
 }
 
