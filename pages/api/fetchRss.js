@@ -160,7 +160,7 @@ function getBaseUrl(url) {
 }
 
 // Fetches and decodes HTML content
-async function fetchAndDecodeHtml(url, sanitizeUrl = true) {
+async function fetchAndDecodeHtml(url, sanitizeUrl = true, town) {
   try {
     const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
     const edgeApiUrl = new URL("/api/getDescription", siteUrl);
@@ -174,7 +174,7 @@ async function fetchAndDecodeHtml(url, sanitizeUrl = true) {
     const html = await response.text();
     return html;
   } catch (error) {
-    logError(error, "", "fetching and decoding HTML");
+    logError(error, town, "fetching and decoding HTML");
     throw new Error(
       `Failed to fetch and decode HTML from ${url}: ${error.message}`
     );
@@ -298,7 +298,7 @@ async function scrapeDescription(item, region, town) {
     }
 
     const { sanitizeUrl } = getTownData(region, town);
-    const html = await fetchAndDecodeHtml(url, sanitizeUrl);
+    const html = await fetchAndDecodeHtml(url, sanitizeUrl, town);
     const $ = load(html);
     const description = getDescription($, item, region, town);
     const image = getImage($, item, region, town, description);
