@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CITIES_DATA } from "@utils/cityData";
+import { CITIES_DATA } from "@utils/constants";
 import { captureException } from "@sentry/nextjs";
 
 function generateTownUrls(province) {
