@@ -44,6 +44,10 @@ export const normalizeWeather = (startDate, weatherInfo) => {
 };
 
 const extractEventImage = (description) => {
+  if (!description) {
+    return "";
+  }
+
   const newFormatRegex = /<span class="hidden" data-image="([^"]+)">/;
   const newFormatMatch = description.match(newFormatRegex);
   if (newFormatMatch) {
@@ -65,6 +69,10 @@ const extractEventImage = (description) => {
 };
 
 const extractEventUrl = (description) => {
+  if (!description) {
+    return "";
+  }
+
   const newFormatRegex =
     /<span id="more-info" class="hidden" data-url="([^"]+)">/;
   const newFormatMatch = description.match(newFormatRegex);
@@ -83,6 +91,10 @@ const extractEventUrl = (description) => {
 };
 
 const extractVideoURL = (description) => {
+  if (!description) {
+    return "";
+  }
+
   const newFormatRegex = /<span class="hidden" data-video="([^"]+)">/;
   const newFormatMatch = description.match(newFormatRegex);
   if (newFormatMatch) {
@@ -101,6 +113,10 @@ const extractVideoURL = (description) => {
 };
 
 const cleanDescription = (description) => {
+  if (!description) {
+    return null;
+  }
+
   // Remove <span> elements with data attributes (including data-image)
   description = description.replace(
     /<span class="hidden" data-[^>]+><\/span>/g,
@@ -236,7 +252,7 @@ export const normalizeEvents = (event, weatherInfo) => {
   } = getFormattedDate(startDate, endDate);
   const weatherObject = normalizeWeather(startDateStr, weatherInfo);
   const eventImage = extractEventImage(event.description);
-  const description = cleanDescription(event.description);
+  const description = cleanDescription(event.description) || null;
   const locationParts = event.location ? event.location.split(",") : [];
   const town =
     locationParts.length > 1
@@ -396,7 +412,7 @@ export const normalizeEvent = (event) => {
     formattedStart,
     formattedEnd,
     nameDay,
-    description,
+    description: description || "",
     tag,
     slug: slug(title, originalFormattedStart, event.id),
     startDate,
