@@ -19,6 +19,8 @@ const CONFIG = {
   rssFeedCacheKey: "rssFeedCache",
   maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   rssFeedCacheMaxAge: 3 * 60 * 60 * 1000, // 3 hours
+  descriptionEmptyMessage:
+    "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!",
 };
 
 const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
@@ -170,6 +172,7 @@ async function fetchAndDecodeHtml(url, sanitizeUrl = true, town = "Unknown") {
     edgeApiUrl.searchParams.append("itemUrl", sanitizedUrl);
 
     const response = await fetch(edgeApiUrl.toString());
+
     if (!response.ok) {
       throw new Error(`Edge API error! status: ${response.status}`);
     }
@@ -220,8 +223,7 @@ function getDescription($, item, region, town) {
 
     description = $desc.toString();
   } else {
-    description =
-      "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!";
+    description = CONFIG.descriptionEmptyMessage;
   }
 
   return description;
@@ -293,12 +295,12 @@ async function scrapeDescription(item, region, town) {
   try {
     const url = getRSSItemData(item).url;
     if (!url) {
-      return null;
+      return CONFIG.descriptionEmptyMessage;
     }
 
     const { sanitizeUrl } = getTownData(region, town);
     const html = await fetchAndDecodeHtml(url, sanitizeUrl, town);
-    if (!html) return null;
+    if (!html) return CONFIG.descriptionEmptyMessage;
 
     const $ = load(html);
     const description = getDescription($, item, region, town);
@@ -308,7 +310,7 @@ async function scrapeDescription(item, region, town) {
     return formatDescription(item, description, image, video);
   } catch (error) {
     logError(error, town, "scraping description");
-    return null;
+    return CONFIG.descriptionEmptyMessage;
   }
 }
 
