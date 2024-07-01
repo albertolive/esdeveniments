@@ -59,6 +59,7 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
     edgeApiUrl.searchParams.append("rssFeed", rssFeed);
 
     const response = await fetch(edgeApiUrl.toString());
+
     if (!response.ok) {
       throw new Error(
         `Error fetching rss feed edge. status: ${response.status}`
@@ -66,6 +67,7 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
     }
 
     const data = await response.json();
+
     if (shouldInteractWithKv) {
       try {
         await kv.set(`${env}_${town}_${CONFIG.rssFeedCacheKey}`, {
@@ -607,7 +609,7 @@ export default async function handler(req, res) {
     if (!rssFeed) throw new Error("RSS feed URL not found for the town");
 
     console.log(`Fetching RSS feed for ${town}: ${rssFeed}`);
-    const items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
+    const { items } = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
 
     let processedItems = new Map();
     if (shouldInteractWithKv) {
