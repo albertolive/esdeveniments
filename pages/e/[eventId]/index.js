@@ -638,6 +638,10 @@ export async function getStaticProps({ params }) {
     ? event.description
     : replaceURLs(event.description);
 
+  if (!event.description) {
+    event.description = "No hi ha cap descripció disponible.";
+  }
+
   return {
     props: { event },
     revalidate: 60,
