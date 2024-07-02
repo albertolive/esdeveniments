@@ -70,19 +70,29 @@ async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
 
     const data = await response.json();
 
+    if (!data || !data.items || !Array.isArray(data.items)) {
+      throw new Error(
+        `Invalid data structure received for ${town}. Expected {items: Array}, got: ${JSON.stringify(
+          data
+        )}`
+      );
+    }
+
+    const { items } = data;
+
     if (shouldInteractWithKv) {
       try {
         await kv.set(`${env}_${town}_${CONFIG.rssFeedCacheKey}`, {
           timestamp: Date.now(),
-          data,
+          data: items,
         });
       } catch (err) {
         logError(err, town, "caching RSS feed");
       }
     }
 
-    console.log("Returning new RSS data");
-    return data;
+    console.log(`Returning ${items.length} items for ${town}`);
+    return items;
   } catch (err) {
     logError(err, town, "fetching RSS feed");
     return [];
@@ -190,83 +200,116 @@ function sanitize(url) {
 }
 
 // Retrieves the description of an item
-function getDescription($, item, region, town) {
+async function getDescription(item, region, town) {
+  const { fullDescription, url } = getRSSItemData(item);
   const {
     descriptionSelector,
     removeImage = false,
     getDescriptionFromRss = false,
   } = getTownData(region, town);
-  const { itemDescription, content, url } = getRSSItemData(item);
-  const alternativeDescription = `${itemDescription || ""}${content || ""}`;
 
-  if (alternativeDescription && getDescriptionFromRss) {
-    return alternativeDescription;
+  // If we have a description from RSS and we're allowed to use it, return it
+  if (fullDescription && getDescriptionFromRss) {
+    return fullDescription;
   }
 
-  let description = $(descriptionSelector).html()?.trim();
+  // If we don't have a description from RSS or we're not allowed to use it, scrape the website
+  try {
+    const { sanitizeUrl } = getTownData(region, town);
+    const html = await fetchAndDecodeHtml(url, sanitizeUrl, town);
+    if (!html) return CONFIG.descriptionEmptyMessage;
 
-  if (description) {
-    let dom = $.parseHTML(description);
-    let $desc = $(dom);
+    const $ = load(html);
+    let $desc = $(descriptionSelector);
 
-    $desc.find("img").each((_, img) => {
-      let src = $(img).attr("src");
-      if (src && !src.startsWith("http")) {
-        src = new URL(src, getBaseUrl(url)).href;
-        $(img).attr("src", src);
+    if ($desc.length) {
+      // Handle images
+      $desc.find("img").each((_, img) => {
+        let src = $(img).attr("src");
+        if (src && !src.startsWith("http")) {
+          src = new URL(src, getBaseUrl(url)).href;
+          $(img).attr("src", src);
+        }
+      });
+
+      if (removeImage) {
+        $desc.find("img").remove();
       }
-    });
 
-    if (removeImage) {
-      $desc.find("img").remove();
+      // Extract text content
+      let description = $desc.text().trim();
+
+      // Remove extra whitespace and newlines
+      description = description.replace(/\s+/g, " ").trim();
+
+      // Limit description length if needed
+      const maxLength = 500; // Adjust this value as needed
+      if (description.length > maxLength) {
+        description = description.substring(0, maxLength) + "...";
+      }
+
+      return description;
+    } else {
+      return CONFIG.descriptionEmptyMessage;
     }
-
-    description = $desc.toString();
-  } else {
-    description = CONFIG.descriptionEmptyMessage;
+  } catch (error) {
+    logError(error, town, "scraping description");
+    return fullDescription || CONFIG.descriptionEmptyMessage;
   }
-
-  return description;
 }
 
 // Retrieves the image of an item
-function getImage($, item, region, town, description) {
+async function getImage(item, region, town, description) {
   const { imageSelector, removeImage = false } = getTownData(region, town);
   const { alternativeImage, url } = getRSSItemData(item);
-  let rawImage = $(imageSelector).prop("outerHTML")?.trim();
-  let image;
-  const regex = /(https?:\/\/[^"\s]+)/g;
 
   if (alternativeImage) {
-    image = alternativeImage;
-  } else if (rawImage) {
-    let $img = load(rawImage);
-    let img = $img("img");
-    img.removeAttr("style");
-    img.removeAttr("class");
-    let imgOuterHtml;
-    if ($img("a").length) {
-      imgOuterHtml = $img("a").prop("outerHTML");
-    } else {
-      imgOuterHtml = $img("img").prop("outerHTML");
-    }
-
-    let src = $img("img").attr("src");
-    if (!src.startsWith("http")) {
-      src = new URL(src, getBaseUrl(url)).href;
-      $img("img").attr("src", src);
-      imgOuterHtml = $img.html();
-    }
-
-    image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
-  } else if (!removeImage) {
-    image = getEventImageUrl(description);
+    return alternativeImage;
   }
 
-  const result = image && image.match(regex);
-  image = result && result[0];
+  // If we need to scrape the image
+  try {
+    const { sanitizeUrl } = getTownData(region, town);
+    const html = await fetchAndDecodeHtml(url, sanitizeUrl, town);
+    if (!html) return null;
 
-  return image;
+    const $ = load(html);
+    let rawImage = $(imageSelector).prop("outerHTML")?.trim();
+    let image;
+    const regex = /(https?:\/\/[^"\s]+)/g;
+
+    if (rawImage) {
+      let $img = load(rawImage);
+      let img = $img("img");
+      img.removeAttr("style");
+      img.removeAttr("class");
+      let imgOuterHtml;
+      if ($img("a").length) {
+        imgOuterHtml = $img("a").prop("outerHTML");
+      } else {
+        imgOuterHtml = $img("img").prop("outerHTML");
+      }
+
+      let src = $img("img").attr("src");
+      if (!src.startsWith("http")) {
+        src = new URL(src, getBaseUrl(url)).href;
+        $img("img").attr("src", src);
+        imgOuterHtml = $img.html();
+      }
+
+      image = replaceImageUrl(imgOuterHtml, getBaseUrl(url));
+    } else if (!removeImage) {
+      image = getEventImageUrl(description);
+    }
+
+    const result = image && image.match(regex);
+    image = result && result[0];
+
+    return image;
+  } catch (error) {
+    logError(error, town, "getting image");
+    return null;
+  }
 }
 
 // Retrieves the video URL from the description
@@ -293,18 +336,13 @@ function formatDescription(item, description, image, video) {
 // Scrapes the description of an item
 async function scrapeDescription(item, region, town) {
   try {
-    const url = getRSSItemData(item).url;
+    const { url } = getRSSItemData(item);
     if (!url) {
       return CONFIG.descriptionEmptyMessage;
     }
 
-    const { sanitizeUrl } = getTownData(region, town);
-    const html = await fetchAndDecodeHtml(url, sanitizeUrl, town);
-    if (!html) return CONFIG.descriptionEmptyMessage;
-
-    const $ = load(html);
-    const description = getDescription($, item, region, town);
-    const image = getImage($, item, region, town, description);
+    const description = await getDescription(item, region, town);
+    const image = await getImage(item, region, town, description);
     const video = getVideo(description);
 
     return formatDescription(item, description, image, video);
@@ -381,71 +419,111 @@ function getRSSItemData(item) {
     location = "",
     "content:encoded": locationExtra,
     date,
+    "events:dates": eventsDates,
   } = item;
 
   if (!guid) {
     guid = createHash(title, url, location || locationExtra, date);
   }
 
+  // Combine itemDescription and content for a more comprehensive description
+  const fullDescription = itemDescription || content || "";
+
   return {
     guid,
     pubDate,
     title,
-    itemDescription,
-    content,
+    fullDescription,
     alternativeImage,
     url,
     location,
     locationExtra,
     date,
+    eventsDates,
   };
 }
 
 // Creates an event from an RSS item
 async function createEvent(item, region, town) {
   const { regionLabel, label: townLabel } = getTownData(region, town);
-  const { pubDate, title, date } = getRSSItemData(item);
-  const isDateObject = date && typeof date === "object";
-  const hasFromDate = isDateObject && date.from;
-  const hasToDate = isDateObject && date.to;
+  const { pubDate, title, date, eventsDates } = getRSSItemData(item);
   const dateTimeParams = { zone: "Europe/Madrid" };
 
-  let dateTime;
+  let dateTime, endDateTime;
 
-  if (pubDate) {
-    dateTime = DateTime.fromRFC2822(pubDate, dateTimeParams);
-  } else if (hasFromDate) {
-    dateTime = DateTime.fromRFC2822(date.from, dateTimeParams);
-  } else if (isDateObject) {
-    console.log("Date object without from property:", date);
+  function parseDateTime(dateString, timeString = "00:00:00") {
+    return DateTime.fromISO(`${dateString}T${timeString}`, dateTimeParams);
+  }
+
+  function handleInvalidDate(errorMessage) {
+    logError(new Error(errorMessage), town, "createEvent");
+    return null;
+  }
+
+  if (eventsDates && eventsDates["events:date"]) {
+    const {
+      "events:date_start": dateStart,
+      "events:time_start": timeStart = "00:00:00",
+      "events:date_end": dateEnd,
+      "events:time_end": timeEnd = "23:59:59",
+    } = eventsDates["events:date"];
+
+    dateTime = parseDateTime(dateStart, timeStart);
+
+    if (dateStart === dateEnd && timeStart === timeEnd) {
+      endDateTime = dateTime.plus({ hours: 1 });
+    } else {
+      endDateTime = parseDateTime(dateEnd, timeEnd);
+    }
+
+    if (!dateTime.isValid || !endDateTime.isValid) {
+      return handleInvalidDate(
+        `Invalid date format for event with start date ${dateStart} and end date ${dateEnd}`
+      );
+    }
   } else {
-    dateTime = DateTime.fromISO(ensureISOFormat(date), dateTimeParams);
+    const isDateObject = date && typeof date === "object";
+    const hasFromDate = isDateObject && date.from;
+    const hasToDate = isDateObject && date.to;
+
+    if (pubDate) {
+      dateTime = DateTime.fromRFC2822(pubDate, dateTimeParams);
+    } else if (hasFromDate) {
+      dateTime = DateTime.fromRFC2822(date.from, dateTimeParams);
+    } else if (isDateObject) {
+      console.warn("Date object without from property:", date);
+      return null;
+    } else {
+      dateTime = DateTime.fromISO(ensureISOFormat(date), dateTimeParams);
+    }
+
+    if (!dateTime.isValid) {
+      return handleInvalidDate(
+        `Invalid date format for event starting at ${
+          pubDate || date.from || date
+        }`
+      );
+    }
+
+    endDateTime = hasToDate
+      ? DateTime.fromRFC2822(date.to, dateTimeParams)
+      : dateTime.plus({ hours: 1 });
+
+    if (!endDateTime.isValid) {
+      return handleInvalidDate(
+        `Invalid date format for event ending at ${date.to}`
+      );
+    }
   }
 
-  if (!dateTime.isValid) {
-    const errorMessage = `Invalid date format for event starting at ${
-      pubDate || date.from || date
-    }`;
-    logError(new Error(errorMessage), town, "createEvent");
-    return null;
-  }
-
-  const endDateTime = hasToDate
-    ? DateTime.fromRFC2822(date.to, dateTimeParams)
-    : dateTime.plus({ hours: 1 });
-
-  if (!endDateTime.isValid) {
-    const errorMessage = `Invalid date format for event ending at ${date.to}`;
-    logError(new Error(errorMessage), town, "createEvent");
-    return null;
-  }
-
-  const isFullDayEvent = dateTime.toFormat("HH:mm:ss") === "00:00:00";
+  const isFullDayEvent =
+    dateTime.startOf("day").equals(dateTime) &&
+    endDateTime.endOf("day").equals(endDateTime);
 
   const description = await scrapeDescription(item, region, town);
   const scrapedLocation = await scrapeLocation(item, region, town);
 
-  const event = {
+  return {
     summary: title,
     description,
     location: scrapedLocation
@@ -455,11 +533,9 @@ async function createEvent(item, region, town) {
       ? { date: dateTime.toFormat("yyyy-MM-dd") }
       : { dateTime: dateTime.toJSDate(), timeZone: "Europe/Madrid" },
     end: isFullDayEvent
-      ? { date: endDateTime.toFormat("yyyy-MM-dd") }
+      ? { date: endDateTime.plus({ days: 1 }).toFormat("yyyy-MM-dd") }
       : { dateTime: endDateTime.toJSDate(), timeZone: "Europe/Madrid" },
   };
-
-  return event;
 }
 
 // Inserts an event into Google Calendar
@@ -611,7 +687,7 @@ export default async function handler(req, res) {
     if (!rssFeed) throw new Error("RSS feed URL not found for the town");
 
     console.log(`Fetching RSS feed for ${town}: ${rssFeed}`);
-    const { items } = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
+    const items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
 
     let processedItems = new Map();
     if (shouldInteractWithKv) {
@@ -627,7 +703,6 @@ export default async function handler(req, res) {
 
     if (newItems.length === 0) {
       const message = `No new items found for ${town}`;
-      console.log(message);
       res.status(200).json({ message });
       return;
     }
@@ -644,7 +719,7 @@ export default async function handler(req, res) {
     const processedCount = results.filter(Boolean).length;
 
     const message = `Finished processing ${processedCount} items for ${town}`;
-    console.log(message);
+
     res
       .status(200)
       .json({ message, processedCount, totalItems: newItems.length });

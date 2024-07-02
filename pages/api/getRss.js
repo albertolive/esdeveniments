@@ -70,18 +70,29 @@ export default async function handler(req) {
       );
     }
 
-    const data = await response.text();
-    const json = parser.parse(data);
+    const contentType = response.headers.get("content-type");
+    let data;
 
-    if (!json || !json.rss || !json.rss.channel) {
-      throw new ParseError("Invalid RSS data format");
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      const textData = await response.text();
+      data = parser.parse(textData);
     }
 
-    const items = json.rss.channel.item
-      ? Array.isArray(json.rss.channel.item)
-        ? json.rss.channel.item
-        : [json.rss.channel.item]
-      : [];
+    let items = [];
+
+    if (Array.isArray(data)) {
+      items = data;
+    } else if (data && data.rss && data.rss.channel) {
+      items = data.rss.channel.item
+        ? Array.isArray(data.rss.channel.item)
+          ? data.rss.channel.item
+          : [data.rss.channel.item]
+        : [];
+    } else {
+      throw new ParseError("Invalid data format");
+    }
 
     if (items.length === 0) {
       return new Response(
