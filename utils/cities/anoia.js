@@ -27,6 +27,7 @@ const anoia = [
           postalCode: "08700",
           coords: { lat: 41.5787365230604, lng: 1.61753427064665 },
           ...sharedData,
+          disableInsertion: true, // No existeix RSS
         },
       ],
       [
@@ -67,6 +68,7 @@ const anoia = [
           postalCode: "08783",
           coords: { lat: 41.5021586, lng: 1.8113091 },
           ...sharedData,
+          disableInsertion: true, // No existeix RSS
         },
       ],
       [
