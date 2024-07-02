@@ -695,9 +695,21 @@ export default async function handler(req, res) {
     if (!rssFeed) throw new Error("RSS feed URL not found for the town");
 
     console.log(`Fetching RSS feed for ${town}: ${rssFeed}`);
-    const items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
+    let items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
 
-    console.log("items", items);
+    // Ensure items is an array without full normalization
+    if (!Array.isArray(items)) {
+      console.warn(`Items for ${town} is not an array. Attempting to correct.`);
+      items = Array.isArray(items.items) ? items.items : [items];
+    }
+
+    // Log the structure in production for debugging
+    if (env === "prod") {
+      console.log(
+        "Items structure:",
+        JSON.stringify(items.slice(0, 2), null, 2)
+      ); // Log only first two items
+    }
 
     let processedItems = new Map();
     if (shouldInteractWithKv) {
@@ -705,11 +717,15 @@ export default async function handler(req, res) {
       await cleanProcessedItems(processedItems, town);
     }
 
-    const itemHashes = items.map(getRSSItemData).map((item) => item.guid);
+    // Use getRSSItemData to process items
+    const processedRSSItems = items.map(getRSSItemData);
+    const itemHashes = processedRSSItems.map((item) => item.guid);
     const processedItemsSet = new Set(processedItems.keys());
     const newItems = shouldInteractWithKv
-      ? items.filter((_, i) => !processedItemsSet.has(itemHashes[i]))
-      : items;
+      ? processedRSSItems.filter(
+          (_, i) => !processedItemsSet.has(itemHashes[i])
+        )
+      : processedRSSItems;
 
     if (newItems.length === 0) {
       const message = `No new items found for ${town}`;
