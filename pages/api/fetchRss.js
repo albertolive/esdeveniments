@@ -697,6 +697,8 @@ export default async function handler(req, res) {
     console.log(`Fetching RSS feed for ${town}: ${rssFeed}`);
     const items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
 
+    console.log("items", items);
+
     let processedItems = new Map();
     if (shouldInteractWithKv) {
       processedItems = await getProcessedItems(town);
