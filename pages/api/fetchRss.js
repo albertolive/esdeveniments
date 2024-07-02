@@ -683,7 +683,15 @@ export default async function handler(req, res) {
     const { towns } = CITIES_DATA.get(region);
     if (!towns.has(town)) throw new Error("Town not found");
 
-    const { rssFeed } = towns.get(town);
+    const { rssFeed, disableInsertion = false } = towns.get(town);
+
+    if (disableInsertion) {
+      const message = `Event insertion is disabled for ${town}. Skipping processing.`;
+      console.log(message);
+      res.status(200).json({ message, processedCount: 0, totalItems: 0 });
+      return;
+    }
+
     if (!rssFeed) throw new Error("RSS feed URL not found for the town");
 
     console.log(`Fetching RSS feed for ${town}: ${rssFeed}`);
