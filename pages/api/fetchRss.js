@@ -187,7 +187,9 @@ async function fetchAndDecodeHtml(url, sanitizeUrl = true, town = "Unknown") {
       throw new Error(`Edge API error! status: ${response.status}`);
     }
 
-    return await response.text();
+    const html = await response.text();
+
+    return html;
   } catch (error) {
     logError(error, town, "fetching and decoding HTML");
     return null;
@@ -201,7 +203,7 @@ function sanitize(url) {
 
 // Retrieves the description of an item
 async function getDescription(item, region, town) {
-  const { fullDescription, url } = getRSSItemData(item);
+  const { fullDescription, url } = item;
   const {
     descriptionSelector,
     removeImage = false,
@@ -261,7 +263,7 @@ async function getDescription(item, region, town) {
 // Retrieves the image of an item
 async function getImage(item, region, town, description) {
   const { imageSelector, removeImage = false } = getTownData(region, town);
-  const { alternativeImage, url } = getRSSItemData(item);
+  const { alternativeImage, url } = item;
 
   if (alternativeImage) {
     return alternativeImage;
@@ -324,7 +326,7 @@ const getVideo = (description) => {
 
 // Formats the event description with HTML
 function formatDescription(item, description, image, video) {
-  const { url } = getRSSItemData(item);
+  const { url } = item;
   return `
     <div>${description}</div>
     ${image ? `<span class="hidden" data-image="${image}"></span>` : ""}
@@ -336,7 +338,7 @@ function formatDescription(item, description, image, video) {
 // Scrapes the description of an item
 async function scrapeDescription(item, region, town) {
   try {
-    const { url } = getRSSItemData(item);
+    const { url } = item;
     if (!url) {
       return CONFIG.descriptionEmptyMessage;
     }
@@ -356,11 +358,7 @@ async function scrapeDescription(item, region, town) {
 async function scrapeLocation(item, region, town) {
   try {
     const { locationSelector } = getTownData(region, town);
-    const {
-      url: itemUrl,
-      location: itemLocation,
-      locationExtra,
-    } = getRSSItemData(item);
+    const { url: itemUrl, location: itemLocation, locationExtra } = item;
     const location = itemLocation || locationExtra;
     if (location) return location;
 
@@ -446,7 +444,7 @@ function getRSSItemData(item) {
 // Creates an event from an RSS item
 async function createEvent(item, region, town) {
   const { regionLabel, label: townLabel } = getTownData(region, town);
-  const { pubDate, title, date, eventsDates } = getRSSItemData(item);
+  const { pubDate, title, date, eventsDates } = item;
   const dateTimeParams = { zone: "Europe/Madrid" };
 
   let dateTime, endDateTime;
