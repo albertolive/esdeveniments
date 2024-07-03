@@ -74,6 +74,8 @@ export default async function handler(req) {
   const { searchParams } = new URL(req.url);
   const itemUrl = searchParams.get("itemUrl");
 
+  console.log("Received request for itemUrl:", itemUrl);
+
   try {
     if (!itemUrl) {
       throw new ValidationError("Item URL is required");
@@ -94,11 +96,13 @@ export default async function handler(req) {
     const decoder = getDecoder(response);
     const html = decoder.decode(arrayBuffer);
 
+    console.log("Successfully fetched and decoded content");
     return new Response(html, {
       status: 200,
       headers: HEADERS_HTML,
     });
   } catch (error) {
+    console.error("Error in handler:", error);
     return handleError(error, itemUrl);
   }
 }
@@ -108,6 +112,14 @@ function handleError(error, itemUrl) {
   captureException(error);
 
   let status, message;
+
+  // Log detailed error information
+  console.error("Error details:", {
+    name: error.name,
+    message: error.message,
+    stack: error.stack,
+    itemUrl: itemUrl,
+  });
 
   switch (true) {
     case error instanceof ValidationError:
@@ -129,6 +141,9 @@ function handleError(error, itemUrl) {
       status = 500;
       message = "An unexpected error occurred";
   }
+
+  // Log the final error response
+  console.error("Error response:", { status, message });
 
   return new Response(JSON.stringify({ error: message }), {
     status,

@@ -1,8 +1,11 @@
 import { captureException, setExtra } from "@sentry/nextjs";
+import { XMLParser } from "fast-xml-parser";
 
 export const config = {
   runtime: "edge",
 };
+
+const parser = new XMLParser();
 
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
@@ -89,16 +92,21 @@ export default async function handler(req) {
 
     let items = [];
 
-    if (Array.isArray(data)) {
-      items = data;
-    } else if (data && data.rss && data.rss.channel) {
-      items = data.rss.channel.item
-        ? Array.isArray(data.rss.channel.item)
-          ? data.rss.channel.item
-          : [data.rss.channel.item]
-        : [];
-    } else {
-      throw new ParseError("Invalid data format");
+    if (!Array.isArray(data)) {
+      const json = parser.parse(data);
+
+      // Validate the data
+      if (
+        !json ||
+        !json.rss ||
+        !json.rss.channel ||
+        !Array.isArray(json.rss.channel.item)
+      ) {
+        console.log("Invalid RSS data format or no items in feed");
+        return [];
+      }
+
+      data = json.rss.channel.item;
     }
 
     if (items.length === 0) {
