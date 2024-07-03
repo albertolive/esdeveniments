@@ -72,13 +72,21 @@ function getDecoder(response) {
 
 export default async function handler(req) {
   const { searchParams } = new URL(req.url);
-  const itemUrl = searchParams.get("itemUrl");
+  let itemUrl = searchParams.get("itemUrl");
 
   console.log("Received request for itemUrl:", itemUrl);
 
   try {
+    itemUrl = decodeURIComponent(itemUrl);
+
     if (!itemUrl) {
       throw new ValidationError("Item URL is required");
+    }
+
+    try {
+      new URL(itemUrl);
+    } catch (urlError) {
+      throw new ValidationError("Invalid URL format");
     }
 
     const response = await fetchWithTimeout(itemUrl, {

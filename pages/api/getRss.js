@@ -70,43 +70,54 @@ export default async function handler(req) {
       );
     }
 
+    const contentType = response.headers.get("content-type");
     let data;
 
-    if (
-      response.headers["content-type"] &&
-      response.headers["content-type"].includes("application/json")
-    ) {
-      // If the Content-Type is JSON, parse the response data as JSON
-      data = JSON.parse(response.data);
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
     } else {
-      // If the Content-Type is not JSON, decode the response data
-      let decoder = new TextDecoder("utf-8");
-      data = decoder.decode(response.data);
-
-      // If the decoded data contains unusual characters, try ISO-8859-1
-      if (data.includes("�")) {
-        decoder = new TextDecoder("iso-8859-1");
-        data = decoder.decode(response.data);
-      }
+      data = await response.text();
     }
 
     let items = [];
 
-    if (!Array.isArray(data)) {
-      const json = parser.parse(data);
-
-      // Validate the data
-      if (
-        !json ||
-        !json.rss ||
-        !json.rss.channel ||
-        !Array.isArray(json.rss.channel.item)
-      ) {
-        console.log("Invalid RSS data format or no items in feed");
-        return [];
+    if (Array.isArray(data)) {
+      // If data is already an array, use it directly
+      items = data;
+    } else if (typeof data === "object" && data !== null) {
+      // If data is an object (direct JSON response), try to find an array property
+      const arrayProperty = Object.values(data).find(Array.isArray);
+      if (arrayProperty) {
+        items = arrayProperty;
+      } else {
+        // If no array property found, wrap the object in an array
+        items = [data];
       }
+    } else {
+      // Attempt to parse as XML/RSS
+      try {
+        const json = parser.parse(data);
 
-      data = json.rss.channel.item;
+        if (json && json.rss && json.rss.channel) {
+          items = Array.isArray(json.rss.channel.item)
+            ? json.rss.channel.item
+            : [json.rss.channel.item].filter(Boolean);
+        } else if (json && json.feed && json.feed.entry) {
+          // Handle Atom feeds
+          items = Array.isArray(json.feed.entry)
+            ? json.feed.entry
+            : [json.feed.entry].filter(Boolean);
+        } else {
+          console.log(
+            "Unexpected feed structure:",
+            JSON.stringify(json).slice(0, 200) + "..."
+          );
+          throw new ParseError("Unexpected feed structure");
+        }
+      } catch (parseError) {
+        console.error("Error parsing feed:", parseError);
+        throw new ParseError(`Failed to parse feed: ${parseError.message}`);
+      }
     }
 
     if (items.length === 0) {
