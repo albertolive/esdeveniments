@@ -518,8 +518,11 @@ async function createEvent(item, region, town) {
     dateTime.startOf("day").equals(dateTime) &&
     endDateTime.endOf("day").equals(endDateTime);
 
-  const description = await scrapeDescription(item, region, town);
-  const scrapedLocation = await scrapeLocation(item, region, town);
+  // Fetch description and location in parallel
+  const [description, scrapedLocation] = await Promise.all([
+    scrapeDescription(item, region, town),
+    scrapeLocation(item, region, town),
+  ]);
 
   return {
     summary: title,
