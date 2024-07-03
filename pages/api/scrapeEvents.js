@@ -691,17 +691,22 @@ function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
 async function fetchHtmlContent(url, selectors) {
   const { encoding } = selectors;
 
-  let retries = 3;
+  let retries = 1;
   let delay = 1000;
-
+  console.log(`Fetching HTML content for ${url}`);
   while (retries > 0) {
     try {
-      const response = await axios.get(url, {
-        responseType: "arraybuffer",
-        timeout: 10000,
-      });
-      const decoder = new TextDecoder(encoding);
-      return decoder.decode(response.data);
+      const edgeApiUrl = new URL("/api/getDescription", siteUrl);
+      edgeApiUrl.searchParams.append("itemUrl", encodeURIComponent(url));
+      const response = await fetch(edgeApiUrl.toString());
+
+      if (!response.ok) {
+        throw new Error(`Edge API error! status: ${response.status}`);
+      }
+
+      const html = await response.text();
+
+      return html;
     } catch (error) {
       retries--;
       console.error(
