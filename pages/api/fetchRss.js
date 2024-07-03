@@ -179,7 +179,7 @@ async function fetchAndDecodeHtml(url, sanitizeUrl = true, town = "Unknown") {
   try {
     const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
     const edgeApiUrl = new URL("/api/getDescription", siteUrl);
-    edgeApiUrl.searchParams.append("itemUrl", sanitizedUrl);
+    edgeApiUrl.searchParams.append("itemUrl", encodeURIComponent(sanitizedUrl));
 
     const response = await fetch(edgeApiUrl.toString());
 
