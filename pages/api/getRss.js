@@ -1,4 +1,3 @@
-import { XMLParser } from "fast-xml-parser";
 import { captureException, setExtra } from "@sentry/nextjs";
 
 export const config = {
@@ -8,8 +7,6 @@ export const config = {
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
 const HEADERS_JSON = { "Content-Type": "application/json" };
-
-const parser = new XMLParser();
 
 class HTTPError extends Error {
   constructor(message, status) {
@@ -70,14 +67,24 @@ export default async function handler(req) {
       );
     }
 
-    const contentType = response.headers.get("content-type");
     let data;
 
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.json();
+    if (
+      response.headers["content-type"] &&
+      response.headers["content-type"].includes("application/json")
+    ) {
+      // If the Content-Type is JSON, parse the response data as JSON
+      data = JSON.parse(response.data);
     } else {
-      const textData = await response.text();
-      data = parser.parse(textData);
+      // If the Content-Type is not JSON, decode the response data
+      let decoder = new TextDecoder("utf-8");
+      data = decoder.decode(response.data);
+
+      // If the decoded data contains unusual characters, try ISO-8859-1
+      if (data.includes("�")) {
+        decoder = new TextDecoder("iso-8859-1");
+        data = decoder.decode(response.data);
+      }
     }
 
     let items = [];
