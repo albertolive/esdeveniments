@@ -4,7 +4,7 @@ import Bottleneck from "bottleneck";
 import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
-import { env } from "@utils/helpers";
+import { env, sanitizeUrl } from "@utils/helpers";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
 import createHash from "@utils/createHash";
@@ -203,7 +203,7 @@ function sanitize(url) {
 
 // Retrieves the description of an item
 async function getDescription(item, region, town) {
-  const { fullDescription, url } = item;
+  const { fullDescription, url: originalUrl } = item;
   const {
     descriptionSelector,
     removeImage = false,
@@ -215,10 +215,18 @@ async function getDescription(item, region, town) {
     return fullDescription;
   }
 
+  // Sanitize the URL
+  const url = sanitizeUrl(originalUrl);
+
+  if (!url) {
+    console.warn(`Invalid URL for item in ${town}:`, originalUrl);
+    return CONFIG.descriptionEmptyMessage;
+  }
+
   // If we don't have a description from RSS or we're not allowed to use it, scrape the website
   try {
-    const { sanitizeUrl } = getTownData(region, town);
-    const html = await fetchAndDecodeHtml(url, sanitizeUrl, town);
+    const { sanitizeUrl: shouldSanitizeUrl } = getTownData(region, town);
+    const html = await fetchAndDecodeHtml(url, shouldSanitizeUrl, town);
     if (!html) return CONFIG.descriptionEmptyMessage;
 
     const $ = load(html);

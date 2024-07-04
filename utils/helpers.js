@@ -497,3 +497,33 @@ export function getRegionFromQuery(q) {
 export function findCategoryKeyByValue(value) {
   return Object.keys(CATEGORIES).find((key) => CATEGORIES[key] === value);
 }
+
+export function sanitizeUrl(url) {
+  if (typeof url !== "string") {
+    console.warn("Invalid URL type:", typeof url);
+    return "";
+  }
+
+  // Remove any leading "https," or "http,"
+  url = url.replace(/^(https?),\s*/, "");
+
+  // Ensure the URL starts with http:// or https://
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = "https://" + url;
+  }
+
+  // Remove any double slashes (except after the protocol)
+  url = url.replace(/(https?:\/\/)\/+/g, "$1");
+
+  // Remove any spaces in the URL
+  url = url.replace(/\s+/g, "");
+
+  try {
+    // Try to construct a URL object to validate the URL
+    new URL(url);
+    return url;
+  } catch (error) {
+    console.warn("Invalid URL after sanitization:", url);
+    return "";
+  }
+}
