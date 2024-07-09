@@ -24,54 +24,28 @@ class ValidationError extends Error {
   }
 }
 
-async function fetchWithTimeout(url, options, timeout = 25000) {
+async function fetchWithTimeout(url, options = {}, timeout = 25000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
-  const MAX_REDIRECTS = 5; // Limit the number of redirects
-  let redirectCount = 0;
-  let finalResponse;
 
   try {
-    let response = await fetch(url, {
+    const response = await fetch(url, {
       ...options,
       signal: controller.signal,
-      headers: {
-        ...options.headers,
-        "User-Agent": USER_AGENT, // Ensure User-Agent is set
-      },
-      redirect: "manual", // Handle redirects manually
     });
-
-    while (
-      response.status >= 300 &&
-      response.status < 400 &&
-      redirectCount < MAX_REDIRECTS
-    ) {
-      const location = response.headers.get("Location");
-      if (!location) break;
-      redirectCount++;
-      console.log(`Redirect ${redirectCount} to ${location}`);
-      response = await fetch(location, {
-        ...options,
-        signal: controller.signal,
-        headers: {
-          ...options.headers,
-          "User-Agent": USER_AGENT, // Ensure User-Agent is set
-        },
-        redirect: "manual",
-      });
-    }
-
     clearTimeout(id);
-    finalResponse = response;
 
-    if (redirectCount >= MAX_REDIRECTS) {
-      throw new Error(`Too many redirects: ${url}`);
-    }
+    // Log response details for debugging
+    console.log("Response status:", response.status);
+    console.log(
+      "Response headers:",
+      JSON.stringify(Object.fromEntries(response.headers))
+    );
 
-    return finalResponse;
+    return response;
   } catch (error) {
     clearTimeout(id);
+    console.error("Fetch error:", error);
     throw error;
   }
 }
@@ -124,26 +98,37 @@ export default async function handler(req) {
       throw new ValidationError("Invalid URL format");
     }
 
+    console.log("Attempting to fetch with User-Agent:", USER_AGENT);
     const response = await fetchWithTimeout(itemUrl, {
-      headers: { "User-Agent": USER_AGENT },
+      headers: {
+        "User-Agent": USER_AGENT,
+        // Add additional headers that might be necessary
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+      },
     });
 
     if (!response.ok) {
-      const responseText = await response.text();
       console.error(
-        `Fetch error! status: ${response.status}, response: ${responseText}`
+        "Response not OK. Status:",
+        response.status,
+        "Status Text:",
+        response.statusText
       );
+      const responseText = await response.text();
+      console.error("Response body:", responseText.substring(0, 200) + "...");
       throw new HTTPError(
         `HTTP error! status: ${response.status}`,
         response.status
       );
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-    const decoder = getDecoder(response);
-    const html = decoder.decode(arrayBuffer);
+    const html = await response.text();
 
-    console.log("Successfully fetched and decoded content");
+    console.log("Successfully fetched content. Length:", html.length);
+    console.log("First 200 characters:", html.substring(0, 200));
+
     return new Response(html, {
       status: 200,
       headers: HEADERS_HTML,
@@ -183,10 +168,6 @@ function handleError(error, itemUrl) {
     case error.name === "AbortError":
       status = 504;
       message = "Request timed out";
-      break;
-    case error.message.includes("Too many redirects"):
-      status = 500;
-      message = "Too many redirects detected";
       break;
     default:
       status = 500;
