@@ -64,6 +64,9 @@ function Card({ event, isLoading, isPriority }) {
   const location = truncateString(event.location || "");
   const subLocation = truncateString(event.subLocation || "", 45);
   const image = event.imageUploaded || event.eventImage;
+  const eventDate = event.formattedEnd
+    ? `Del ${event.formattedStart} al ${event.formattedEnd}`
+    : `${event.nameDay}, ${event.formattedStart}`;
 
   return (
     <>
@@ -115,7 +118,7 @@ function Card({ event, isLoading, isPriority }) {
             <Image
               className="w-full flex justify-center object-contain"
               title={event.title}
-              date={event.formattedStart}
+              date={eventDate}
               location={event.location}
               subLocation={event.subLocation}
               image={image}
@@ -144,11 +147,7 @@ function Card({ event, isLoading, isPriority }) {
           <div>
             <CalendarIcon className="h-5 w-5" />
           </div>
-          <p className="px-2 font-semibold">
-            {event.formattedEnd
-              ? `Del ${event.formattedStart} al ${event.formattedEnd}`
-              : `${event.nameDay}, ${event.formattedStart}`}
-          </p>
+          <p className="px-2 font-semibold">{eventDate}</p>
         </div>
         {/* Location */}
         <div className="flex justify-start items-start">

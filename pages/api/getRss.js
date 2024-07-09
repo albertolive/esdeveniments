@@ -1,5 +1,5 @@
-import { captureException, setExtra } from "@sentry/nextjs";
 import { XMLParser } from "fast-xml-parser";
+import { captureException, setExtra } from "@sentry/nextjs";
 
 export const config = {
   runtime: "edge",
@@ -50,6 +50,47 @@ async function fetchWithTimeout(url, options, timeout = 25000) {
   }
 }
 
+function sanitizeUrl(url) {
+  if (typeof url !== "string") {
+    console.warn("Invalid URL type:", typeof url);
+    return "";
+  }
+
+  // Remove any leading "https," or "http,"
+  url = url.replace(/^(https?),\s*/, "");
+
+  // Ensure the URL starts with http:// or https://
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = "https://" + url;
+  }
+
+  // Remove any double slashes (except after the protocol)
+  url = url.replace(/(https?:\/\/)\/+/g, "$1");
+
+  // Remove any spaces in the URL
+  url = url.replace(/\s+/g, "");
+
+  try {
+    // Try to construct a URL object to validate the URL
+    new URL(url);
+    return url;
+  } catch (error) {
+    console.warn("Invalid URL after sanitization:", url);
+    return "";
+  }
+}
+
+function sanitizeItem(item) {
+  return {
+    ...item,
+    link: sanitizeUrl(
+      typeof item.link === "object"
+        ? item.link.https || Object.values(item.link)[0]
+        : item.link
+    ),
+  };
+}
+
 export default async function handler(req) {
   const { searchParams } = new URL(req.url);
   const rssFeed = searchParams.get("rssFeed");
@@ -58,6 +99,8 @@ export default async function handler(req) {
     if (!rssFeed) {
       throw new ValidationError("RSS feed URL is required");
     }
+
+    console.log("Fetching RSS feed:", rssFeed);
 
     const response = await fetchWithTimeout(rssFeed, {
       headers: { "User-Agent": USER_AGENT },
@@ -75,35 +118,44 @@ export default async function handler(req) {
 
     if (contentType && contentType.includes("application/json")) {
       data = await response.json();
+      console.log(
+        "Received JSON data:",
+        JSON.stringify(data).slice(0, 200) + "..."
+      );
     } else {
-      data = await response.text();
+      const arrayBuffer = await response.arrayBuffer();
+      let html = new TextDecoder("utf-8").decode(arrayBuffer);
+
+      // Fallback to ISO-8859-1 if we detect the replacement character
+      if (html.includes("�")) {
+        html = new TextDecoder("iso-8859-1").decode(arrayBuffer);
+      }
+
+      console.log("Received XML data:", html.slice(0, 200) + "...");
+      data = html;
     }
 
     let items = [];
 
     if (Array.isArray(data)) {
-      // If data is already an array, use it directly
       items = data;
     } else if (typeof data === "object" && data !== null) {
-      // If data is an object (direct JSON response), try to find an array property
       const arrayProperty = Object.values(data).find(Array.isArray);
       if (arrayProperty) {
         items = arrayProperty;
       } else {
-        // If no array property found, wrap the object in an array
         items = [data];
       }
     } else {
-      // Attempt to parse as XML/RSS
       try {
         const json = parser.parse(data);
+        console.log("Parsed XML:", JSON.stringify(json).slice(0, 200) + "...");
 
         if (json && json.rss && json.rss.channel) {
           items = Array.isArray(json.rss.channel.item)
             ? json.rss.channel.item
             : [json.rss.channel.item].filter(Boolean);
         } else if (json && json.feed && json.feed.entry) {
-          // Handle Atom feeds
           items = Array.isArray(json.feed.entry)
             ? json.feed.entry
             : [json.feed.entry].filter(Boolean);
@@ -119,6 +171,15 @@ export default async function handler(req) {
         throw new ParseError(`Failed to parse feed: ${parseError.message}`);
       }
     }
+
+    console.log("Raw items:", JSON.stringify(items).slice(0, 200) + "...");
+
+    items = items.map(sanitizeItem);
+
+    console.log(
+      "Sanitized items:",
+      JSON.stringify(items).slice(0, 200) + "..."
+    );
 
     if (items.length === 0) {
       return new Response(
