@@ -27,15 +27,49 @@ class ValidationError extends Error {
 async function fetchWithTimeout(url, options, timeout = 25000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
+  const MAX_REDIRECTS = 5; // Limit the number of redirects
+  let redirectCount = 0;
+  let finalResponse;
 
   try {
-    const response = await fetch(url, {
+    let response = await fetch(url, {
       ...options,
       signal: controller.signal,
-      redirect: "follow", // Ensure redirects are followed
+      headers: {
+        ...options.headers,
+        "User-Agent": USER_AGENT, // Ensure User-Agent is set
+      },
+      redirect: "manual", // Handle redirects manually
     });
+
+    while (
+      response.status >= 300 &&
+      response.status < 400 &&
+      redirectCount < MAX_REDIRECTS
+    ) {
+      const location = response.headers.get("Location");
+      if (!location) break;
+      redirectCount++;
+      console.log(`Redirect ${redirectCount} to ${location}`);
+      response = await fetch(location, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          ...options.headers,
+          "User-Agent": USER_AGENT, // Ensure User-Agent is set
+        },
+        redirect: "manual",
+      });
+    }
+
     clearTimeout(id);
-    return response;
+    finalResponse = response;
+
+    if (redirectCount >= MAX_REDIRECTS) {
+      throw new Error(`Too many redirects: ${url}`);
+    }
+
+    return finalResponse;
   } catch (error) {
     clearTimeout(id);
     throw error;
