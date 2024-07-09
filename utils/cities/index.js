@@ -16,6 +16,7 @@ import moianes from "./moianes";
 import urgell from "./urgell";
 import barcelones from "./barcelones";
 import tarragones from "./tarragones";
+import { CITIES_SELECTORS } from "./citiesSelectors";
 
 export {
   osona,
@@ -36,4 +37,5 @@ export {
   urgell,
   barcelones,
   tarragones,
+  CITIES_SELECTORS,
 };
