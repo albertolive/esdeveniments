@@ -32,6 +32,7 @@ async function fetchWithTimeout(url, options, timeout = 25000) {
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
+      redirect: "follow", // Ensure redirects are followed
     });
     clearTimeout(id);
     return response;
@@ -94,6 +95,10 @@ export default async function handler(req) {
     });
 
     if (!response.ok) {
+      const responseText = await response.text();
+      console.error(
+        `Fetch error! status: ${response.status}, response: ${responseText}`
+      );
       throw new HTTPError(
         `HTTP error! status: ${response.status}`,
         response.status
@@ -144,6 +149,10 @@ function handleError(error, itemUrl) {
     case error.name === "AbortError":
       status = 504;
       message = "Request timed out";
+      break;
+    case error.message.includes("Too many redirects"):
+      status = 500;
+      message = "Too many redirects detected";
       break;
     default:
       status = 500;
