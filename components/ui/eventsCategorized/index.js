@@ -2,6 +2,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 import ChevronRightIcon from "@heroicons/react/solid/ChevronRightIcon";
+import SpeakerphoneIcon from "@heroicons/react/outline/SpeakerphoneIcon";
 import Meta from "@components/partials/seo-meta";
 import { generatePagesData } from "@components/partials/generatePagesData";
 import { useGetCategorizedEvents } from "@components/hooks/useGetCategorizedEvents";
@@ -20,6 +21,11 @@ const NoEventsFound = dynamic(
     loading: () => "",
   }
 );
+
+const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
+  loading: () => "",
+  ssr: false,
+});
 
 function EventsCategorized() {
   const {
@@ -186,6 +192,14 @@ function EventsCategorized() {
                     <EventsHorizontalScroll
                       events={categorizedEvents.events[category]}
                     />
+                    {/* Ad */}
+                    <div className="w-full h-full flex items-start min-h-[250px] gap-2 mt-4 mb-2">
+                      <SpeakerphoneIcon className="w-5 h-5 mt-1" />
+                      <div className="w-11/12 flex flex-col gap-4">
+                        <h2>Contingut patrocinat</h2>
+                        <AdArticle slot="8139041285" />
+                      </div>
+                    </div>
                   </div>
                 ) : null
               )}
