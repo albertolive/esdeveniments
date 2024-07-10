@@ -72,10 +72,12 @@ async function fetchWithTimeout(
       // Handle cookies
       const setCookieHeader = response.headers.get("Set-Cookie");
       if (setCookieHeader) {
-        const cookies = setCookieHeader.split(",");
-        cookies.forEach((cookie) => {
-          const [cookieName, cookieValue] = cookie.split(";")[0].split("=");
-          cookieJar[cookieName.trim()] = cookieValue.trim();
+        setCookieHeader.split(",").forEach((cookieString) => {
+          const cookieParts = cookieString.split(";")[0].split("=");
+          if (cookieParts.length === 2) {
+            const [cookieName, cookieValue] = cookieParts;
+            cookieJar[cookieName.trim()] = cookieValue.trim();
+          }
         });
       }
 
