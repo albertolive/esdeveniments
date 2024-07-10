@@ -22,6 +22,70 @@ class ValidationError extends Error {
   }
 }
 
+async function runDiagnostics(url) {
+  const results = {
+    normalFetch: null,
+    browserLikeFetch: null,
+    delayedFetch: null,
+  };
+
+  // Normal fetch
+  try {
+    const response = await fetch(url);
+    results.normalFetch = {
+      status: response.status,
+      headers: Object.fromEntries(response.headers),
+      body: await response.text(),
+    };
+  } catch (error) {
+    results.normalFetch = { error: error.message };
+  }
+
+  // Browser-like fetch
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate, br",
+        Referer: "https://www.google.com/",
+        DNT: "1",
+        Connection: "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "cross-site",
+        "Sec-Fetch-User": "?1",
+      },
+    });
+    results.browserLikeFetch = {
+      status: response.status,
+      headers: Object.fromEntries(response.headers),
+      body: await response.text(),
+    };
+  } catch (error) {
+    results.browserLikeFetch = { error: error.message };
+  }
+
+  // Delayed fetch
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 second delay
+  try {
+    const response = await fetch(url);
+    results.delayedFetch = {
+      status: response.status,
+      headers: Object.fromEntries(response.headers),
+      body: await response.text(),
+    };
+  } catch (error) {
+    results.delayedFetch = { error: error.message };
+  }
+
+  return results;
+}
+
 async function fetchWithRedirects(url, options = {}, maxRedirects = 5) {
   let currentUrl = url;
   let redirectCount = 0;
@@ -87,6 +151,12 @@ export default async function handler(req) {
   let itemUrl = searchParams.get("itemUrl");
 
   console.log("Received request for itemUrl:", itemUrl);
+
+  const diagnosticResults = await runDiagnostics(itemUrl);
+  console.log(
+    "Diagnostic results:",
+    JSON.stringify(diagnosticResults, null, 2)
+  );
 
   try {
     itemUrl = decodeURIComponent(itemUrl);
