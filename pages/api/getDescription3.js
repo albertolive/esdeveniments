@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export const config = {
   runtime: "edge",
 };
@@ -14,15 +12,21 @@ async function fetchHtmlContent(
 
   while (retries > 0) {
     try {
-      const response = await axios.get(url, { responseType: "arraybuffer" });
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const buffer = await response.arrayBuffer();
       const decoder = new TextDecoder(encoding);
-      return decoder.decode(response.data);
+      return decoder.decode(buffer);
     } catch (error) {
       retries--;
       console.error("Error fetching HTML content, retries left: ", retries);
       if (retries === 0) {
         throw new Error(
-          `Error fetching HTML content. Status: ${error.response?.status}, Message: ${error.message}`
+          `Error fetching HTML content. Status: ${
+            error.status || "unknown"
+          }, Message: ${error.message}`
         );
       }
       await new Promise((resolve) => setTimeout(resolve, delay));
