@@ -22,85 +22,63 @@ class ValidationError extends Error {
   }
 }
 
-let cookieJar = {};
-
-async function fetchWithTimeout(
-  url,
-  options = {},
-  timeout = 25000,
-  maxRedirects = 5
-) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-
-  let redirectCount = 0;
+async function fetchWithRedirects(url, options = {}, maxRedirects = 5) {
   let currentUrl = url;
+  let redirectCount = 0;
+  let cookieJar = {};
 
   while (redirectCount < maxRedirects) {
-    try {
-      console.log(`Attempting fetch for URL: ${currentUrl}`);
+    console.log(`Attempting fetch for URL: ${currentUrl}`);
 
-      // Add cookies to the request
-      const cookieString = Object.entries(cookieJar)
-        .map(([key, value]) => `${key}=${value}`)
-        .join("; ");
+    const cookieString = Object.entries(cookieJar)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("; ");
 
-      const response = await fetch(currentUrl, {
-        ...options,
-        signal: controller.signal,
-        redirect: "manual", // Handle redirects manually
-        headers: {
-          ...options.headers,
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-          Accept:
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-          "Accept-Language": "en-US,en;q=0.9",
-          "Accept-Encoding": "gzip, deflate, br",
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-          Cookie: cookieString,
-        },
-      });
+    const response = await fetch(currentUrl, {
+      ...options,
+      headers: {
+        ...options.headers,
+        Cookie: cookieString,
+      },
+      redirect: "manual",
+    });
 
-      console.log(`Response status: ${response.status}`);
-      console.log(
-        "Response headers:",
-        JSON.stringify(Object.fromEntries(response.headers))
-      );
+    console.log(`Response status: ${response.status}`);
+    console.log(
+      "Response headers:",
+      JSON.stringify(Object.fromEntries(response.headers))
+    );
 
-      // Handle cookies
-      const setCookieHeader = response.headers.get("Set-Cookie");
-      if (setCookieHeader) {
-        setCookieHeader.split(",").forEach((cookieString) => {
-          const cookieParts = cookieString.split(";")[0].split("=");
-          if (cookieParts.length === 2) {
-            const [cookieName, cookieValue] = cookieParts;
-            cookieJar[cookieName.trim()] = cookieValue.trim();
-          }
-        });
-      }
-
-      if (response.status >= 300 && response.status < 400) {
-        const location = response.headers.get("Location");
-        if (!location) {
-          throw new Error("Redirect location header missing");
+    // Handle cookies
+    const setCookieHeader = response.headers.get("Set-Cookie");
+    if (setCookieHeader) {
+      setCookieHeader.split(",").forEach((cookie) => {
+        const [cookieName, ...rest] = cookie.split(";")[0].split("=");
+        const cookieValue = rest.join("=");
+        if (cookieName && cookieValue) {
+          cookieJar[cookieName.trim()] = cookieValue.trim();
         }
-        currentUrl = new URL(location, currentUrl).toString();
-        redirectCount++;
-        console.log(`Redirect ${redirectCount} to ${currentUrl}`);
-      } else {
-        clearTimeout(id);
-        return response;
+      });
+    }
+
+    if (response.status === 200) {
+      return response;
+    } else if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("Location");
+      if (!location) {
+        throw new Error("Redirect location header missing");
       }
-    } catch (error) {
-      clearTimeout(id);
-      console.error("Fetch error:", error);
-      throw error;
+      currentUrl = new URL(location, currentUrl).toString();
+      redirectCount++;
+      console.log(`Redirect ${redirectCount} to ${currentUrl}`);
+    } else {
+      throw new HTTPError(
+        `HTTP error! status: ${response.status}`,
+        response.status
+      );
     }
   }
 
-  clearTimeout(id);
   throw new Error(`Too many redirects: ${url}`);
 }
 
@@ -123,22 +101,18 @@ export default async function handler(req) {
       throw new ValidationError("Invalid URL format");
     }
 
-    const response = await fetchWithTimeout(itemUrl);
-
-    if (!response.ok) {
-      console.error(
-        "Response not OK. Status:",
-        response.status,
-        "Status Text:",
-        response.statusText
-      );
-      const responseText = await response.text();
-      console.error("Response body:", responseText.substring(0, 200) + "...");
-      throw new HTTPError(
-        `HTTP error! status: ${response.status}`,
-        response.status
-      );
-    }
+    const response = await fetchWithRedirects(itemUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
+    });
 
     const html = await response.text();
 
