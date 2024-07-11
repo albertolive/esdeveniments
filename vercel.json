@@ -36,6 +36,15 @@
     },
     "pages/api/insertTowns.js": {
       "maxDuration": 300
+    },
+    "pages/api/getRss.js": {
+      "maxDuration": 300
+    },
+    "pages/api/getDescription.js": {
+      "maxDuration": 300
+    },
+    "pages/api/getDescription2.js": {
+      "maxDuration": 300
     }
   }
 }

@@ -1,9 +1,13 @@
+import chromium from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
 import { captureException, setExtra } from "@sentry/nextjs";
 
 export const config = {
   runtime: "edge",
 };
 
+const USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
 const HEADERS_JSON = { "Content-Type": "application/json" };
 const HEADERS_HTML = { "Content-Type": "text/html" };
 
@@ -22,128 +26,19 @@ class ValidationError extends Error {
   }
 }
 
-async function runDiagnostics(url) {
-  const results = {
-    normalFetch: null,
-    browserLikeFetch: null,
-    delayedFetch: null,
-  };
+async function fetchWithPuppeteer(url) {
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+  });
+  const page = await browser.newPage();
+  await page.setUserAgent(USER_AGENT);
+  await page.goto(url, { waitUntil: "networkidle2" });
 
-  // Normal fetch
-  try {
-    const response = await fetch(url);
-    results.normalFetch = {
-      status: response.status,
-      headers: Object.fromEntries(response.headers),
-      body: await response.text(),
-    };
-  } catch (error) {
-    results.normalFetch = { error: error.message };
-  }
-
-  // Browser-like fetch
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Accept-Encoding": "gzip, deflate, br",
-        Referer: "https://www.google.com/",
-        DNT: "1",
-        Connection: "keep-alive",
-        "Upgrade-Insecure-Requests": "1",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "cross-site",
-        "Sec-Fetch-User": "?1",
-      },
-    });
-    results.browserLikeFetch = {
-      status: response.status,
-      headers: Object.fromEntries(response.headers),
-      body: await response.text(),
-    };
-  } catch (error) {
-    results.browserLikeFetch = { error: error.message };
-  }
-
-  // Delayed fetch
-  await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 second delay
-  try {
-    const response = await fetch(url);
-    results.delayedFetch = {
-      status: response.status,
-      headers: Object.fromEntries(response.headers),
-      body: await response.text(),
-    };
-  } catch (error) {
-    results.delayedFetch = { error: error.message };
-  }
-
-  return results;
-}
-
-async function fetchWithRedirects(url, options = {}, maxRedirects = 5) {
-  let currentUrl = url;
-  let redirectCount = 0;
-  let cookieJar = {};
-
-  while (redirectCount < maxRedirects) {
-    console.log(`Attempting fetch for URL: ${currentUrl}`);
-
-    const cookieString = Object.entries(cookieJar)
-      .map(([key, value]) => `${key}=${value}`)
-      .join("; ");
-
-    const response = await fetch(currentUrl, {
-      ...options,
-      headers: {
-        ...options.headers,
-        Cookie: cookieString,
-      },
-      redirect: "manual",
-    });
-
-    console.log(`Response status: ${response.status}`);
-    console.log(
-      "Response headers:",
-      JSON.stringify(Object.fromEntries(response.headers))
-    );
-
-    // Handle cookies
-    const setCookieHeader = response.headers.get("Set-Cookie");
-    if (setCookieHeader) {
-      setCookieHeader.split(",").forEach((cookie) => {
-        const [cookieName, ...rest] = cookie.split(";")[0].split("=");
-        const cookieValue = rest.join("=");
-        if (cookieName && cookieValue) {
-          cookieJar[cookieName.trim()] = cookieValue.trim();
-        }
-      });
-    }
-
-    if (response.status === 200) {
-      return response;
-    } else if (response.status >= 300 && response.status < 400) {
-      const location = response.headers.get("Location");
-      if (!location) {
-        throw new Error("Redirect location header missing");
-      }
-      currentUrl = new URL(location, currentUrl).toString();
-      redirectCount++;
-      console.log(`Redirect ${redirectCount} to ${currentUrl}`);
-    } else {
-      throw new HTTPError(
-        `HTTP error! status: ${response.status}`,
-        response.status
-      );
-    }
-  }
-
-  throw new Error(`Too many redirects: ${url}`);
+  const html = await page.content();
+  await browser.close();
+  return html;
 }
 
 export default async function handler(req) {
@@ -151,12 +46,6 @@ export default async function handler(req) {
   let itemUrl = searchParams.get("itemUrl");
 
   console.log("Received request for itemUrl:", itemUrl);
-
-  const diagnosticResults = await runDiagnostics(itemUrl);
-  console.log(
-    "Diagnostic results:",
-    JSON.stringify(diagnosticResults, null, 2)
-  );
 
   try {
     itemUrl = decodeURIComponent(itemUrl);
@@ -171,20 +60,8 @@ export default async function handler(req) {
       throw new ValidationError("Invalid URL format");
     }
 
-    const response = await fetchWithRedirects(itemUrl, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-      },
-    });
-
-    const html = await response.text();
+    console.log("Attempting to fetch with Puppeteer");
+    const html = await fetchWithPuppeteer(itemUrl);
 
     console.log("Successfully fetched content. Length:", html.length);
     console.log("First 200 characters:", html.substring(0, 200));
@@ -205,6 +82,7 @@ function handleError(error, itemUrl) {
 
   let status, message;
 
+  // Log detailed error information
   console.error("Error details:", {
     name: error.name,
     message: error.message,
@@ -228,15 +106,12 @@ function handleError(error, itemUrl) {
       status = 504;
       message = "Request timed out";
       break;
-    case error.message.includes("Too many redirects"):
-      status = 508; // Loop Detected
-      message = "Too many redirects detected";
-      break;
     default:
       status = 500;
       message = "An unexpected error occurred";
   }
 
+  // Log the final error response
   console.error("Error response:", { status, message });
 
   return new Response(JSON.stringify({ error: message }), {
