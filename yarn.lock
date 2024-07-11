@@ -855,6 +855,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sparticuz/chromium@npm:^123.0.1":
+  version: 123.0.1
+  resolution: "@sparticuz/chromium@npm:123.0.1"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    tar-fs: "npm:^3.0.5"
+  checksum: 10c0/5d7b00141c65a2718c488ca8ab5b8a6bc4cf6f268c4aeb8126c4203819b4212a17b76af67584a7294367b04199d03c8c60937951c29ddc6041cc216c17ec27f7
+  languageName: node
+  linkType: hard
+
 "@swc/helpers@npm:0.5.2":
   version: 0.5.2
   resolution: "@swc/helpers@npm:0.5.2"
@@ -1909,6 +1919,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chromium-bidi@npm:0.6.0":
+  version: 0.6.0
+  resolution: "chromium-bidi@npm:0.6.0"
+  dependencies:
+    mitt: "npm:3.0.1"
+    urlpattern-polyfill: "npm:10.0.0"
+    zod: "npm:3.23.8"
+  peerDependencies:
+    devtools-protocol: "*"
+  checksum: 10c0/29e6530965181fbaf23c7475f03c49d2210b34f2c2bf5c3e785f631a3a0fea69eb29184e43e4d43587739f213d1a876a127edf9a9506c3c088e27444d8e6e2e5
+  languageName: node
+  linkType: hard
+
 "classnames@npm:^2.2.6, classnames@npm:^2.3.2":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
@@ -2063,6 +2086,23 @@ __metadata:
     path-type: "npm:^4.0.0"
     yaml: "npm:^1.10.0"
   checksum: 10c0/b923ff6af581638128e5f074a5450ba12c0300b71302398ea38dbeabd33bbcaa0245ca9adbedfcf284a07da50f99ede5658c80bb3e39e2ce770a99d28a21ef03
+  languageName: node
+  linkType: hard
+
+"cosmiconfig@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "cosmiconfig@npm:9.0.0"
+  dependencies:
+    env-paths: "npm:^2.2.1"
+    import-fresh: "npm:^3.3.0"
+    js-yaml: "npm:^4.1.0"
+    parse-json: "npm:^5.2.0"
+  peerDependencies:
+    typescript: ">=4.9.5"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/1c1703be4f02a250b1d6ca3267e408ce16abfe8364193891afc94c2d5c060b69611fdc8d97af74b7e6d5d1aac0ab2fb94d6b079573146bc2d756c2484ce5f0ee
   languageName: node
   linkType: hard
 
@@ -2502,7 +2542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"env-paths@npm:^2.2.0":
+"env-paths@npm:^2.2.0, env-paths@npm:^2.2.1":
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
   checksum: 10c0/285325677bf00e30845e330eec32894f5105529db97496ee3f598478e50f008c5352a41a30e5e72ec9de8a542b5a570b85699cd63bd2bc646dbcb9f311d83bc4
@@ -3215,6 +3255,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"follow-redirects@npm:^1.15.6":
+  version: 1.15.6
+  resolution: "follow-redirects@npm:1.15.6"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 10c0/9ff767f0d7be6aa6870c82ac79cf0368cd73e01bbc00e9eb1c2a16fbb198ec105e3c9b6628bb98e9f3ac66fe29a957b9645bcb9a490bb7aa0d35f908b6b85071
+  languageName: node
+  linkType: hard
+
 "for-each@npm:^0.3.3":
   version: 0.3.3
   resolution: "for-each@npm:0.3.3"
@@ -3810,7 +3860,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-fresh@npm:^3.0.0, import-fresh@npm:^3.2.1":
+"import-fresh@npm:^3.0.0, import-fresh@npm:^3.2.1, import-fresh@npm:^3.3.0":
   version: 3.3.0
   resolution: "import-fresh@npm:3.3.0"
   dependencies:
@@ -5167,7 +5217,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parse-json@npm:^5.0.0":
+"parse-json@npm:^5.0.0, parse-json@npm:^5.2.0":
   version: 5.2.0
   resolution: "parse-json@npm:5.2.0"
   dependencies:
@@ -5503,7 +5553,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:^22.12.1":
+"puppeteer-core@npm:22.12.1":
   version: 22.12.1
   resolution: "puppeteer-core@npm:22.12.1"
   dependencies:
@@ -5513,6 +5563,33 @@ __metadata:
     devtools-protocol: "npm:0.0.1299070"
     ws: "npm:^8.17.1"
   checksum: 10c0/61bbb50b857362a181ace3d138a578e6ea941a1d6ceee5f12ea1bc8621e52b24c10d174c401990770f133eea6f490317dceeeb8a5ecb48e78f9cfb12a4e4ed2f
+  languageName: node
+  linkType: hard
+
+"puppeteer-core@npm:^22.13.0":
+  version: 22.13.0
+  resolution: "puppeteer-core@npm:22.13.0"
+  dependencies:
+    "@puppeteer/browsers": "npm:2.2.3"
+    chromium-bidi: "npm:0.6.0"
+    debug: "npm:^4.3.5"
+    devtools-protocol: "npm:0.0.1299070"
+    ws: "npm:^8.18.0"
+  checksum: 10c0/a91f43d51dd62edeb6cd78c981082e48681ac3af12598318ee78752536a7842d8e781e409ba77ffe530845692e7cb47767c365e2345c03e05f73a8d0277ca6db
+  languageName: node
+  linkType: hard
+
+"puppeteer@npm:^22.12.1":
+  version: 22.12.1
+  resolution: "puppeteer@npm:22.12.1"
+  dependencies:
+    "@puppeteer/browsers": "npm:2.2.3"
+    cosmiconfig: "npm:^9.0.0"
+    devtools-protocol: "npm:0.0.1299070"
+    puppeteer-core: "npm:22.12.1"
+  bin:
+    puppeteer: lib/esm/puppeteer/node/cli.js
+  checksum: 10c0/733bc53e470384b481b06bfc59810b9a30922e1501bb7a6b4829a75fe621fa9d4f5b9990f844ec7aaae433c3278e5afc86a23db88b70403303d555aa6c71cab9
   languageName: node
   linkType: hard
 
@@ -5899,6 +5976,7 @@ __metadata:
     "@next/bundle-analyzer": "npm:^13.1.6"
     "@sentry/nextjs": "npm:^7.105.0"
     "@sentry/utils": "npm:^7.80.0"
+    "@sparticuz/chromium": "npm:^123.0.1"
     "@tailwindcss/aspect-ratio": "npm:^0.4.2"
     "@tailwindcss/forms": "npm:^0.5.3"
     "@tailwindcss/typography": "npm:^0.5.9"
@@ -5926,7 +6004,8 @@ __metadata:
     next-sitemap: "npm:^2.5.28"
     postcss: "npm:^8.4.21"
     prettier-eslint: "npm:^15.0.1"
-    puppeteer-core: "npm:^22.12.1"
+    puppeteer: "npm:^22.12.1"
+    puppeteer-core: "npm:^22.13.0"
     react: "npm:^18.2.0"
     react-datepicker: "npm:^4.9.0"
     react-dom: "npm:^18.2.0"
@@ -6474,7 +6553,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar-fs@npm:*":
+"tar-fs@npm:*, tar-fs@npm:^3.0.5":
   version: 3.0.6
   resolution: "tar-fs@npm:3.0.6"
   dependencies:
@@ -7083,7 +7162,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.17.1":
+"ws@npm:^8.17.1, ws@npm:^8.18.0":
   version: 8.18.0
   resolution: "ws@npm:8.18.0"
   peerDependencies:

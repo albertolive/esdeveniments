@@ -1,6 +1,7 @@
-import chromium from "chrome-aws-lambda";
 import { captureException, setExtra } from "@sentry/nextjs";
 import { siteUrl } from "@config/index";
+const chromium = require("@sparticuz/chromium");
+const puppeteer = require("puppeteer-core");
 
 class HTTPError extends Error {
   constructor(message, status) {
@@ -18,18 +19,29 @@ class ValidationError extends Error {
 }
 
 async function fetchWithPuppeteer(url) {
-  const browser = await chromium.puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
-  });
-  const page = await browser.newPage();
-  await page.goto(url, { waitUntil: "networkidle2" });
+  let browser = null;
+  try {
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    });
 
-  const html = await page.content();
-  await browser.close();
-  return html;
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: "networkidle2" });
+
+    const html = await page.content();
+    return html;
+  } catch (error) {
+    console.error("Error in fetchWithPuppeteer:", error);
+    throw error;
+  } finally {
+    if (browser !== null) {
+      await browser.close();
+    }
+  }
 }
 
 export default async function handler(req, res) {
