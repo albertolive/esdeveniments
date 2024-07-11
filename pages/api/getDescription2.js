@@ -1,5 +1,6 @@
 import chromium from "chrome-aws-lambda";
 import { captureException, setExtra } from "@sentry/nextjs";
+import { siteUrl } from "@config/index";
 
 class HTTPError extends Error {
   constructor(message, status) {
@@ -32,7 +33,7 @@ async function fetchWithPuppeteer(url) {
 }
 
 export default async function handler(req, res) {
-  const { searchParams } = new URL(req.url);
+  const { searchParams } = new URL(req.url, siteUrl);
   let itemUrl = searchParams.get("itemUrl");
 
   console.log("Received request for itemUrl:", itemUrl);
@@ -42,12 +43,6 @@ export default async function handler(req, res) {
 
     if (!itemUrl) {
       throw new ValidationError("Item URL is required");
-    }
-
-    try {
-      new URL(itemUrl);
-    } catch (urlError) {
-      throw new ValidationError("Invalid URL format");
     }
 
     console.log("Attempting to fetch with Puppeteer");
