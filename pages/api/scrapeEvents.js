@@ -72,15 +72,19 @@ function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
   );
 }
 
-async function fetchHtmlContent(url) {
+async function fetchHtmlContent(url, alternativeScrapper = false) {
   let retries = RETRY_LIMIT;
   let delay = INITIAL_DELAY;
+
+  const apiUrl = alternativeScrapper
+    ? `/api/getAlternativeScrapper`
+    : `/api/getDescription`;
 
   while (retries > 0) {
     try {
       const response = await fetch(
         new URL(
-          `/api/getDescription?itemUrl=${encodeURIComponent(url)}`,
+          `${apiUrl}?itemUrl=${encodeURIComponent(url)}`,
           siteUrl
         ).toString()
       );
@@ -115,8 +119,9 @@ async function exhaustiveSearch(url, selectors, initialData = {}) {
     timeSelector,
     descriptionSelector,
     imageSelector,
+    alternativeScrapper,
   } = selectors;
-  const html = await fetchHtmlContent(url);
+  const html = await fetchHtmlContent(url, alternativeScrapper);
   const $ = cheerio.load(html);
 
   const data = {

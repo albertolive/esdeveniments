@@ -125,7 +125,7 @@ const anoia = [
         "veciana",
         {
           label: "Veciana",
-          rssFeed: "https://www.veciana.cat/rss/12",
+          rssFeed: "http://www.veciana.cat/rss/12",
           postalCode: "08282",
           coords: { lat: 41.6559380729177, lng: 1.48857977483836 },
           ...sharedData,

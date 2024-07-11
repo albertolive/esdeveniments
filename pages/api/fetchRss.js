@@ -41,17 +41,25 @@ function logError(error, town, context) {
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Utility function to check cache validity
-const isCacheValid = (cachedData) =>
-  cachedData && Date.now() - cachedData.timestamp < CONFIG.rssFeedCacheMaxAge;
+const isCacheValid = (cachedData, cachedTime) =>
+  cachedData && Date.now() - cachedData.timestamp < cachedTime;
 
 // Fetches the RSS feed and returns the parsed data
-async function fetchRSSFeed(rssFeed, town, shouldInteractWithKv) {
+async function fetchRSSFeed(
+  rssFeed,
+  town,
+  shouldInteractWithKv,
+  increaseCacheTime
+) {
   try {
     if (shouldInteractWithKv) {
       const cachedData = await kv.get(
         `${env}_${town}_${CONFIG.rssFeedCacheKey}`
       );
-      if (isCacheValid(cachedData)) {
+      const cachedTime = increaseCacheTime
+        ? 24 * 60 * 60 * 1000
+        : CONFIG.rssFeedCacheMaxAge;
+      if (isCacheValid(cachedData, cachedTime)) {
         console.log(`Returning cached data for ${town}`);
         return cachedData.data;
       }
@@ -692,7 +700,11 @@ export default async function handler(req, res) {
     const { towns } = CITIES_DATA.get(region);
     if (!towns.has(town)) throw new Error("Town not found");
 
-    const { rssFeed, disableInsertion = false } = towns.get(town);
+    const {
+      rssFeed,
+      disableInsertion = false,
+      increaseCacheTime = false,
+    } = towns.get(town);
 
     if (disableInsertion) {
       const message = `Event insertion is disabled for ${town}. Skipping processing.`;
@@ -704,7 +716,12 @@ export default async function handler(req, res) {
     if (!rssFeed) throw new Error("RSS feed URL not found for the town");
 
     console.log(`Fetching RSS feed for ${town}: ${rssFeed}`);
-    let items = await fetchRSSFeed(rssFeed, town, shouldInteractWithKv);
+    let items = await fetchRSSFeed(
+      rssFeed,
+      town,
+      shouldInteractWithKv,
+      increaseCacheTime
+    );
 
     // Ensure items is an array without full normalization
     if (!Array.isArray(items)) {
