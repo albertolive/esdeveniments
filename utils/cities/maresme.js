@@ -43,6 +43,7 @@ const maresme = [
           postalCode: "08358",
           coords: { lat: 41.60897309259838, lng: 2.540454175884264 },
           getDescriptionFromRss: true,
+          disableInsertion: true,
         },
       ],
       [
@@ -117,6 +118,7 @@ const maresme = [
           postalCode: "08320",
           coords: { lat: 41.48276608612813, lng: 2.311522588574262 },
           getDescriptionFromRss: true,
+          disableInsertion: true,
         },
       ],
       [
@@ -127,6 +129,7 @@ const maresme = [
           postalCode: "08380",
           coords: { lat: 41.64667346532037, lng: 2.7425516023358285 },
           getDescriptionFromRss: true,
+          disableInsertion: true,
         },
       ],
       [
@@ -262,6 +265,7 @@ const maresme = [
           postalCode: "08339",
           coords: { lat: 41.517176648217394, lng: 2.3583089588685895 },
           getDescriptionFromRss: true,
+          disableInsertion: true,
         },
       ],
       [
