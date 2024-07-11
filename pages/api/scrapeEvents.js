@@ -279,7 +279,10 @@ async function createEventRss(city) {
   }
 
   try {
-    const html = await fetchHtmlContent(cityData.url);
+    const html = await fetchHtmlContent(
+      cityData.url,
+      cityData.alternativeScrapper
+    );
     const events = await extractEventDetails(html, cityData);
     return createRssFeed(events, city);
   } catch (error) {

@@ -19,38 +19,6 @@ export default function ByDate({ initialState }) {
 }
 
 export async function getStaticPaths() {
-  if (
-    process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
-    process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
-  ) {
-    const { CITIES_DATA, BYDATES } = require("@utils/constants");
-    const paths = [];
-
-    for (const [regionKey, region] of CITIES_DATA) {
-      // Add paths for regions
-      const regionDatePaths = BYDATES.map((byDate) => ({
-        params: {
-          place: regionKey,
-          byDate: byDate.value,
-        },
-      }));
-      paths.push(...regionDatePaths);
-
-      // Add paths for towns
-      for (const [townKey] of region.towns) {
-        const townDatePaths = BYDATES.map((byDate) => ({
-          params: {
-            place: townKey,
-            byDate: byDate.value,
-          },
-        }));
-        paths.push(...townDatePaths);
-      }
-    }
-
-    return { paths, fallback: false };
-  }
-
   return {
     paths: [],
     fallback: "blocking",
