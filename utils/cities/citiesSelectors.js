@@ -165,6 +165,7 @@ export const CITIES_SELECTORS = {
       swapDayMonthOrder: false,
     },
     timeRegex: /(\d{2}):(\d{2})/i,
+    alternativeScrapper: true,
   },
   "roda-de-ter": {
     defaultLocation: "Roda de Ter",
