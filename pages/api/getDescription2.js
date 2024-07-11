@@ -21,7 +21,7 @@ async function fetchWithScrapingBee(url) {
   try {
     const response = await axios.get("https://app.scrapingbee.com/api/v1/", {
       params: {
-        api_key: process.env.NEXT_PUBLIC_SCRAPINGBEE_API_KEY,
+        api_key: process.env.NEXT_PUBLIC_SCRAPINGBEE,
         url: url,
         render_js: "false",
       },
