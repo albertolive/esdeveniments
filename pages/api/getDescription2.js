@@ -1,13 +1,6 @@
-import chromium from "chrome-aws-lambda";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import { captureException, setExtra } from "@sentry/nextjs";
 
-export const config = {
-  runtime: "edge",
-};
-
-const USER_AGENT =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
 const HEADERS_JSON = { "Content-Type": "application/json" };
 const HEADERS_HTML = { "Content-Type": "text/html" };
 
@@ -28,12 +21,9 @@ class ValidationError extends Error {
 
 async function fetchWithPuppeteer(url) {
   const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
-  await page.setUserAgent(USER_AGENT);
   await page.goto(url, { waitUntil: "networkidle2" });
 
   const html = await page.content();
@@ -82,7 +72,6 @@ function handleError(error, itemUrl) {
 
   let status, message;
 
-  // Log detailed error information
   console.error("Error details:", {
     name: error.name,
     message: error.message,
@@ -111,7 +100,6 @@ function handleError(error, itemUrl) {
       message = "An unexpected error occurred";
   }
 
-  // Log the final error response
   console.error("Error response:", { status, message });
 
   return new Response(JSON.stringify({ error: message }), {
