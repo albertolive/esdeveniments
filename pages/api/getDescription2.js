@@ -1,7 +1,6 @@
 import { captureException, setExtra } from "@sentry/nextjs";
 import { siteUrl } from "@config/index";
-const chromium = require("@sparticuz/chromium");
-const puppeteer = require("puppeteer-core");
+const axios = require("axios");
 
 class HTTPError extends Error {
   constructor(message, status) {
@@ -18,32 +17,27 @@ class ValidationError extends Error {
   }
 }
 
-async function fetchWithPuppeteer(url) {
-  let browser = null;
+async function fetchWithScrapingBee(url) {
   try {
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
+    const response = await axios.get("https://app.scrapingbee.com/api/v1/", {
+      params: {
+        api_key: process.env.NEXT_PUBLIC_SCRAPINGBEE_API_KEY,
+        url: url,
+        render_js: "false",
+      },
     });
 
-    const page = await browser.newPage();
-    await page.setUserAgent(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    );
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
-
-    const html = await page.content();
-    return html;
-  } catch (error) {
-    console.error("Error in fetchWithPuppeteer:", error);
-    throw error;
-  } finally {
-    if (browser !== null) {
-      await browser.close();
+    if (response.status !== 200) {
+      throw new HTTPError(
+        `HTTP error! status: ${response.status}`,
+        response.status
+      );
     }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error in fetchWithScrapingBee:", error);
+    throw error;
   }
 }
 
@@ -60,8 +54,8 @@ export default async function handler(req, res) {
       throw new ValidationError("Item URL is required");
     }
 
-    console.log("Attempting to fetch with Puppeteer");
-    const html = await fetchWithPuppeteer(itemUrl);
+    console.log("Attempting to fetch with ScrapingBee");
+    const html = await fetchWithScrapingBee(itemUrl);
 
     console.log("Successfully fetched content. Length:", html.length);
     console.log("First 200 characters:", html.substring(0, 200));
