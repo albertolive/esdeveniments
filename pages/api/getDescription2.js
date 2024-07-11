@@ -1,8 +1,5 @@
-import puppeteer from "puppeteer";
+import chromium from "chrome-aws-lambda";
 import { captureException, setExtra } from "@sentry/nextjs";
-
-const HEADERS_JSON = { "Content-Type": "application/json" };
-const HEADERS_HTML = { "Content-Type": "text/html" };
 
 class HTTPError extends Error {
   constructor(message, status) {
@@ -20,8 +17,11 @@ class ValidationError extends Error {
 }
 
 async function fetchWithPuppeteer(url) {
-  const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  const browser = await chromium.puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
   });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle2" });
@@ -31,7 +31,7 @@ async function fetchWithPuppeteer(url) {
   return html;
 }
 
-export default async function handler(req) {
+export default async function handler(req, res) {
   const { searchParams } = new URL(req.url);
   let itemUrl = searchParams.get("itemUrl");
 
@@ -56,17 +56,14 @@ export default async function handler(req) {
     console.log("Successfully fetched content. Length:", html.length);
     console.log("First 200 characters:", html.substring(0, 200));
 
-    return new Response(html, {
-      status: 200,
-      headers: HEADERS_HTML,
-    });
+    res.status(200).send(html);
   } catch (error) {
     console.error("Error in handler:", error);
-    return handleError(error, itemUrl);
+    return handleError(error, itemUrl, res);
   }
 }
 
-function handleError(error, itemUrl) {
+function handleError(error, itemUrl, res) {
   setExtra("itemUrl", itemUrl);
   captureException(error);
 
@@ -102,8 +99,5 @@ function handleError(error, itemUrl) {
 
   console.error("Error response:", { status, message });
 
-  return new Response(JSON.stringify({ error: message }), {
-    status,
-    headers: HEADERS_JSON,
-  });
+  res.status(status).json({ error: message });
 }
