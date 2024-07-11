@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 import { captureException, setExtra } from "@sentry/nextjs";
 import { siteUrl } from "@config/index";
 
