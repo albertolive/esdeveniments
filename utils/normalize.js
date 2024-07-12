@@ -209,7 +209,7 @@ function timeUntilEvent(startDateStr, endDateStr) {
   }
 }
 
-function calculateDurationInHours(startDateStr, endDateStr) {
+export function calculateDurationInHours(startDateStr, endDateStr) {
   const startDate = new Date(startDateStr);
   const endDate = new Date(endDateStr);
 

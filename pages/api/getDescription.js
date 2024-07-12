@@ -92,12 +92,6 @@ export default async function handler(req) {
       throw new ValidationError("Item URL is required");
     }
 
-    try {
-      new URL(itemUrl);
-    } catch (urlError) {
-      throw new ValidationError("Invalid URL format");
-    }
-
     console.log("Attempting to fetch with User-Agent:", USER_AGENT);
     const response = await fetchWithTimeout(itemUrl, {
       headers: {

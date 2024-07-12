@@ -4,7 +4,8 @@ import Bottleneck from "bottleneck";
 import { DateTime } from "luxon";
 import { captureException } from "@sentry/nextjs";
 import { CITIES_DATA } from "@utils/constants";
-import { env, sanitizeUrl } from "@utils/helpers";
+import { env, sanitizeUrl, getFormattedDate } from "@utils/helpers";
+import { calculateDurationInHours } from "@utils/normalize";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
 import createHash from "@utils/createHash";
@@ -157,6 +158,25 @@ async function cleanProcessedItems(processedItems, town) {
   await setProcessedItems(processedItems, town);
 }
 
+function generateFallbackDescription(title, start, end, location) {
+  const { formattedStart, formattedEnd } = getFormattedDate(start, end);
+  const duration = calculateDurationInHours(start, end);
+
+  let description = `${title}\n\n📅 ${formattedStart} - ${formattedEnd}`;
+
+  if (location) {
+    description += `\n\n📍 ${location}`;
+  }
+
+  if (duration) {
+    description += `\n\n⏰ Durada: ${duration}`;
+  }
+
+  description += `\n\n🔗 Visita el nostre lloc web per a més informació!`;
+
+  return description;
+}
+
 // Utility functions for handling images and URLs
 const getEventImageUrl = (description) => {
   const regex = /(http(s?):)([\\/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|JPG)/g;
@@ -215,7 +235,6 @@ async function getDescription(item, region, town) {
     removeImage = false,
     getDescriptionFromRss = false,
   } = getTownData(region, town);
-
   // If we have a description from RSS and we're allowed to use it, return it
   if (fullDescription && getDescriptionFromRss) {
     return fullDescription;
@@ -353,21 +372,27 @@ function formatDescription(item, description, image, video) {
 // Scrapes the description of an item
 async function scrapeDescription(item, region, town) {
   try {
-    const { url, title } = item;
+    const { url, title, start, end, location } = item;
     if (!url) {
-      return title;
+      return generateFallbackDescription(title, start, end, location);
     }
 
     const description = await getDescription(item, region, town);
     const image = await getImage(item, region, town, description);
     const video = getVideo(description);
 
-    const finalDescription = description || title;
+    const finalDescription =
+      description || generateFallbackDescription(title, start, end, location);
 
     return formatDescription(item, finalDescription, image, video);
   } catch (error) {
     logError(error, town, "scraping description");
-    return item.title;
+    return generateFallbackDescription(
+      item.title,
+      item.start,
+      item.end,
+      item.location
+    );
   }
 }
 
@@ -536,16 +561,20 @@ async function createEvent(item, region, town) {
     endDateTime.endOf("day").equals(endDateTime);
 
   // Fetch description and location in parallel
-  const [description, scrapedLocation] = await Promise.all([
-    scrapeDescription(item, region, town),
+  const [description, location] = await Promise.all([
+    scrapeDescription(
+      { ...item, start: dateTime, end: endDateTime },
+      region,
+      town
+    ),
     scrapeLocation(item, region, town),
   ]);
 
   return {
     summary: title,
     description,
-    location: scrapedLocation
-      ? `${scrapedLocation}, ${townLabel}, ${regionLabel}`
+    location: location
+      ? `${location}, ${townLabel}, ${regionLabel}`
       : `${townLabel}, ${regionLabel}`,
     start: isFullDayEvent
       ? { date: dateTime.toFormat("yyyy-MM-dd") }
