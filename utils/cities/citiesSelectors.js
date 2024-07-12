@@ -60,6 +60,7 @@ export const CITIES_SELECTORS = {
     urlImage: "/",
     dateRegex: { regex: /^([a-zA-zçÇ]+)\s+(\d+)/i, swapDayMonthOrder: true },
     timeRegex: /(\d{2}):(\d{2})/i,
+    alternativeScrapper: true,
   },
   "la-roca-del-valles": {
     defaultLocation: "La Roca del Vallès",
@@ -102,6 +103,7 @@ export const CITIES_SELECTORS = {
       swapDayMonthOrder: false,
     },
     timeRegex: /(\d{2}):(\d{2})/i,
+    alternativeScrapper: true,
   },
   "el-masnou": {
     defaultLocation: "El Masnou",
@@ -187,6 +189,7 @@ export const CITIES_SELECTORS = {
       swapDayMonthOrder: false,
     },
     timeRegex: /(\d{2}):(\d{2})/i,
+    alternativeScrapper: true,
   },
   "vilassar-de-mar": {
     defaultLocation: "Vilassar de Mar",

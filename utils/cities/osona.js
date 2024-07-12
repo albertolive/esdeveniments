@@ -149,7 +149,7 @@ const osona = [
           postalCode: "08510",
           coords: { lat: 41.98073426558233, lng: 2.3092071424357914 },
           getDescriptionFromRss: true,
-          disableInsertion: true,
+          increaseCacheTime: true,
         },
       ],
       [
