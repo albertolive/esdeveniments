@@ -10,6 +10,8 @@ import { truncateString } from "@utils/helpers";
 import useOnScreen from "@components/hooks/useOnScreen";
 import ShareButton from "@components/ui/common/cardShareButton";
 import Image from "@components/ui/common/image";
+import NativeShareButton from "@components/ui/common/nativeShareButton";
+import useCheckMobileScreen from "@components/hooks/useCheckMobileScreen";
 
 const AdCard = dynamic(() => import("@components/ui/adCard"), {
   loading: () => (
@@ -47,6 +49,7 @@ function CardHorizontal({ event, isLoading, isPriority }) {
   });
   const { prefetch } = useRouter();
   const [isCardLoading, setIsCardLoading] = useState(false);
+  const isMobile = useCheckMobileScreen();
 
   const handlePrefetch = () => {
     prefetch(`/e/${event.slug}`);
@@ -138,12 +141,17 @@ function CardHorizontal({ event, isLoading, isPriority }) {
         className="w-full flex justify-center items-center gap-2 pb-6 px-4"
         ref={counterRef}
       >
-        {isPriority ? (
-          <ShareButton slug={event.slug} />
-        ) : (
-          isShareVisible && <ShareButton slug={event.slug} />
-        )}
+        {isPriority
+          ? !isMobile && <ShareButton slug={event.slug} />
+          : isShareVisible && !isMobile && <ShareButton slug={event.slug} />}
         {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
+        {isMobile && (
+          <NativeShareButton
+            title={event.title}
+            text={event.description}
+            url={`${window.location.origin}/e/${event.slug}`}
+          />
+        )}
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
         {/* Date */}
