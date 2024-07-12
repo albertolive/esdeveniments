@@ -125,6 +125,7 @@ export const CITIES_SELECTORS = {
       swapDayMonthOrder: false,
     },
     timeRegex: /(\d{2}):(\d{2})/i,
+    alternativeScrapper: true,
   },
   "malgrat-de-mar": {
     defaultLocation: "Malgrat de Mar",
@@ -146,6 +147,7 @@ export const CITIES_SELECTORS = {
       swapDayMonthOrder: false,
     },
     timeRegex: /(\d{2}):(\d{2})/i,
+    alternativeScrapper: true,
   },
   "vilassar-de-dalt": {
     defaultLocation: "Vilassar de Dalt",
