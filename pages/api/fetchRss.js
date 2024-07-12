@@ -19,8 +19,6 @@ const CONFIG = {
   rssFeedCacheKey: "rssFeedCache",
   maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   rssFeedCacheMaxAge: 3 * 60 * 60 * 1000, // 3 hours
-  descriptionEmptyMessage:
-    "Encara no hi ha descripció. Afegeix-ne una i dóna vida a aquest espai!",
 };
 
 const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 300 });
@@ -228,14 +226,15 @@ async function getDescription(item, region, town) {
 
   if (!url) {
     console.warn(`Invalid URL for item in ${town}:`, originalUrl);
-    return CONFIG.descriptionEmptyMessage;
+    return "";
   }
 
   // If we don't have a description from RSS or we're not allowed to use it, scrape the website
   try {
     const { sanitizeUrl: shouldSanitizeUrl } = getTownData(region, town);
     const html = await fetchAndDecodeHtml(url, shouldSanitizeUrl, town);
-    if (!html) return CONFIG.descriptionEmptyMessage;
+
+    if (!html) return "";
 
     const $ = load(html);
     let $desc = $(descriptionSelector);
@@ -268,11 +267,11 @@ async function getDescription(item, region, town) {
 
       return description;
     } else {
-      return CONFIG.descriptionEmptyMessage;
+      return "";
     }
   } catch (error) {
     logError(error, town, "scraping description");
-    return fullDescription || CONFIG.descriptionEmptyMessage;
+    return fullDescription || "";
   }
 }
 
@@ -354,19 +353,21 @@ function formatDescription(item, description, image, video) {
 // Scrapes the description of an item
 async function scrapeDescription(item, region, town) {
   try {
-    const { url } = item;
+    const { url, title } = item;
     if (!url) {
-      return CONFIG.descriptionEmptyMessage;
+      return title;
     }
 
     const description = await getDescription(item, region, town);
     const image = await getImage(item, region, town, description);
     const video = getVideo(description);
 
-    return formatDescription(item, description, image, video);
+    const finalDescription = description || title;
+
+    return formatDescription(item, finalDescription, image, video);
   } catch (error) {
     logError(error, town, "scraping description");
-    return CONFIG.descriptionEmptyMessage;
+    return item.title;
   }
 }
 
