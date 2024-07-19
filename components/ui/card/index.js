@@ -10,18 +10,19 @@ const CardLoading = dynamic(() => import("@components/ui/cardLoading"), {
   ),
 });
 
+const AdCard = dynamic(() => import("@components/ui/adCard"), {
+  loading: () => (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+    </div>
+  ),
+  ssr: false,
+});
+
 function Card({ event, isLoading, isPriority }) {
   if (isLoading) return <CardLoading />;
 
   if (event.isAd) {
-    const AdCard = dynamic(() => import("@components/ui/adCard"), {
-      loading: () => (
-        <div className="flex justify-center items-center w-full">
-          <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
-        </div>
-      ),
-      ssr: false,
-    });
     return <AdCard event={event} />;
   }
 
@@ -30,4 +31,12 @@ function Card({ event, isLoading, isPriority }) {
   );
 }
 
-export default memo(Card);
+function areEqual(prevProps, nextProps) {
+  return (
+    prevProps.isLoading === nextProps.isLoading &&
+    prevProps.isPriority === nextProps.isPriority &&
+    prevProps.event.id === nextProps.event.id
+  );
+}
+
+export default memo(Card, areEqual);

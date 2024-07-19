@@ -13,18 +13,19 @@ const CardHorizontalLoading = dynamic(
   }
 );
 
+const AdCard = dynamic(() => import("@components/ui/adCard"), {
+  loading: () => (
+    <div className="flex justify-center items-center w-full">
+      <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
+    </div>
+  ),
+  ssr: false,
+});
+
 function CardHorizontal({ event, isLoading, isPriority }) {
   if (isLoading) return <CardHorizontalLoading />;
 
   if (event.isAd) {
-    const AdCard = dynamic(() => import("@components/ui/adCard"), {
-      loading: () => (
-        <div className="flex justify-center items-center w-full">
-          <div className="w-full h-60 bg-darkCorp animate-fast-pulse"></div>
-        </div>
-      ),
-      ssr: false,
-    });
     return <AdCard event={event} />;
   }
 
@@ -33,4 +34,12 @@ function CardHorizontal({ event, isLoading, isPriority }) {
   );
 }
 
-export default memo(CardHorizontal);
+function areEqual(prevProps, nextProps) {
+  return (
+    prevProps.isLoading === nextProps.isLoading &&
+    prevProps.isPriority === nextProps.isPriority &&
+    prevProps.event.id === nextProps.event.id
+  );
+}
+
+export default memo(CardHorizontal, areEqual);

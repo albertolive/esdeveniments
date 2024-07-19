@@ -92,7 +92,7 @@ function CardContent({ event, isPriority, isHorizontal }) {
               <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             </div>
             {/* Title */}
-            <h3 className="w-11/12 uppercase whitespace-nowrap overflow-hidden text-ellipsis">
+            <h3 className="w-11/12 uppercase">
               <Link href={`/e/${event.slug}`} passHref prefetch={false}>
                 {memoizedValues.title}
               </Link>
@@ -136,26 +136,44 @@ function CardContent({ event, isPriority, isHorizontal }) {
           </div>
         </div>
       </Link>
-      {/* ShareButton */}
-      <div className="w-full flex flex-col px-4 gap-3">
-        {/* Date */}
-        <div className="flex justify-between items-start gap-2">
-          <div className="flex items-start gap-2">
-            <CalendarIcon className="h-5 w-5 mt-1" />
-            <p className="font-semibold">{memoizedValues.eventDate}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {!isMobile && <ShareButton slug={event.slug} />}
-            {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
-            {isMobile && (
+      {/* ShareButton, Date, and ViewCounter */}
+      {!isMobile ? (
+        <div
+          className="w-full flex justify-center items-center gap-2 pb-6 px-4"
+          ref={counterRef}
+        >
+          {<ShareButton slug={event.slug} />}
+          {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
+        </div>
+      ) : (
+        <div className="w-full flex flex-col px-4 gap-3">
+          {/* Date */}
+          <div className="flex justify-between items-start gap-2">
+            <div className="flex items-start gap-2">
+              <CalendarIcon className="h-5 w-5 mt-1" />
+              <p className="font-semibold">{memoizedValues.eventDate}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
               <NativeShareButton
                 title={event.title}
                 text={event.description}
                 url={`${window.location.origin}/e/${event.slug}`}
               />
-            )}
+            </div>
           </div>
         </div>
+      )}
+      <div className="w-full flex flex-col px-4 gap-3">
+        {!isMobile && (
+          /* Date for desktop */
+          <div className="flex justify-start items-start">
+            <div>
+              <CalendarIcon className="h-5 w-5" />
+            </div>
+            <p className="px-2 font-semibold">{memoizedValues.eventDate}</p>
+          </div>
+        )}
         {/* Location */}
         <div className="flex justify-start items-start">
           <div>
