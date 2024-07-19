@@ -35,6 +35,17 @@ function CardHorizontal({ event, isLoading, isPriority }) {
 }
 
 function areEqual(prevProps, nextProps) {
+  if (!prevProps.event && !nextProps.event) {
+    return (
+      prevProps.isLoading === nextProps.isLoading &&
+      prevProps.isPriority === nextProps.isPriority
+    );
+  }
+
+  if (!prevProps.event || !nextProps.event) {
+    return false;
+  }
+
   return (
     prevProps.isLoading === nextProps.isLoading &&
     prevProps.isPriority === nextProps.isPriority &&
