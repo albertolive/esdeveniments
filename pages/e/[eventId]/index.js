@@ -2,17 +2,19 @@ import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import { useRouter } from "next/router";
-import PencilIcon from "@heroicons/react/outline/PencilIcon";
-import XIcon from "@heroicons/react/outline/XIcon";
-import LocationIcon from "@heroicons/react/outline/LocationMarkerIcon";
-import ChevronDownIcon from "@heroicons/react/outline/ChevronDownIcon";
-import CalendarIcon from "@heroicons/react/outline/CalendarIcon";
-import CloudIcon from "@heroicons/react/outline/CloudIcon";
-import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
-import ArrowRightIcon from "@heroicons/react/outline/ArrowRightIcon";
-import SpeakerphoneIcon from "@heroicons/react/outline/SpeakerphoneIcon";
-import ShareIcon from "@heroicons/react/outline/ShareIcon";
-import WebIcon from "@heroicons/react/outline/GlobeAltIcon";
+import {
+  PencilIcon,
+  XIcon,
+  LocationMarkerIcon as LocationIcon,
+  ChevronDownIcon,
+  CalendarIcon,
+  CloudIcon,
+  InformationCircleIcon as InfoIcon,
+  ArrowRightIcon,
+  SpeakerphoneIcon,
+  ShareIcon,
+  GlobeAltIcon as WebIcon,
+} from "@heroicons/react/outline";
 import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
 import { generateJsonData } from "@utils/helpers";

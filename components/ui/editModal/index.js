@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Modal from "@components/ui/common/modal";
-import PencilIcon from "@heroicons/react/outline/PencilIcon";
-import XCircleIcon from "@heroicons/react/outline/XCircleIcon";
+import { PencilIcon, XCircleIcon } from "@heroicons/react/outline";
 
 export default function EditModal({
   openModal,

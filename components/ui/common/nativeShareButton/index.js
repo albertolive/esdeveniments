@@ -26,7 +26,7 @@ const NativeShareButton = ({ title, text, url }) => {
   return (
     <button
       onClick={handleNativeShare}
-      className="flex items-center text-white rounded"
+      className="flex items-center text-primary"
     >
       <ShareIcon className="h-6 w-6" />
     </button>

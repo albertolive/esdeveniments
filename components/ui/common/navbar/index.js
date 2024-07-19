@@ -1,11 +1,13 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
-import MenuIcon from "@heroicons/react/outline/MenuIcon";
-import XIcon from "@heroicons/react/outline/XIcon";
-import PlusSmIcon from "@heroicons/react/outline/PlusIcon";
-import HomeIcon from "@heroicons/react/outline/HomeIcon";
-import InfoIcon from "@heroicons/react/outline/InformationCircleIcon";
+import {
+  MenuIcon,
+  XIcon,
+  PlusIcon as PlusSmIcon,
+  HomeIcon,
+  InformationCircleIcon as InfoIcon,
+} from "@heroicons/react/outline";
 import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import logo from "@public/static/images/logo-esdeveniments.webp";
