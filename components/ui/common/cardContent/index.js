@@ -158,7 +158,10 @@ function CardContent({ event, isPriority, isHorizontal }) {
               <NativeShareButton
                 title={event.title}
                 text={event.description}
-                url={`${window.location.origin}/e/${event.slug}`}
+                url={event.slug}
+                startDate={event.startDate}
+                endDate={event.endDate}
+                location={event.location}
               />
             </div>
           </div>
