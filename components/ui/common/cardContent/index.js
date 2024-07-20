@@ -59,7 +59,7 @@ function CardContent({ event, isPriority, isHorizontal }) {
   const memoizedValues = useMemo(
     () => ({
       title: truncateString(event.title || "", isHorizontal ? 30 : 75),
-      location: truncateString(event.location || "", 30),
+      location: truncateString(event.location || ""),
       subLocation: truncateString(event.subLocation || "", 45),
       image: event.imageUploaded || event.eventImage,
       eventDate: event.formattedEnd
@@ -146,11 +146,11 @@ function CardContent({ event, isPriority, isHorizontal }) {
           {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
         </div>
       ) : (
-        <div className="w-full flex flex-col px-4 gap-3">
+        <div className="w-full flex flex-col px-4 gap-3 mb-2">
           {/* Date */}
           <div className="flex justify-between items-start gap-2">
             <div className="flex items-start gap-2">
-              <CalendarIcon className="h-5 w-5 mt-1" />
+              <CalendarIcon className="h-5 w-5" />
               <p className="font-semibold">{memoizedValues.eventDate}</p>
             </div>
             <div className="flex items-center gap-2">
@@ -159,8 +159,7 @@ function CardContent({ event, isPriority, isHorizontal }) {
                 title={event.title}
                 text={event.description}
                 url={event.slug}
-                startDate={event.startDate}
-                endDate={event.endDate}
+                date={memoizedValues.eventDate}
                 location={event.location}
               />
             </div>
@@ -183,12 +182,8 @@ function CardContent({ event, isPriority, isHorizontal }) {
             <LocationMarkerIcon className="h-5 w-5" />
           </div>
           <div className="h-full flex flex-col justify-start items-start px-2">
-            <span className="truncate max-w-full">
-              {memoizedValues.location}
-            </span>
-            <span className="truncate max-w-full">
-              {memoizedValues.subLocation}
-            </span>
+            <span className="max-w-full">{memoizedValues.location}</span>
+            <span className="max-w-full">{memoizedValues.subLocation}</span>
           </div>
         </div>
         {/* hour */}

@@ -2,39 +2,17 @@ import React, { useCallback, memo } from "react";
 import { ShareIcon } from "@heroicons/react/outline";
 import useCheckMobileScreen from "@components/hooks/useCheckMobileScreen";
 import { sendGoogleEvent } from "@utils/analytics";
-import { truncateString } from "@utils/helpers";
 
-const NativeShareButton = ({
-  title,
-  text,
-  url,
-  startDate,
-  endDate,
-  location,
-}) => {
+const NativeShareButton = ({ title, url, date, location }) => {
   const isMobile = useCheckMobileScreen();
 
   const handleNativeShare = useCallback(async () => {
     if (navigator.share) {
-      // Format the dates
-      const formatDate = (date) =>
-        new Date(date).toLocaleString("ca-ES", {
-          dateStyle: "full",
-          timeStyle: "short",
-        });
-
-      const formattedStartDate = formatDate(startDate);
-      const formattedEndDate = endDate ? formatDate(endDate) : null;
-      const truncatedDescription = truncateString(text || "", 100);
-
-      // Construct the share text
       const shareText = `
-${truncatedDescription}
+${title}
 
-Data: ${formattedStartDate}${formattedEndDate ? ` - ${formattedEndDate}` : ""}
+Data: ${date}
 Lloc: ${location}
-
-Més informació: ${url}
       `.trim();
 
       try {
@@ -52,7 +30,7 @@ Més informació: ${url}
         });
       }
     }
-  }, [title, text, url, startDate, endDate, location]);
+  }, [title, date, location, url]);
 
   if (!isMobile) {
     return null;
