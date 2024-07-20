@@ -156,15 +156,12 @@ function CardContent({ event, isPriority, isHorizontal }) {
         {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
-        {!isMobile && (
-          /* Date for desktop */
-          <div className="flex justify-start items-start">
-            <div>
-              <CalendarIcon className="h-5 w-5" />
-            </div>
-            <p className="px-2 font-semibold">{memoizedValues.eventDate}</p>
+        <div className="flex justify-start items-start">
+          <div>
+            <CalendarIcon className="h-5 w-5" />
           </div>
-        )}
+          <p className="px-2 font-semibold">{memoizedValues.eventDate}</p>
+        </div>
         {/* Location */}
         <div className="flex justify-start items-start">
           <div>
