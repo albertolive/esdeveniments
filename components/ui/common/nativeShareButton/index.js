@@ -3,7 +3,7 @@ import { ShareIcon } from "@heroicons/react/outline";
 import useCheckMobileScreen from "@components/hooks/useCheckMobileScreen";
 import { sendGoogleEvent } from "@utils/analytics";
 
-const NativeShareButton = ({ title, url, date, location }) => {
+const NativeShareButton = ({ title, url, date, location, subLocation }) => {
   const isMobile = useCheckMobileScreen();
 
   const handleNativeShare = useCallback(async () => {
@@ -12,7 +12,7 @@ const NativeShareButton = ({ title, url, date, location }) => {
 ${title}
 
 Data: ${date}
-Lloc: ${location}
+Lloc: ${location}, ${subLocation}
       `.trim();
 
       try {

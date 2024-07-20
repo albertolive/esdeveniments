@@ -160,7 +160,8 @@ function CardContent({ event, isPriority, isHorizontal }) {
                 text={event.description}
                 url={event.slug}
                 date={memoizedValues.eventDate}
-                location={event.location}
+                location={memoizedValues.location}
+                subLocation={memoizedValues.subLocation}
               />
             </div>
           </div>
