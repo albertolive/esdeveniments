@@ -30,7 +30,7 @@ Lloc: ${location}, ${subLocation}
         });
       }
     }
-  }, [title, date, location, url]);
+  }, [title, date, location, subLocation, url]);
 
   if (!isMobile) {
     return null;

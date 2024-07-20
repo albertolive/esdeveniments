@@ -360,6 +360,10 @@ export default function Event(props) {
     </>
   );
 
+  const eventDateString = formattedEnd
+    ? `Del ${formattedStart} al ${formattedEnd}`
+    : `${nameDay}, ${formattedStart}`;
+
   const jsonData = generateJsonData({ ...data.event });
 
   if (title === "CANCELLED") return <NoEventFound />;
@@ -424,7 +428,7 @@ export default function Event(props) {
                     title={title}
                     text={description}
                     url={slug}
-                    date={eventDate}
+                    date={eventDateString}
                     location={location}
                     subLocation={`${town}, ${region}, ${postalCode}`}
                   />

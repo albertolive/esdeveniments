@@ -147,7 +147,7 @@ function CardContent({ event, isPriority, isHorizontal }) {
           <NativeShareButton
             title={event.title}
             text={event.description}
-            url={event.slug}
+            url={`/e/${event.slug}`}
             date={memoizedValues.eventDate}
             location={memoizedValues.location}
             subLocation={memoizedValues.subLocation}
