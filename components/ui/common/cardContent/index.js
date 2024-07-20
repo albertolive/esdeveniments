@@ -137,36 +137,24 @@ function CardContent({ event, isPriority, isHorizontal }) {
         </div>
       </Link>
       {/* ShareButton, Date, and ViewCounter */}
-      {!isMobile ? (
-        <div
-          className="w-full flex justify-center items-center gap-2 pb-6 px-4"
-          ref={counterRef}
-        >
-          {<ShareButton slug={event.slug} />}
-          {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
-        </div>
-      ) : (
-        <div className="w-full flex flex-col px-4 gap-3 mb-2">
-          {/* Date */}
-          <div className="flex justify-between items-start gap-2">
-            <div className="flex items-start gap-2">
-              <CalendarIcon className="h-5 w-5" />
-              <p className="font-semibold">{memoizedValues.eventDate}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
-              <NativeShareButton
-                title={event.title}
-                text={event.description}
-                url={event.slug}
-                date={memoizedValues.eventDate}
-                location={memoizedValues.location}
-                subLocation={memoizedValues.subLocation}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <div
+        className="w-full flex justify-center items-center gap-2 pb-4 px-4"
+        ref={counterRef}
+      >
+        {!isMobile ? (
+          <ShareButton slug={event.slug} />
+        ) : (
+          <NativeShareButton
+            title={event.title}
+            text={event.description}
+            url={event.slug}
+            date={memoizedValues.eventDate}
+            location={memoizedValues.location}
+            subLocation={memoizedValues.subLocation}
+          />
+        )}
+        {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
+      </div>
       <div className="w-full flex flex-col px-4 gap-3">
         {!isMobile && (
           /* Date for desktop */

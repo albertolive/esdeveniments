@@ -19,10 +19,10 @@ import { useGetEvent } from "@components/hooks/useGetEvent";
 import Meta from "@components/partials/seo-meta";
 import { generateJsonData } from "@utils/helpers";
 import ReportView from "@components/ui/reportView";
-import CardShareButton from "@components/ui/common/cardShareButton";
 import useOnScreen from "@components/hooks/useOnScreen";
 import { siteUrl } from "@config/index";
 import { sendGoogleEvent } from "@utils/analytics";
+import useCheckMobileScreen from "@components/hooks/useCheckMobileScreen";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -97,6 +97,22 @@ const ViewCounter = dynamic(() => import("@components/ui/viewCounter"), {
   loading: () => "",
   ssr: false,
 });
+
+const CardShareButton = dynamic(
+  () => import("@components/ui/common/cardShareButton"),
+  {
+    loading: () => "",
+    ssr: false,
+  }
+);
+
+const NativeShareButton = dynamic(
+  () => import("@components/ui/common/nativeShareButton"),
+  {
+    loading: () => "",
+    ssr: false,
+  }
+);
 
 function replaceURLs(text) {
   if (!text) return;
@@ -261,6 +277,7 @@ export default function Event(props) {
   const { data, error } = useGetEvent(props);
   const slug = data.event ? data.event.slug : "";
   const title = data.event ? data.event.title : "";
+  const isMobile = useCheckMobileScreen();
 
   useEffect(() => {
     sendGoogleEvent("view_event_page");
@@ -330,6 +347,19 @@ export default function Event(props) {
 
   const image = imageUploaded || eventImage;
 
+  const eventDate = formattedEnd ? (
+    <>
+      <time dateTime={formattedStart}>Del {formattedStart}</time> al{" "}
+      <time dateTime={formattedEnd}>{formattedEnd}</time>
+    </>
+  ) : (
+    <>
+      <time dateTime={formattedStart}>
+        {nameDay}, {formattedStart}
+      </time>
+    </>
+  );
+
   const jsonData = generateJsonData({ ...data.event });
 
   if (title === "CANCELLED") return <NoEventFound />;
@@ -343,11 +373,6 @@ export default function Event(props) {
 
   return (
     <>
-      <Script
-        id={id}
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
-      />
       <Meta
         title={generateMetaTitle(title, "", location, town, region)}
         description={generateMetaDescription(
@@ -357,6 +382,11 @@ export default function Event(props) {
         canonical={`${siteUrl}/e/${slug}`}
         image={image}
         preload="/static/images/gMaps.webp"
+      />
+      <Script
+        id={id}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonData) }}
       />
       <ReportView slug={slug} />
       {newEvent && <Notification title={title} url={slug} />}
@@ -387,26 +417,24 @@ export default function Event(props) {
               )}
               {/* ShareButton */}
               <div className="w-full flex justify-between items-center px-4">
-                <CardShareButton slug={slug} />
+                {!isMobile ? (
+                  <CardShareButton slug={slug} />
+                ) : (
+                  <NativeShareButton
+                    title={title}
+                    text={description}
+                    url={slug}
+                    date={eventDate}
+                    location={location}
+                    subLocation={`${town}, ${region}, ${postalCode}`}
+                  />
+                )}
                 <ViewCounter slug={slug} />
               </div>
             </div>
             {/* Small date and title */}
             <div className="w-full flex flex-col justify-start items-start gap-2 px-4">
-              <p className="font-semibold">
-                {formattedEnd ? (
-                  <>
-                    <time dateTime={formattedStart}>Del {formattedStart}</time>{" "}
-                    al <time dateTime={formattedEnd}>{formattedEnd}</time>
-                  </>
-                ) : (
-                  <>
-                    <time dateTime={formattedStart}>
-                      {nameDay}, {formattedStart}
-                    </time>
-                  </>
-                )}
-              </p>
+              <p className="font-semibold">{eventDate}</p>
               <h1 className="w-full uppercase">{title}</h1>
             </div>
             {/* Full date */}
@@ -415,11 +443,7 @@ export default function Event(props) {
               <div className="w-11/12 flex flex-col gap-4">
                 <h2>Data i hora</h2>
                 <div className="w-full flex flex-col gap-4">
-                  <p>
-                    {formattedEnd
-                      ? `Del ${formattedStart} al ${formattedEnd}`
-                      : `${nameDay}, ${formattedStart}`}
-                  </p>
+                  <p>{eventDate}</p>
                   <p className="capitalize">
                     {isFullDayEvent
                       ? "Consultar horaris"
