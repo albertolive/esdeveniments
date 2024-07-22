@@ -86,30 +86,40 @@ function CardContent({ event, isPriority, isHorizontal }) {
           onTouchStart={handlePrefetch}
           onClick={handleClick}
         >
-          {/* Title */}
+          {/* Title, Share Button, and Weather Icon */}
           <div className="bg-whiteCorp h-fit flex justify-between items-start gap-2 pr-4">
             <div className="flex justify-start items-center gap-0 pt-[2px] m-0">
               <div className="w-2 h-6 bg-gradient-to-r from-primary to-primarydark"></div>
             </div>
-            {/* Title */}
-            <h3 className="w-11/12 uppercase">
+            <h3 className="w-9/12 uppercase">
               <Link href={`/e/${event.slug}`} passHref prefetch={false}>
                 {memoizedValues.title}
               </Link>
             </h3>
-            {/* WeatherIcon */}
-            <div className="w-1/12 flex justify-end h-30">
+            <div className="flex items-center gap-2">
               {icon && (
-                <NextImage
-                  alt={description}
-                  src={icon}
-                  width="30"
-                  height="30"
-                  style={{
-                    maxWidth: "100%",
-                    height: "auto",
-                  }}
-                  priority={isPriority}
+                <div className="flex items-center gap-1">
+                  <NextImage
+                    alt={description}
+                    src={icon}
+                    width="30"
+                    height="30"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                    }}
+                    priority={isPriority}
+                  />
+                </div>
+              )}
+              {isMobile && (
+                <NativeShareButton
+                  title={event.title}
+                  text={event.description}
+                  url={`/e/${event.slug}`}
+                  date={memoizedValues.eventDate}
+                  location={memoizedValues.location}
+                  subLocation={memoizedValues.subLocation}
                 />
               )}
             </div>
@@ -121,7 +131,7 @@ function CardContent({ event, isPriority, isHorizontal }) {
               style={{ height: isHorizontal ? "16rem" : "auto" }}
             >
               <Image
-                className={`w-full ${
+                className={`w-full flex justify-center ${
                   isHorizontal ? "h-64 object-cover" : "object-contain"
                 }`}
                 title={event.title}
@@ -136,43 +146,28 @@ function CardContent({ event, isPriority, isHorizontal }) {
           </div>
         </div>
       </Link>
-      {/* ShareButton, Date, and ViewCounter */}
+      {/* Share and ViewCounter */}
       <div
         className="w-full flex justify-center items-center gap-2 pb-4 px-4"
         ref={counterRef}
       >
-        {!isMobile ? (
-          <ShareButton slug={event.slug} />
-        ) : (
-          <NativeShareButton
-            title={event.title}
-            text={event.description}
-            url={`/e/${event.slug}`}
-            date={memoizedValues.eventDate}
-            location={memoizedValues.location}
-            subLocation={memoizedValues.subLocation}
-          />
-        )}
+        {!isMobile && <ShareButton slug={event.slug} />}
         {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
         <div className="flex justify-start items-start">
-          <div>
-            <CalendarIcon className="h-5 w-5" />
-          </div>
+          <CalendarIcon className="h-5 w-5" />
           <p className="px-2 font-semibold">{memoizedValues.eventDate}</p>
         </div>
         {/* Location */}
         <div className="flex justify-start items-start">
-          <div>
-            <LocationMarkerIcon className="h-5 w-5" />
-          </div>
+          <LocationMarkerIcon className="h-5 w-5" />
           <div className="h-full flex flex-col justify-start items-start px-2">
             <span className="max-w-full">{memoizedValues.location}</span>
             <span className="max-w-full">{memoizedValues.subLocation}</span>
           </div>
         </div>
-        {/* hour */}
+        {/* Date time */}
         <div className="flex justify-start items-center">
           <ClockIcon className="h-5 w-5" />
           <p className="px-2">
