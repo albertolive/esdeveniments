@@ -6,7 +6,8 @@ const Navbar = dynamic(() => import("@components/ui/common/navbar"), {
 });
 
 const Footer = dynamic(() => import("@components/ui/common/footer"), {
-  ssr: true,
+  loading: () => "",
+  ssr: false,
 });
 
 export default function BaseLayout({ children }) {
