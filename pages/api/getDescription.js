@@ -92,7 +92,6 @@ export default async function handler(req) {
       throw new ValidationError("Item URL is required");
     }
 
-    console.log("Attempting to fetch with User-Agent:", USER_AGENT);
     const response = await fetchWithTimeout(itemUrl, {
       headers: {
         "User-Agent": USER_AGENT,
@@ -110,8 +109,7 @@ export default async function handler(req) {
         "Status Text:",
         response.statusText
       );
-      const responseText = await response.text();
-      console.error("Response body:", responseText.substring(0, 200) + "...");
+
       throw new HTTPError(
         `HTTP error! status: ${response.status}`,
         response.status
@@ -119,9 +117,6 @@ export default async function handler(req) {
     }
 
     const html = await response.text();
-
-    console.log("Successfully fetched content. Length:", html.length);
-    console.log("First 200 characters:", html.substring(0, 200));
 
     return new Response(html, {
       status: 200,

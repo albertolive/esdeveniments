@@ -25,7 +25,7 @@ function EventCardLoading() {
   );
 }
 
-function EventsHorizontalScroll({ events, loading }) {
+function EventsHorizontalScroll({ events, loading, usePriority }) {
   if (loading) {
     return (
       <div className="w-full flex overflow-x-auto py-4 space-x-4">
@@ -38,12 +38,15 @@ function EventsHorizontalScroll({ events, loading }) {
 
   return (
     <div className="w-full flex overflow-x-auto py-4 space-x-4">
-      {events.map((event) => (
+      {events.map((event, index) => (
         <div
           key={event.id}
           className="flex-none w-96 min-w-[24rem] flex flex-col bg-whiteCorp overflow-hidden cursor-pointer"
         >
-          <CardHorizontal event={event} isPriority={false} />
+          <CardHorizontal
+            event={event}
+            isPriority={usePriority && (index === 0 || index === 1)}
+          />
         </div>
       ))}
     </div>

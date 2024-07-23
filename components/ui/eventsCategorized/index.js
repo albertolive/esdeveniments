@@ -143,6 +143,8 @@ function EventsCategorized() {
   // Error handling
   if (error) return <NoEventsFound title={notFoundText} />;
 
+  let priorityCount = 0;
+
   // Render
   return (
     <>
@@ -172,8 +174,12 @@ function EventsCategorized() {
         ) : (
           <div className="p-2">
             {eventKeys.length > 0 &&
-              eventKeys.map((category) =>
-                categorizedEvents.events[category]?.length > 0 ? (
+              eventKeys.map((category, index) => {
+                const shouldUsePriority = priorityCount < 2;
+                if (shouldUsePriority) {
+                  priorityCount += 1;
+                }
+                return categorizedEvents.events[category]?.length > 0 ? (
                   <div key={category}>
                     <div className="flex justify-between mt-4 mb-2">
                       <h2 className="font-semibold">
@@ -191,30 +197,29 @@ function EventsCategorized() {
                     </div>
                     <EventsHorizontalScroll
                       events={categorizedEvents.events[category]}
+                      usePriority={shouldUsePriority}
                     />
                     {/* Ad */}
-                    <div className="w-full h-full flex items-start min-h-[250px] gap-2 mt-4 mb-2">
-                      <SpeakerphoneIcon className="w-5 h-5 mt-1" />
-                      <div className="w-11/12 flex flex-col gap-4">
-                        <h2>Contingut patrocinat</h2>
-                        <AdArticle slot="8139041285" />
+                    {(index === 1 || index === 3) && (
+                      <div className="w-full h-full flex items-start min-h-[250px] gap-2 mt-4 mb-2">
+                        <SpeakerphoneIcon className="w-5 h-5 mt-1" />
+                        <div className="w-11/12 flex flex-col gap-4">
+                          <h2>Contingut patrocinat</h2>
+                          <AdArticle slot="8139041285" />
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
-                ) : null
-              )}
+                ) : null;
+              })}
             {latestEvents.length > 0 && (
               <>
                 <h2 className="font-semibold mt-4 mb-6">
                   Altres esdeveniments
                 </h2>
                 <List events={latestEvents}>
-                  {(event, index) => (
-                    <Card
-                      key={event.id}
-                      event={event}
-                      isPriority={index === 0}
-                    />
+                  {(event) => (
+                    <Card key={event.id} event={event} isPriority={false} />
                   )}
                 </List>
               </>
