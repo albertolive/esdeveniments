@@ -54,6 +54,11 @@ function CardContent({ event, isPriority, isHorizontal }) {
     setIsCardLoading(true);
   }, []);
 
+  const handleShareClick = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
   const { description, icon } = event.weather || {};
 
   const memoizedValues = useMemo(
@@ -120,6 +125,7 @@ function CardContent({ event, isPriority, isHorizontal }) {
                   date={memoizedValues.eventDate}
                   location={memoizedValues.location}
                   subLocation={memoizedValues.subLocation}
+                  onShareClick={handleShareClick}
                 />
               )}
             </div>
