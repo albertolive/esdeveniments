@@ -168,7 +168,14 @@ function EventsCategorized() {
         {isLoading || isValidating ? (
           <>
             {[...Array(10)].map((_, i) => (
-              <CardLoading key={i} />
+              <div key={i} className="mt-9 ml-2">
+                <div className="w-10/12 flex justify-start items-center animate-fast-pulse mb-4">
+                  <div className="w-2/3 h-5 bg-darkCorp rounded-xl"></div>
+                </div>
+                <div className="mt-0.5">
+                  <CardLoading key={i} />
+                </div>
+              </div>
             ))}
           </>
         ) : (

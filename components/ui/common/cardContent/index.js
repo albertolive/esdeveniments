@@ -7,23 +7,18 @@ import {
   ClockIcon,
   LocationMarkerIcon,
   CalendarIcon,
+  ShareIcon,
 } from "@heroicons/react/outline";
 import { truncateString } from "@utils/helpers";
 import useOnScreen from "@components/hooks/useOnScreen";
 import Image from "@components/ui/common/image";
 import useCheckMobileScreen from "@components/hooks/useCheckMobileScreen";
-
-const ViewCounter = dynamic(() => import("@components/ui/viewCounter"), {
-  loading: () => (
-    <div className="w-5 h-5 bg-gray-200 animate-pulse rounded-full"></div>
-  ),
-  ssr: false,
-});
+import ViewCounter from "@components/ui/viewCounter";
 
 const NativeShareButton = dynamic(
   () => import("@components/ui/common/nativeShareButton"),
   {
-    loading: () => "",
+    loading: () => <ShareIcon className="h-6 w-6 text-primary" />,
     ssr: false,
   }
 );
@@ -154,11 +149,15 @@ function CardContent({ event, isPriority, isHorizontal }) {
       </Link>
       {/* Share and ViewCounter */}
       <div
-        className="w-full flex justify-center items-center gap-2 pb-4 px-4"
+        className="w-full flex justify-center items-center gap-2 px-4"
         ref={counterRef}
       >
         {!isMobile && <ShareButton slug={event.slug} />}
-        {isCounterVisible && <ViewCounter slug={event.slug} hideText />}
+        {isPriority ? (
+          <ViewCounter slug={event.slug} hideText />
+        ) : (
+          isCounterVisible && <ViewCounter slug={event.slug} hideText />
+        )}
       </div>
       <div className="w-full flex flex-col px-4 gap-3">
         <div className="flex justify-start items-start">
