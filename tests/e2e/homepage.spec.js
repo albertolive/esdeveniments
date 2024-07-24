@@ -1,9 +1,13 @@
 const { test, expect } = require('@playwright/test');
 
 test('navigate to the homepage and click on the first event', async ({ page }) => {
+  // Output the PLAYWRIGHT_TEST_TIMEOUT environment variable for debugging purposes
+  console.log(`PLAYWRIGHT_TEST_TIMEOUT environment variable: ${process.env.PLAYWRIGHT_TEST_TIMEOUT}`);
+
   // Set the default timeout to the value specified by PLAYWRIGHT_TEST_TIMEOUT or default to 120 seconds
   // Ensure the timeoutValue is parsed as an integer
   const timeoutValue = parseInt(process.env.PLAYWRIGHT_TEST_TIMEOUT, 10) || 120000;
+  console.log(`Parsed timeoutValue: ${timeoutValue}`); // Output the parsed timeout value for debugging purposes
   page.setDefaultTimeout(timeoutValue);
 
   // Navigate to the homepage
