@@ -17,8 +17,15 @@ test('navigate to the homepage and click on the first event', async ({ page }) =
   // Correct the timeout parameter to be a number
   // Use the timeoutValue for the waitForSelector to ensure it uses the environment variable
   // The timeoutValue is already a number, so no need to convert it again
-  await page.waitForSelector(firstEventSelector, { state: 'visible', timeout: timeoutValue });
-  await page.click(firstEventSelector);
+  // Adding try-catch to log the timeout value for debugging purposes
+  try {
+    await page.waitForSelector(firstEventSelector, { state: 'visible', timeout: timeoutValue });
+    await page.click(firstEventSelector);
+  } catch (error) {
+    console.log(`Error: ${error.message}`);
+    console.log(`Timeout value used: ${timeoutValue}`);
+    throw error; // rethrow the error to fail the test with the logged information
+  }
 
   // Add an assertion here if needed, for example, checking if the URL changed
   // expect(page.url()).toBe('the expected URL after clicking the first event');
