@@ -16,6 +16,7 @@ test('navigate to the homepage and click on the first event', async ({ page }) =
   const firstEventSelector = 'div[data-testid="event-card"]:first-of-type a';
   // Correct the timeout parameter to be a number
   // Use the timeoutValue for the waitForSelector to ensure it uses the environment variable
+  // The timeoutValue is already a number, so no need to convert it again
   await page.waitForSelector(firstEventSelector, { state: 'visible', timeout: timeoutValue });
   await page.click(firstEventSelector);
 
