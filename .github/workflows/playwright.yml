@@ -67,9 +67,13 @@ jobs:
           echo "No npm debug logs found."
         fi
     - name: Run Playwright tests
-      run: yarn playwright test
+      run: |
+        echo "Waiting for server to be ready..."
+        timeout 60s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3000)" != "200" ]]; do sleep 5; done' || (echo "Server failed to start" && exit 1)
+        echo "Server is ready. Running Playwright tests..."
+        yarn playwright test
       env:
-        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+        PLAYWRIGHT_TEST_BASE_URL: http://localhost:3000
         PLAYWRIGHT_TEST_TIMEOUT: 60000
     - name: Stop server
       if: always()
