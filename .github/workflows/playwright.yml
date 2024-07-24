@@ -51,11 +51,23 @@ jobs:
     - name: Wait for server to be ready
       run: |
         timeout 180s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3000)" != "200" ]]; do sleep 5; done' || (echo "Server failed to start" && cat server.log && exit 1)
-    - name: Display server logs if wait fails
+    - name: Check server logs if wait fails
       if: failure()
-      run: cat server.log
+      run: |
+        echo "Server failed to start. Checking logs:"
+        if [ -f "server.log" ]; then
+          cat server.log
+        else
+          echo "No server log file found."
+        fi
+        echo "Checking npm debug logs:"
+        if ls /home/runner/.npm/_logs/*-debug.log 1> /dev/null 2>&1; then
+          cat /home/runner/.npm/_logs/*-debug.log
+        else
+          echo "No npm debug logs found."
+        fi
     - name: Run Playwright tests
-      run: yarn playwright test --config=playwright.config.js
+      run: yarn playwright test
       env:
         PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
         PLAYWRIGHT_TEST_TIMEOUT: 60000
