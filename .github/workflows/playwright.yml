@@ -22,7 +22,7 @@ jobs:
       run: yarn playwright install --with-deps
     - name: Run Playwright tests
       env:
-        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url || 'https://esdeveniments-repository-iohq9ls1.devinapps.com' }}
         PLAYWRIGHT_TEST_TIMEOUT: 60000
         # Add other necessary environment variables
         NEXT_PUBLIC_GOOGLE_MAPS: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS }}
@@ -46,7 +46,9 @@ jobs:
         SENTRY_IGNORE_API_RESOLUTION_ERROR: ${{ secrets.SENTRY_IGNORE_API_RESOLUTION_ERROR }}
         NEXT_PUBLIC_TINY: ${{ secrets.NEXT_PUBLIC_TINY }}
         NEXT_PUBLIC_SCRAPINGBEE: ${{ secrets.NEXT_PUBLIC_SCRAPINGBEE }}
-      run: yarn playwright test
+      run: |
+        echo "PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url || 'https://esdeveniments-repository-iohq9ls1.devinapps.com' }}"
+        yarn playwright test
     - uses: actions/upload-artifact@v3
       if: always()
       with:
