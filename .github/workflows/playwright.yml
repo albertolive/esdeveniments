@@ -5,7 +5,7 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4
     - name: Set up Node.js
@@ -22,9 +22,9 @@ jobs:
       run: yarn playwright install --with-deps
     - name: Start development server
       run: |
-        yarn run dev &
+        yarn run dev > server.log 2>&1 &
         echo $! > .pidfile
-        sleep 30  # Allow time for the server to start
+        sleep 60  # Increase wait time to 60 seconds
       env:
         # Set environment variables for the development server
         NEXT_PUBLIC_GOOGLE_MAPS: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS }}
@@ -50,7 +50,12 @@ jobs:
         NEXT_PUBLIC_SCRAPINGBEE: ${{ secrets.NEXT_PUBLIC_SCRAPINGBEE }}
     - name: Wait for server to be ready
       run: |
-        timeout 60s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3001)" != "200" ]]; do sleep 5; done' || (echo "Server failed to start" && exit 1)
+        timeout 120s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3001)" != "200" ]]; do sleep 5; done' || (echo "Server failed to start" && cat server.log && exit 1)
+    - name: Check server logs if wait fails
+      if: failure()
+      run: |
+        echo "Server failed to start. Checking logs:"
+        cat server.log
     - name: Run Playwright tests
       run: yarn playwright test --base-url http://localhost:3001
       env:
