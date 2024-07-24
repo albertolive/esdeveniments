@@ -55,7 +55,7 @@ jobs:
       if: failure()
       run: cat server.log
     - name: Run Playwright tests
-      run: yarn playwright test --base-url http://localhost:3000
+      run: yarn playwright test --config=playwright.config.js
       env:
         PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
         PLAYWRIGHT_TEST_TIMEOUT: 60000
