@@ -22,8 +22,8 @@ test('navigate to the homepage and click on the first event', async ({ page }) =
     await page.waitForSelector(firstEventSelector, { state: 'visible', timeout: timeoutValue });
     await page.click(firstEventSelector);
   } catch (error) {
-    console.log(`Error: ${error.message}`);
-    console.log(`Timeout value used: ${timeoutValue}`);
+    console.error(`Error: ${error.message}`);
+    console.error(`Timeout value used: ${timeoutValue}`);
     throw error; // rethrow the error to fail the test with the logged information
   }
 
