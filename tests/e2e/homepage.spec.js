@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test('navigate to the homepage and click on the first event', async ({ page }) => {
   // Navigate to the homepage
-  await page.goto('http://localhost:3000');
+  await page.goto(process.env.PLAYWRIGHT_TEST_BASE_URL);
 
   // Click on the first event
   // Updated selector to match the provided HTML structure
