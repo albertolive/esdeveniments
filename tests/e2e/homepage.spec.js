@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test('navigate to the homepage and click on the first event', async ({ page }) => {
   // Set the default timeout to the value specified by PLAYWRIGHT_TEST_TIMEOUT or default to 120 seconds
+  // Ensure the timeoutValue is parsed as an integer
   const timeoutValue = parseInt(process.env.PLAYWRIGHT_TEST_TIMEOUT, 10) || 120000;
   page.setDefaultTimeout(timeoutValue);
 
@@ -13,7 +14,8 @@ test('navigate to the homepage and click on the first event', async ({ page }) =
   // The previous complex selector was not valid, so it has been simplified
   // Ensure the element is visible before clicking
   const firstEventSelector = 'div[data-testid="event-card"]:first-of-type a';
-  await page.waitForSelector(firstEventSelector, { state: 'visible', timeout: timeoutValue });
+  // Correct the timeout parameter to be a number
+  await page.waitForSelector(firstEventSelector, { state: 'visible', timeout: Number(timeoutValue) });
   await page.click(firstEventSelector);
 
   // Add an assertion here if needed, for example, checking if the URL changed
