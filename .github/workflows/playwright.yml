@@ -5,6 +5,7 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
     - uses: actions/checkout@v4
     - name: Set up Node.js
@@ -20,7 +21,10 @@ jobs:
     - name: Install Playwright
       run: yarn playwright install --with-deps
     - name: Start development server
-      run: yarn run dev &
+      run: |
+        yarn run dev &
+        echo $! > .pidfile
+        sleep 30  # Allow time for the server to start
       env:
         # Set environment variables for the development server
         NEXT_PUBLIC_GOOGLE_MAPS: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS }}
@@ -46,15 +50,12 @@ jobs:
         NEXT_PUBLIC_SCRAPINGBEE: ${{ secrets.NEXT_PUBLIC_SCRAPINGBEE }}
     - name: Wait for server to be ready
       run: |
-        echo "Waiting for server to be ready..."
-        timeout 60s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3001)" != "200" ]]; do sleep 5; done' || exit 1
-    - name: Check server logs if wait fails
-      if: failure()
-      run: |
-        echo "Server failed to start. Checking logs:"
-        cat /home/runner/.npm/_logs/*-debug.log
+        timeout 60s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3001)" != "200" ]]; do sleep 5; done' || (echo "Server failed to start" && exit 1)
     - name: Run Playwright tests
-      run: npx playwright test --retries=2 --timeout=60000
+      run: yarn playwright test --base-url http://localhost:3001
       env:
-        PLAYWRIGHT_BASE_URL: http://localhost:3001
+        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
         PLAYWRIGHT_TEST_TIMEOUT: 60000
+    - name: Stop development server
+      if: always()
+      run: kill $(cat .pidfile)
