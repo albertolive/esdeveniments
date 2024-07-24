@@ -5,7 +5,7 @@
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
     "vercel-build": "next build && yarn run postbuild",
-    "dev": "next dev",
+    "dev": "next dev --hostname 0.0.0.0",
     "build:development": "NODE_ENV=development env-cmd -f .env.development next build",
     "start:development": "env-cmd -f .env.development next start",
     "build:staging": "NODE_ENV=staging env-cmd -f .env.staging next build",
@@ -60,6 +60,7 @@
     "eslint": "8.34.0",
     "eslint-config-next": "^14.0.3",
     "next-sitemap": "^2.5.28",
+    "playwright": "^1.45.3",
     "prettier-eslint": "^15.0.1"
   },
   "packageManager": "yarn@4.1.1"
