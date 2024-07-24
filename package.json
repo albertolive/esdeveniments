@@ -19,6 +19,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.10",
     "@heroicons/react": "^1.0.6",
+    "@playwright/test": "^1.45.3",
     "@sentry/nextjs": "^7.105.0",
     "@sentry/utils": "^7.80.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
