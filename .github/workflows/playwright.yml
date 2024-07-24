@@ -20,6 +20,8 @@ jobs:
       run: yarn install --frozen-lockfile
     - name: Install Playwright
       run: yarn playwright install --with-deps
+    - name: Install Playwright Test
+      run: yarn add @playwright/test
     - name: Run Playwright tests
       env:
         PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url || 'https://esdeveniments-repository-iohq9ls1.devinapps.com' }}
