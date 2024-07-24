@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test('navigate to the homepage and click on the first event', async ({ page }) => {
   // Set the default timeout to the value specified by PLAYWRIGHT_TEST_TIMEOUT or default to 120 seconds
-  const timeoutValue = process.env.PLAYWRIGHT_TEST_TIMEOUT || 120000;
+  const timeoutValue = parseInt(process.env.PLAYWRIGHT_TEST_TIMEOUT, 10) || 120000;
   page.setDefaultTimeout(timeoutValue);
 
   // Navigate to the homepage
