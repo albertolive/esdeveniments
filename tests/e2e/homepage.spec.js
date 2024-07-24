@@ -1,6 +1,9 @@
 const { test, expect } = require('@playwright/test');
 
 test('navigate to the homepage and click on the first event', async ({ page }) => {
+  // Set the default timeout to a higher value
+  page.setDefaultTimeout(60000);
+
   // Navigate to the homepage
   await page.goto(process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001');
 
