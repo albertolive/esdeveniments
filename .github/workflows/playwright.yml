@@ -50,6 +50,7 @@ jobs:
         NEXT_PUBLIC_SCRAPINGBEE: ${{ secrets.NEXT_PUBLIC_SCRAPINGBEE }}
       run: |
         echo "PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url || 'https://esdeveniments-repository-iohq9ls1.devinapps.com' }}"
+        echo "PLAYWRIGHT_TEST_TIMEOUT: $PLAYWRIGHT_TEST_TIMEOUT"
         yarn playwright test
     - uses: actions/upload-artifact@v3
       if: always()

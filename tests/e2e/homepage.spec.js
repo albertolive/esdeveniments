@@ -15,7 +15,8 @@ test('navigate to the homepage and click on the first event', async ({ page }) =
   // Ensure the element is visible before clicking
   const firstEventSelector = 'div[data-testid="event-card"]:first-of-type a';
   // Correct the timeout parameter to be a number
-  await page.waitForSelector(firstEventSelector, { state: 'visible', timeout: Number(timeoutValue) });
+  // Use the timeoutValue for the waitForSelector to ensure it uses the environment variable
+  await page.waitForSelector(firstEventSelector, { state: 'visible', timeout: timeoutValue });
   await page.click(firstEventSelector);
 
   // Add an assertion here if needed, for example, checking if the URL changed
