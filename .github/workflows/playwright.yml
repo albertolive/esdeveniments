@@ -47,8 +47,14 @@ jobs:
     - name: Wait for server to be ready
       run: |
         echo "Waiting for server to be ready..."
-        sleep 30
+        timeout 60s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3001)" != "200" ]]; do sleep 5; done' || exit 1
+    - name: Check server logs if wait fails
+      if: failure()
+      run: |
+        echo "Server failed to start. Checking logs:"
+        cat /home/runner/.npm/_logs/*-debug.log
     - name: Run Playwright tests
-      run: yarn playwright test
+      run: npx playwright test --retries=2 --timeout=60000
       env:
         PLAYWRIGHT_BASE_URL: http://localhost:3001
+        PLAYWRIGHT_TEST_TIMEOUT: 60000
