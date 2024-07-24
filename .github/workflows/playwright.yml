@@ -20,11 +20,11 @@ jobs:
       run: yarn add @playwright/test
     - name: Install Playwright
       run: yarn playwright install --with-deps
-    - name: Start development server
+    - name: Start server and capture logs
       run: |
         yarn run dev > server.log 2>&1 &
         echo $! > .pidfile
-        sleep 60  # Increase wait time to 60 seconds
+        sleep 30  # Give the server more time to start up
       env:
         # Set environment variables for the development server
         NEXT_PUBLIC_GOOGLE_MAPS: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS }}
@@ -50,17 +50,15 @@ jobs:
         NEXT_PUBLIC_SCRAPINGBEE: ${{ secrets.NEXT_PUBLIC_SCRAPINGBEE }}
     - name: Wait for server to be ready
       run: |
-        timeout 120s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3001)" != "200" ]]; do sleep 5; done' || (echo "Server failed to start" && cat server.log && exit 1)
-    - name: Check server logs if wait fails
+        timeout 180s bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3000)" != "200" ]]; do sleep 5; done' || (echo "Server failed to start" && cat server.log && exit 1)
+    - name: Display server logs if wait fails
       if: failure()
-      run: |
-        echo "Server failed to start. Checking logs:"
-        cat server.log
+      run: cat server.log
     - name: Run Playwright tests
-      run: yarn playwright test --base-url http://localhost:3001
+      run: yarn playwright test --base-url http://localhost:3000
       env:
         PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
         PLAYWRIGHT_TEST_TIMEOUT: 60000
-    - name: Stop development server
+    - name: Stop server
       if: always()
       run: kill $(cat .pidfile)
