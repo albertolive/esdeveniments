@@ -55,11 +55,12 @@ test.describe('Homepage tests', () => {
   });
 
   test('navigate to the homepage and click on the first event', async ({ page, context }) => {
+    const testUrl = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001';
     const timeoutValue = 120000; // 2 minutes
     console.log(`Starting test with timeoutValue: ${timeoutValue}`);
     page.setDefaultTimeout(timeoutValue);
 
-    console.log('Navigating to the homepage');
+    console.log(`Navigating to the homepage: ${testUrl}`);
     await page.goto(testUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
     console.log('Waiting for content to load...');
