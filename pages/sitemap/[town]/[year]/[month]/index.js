@@ -1,11 +1,14 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import Script from "next/script";
-import { generateJsonData } from "@utils/helpers";
+import { generateJsonData, getTownLabel, getRegionByTown, generateRegionsOptions, generateTownsOptions } from "@utils/helpers";
 import Meta from "@components/partials/seo-meta";
 import Link from "next/link";
 import { MONTHS_URL } from "@utils/constants";
 import { siteUrl } from "@config/index";
+import { getCalendarEvents } from "@lib/helpers";
+import { getHistoricDates, getAllYears } from "@lib/dates";
+import { getCacheClient } from "@lib/cache";
 
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
@@ -15,15 +18,32 @@ const NoEventsFound = dynamic(
   }
 );
 
-export default function Month({ events, town, townLabel }) {
+export default function Month(props) {
+  const { events, town, townLabel } = props;
   const { query } = useRouter();
-  let { year, month } = query;
-
-  if (month === "marc") month = month.replace("c", "ç");
+  const { year, month: rawMonth } = query;
+  const month = rawMonth === "marc" ? rawMonth.replace("c", "ç") : rawMonth;
 
   const jsonData = events
     ? events.filter(({ isAd }) => !isAd).map((event) => generateJsonData(event))
     : [];
+
+  const renderEventItem = (event) => (
+    <div key={event.id}>
+      <Link
+        href={`/e/${event.slug}`}
+        prefetch={false}
+        className="hover:text-primary"
+      >
+        <h3>{event.title}</h3>
+        <p className="text-sm">
+          {event.formattedEnd
+            ? `${event.formattedStart} - ${event.formattedEnd}`
+            : event.formattedStart}
+        </p>
+      </Link>
+    </div>
+  );
 
   return (
     <>
@@ -42,24 +62,7 @@ export default function Month({ events, town, townLabel }) {
           Arxiu {townLabel} - {month} del {year}
         </h1>
         <div className="flex flex-col items-start">
-          {(events &&
-            events.length &&
-            events.map((event) => (
-              <div key={event.id}>
-                <Link
-                  href={`/e/${event.slug}`}
-                  prefetch={false}
-                  className="hover:text-primary"
-                >
-                  <h3 key={event.id}>{event.title}</h3>
-                  <p className="text-sm" key={event.id}>
-                    {event.formattedEnd
-                      ? `${event.formattedStart} - ${event.formattedEnd}`
-                      : `${event.formattedStart}`}
-                  </p>
-                </Link>
-              </div>
-            ))) || <NoEventsFound />}
+          {events && events.length ? events.map(renderEventItem) : <NoEventsFound />}
         </div>
       </div>
     </>
@@ -67,43 +70,35 @@ export default function Month({ events, town, townLabel }) {
 }
 
 export async function getStaticPaths() {
-  const { getAllYears } = require("@lib/dates");
-  const {
-    generateRegionsOptions,
-    generateTownsOptions,
-  } = require("@utils/helpers");
-
   const regions = generateRegionsOptions();
   const years = getAllYears();
-  let params = [];
+  const params = [];
 
-  // Get the current year and the next three months
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
   const nextThreeMonths = currentMonth + 2;
 
-  years.map((year) => {
-    MONTHS_URL.map((month, index) => {
-      // Only pre-render pages for the current year from the current month to three months ahead
-      if (
-        year === currentYear &&
-        index >= currentMonth &&
-        index <= nextThreeMonths
-      ) {
-        regions.map((region) => {
-          const towns = generateTownsOptions(region.value);
-          towns.map((town) => {
-            params.push({
-              params: {
-                town: town.value,
-                year: year.toString(),
-                month: month.toLowerCase(),
-              },
+  const generateParams = (year, month, region, town) => ({
+    params: {
+      town,
+      year: year.toString(),
+      month: month.toLowerCase(),
+    },
+  });
+
+  years.forEach((year) => {
+    if (year === currentYear) {
+      MONTHS_URL.forEach((month, index) => {
+        if (index >= currentMonth && index <= nextThreeMonths) {
+          regions.forEach((region) => {
+            const towns = generateTownsOptions(region.value);
+            towns.forEach((town) => {
+              params.push(generateParams(year, month, region.value, town.value));
             });
           });
-        });
-      }
-    });
+        }
+      });
+    }
   });
 
   return {
@@ -112,30 +107,48 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }) {
-  const { getCalendarEvents } = require("@lib/helpers");
-  const { getHistoricDates } = require("@lib/dates");
-  const { getTownLabel, getRegionByTown } = require("@utils/helpers");
+export async function getStaticProps(context) {
+  try {
+    const { params } = context;
+    const { town, year, month } = params;
+    const cacheKey = `sitemap-${town}-${year}-${month}`;
+    const cache = getCacheClient();
 
-  const { town, year, month } = params;
-  const { from, until } = getHistoricDates(month, year);
-  const townLabel = getTownLabel(town);
+    // Check if data is in cache
+    const cachedData = await cache.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
 
-  const { events } = await getCalendarEvents({
-    from,
-    until,
-    maxResults: 2500,
-    filterByDate: false,
-    q: `${townLabel || ""} ${getRegionByTown(town) || ""}`,
-  });
+    const { from, until } = getHistoricDates(month, year);
+    const townLabel = getTownLabel(town);
 
-  const normalizedEvents = JSON.parse(JSON.stringify(events));
+    const { events } = await getCalendarEvents({
+      from,
+      until,
+      maxResults: 2500,
+      filterByDate: false,
+      q: `${townLabel || ""} ${getRegionByTown(town) || ""}`,
+    });
 
-  return {
-    props: {
-      events: normalizedEvents && normalizedEvents.filter(({ isAd }) => !isAd),
-      town,
-      townLabel,
-    },
-  };
+    const normalizedEvents = JSON.parse(JSON.stringify(events));
+    const filteredEvents = normalizedEvents.filter(({ isAd }) => !isAd) || [];
+
+    const props = {
+      props: {
+        events: filteredEvents,
+        town,
+        townLabel,
+      },
+      revalidate: 3600, // Revalidate every hour
+    };
+
+    // Cache the result
+    await cache.set(cacheKey, JSON.stringify(props), 'EX', 3600);
+
+    return props;
+  } catch (error) {
+    console.error('Error in getStaticProps:', error);
+    return { notFound: true };
+  }
 }

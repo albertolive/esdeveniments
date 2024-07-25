@@ -1,0 +1,60 @@
+name: End-to-End tests
+
+on:
+  deployment_status:
+    states: [success]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'yarn'
+        cache-dependency-path: '**/yarn.lock'
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+    - name: Install Playwright
+      run: yarn playwright install --with-deps
+    - name: Install Playwright Test
+      run: yarn add @playwright/test
+    - name: Run Playwright tests
+      env:
+        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url || 'http://localhost:3001' }}
+        PLAYWRIGHT_TEST_TIMEOUT: 60000
+        # Add other necessary environment variables
+        NEXT_PUBLIC_GOOGLE_MAPS: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS }}
+        NEXT_PUBLIC_GOOGLE_CALENDAR: ${{ secrets.NEXT_PUBLIC_GOOGLE_CALENDAR }}
+        NEXT_PUBLIC_GOOGLE_CALENDAR_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CALENDAR_ID }}
+        NEXT_PUBLIC_DELETE_EVENT: ${{ secrets.NEXT_PUBLIC_DELETE_EVENT }}
+        NEXT_PUBLIC_EDIT_EVENT: ${{ secrets.NEXT_PUBLIC_EDIT_EVENT }}
+        NEXT_PUBLIC_CLOUDINARY_CLOUDNAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUDNAME }}
+        NEXT_PUBLIC_CLOUDINARY_UNSIGNED_UPLOAD_PRESET: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_UNSIGNED_UPLOAD_PRESET }}
+        NEXT_PUBLIC_OPENWEATHERMAP: ${{ secrets.NEXT_PUBLIC_OPENWEATHERMAP }}
+        NEXT_PUBLIC_BROWSE_ROBOT_ID: ${{ secrets.NEXT_PUBLIC_BROWSE_ROBOT_ID }}
+        NEXT_PUBLIC_BROWSE_BEARER: ${{ secrets.NEXT_PUBLIC_BROWSE_BEARER }}
+        KV_URL: ${{ secrets.KV_URL }}
+        KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+        KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+        KV_REST_API_READ_ONLY_TOKEN: ${{ secrets.KV_REST_API_READ_ONLY_TOKEN }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+        GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+        GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
+        SENTRY_IGNORE_API_RESOLUTION_ERROR: ${{ secrets.SENTRY_IGNORE_API_RESOLUTION_ERROR }}
+        NEXT_PUBLIC_TINY: ${{ secrets.NEXT_PUBLIC_TINY }}
+        NEXT_PUBLIC_SCRAPINGBEE: ${{ secrets.NEXT_PUBLIC_SCRAPINGBEE }}
+      run: |
+        echo "PLAYWRIGHT_TEST_BASE_URL: $PLAYWRIGHT_TEST_BASE_URL"
+        echo "PLAYWRIGHT_TEST_TIMEOUT: $PLAYWRIGHT_TEST_TIMEOUT"
+        yarn playwright test
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
