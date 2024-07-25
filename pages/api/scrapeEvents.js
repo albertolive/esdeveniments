@@ -1,11 +1,10 @@
 const cheerio = require("cheerio");
 const RSS = require("rss");
 const { DateTime } = require("luxon");
-const xml2js = require('xml2js');
 import { siteUrl } from "@config/index";
 import { captureException } from "@sentry/nextjs";
 import createHash from "@utils/createHash";
-import { CITIES_SELECTORS, girona } from "@utils/cities";
+import { CITIES_SELECTORS } from "@utils/cities";
 
 const monthMap = {
   gener: "01",
@@ -257,6 +256,7 @@ async function extractEventDetails(content, selectors) {
 }
 
 async function createEventRss(city) {
+  console.log('Creating RSS feed for city:', city);
   const cityData = CITIES_SELECTORS[city];
 
   if (!cityData) {
@@ -286,9 +286,11 @@ async function createEventRss(city) {
     }
 
     console.log(`Extracted ${events.length} events for ${city}`);
+    console.log('Creating RSS feed for events:', events);
     return createRssFeed(events, city);
   } catch (error) {
     console.error(`Error creating RSS feed for ${city}:`, error);
+    console.error('Error stack:', error.stack);
     captureException(error);
     return null;
   }
@@ -313,7 +315,7 @@ function detectContentType(content) {
 
 export default async function handler(req, res) {
   const { city } = req.query;
-  console.log(`Processing request for city: ${city}`);
+  console.log('Handler function called with city:', city);
 
   if (!city) {
     res.status(400).json({ error: "City parameter is missing" });
@@ -326,6 +328,9 @@ export default async function handler(req, res) {
     console.log(`Processing cities: ${cities}`);
     for (const singleCity of cities) {
       try {
+        const selector = CITIES_SELECTORS[singleCity];
+        console.log('Selector for city:', selector);
+
         const rssXml = await createEventRss(singleCity);
         results[singleCity] = rssXml || null;
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -354,7 +359,8 @@ export default async function handler(req, res) {
       res.status(500).json({ error: `Failed to create RSS feed for ${city}` });
     }
   } catch (error) {
-    console.error(`Error in scrapeEvents handler for ${city}:`, error);
+    console.error('Error in handler function:', error);
+    console.error('Error stack:', error.stack);
     captureException(error);
     res.status(500).json({
       error: `Failed to create RSS feed for ${city}`,

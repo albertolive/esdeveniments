@@ -1,25 +1,25 @@
-const girona = {
-  defaultLocation: "Girona",
-  domain: "https://www.girona.cat",
-  url: "https://www.girona.cat/cultura/cat/agenda.php",
-  encoding: "utf-8",
-  listSelector: "item",
-  titleSelector: "title",
-  urlSelector: "link",
-  dateSelector: "pubDate",
-  dateAttr: "",
-  timeSelector: "",
-  descriptionSelector: "description",
-  imageSelector: "",
-  locationSelector: "",
-  urlImage: "",
-  dateRegex: {
-    regex: /(\d{1,2})\/(\d{1,2})\/(\d{4})/i,
-    swapDayMonthOrder: false,
-  },
-  timeRegex: /(\d{1,2}):(\d{2})/i,
-  isRSS: true,
-  alternativeScrapper: false,
+const sharedData = {
+  descriptionSelector: ".ddbbtext",
+  imageSelector: ".first-image",
 };
 
-module.exports = girona;
+const girona = [
+  "girona",
+  {
+    label: "Girona",
+    province: "girona",
+    towns: new Map([
+      [
+        "girona",
+        {
+          label: "Girona",
+          postalCode: "17001",
+          coords: { lat: 41.98311, lng: 2.82493 },
+          ...sharedData,
+        },
+      ],
+    ]),
+  },
+];
+
+export default girona;

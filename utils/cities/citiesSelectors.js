@@ -637,7 +637,6 @@ export const CITIES_SELECTORS = {
       swapDayMonthOrder: false,
     },
     timeRegex: /(\d{1,2}):(\d{2})/i,
-    isRSS: true,
     alternativeScrapper: false,
   },
 };
