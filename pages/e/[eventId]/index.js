@@ -23,6 +23,7 @@ import useOnScreen from "@components/hooks/useOnScreen";
 import { siteUrl } from "@config/index";
 import { sendGoogleEvent } from "@utils/analytics";
 import useCheckMobileScreen from "@components/hooks/useCheckMobileScreen";
+import { addToCalendar } from "@utils/calendar";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -279,6 +280,19 @@ export default function Event(props) {
   const title = data.event ? data.event.title : "";
   const isMobile = useCheckMobileScreen();
 
+  const handleAddToCalendar = () => {
+    if (data.event) {
+      const { title, description, startDate, endDate, location } = data.event;
+      addToCalendar({
+        title,
+        description,
+        startDate,
+        endDate,
+        location,
+      });
+    }
+  };
+
   useEffect(() => {
     sendGoogleEvent("view_event_page");
   }, []);
@@ -453,6 +467,13 @@ export default function Event(props) {
                       ? "Consultar horaris"
                       : `${startTime} - ${endTime}`}
                   </p>
+                  <button
+                    onClick={handleAddToCalendar}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    <CalendarIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+                    Add to calendar
+                  </button>
                 </div>
               </div>
             </div>
