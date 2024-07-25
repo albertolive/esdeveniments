@@ -1,5 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
+console.log(`PLAYWRIGHT_TEST_BASE_URL: ${process.env.PLAYWRIGHT_TEST_BASE_URL}`);
+
 test.use({ headless: true });
 
 test.setTimeout(300000); // 5 minutes
@@ -43,7 +45,7 @@ async function waitForEventsToLoad(page, timeout = 30000) {
 
 test.describe('Homepage tests', () => {
   test.beforeEach(async ({ page }) => {
-    const testUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3001';
+    const testUrl = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001';
     console.log(`Testing URL: ${testUrl}`);
     await page.goto(testUrl);
     console.log('Page navigation completed');
@@ -100,14 +102,14 @@ test.describe('Homepage tests', () => {
 
     const currentUrl = page.url();
     console.log(`Current URL after clicking: ${currentUrl}`);
-    expect(currentUrl).not.toBe('http://localhost:3001', 'URL should change after clicking the first event');
+    expect(currentUrl).not.toBe(testUrl, 'URL should change after clicking the first event');
 
     console.log('Test completed successfully');
   });
 
 test('check if "Publicar" option is present in the menu', async ({ page, context }) => {
   const timeoutValue = 900000; // 15 minutes
-  const testUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3001';
+  const testUrl = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001';
   console.log(`Testing URL for "Publicar" option: ${testUrl}`);
 
   const maxRetries = 5;
@@ -150,7 +152,7 @@ test('check if "Publicar" option is present in the menu', async ({ page, context
 });
 
 test('check if the page is responsive', async ({ page }) => {
-  const testUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3001';
+  const testUrl = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001';
   console.log(`Testing URL for responsiveness: ${testUrl}`);
 
   await page.goto(testUrl);
