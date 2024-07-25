@@ -58,7 +58,7 @@ test.describe('Homepage tests', () => {
     page.setDefaultTimeout(timeoutValue);
 
     console.log('Navigating to the homepage');
-    await page.goto('http://localhost:3001', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(testUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
     console.log('Waiting for content to load...');
     await page.waitForSelector('h1:has-text("Què fer a Catalunya. Agenda 2024")', { timeout: 60000 });
