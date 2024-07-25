@@ -5,7 +5,7 @@ const BASE_URL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000'
 test.describe('Homepage tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(BASE_URL);
-    await page.waitForSelector('main', { state: 'visible' });
+    await page.waitForSelector('main', { state: 'visible', timeout: 10000 });
   });
 
   test('navigate to the homepage', async ({ page }) => {
@@ -15,27 +15,47 @@ test.describe('Homepage tests', () => {
   });
 
   test('check if main content is present', async ({ page }) => {
-    await page.waitForSelector('main', { state: 'visible' });
-    const mainContent = await page.$('main');
-    expect(mainContent).not.toBeNull();
+    try {
+      await page.waitForSelector('main', { state: 'visible', timeout: 10000 });
+      const mainContent = await page.$('main');
+      expect(mainContent).not.toBeNull();
+    } catch (error) {
+      console.log(await page.content());
+      throw error;
+    }
   });
 
   test('check if navigation menu is present', async ({ page }) => {
-    await page.waitForSelector('nav', { state: 'visible' });
-    const navMenu = await page.$('nav');
-    expect(navMenu).not.toBeNull();
+    try {
+      await page.waitForSelector('nav', { state: 'visible', timeout: 10000 });
+      const navMenu = await page.$('nav');
+      expect(navMenu).not.toBeNull();
+    } catch (error) {
+      console.log(await page.content());
+      throw error;
+    }
   });
 
   test('check if event cards are present', async ({ page }) => {
-    await page.waitForSelector('article[data-testid="event-card"]', { state: 'visible' });
-    const eventCards = await page.$$('article[data-testid="event-card"]');
-    expect(eventCards.length).toBeGreaterThan(0);
+    try {
+      await page.waitForSelector('article[data-testid="event-card"]', { state: 'visible', timeout: 10000 });
+      const eventCards = await page.$$('article[data-testid="event-card"]');
+      expect(eventCards.length).toBeGreaterThan(0);
+    } catch (error) {
+      console.log(await page.content());
+      throw error;
+    }
   });
 
   test('check if "Publicar" option is present in the menu', async ({ page }) => {
-    await page.waitForSelector('nav', { state: 'visible' });
-    const publicarOption = await page.$('nav >> text=Publicar');
-    expect(publicarOption).not.toBeNull();
+    try {
+      await page.waitForSelector('nav', { state: 'visible', timeout: 10000 });
+      const publicarOption = await page.$('nav >> text=Publicar');
+      expect(publicarOption).not.toBeNull();
+    } catch (error) {
+      console.log(await page.content());
+      throw error;
+    }
   });
 
   test('check if the page is responsive', async ({ page }) => {
@@ -48,16 +68,21 @@ test.describe('Homepage tests', () => {
     ];
 
     for (const size of viewports) {
-      await page.setViewportSize(size);
-      await page.waitForSelector('main', { state: 'visible' });
-      const mainContent = await page.$('main');
-      expect(mainContent).not.toBeNull();
-      await page.waitForSelector('nav', { state: 'visible' });
-      const navMenu = await page.$('nav');
-      expect(navMenu).not.toBeNull();
-      await page.waitForSelector('article[data-testid="event-card"]', { state: 'visible' });
-      const eventCards = await page.$$('article[data-testid="event-card"]');
-      expect(eventCards.length).toBeGreaterThan(0);
+      try {
+        await page.setViewportSize(size);
+        await page.waitForSelector('main', { state: 'visible', timeout: 10000 });
+        const mainContent = await page.$('main');
+        expect(mainContent).not.toBeNull();
+        await page.waitForSelector('nav', { state: 'visible', timeout: 10000 });
+        const navMenu = await page.$('nav');
+        expect(navMenu).not.toBeNull();
+        await page.waitForSelector('article[data-testid="event-card"]', { state: 'visible', timeout: 10000 });
+        const eventCards = await page.$$('article[data-testid="event-card"]');
+        expect(eventCards.length).toBeGreaterThan(0);
+      } catch (error) {
+        console.log(await page.content());
+        throw error;
+      }
     }
   });
 });
