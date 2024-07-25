@@ -18,7 +18,8 @@ const NoEventsFound = dynamic(
   }
 );
 
-export default function Month({ events, town, townLabel }) {
+export default function Month(props) {
+  const { events, town, townLabel } = props;
   const { query } = useRouter();
   const { year, month: rawMonth } = query;
   const month = rawMonth === "marc" ? rawMonth.replace("c", "ç") : rawMonth;
@@ -106,8 +107,9 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps(context) {
   try {
+    const { params } = context;
     const { town, year, month } = params;
     const cacheKey = `sitemap-${town}-${year}-${month}`;
     const cache = getCacheClient();
@@ -130,7 +132,7 @@ export async function getStaticProps({ params }) {
     });
 
     const normalizedEvents = JSON.parse(JSON.stringify(events));
-    const filteredEvents = normalizedEvents?.filter(({ isAd }) => !isAd) || [];
+    const filteredEvents = normalizedEvents.filter(({ isAd }) => !isAd) || [];
 
     const props = {
       props: {
