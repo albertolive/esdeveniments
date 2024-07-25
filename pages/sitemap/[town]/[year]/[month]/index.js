@@ -6,27 +6,13 @@ import Meta from "@components/partials/seo-meta";
 import Link from "next/link";
 import { MONTHS_URL } from "@utils/constants";
 import { siteUrl } from "@config/index";
-import { GetStaticPaths, GetStaticProps } from 'next';
 import { getCalendarEvents } from "@lib/helpers";
 import { getHistoricDates, getAllYears } from "@lib/dates";
 import { getCacheClient } from "@lib/cache";
 
-interface Event {
-  id: string;
-  title: string;
-  slug: string;
-  formattedStart: string;
-  formattedEnd?: string;
-  isAd: boolean;
-}
 
-interface MonthProps {
-  events: Event[];
-  town: string;
-  townLabel: string;
-}
 
-const NoEventsFound = dynamic<Record<string, never>>(
+const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
   {
     loading: () => "",
@@ -34,16 +20,16 @@ const NoEventsFound = dynamic<Record<string, never>>(
   }
 );
 
-export default function Month({ events, town, townLabel }: MonthProps) {
+export default function Month({ events, town, townLabel }) {
   const { query } = useRouter();
-  const { year, month: rawMonth } = query as { year: string; month: string };
+  const { year, month: rawMonth } = query;
   const month = rawMonth === "marc" ? rawMonth.replace("c", "ç") : rawMonth;
 
   const jsonData = events
     ? events.filter(({ isAd }) => !isAd).map((event) => generateJsonData(event))
     : [];
 
-  const renderEventItem = (event: Event) => (
+  const renderEventItem = (event) => (
     <div key={event.id}>
       <Link
         href={`/e/${event.slug}`}
@@ -84,7 +70,7 @@ export default function Month({ events, town, townLabel }: MonthProps) {
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export async function getStaticPaths() {
   const regions = generateRegionsOptions();
   const years = getAllYears();
   const params = [];
@@ -93,7 +79,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const currentMonth = new Date().getMonth();
   const nextThreeMonths = currentMonth + 2;
 
-  const generateParams = (year: number, month: string, region: string, town: string) => ({
+  const generateParams = (year, month, region, town) => ({
     params: {
       town,
       year: year.toString(),
@@ -120,11 +106,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
     paths: params,
     fallback: true, // Generate remaining pages on-demand
   };
-};
+}
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export async function getStaticProps({ params }) {
   try {
-    const { town, year, month } = params as { town: string; year: string; month: string };
+    const { town, year, month } = params;
     const cacheKey = `sitemap-${town}-${year}-${month}`;
     const cache = getCacheClient();
 
@@ -146,7 +132,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     });
 
     const normalizedEvents = JSON.parse(JSON.stringify(events));
-    const filteredEvents = normalizedEvents?.filter(({ isAd }: { isAd: boolean }) => !isAd) || [];
+    const filteredEvents = normalizedEvents?.filter(({ isAd }) => !isAd) || [];
 
     const props = {
       props: {
@@ -165,4 +151,4 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     console.error('Error in getStaticProps:', error);
     return { notFound: true };
   }
-};
+}
