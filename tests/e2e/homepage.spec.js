@@ -54,59 +54,50 @@ test.describe('Homepage tests', () => {
     console.log(`Current URL after navigation: ${page.url()}`);
   });
 
-  test('navigate to the homepage and click on the first event', async ({ page, context }) => {
+  test('navigate to the homepage and click on the first event', async ({ page }) => {
     const testUrl = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001';
     console.log(`Testing URL: ${testUrl}`);
-    const timeoutValue = 120000; // 2 minutes
-    console.log(`Starting test with timeoutValue: ${timeoutValue}`);
-    page.setDefaultTimeout(timeoutValue);
+    page.setDefaultTimeout(120000); // 2 minutes
 
-    console.log(`Navigating to the homepage: ${testUrl}`);
-    await page.goto(testUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-
-    console.log('Waiting for content to load...');
-    await page.waitForSelector('h1:has-text("Què fer a Catalunya. Agenda 2024")', { timeout: 60000 });
-    console.log('Content loaded successfully');
-
-    console.log('Waiting for "Publicar" option to be visible');
-    await page.waitForSelector('nav a[href="/publica"]', { state: 'visible', timeout: 60000 });
-    console.log('"Publicar" option is visible');
-
-    console.log('Waiting for events to load...');
-    await page.waitForSelector('div[href^="/e/"]', { state: 'visible', timeout: 90000 });
-    const eventsLoaded = await page.$$('div[href^="/e/"]');
-    if (eventsLoaded.length === 0) {
-      console.log('No events loaded within the timeout period.');
-      return;
-    }
-    console.log(`${eventsLoaded.length} events loaded successfully.`);
-
-    const eventsPresent = await page.$$eval('div[href^="/e/"]', (elements) => elements.length > 0);
-    if (!eventsPresent) {
-      console.log('No events found on the page. Skipping click test.');
-      return;
-    }
-
-    console.log('Events loaded successfully');
-
-    console.log('Attempting to click the first event');
     try {
+      console.log(`Navigating to the homepage: ${testUrl}`);
+      await page.goto(testUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+      console.log('Waiting for content to load...');
+      await page.waitForSelector('h1:has-text("Què fer a Catalunya. Agenda 2024")', { timeout: 60000 });
+      console.log('Content loaded successfully');
+
+      console.log('Waiting for "Publicar" option to be visible');
+      await page.waitForSelector('nav a[href="/publica"]', { state: 'visible', timeout: 60000 });
+      console.log('"Publicar" option is visible');
+
+      console.log('Waiting for events to load...');
+      await page.waitForSelector('div[href^="/e/"]', { state: 'visible', timeout: 90000 });
+
+      const eventsCount = await page.locator('div[href^="/e/"]').count();
+      console.log(`${eventsCount} events loaded successfully.`);
+
+      if (eventsCount === 0) {
+        throw new Error('No events found on the page.');
+      }
+
+      console.log('Attempting to click the first event');
       await page.click('div[href^="/e/"]:first-child');
       console.log('Successfully clicked the first event');
+
+      console.log('Waiting for navigation after click...');
+      await page.waitForLoadState('domcontentloaded', { timeout: 60000 });
+      console.log('Navigation completed');
+
+      const currentUrl = page.url();
+      console.log(`Current URL after clicking: ${currentUrl}`);
+      expect(currentUrl).not.toBe(testUrl, 'URL should change after clicking the first event');
+
+      console.log('Test completed successfully');
     } catch (error) {
-      console.error('Failed to click the first event:', error);
+      console.error('Test failed:', error);
       throw error;
     }
-
-    console.log('Waiting for navigation after click...');
-    await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
-    console.log('Navigation completed');
-
-    const currentUrl = page.url();
-    console.log(`Current URL after clicking: ${currentUrl}`);
-    expect(currentUrl).not.toBe(testUrl, 'URL should change after clicking the first event');
-
-    console.log('Test completed successfully');
   });
 
 test('check if "Publicar" option is present in the menu', async ({ page, context }) => {
@@ -119,7 +110,7 @@ test('check if "Publicar" option is present in the menu', async ({ page, context
     try {
       console.log(`Attempt ${attempt} of ${maxRetries}`);
       await page.goto(testUrl, { timeout: timeoutValue, waitUntil: 'domcontentloaded' });
-      await page.waitForLoadState('domcontentloaded', { timeout: timeoutValue });
+      await page.waitForLoadState('networkidle', { timeout: timeoutValue });
 
       console.log('Checking for JavaScript errors');
       const jsErrors = await page.evaluate(() => {
@@ -128,9 +119,9 @@ test('check if "Publicar" option is present in the menu', async ({ page, context
       console.log('JavaScript errors:', jsErrors);
 
       console.log('Waiting for "Publicar" option to be visible');
-      await page.waitForSelector('text="Publicar"', { state: 'visible', timeout: 60000 });
+      await page.waitForSelector('a[href="/publica"]', { state: 'visible', timeout: 60000 });
 
-      const publicarOption = await page.locator('nav >> text="Publicar"');
+      const publicarOption = await page.locator('nav a[href="/publica"]');
       expect(await publicarOption.isVisible()).toBe(true);
 
       console.log('Test completed successfully');
@@ -157,11 +148,8 @@ test('check if the page is responsive', async ({ page }) => {
   const testUrl = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001';
   console.log(`Testing URL for responsiveness: ${testUrl}`);
 
-  await page.goto(testUrl);
-  console.log('Page navigation completed');
-
-  await page.waitForLoadState('domcontentloaded', { timeout: 120000 });
-  console.log('DOM content loaded');
+  await page.goto(testUrl, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  console.log('Page navigation completed and DOM content loaded');
 
   // Check if the body element is present
   const body = await page.$('body');
@@ -169,7 +157,7 @@ test('check if the page is responsive', async ({ page }) => {
   console.log('Page body found');
 
   // Check if the main content container is present
-  const mainContent = await page.$('#__next');
+  const mainContent = await page.$('main');
   expect(mainContent).not.toBeNull();
   console.log('Main content container found');
 
@@ -182,10 +170,6 @@ test('check if the page is responsive', async ({ page }) => {
   const pageTitle = await page.title();
   console.log(`Page title: ${pageTitle}`);
   expect(pageTitle).not.toBe('');
-
-  // Check viewport size
-  const viewport = page.viewportSize();
-  console.log(`Viewport size: ${viewport.width}x${viewport.height}`);
 
   // Test responsiveness by resizing viewport
   const sizes = [
@@ -201,11 +185,18 @@ test('check if the page is responsive', async ({ page }) => {
 
     // Check if main content is still visible after resize
     const isMainContentVisible = await mainContent.isVisible();
-    expect(isMainContentVisible).toBe(true);
+    expect(isMainContentVisible).toBe(true, `Main content should be visible at ${size.width}x${size.height}`);
 
     // Check if navigation menu is still present (might be collapsed on smaller screens)
     const isNavMenuPresent = await page.$('nav') !== null;
-    expect(isNavMenuPresent).toBe(true);
+    expect(isNavMenuPresent).toBe(true, `Navigation menu should be present at ${size.width}x${size.height}`);
+
+    // Check if key elements are visible
+    const h1 = await page.$('h1');
+    expect(await h1.isVisible()).toBe(true, `H1 should be visible at ${size.width}x${size.height}`);
+
+    const firstEvent = await page.$('div[href^="/e/"]:first-child');
+    expect(await firstEvent.isVisible()).toBe(true, `First event should be visible at ${size.width}x${size.height}`);
   }
 
   console.log('Responsiveness test completed successfully');
