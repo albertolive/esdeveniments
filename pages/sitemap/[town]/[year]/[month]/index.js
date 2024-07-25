@@ -10,8 +10,6 @@ import { getCalendarEvents } from "@lib/helpers";
 import { getHistoricDates, getAllYears } from "@lib/dates";
 import { getCacheClient } from "@lib/cache";
 
-
-
 const NoEventsFound = dynamic(
   () => import("@components/ui/common/noEventsFound"),
   {
