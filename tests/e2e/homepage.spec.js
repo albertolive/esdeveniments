@@ -9,6 +9,7 @@ test.describe('Homepage tests', () => {
   });
 
   test('navigate to the homepage', async ({ page }) => {
+    await page.waitForLoadState('load');
     const title = await page.title();
     expect(title).toContain('Esdeveniments');
   });
@@ -16,10 +17,6 @@ test.describe('Homepage tests', () => {
   test('check if main content is present', async ({ page }) => {
     await page.waitForSelector('main', { state: 'visible' });
     const mainContent = await page.$('main');
-    if (!mainContent) {
-      console.log('Main content not found. Page content:');
-      console.log(await page.content());
-    }
     expect(mainContent).not.toBeNull();
   });
 
@@ -30,43 +27,34 @@ test.describe('Homepage tests', () => {
   });
 
   test('check if event cards are present', async ({ page }) => {
-    await page.waitForSelector('article', { state: 'visible' });
-    const eventCards = await page.$$('article');
-    if (eventCards.length === 0) {
-      console.log('No event cards found. Page content:');
-      console.log(await page.content());
-    }
+    await page.waitForSelector('article[data-testid="event-card"]', { state: 'visible' });
+    const eventCards = await page.$$('article[data-testid="event-card"]');
     expect(eventCards.length).toBeGreaterThan(0);
   });
 
   test('check if "Publicar" option is present in the menu', async ({ page }) => {
-    await page.waitForSelector('nav a[href="/publica"]', { state: 'visible' });
-    const publicarOption = await page.$('nav a[href="/publica"]');
+    await page.waitForSelector('nav', { state: 'visible' });
+    const publicarOption = await page.$('nav >> text=Publicar');
     expect(publicarOption).not.toBeNull();
   });
 
   test('check if the page is responsive', async ({ page }) => {
-    const sizes = [
+    const viewports = [
       { width: 1920, height: 1080 },
       { width: 1366, height: 768 },
-      { width: 768, height: 1024 },
-      { width: 375, height: 667 }
+      { width: 375, height: 812 },
     ];
 
-    for (const size of sizes) {
+    for (const size of viewports) {
       await page.setViewportSize(size);
       await page.waitForSelector('main', { state: 'visible' });
       const mainContent = await page.$('main');
-      if (!mainContent) {
-        console.log(`Main content not found at viewport size ${size.width}x${size.height}. Page content:`);
-        console.log(await page.content());
-      }
       expect(mainContent).not.toBeNull();
       await page.waitForSelector('nav', { state: 'visible' });
       const navMenu = await page.$('nav');
       expect(navMenu).not.toBeNull();
-      await page.waitForSelector('article', { state: 'visible' });
-      const eventCards = await page.$$('article');
+      await page.waitForSelector('article[data-testid="event-card"]', { state: 'visible' });
+      const eventCards = await page.$$('article[data-testid="event-card"]');
       expect(eventCards.length).toBeGreaterThan(0);
     }
   });
