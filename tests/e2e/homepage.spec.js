@@ -14,6 +14,10 @@ test.describe('Homepage tests', () => {
 
   test('check if main content is present', async ({ page }) => {
     const mainContent = await page.$('main');
+    if (!mainContent) {
+      console.log('Main content not found. Page content:');
+      console.log(await page.content());
+    }
     expect(mainContent).not.toBeNull();
   });
 
@@ -24,6 +28,10 @@ test.describe('Homepage tests', () => {
 
   test('check if event cards are present', async ({ page }) => {
     const eventCards = await page.$$('article');
+    if (eventCards.length === 0) {
+      console.log('No event cards found. Page content:');
+      console.log(await page.content());
+    }
     expect(eventCards.length).toBeGreaterThan(0);
   });
 
@@ -43,6 +51,10 @@ test.describe('Homepage tests', () => {
     for (const size of sizes) {
       await page.setViewportSize(size);
       const mainContent = await page.$('main');
+      if (!mainContent) {
+        console.log(`Main content not found at viewport size ${size.width}x${size.height}. Page content:`);
+        console.log(await page.content());
+      }
       expect(mainContent).not.toBeNull();
       const navMenu = await page.$('nav');
       expect(navMenu).not.toBeNull();
