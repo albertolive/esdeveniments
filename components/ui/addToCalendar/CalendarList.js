@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { sendGoogleEvent } from "@utils/analytics";
 
@@ -38,6 +38,10 @@ const CalendarList = ({ onClick, getUrls, title }) => {
 
   const linkClass = "block mb-6 last:mb-0 hover:underline";
   const buttonClass = "btn flex items-center justify-center space-x-2";
+
+  useEffect(() => {
+    sendGoogleEvent("add_to_calendar_view", { event_title: title });
+  }, [title]);
 
   return (
     <div className="absolute top-full left-0 mt-2 z-10 bg-whiteCorp">
