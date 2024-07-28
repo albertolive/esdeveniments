@@ -16,12 +16,12 @@ function CardLoading() {
         </div>
       </div>
       {/* ImageEvent */}
-      <div className="p-4 flex justify-center items-center">
+      <div className="p-2 flex justify-center items-center">
         <div className="w-full h-60 bg-darkCorp m-2 animate-fast-pulse"></div>
       </div>
       {/* Info */}
       {/* InfoEvent */}
-      <div className="bg-whiteCorp flex flex-col px-4 pt-4 gap-4">
+      <div className="bg-whiteCorp flex flex-col px-2 pt-4 gap-4">
         {/* Date */}
         <div className="bg-darkCorp w-2/3 h-5 pl-1 rounded-xl animate-fast-pulse"></div>
         {/* Location */}

@@ -10,6 +10,7 @@ const NativeShareButton = ({
   location,
   subLocation,
   onShareClick,
+  hideText = false,
 }) => {
   const isMobile = useCheckMobileScreen();
 
@@ -67,6 +68,9 @@ Lloc: ${location}, ${subLocation}
       title="Compartir"
     >
       <ShareIcon className="h-6 w-6" />
+      {!hideText && (
+        <p className="text-blackCorp ml-2 hover:underline">Compartir</p>
+      )}
     </button>
   );
 };

@@ -208,10 +208,14 @@ function EventsCategorized() {
                     />
                     {/* Ad */}
                     {(index === 1 || index === 3) && (
-                      <div className="w-full h-full flex items-start min-h-[250px] gap-2 mt-4 mb-2">
-                        <SpeakerphoneIcon className="w-5 h-5 mt-1" />
-                        <div className="w-11/12 flex flex-col gap-4">
-                          <h2>Contingut patrocinat</h2>
+                      <div className="w-full h-full flex flex-col items-start min-h-[250px] max-w-lg gap-2 mt-4 mb-2">
+                        <div className="w-full flex">
+                          <SpeakerphoneIcon className="w-5 h-5 mt-1 mr-2" />
+                          <div className="w-11/12 flex flex-col gap-4">
+                            <h2>Contingut patrocinat</h2>
+                          </div>
+                        </div>
+                        <div className="w-full">
                           <AdArticle slot="8139041285" />
                         </div>
                       </div>

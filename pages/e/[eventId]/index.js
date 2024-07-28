@@ -23,6 +23,7 @@ import useOnScreen from "@components/hooks/useOnScreen";
 import { siteUrl } from "@config/index";
 import { sendGoogleEvent } from "@utils/analytics";
 import useCheckMobileScreen from "@components/hooks/useCheckMobileScreen";
+import AddToCalendar from "@components/ui/addToCalendar";
 
 const AdArticle = dynamic(() => import("@components/ui/adArticle"), {
   loading: () => "",
@@ -331,6 +332,7 @@ export default function Event(props) {
     postalCode,
     mapsLocation,
     startDate,
+    endDate,
     startTime,
     endTime,
     isFullDayEvent,
@@ -420,7 +422,7 @@ export default function Event(props) {
                 )
               )}
               {/* ShareButton */}
-              <div className="w-full flex justify-between items-center px-4">
+              <div className="w-full flex justify-between items-center px-4 h-2">
                 {!isMobile ? (
                   <CardShareButton slug={slug} />
                 ) : (
@@ -454,6 +456,14 @@ export default function Event(props) {
                       : `${startTime} - ${endTime}`}
                   </p>
                 </div>
+                <AddToCalendar
+                  title={title}
+                  description={description}
+                  location={`${location}, ${town}, ${region}, ${postalCode}`}
+                  startDate={startDate}
+                  endDate={endDate}
+                  canonical={`${siteUrl}/e/${slug}`}
+                />
               </div>
             </div>
             {/* Location */}
