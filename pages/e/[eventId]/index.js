@@ -422,7 +422,7 @@ export default function Event(props) {
                 )
               )}
               {/* ShareButton */}
-              <div className="w-full flex justify-between items-center px-4">
+              <div className="w-full flex justify-between items-center px-4 h-2">
                 {!isMobile ? (
                   <CardShareButton slug={slug} />
                 ) : (

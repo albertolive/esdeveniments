@@ -1,17 +1,12 @@
-import { useState, memo } from "react";
+import { useState, memo, lazy } from "react";
 import GoogleAdsenseContainer from "../GoogleAdsense";
+
+const AdBoard = lazy(() => import("../adBoard"));
 
 export default memo(function AdArticle({ isDisplay = true, slot }) {
   const [displayAd, setDisplayAd] = useState(true);
 
-  if (!displayAd)
-    return (
-      <div style={{ height: "300px", width: "100%" }}>
-        L&apos;anunci no s&apos;ha pogut carregar. Si us plau, ajuda&apos;ns a
-        mantenir aquesta pàgina desactivant qualsevol bloquejador
-        d&apos;anuncis. Gràcies per la teva comprensió i suport!
-      </div>
-    );
+  if (!displayAd) return <AdBoard />;
 
   return (
     <div className="flex">

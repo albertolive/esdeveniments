@@ -121,12 +121,13 @@ function CardContent({ event, isPriority, isHorizontal }) {
                   location={memoizedValues.location}
                   subLocation={memoizedValues.subLocation}
                   onShareClick={handleShareClick}
+                  hideText={true}
                 />
               )}
             </div>
           </div>
           {/* ImageEvent */}
-          <div className="p-4 flex justify-center items-center" ref={shareRef}>
+          <div className="p-2 flex justify-center items-center" ref={shareRef}>
             <div
               className="w-full relative"
               style={{ height: isHorizontal ? "16rem" : "auto" }}
@@ -149,7 +150,7 @@ function CardContent({ event, isPriority, isHorizontal }) {
       </Link>
       {/* Share and ViewCounter */}
       <div
-        className="w-full flex justify-center items-center gap-2 px-4"
+        className="w-full flex justify-center items-center gap-2 px-2 mb-2"
         ref={counterRef}
       >
         {!isMobile && <ShareButton slug={event.slug} />}
