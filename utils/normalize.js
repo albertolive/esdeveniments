@@ -231,73 +231,8 @@ export function calculateDurationInHours(startDateStr, endDateStr) {
   }
 }
 
-export const normalizeEvents = (event, weatherInfo) => {
-  const startDate =
-    (event.start && event.start.dateTime) || event.start.date || null;
-  const endDate =
-    (event.end && event.end.dateTime) || event.end.date || startDate || null;
-  const isFullDayEvent =
-    (event.start && event.start.date && !event.start.dateTime) || null;
-
-  const {
-    originalFormattedStart,
-    formattedStart,
-    formattedEnd,
-    startTime,
-    endTime,
-    nameDay,
-    isMultipleDays,
-    duration,
-    startDate: startDateStr,
-  } = getFormattedDate(startDate, endDate);
-  const weatherObject = normalizeWeather(startDateStr, weatherInfo);
-  const eventImage = extractEventImage(event.description);
-  const description = cleanDescription(event.description) || null;
-  const locationParts = event.location ? event.location.split(",") : [];
-  const town =
-    locationParts.length > 1
-      ? locationParts[locationParts.length - 2].trim()
-      : "";
-  const region =
-    locationParts.length > 0
-      ? locationParts[locationParts.length - 1].trim()
-      : "";
-  const location = locationParts.length > 2 ? locationParts[0].trim() : town;
-  let title = event.summary ? sanitizeText(event.summary) : "";
-
-  const tag = null; //CATEGORIES.find((v) => title.includes(v)) || null;
-
-  const { coords = null, postalCode = null } = getTownOptionsWithLabel(town);
-
-  if (tag) title = title.replace(`${tag}:`, "").trim();
-
-  const imageUploaded = event.guestsCanModify || false;
-  const imageId = event.id ? event.id.split("_")[0] : event.id;
-
-  return {
-    id: event.id,
-    title,
-    startTime,
-    endTime,
-    isFullDayEvent,
-    location,
-    subLocation: `${town}${town && region ? ", " : ""}${region}`,
-    formattedStart,
-    formattedEnd,
-    nameDay,
-    tag,
-    slug: slug(title, originalFormattedStart, event.id),
-    startDate,
-    endDate,
-    imageUploaded: imageUploaded ? cloudinaryUrl(imageId) : null,
-    eventImage,
-    description,
-    weather: weatherObject,
-    coords,
-    isMultipleDays,
-    postalCode,
-    duration: duration || "PT1H",
-  };
+export const normalizeEvents = (events) => {
+  return events.map(event => normalizeEvent(event));
 };
 
 export const normalizeAroundEvents = (event) => {
@@ -352,82 +287,21 @@ export const normalizeAroundEvents = (event) => {
 };
 
 export const normalizeEvent = (event) => {
-  if (!event || event.error) return null;
+  if (!event) return null;
 
-  const startDate =
-    (event.start && event.start.dateTime) || event.start.date || null;
-  const endDate =
-    (event.end && event.end.dateTime) || event.end.date || startDate || null;
-  const isFullDayEvent =
-    (event.start && event.start.date && !event.start.dateTime) || null;
-
-  const {
-    originalFormattedStart,
-    formattedStart,
-    formattedEnd,
-    startTime,
-    endTime,
-    nameDay,
-    duration,
-  } = getFormattedDate(event.start, event.end);
-
-  let title = event.summary ? sanitizeText(event.summary) : "";
-  const locationParts = event.location ? event.location.split(",") : [];
-  const town =
-    locationParts.length > 1
-      ? locationParts[locationParts.length - 2].trim()
-      : "";
-  const region =
-    locationParts.length > 0
-      ? locationParts[locationParts.length - 1].trim()
-      : "";
-  const location = locationParts.length > 2 ? locationParts[0].trim() : town;
-  const tag = null; //CATEGORIES.find((v) => title.includes(v)) || null;
-  if (tag) title = title.replace(`${tag}:`, "").trim();
-  const { postalCode = null, label = null } = getTownOptionsWithLabel(town);
-  const imageUploaded = event.guestsCanModify || false;
-  const imageId = event.id ? event.id.split("_")[0] : event.id;
-  const eventImage = extractEventImage(event.description);
-  const eventUrl = extractEventUrl(event.description);
-  const mapsLocation = `${location}, ${town}${
-    town && region ? ", " : ""
-  }${region}, ${postalCode}`;
-  const description = cleanDescription(event.description);
-  const videoUrl = extractVideoURL(event.description);
-  const timeUntil = timeUntilEvent(startDate, endDate);
-  const durationInHours = calculateDurationInHours(startDate, endDate);
+  const startDate = event.start?.dateTime || event.start?.date || '';
+  const endDate = event.end?.dateTime || event.end?.date || startDate;
 
   return {
-    id: event.id,
-    title,
-    startTime,
-    endTime,
-    isFullDayEvent,
-    label,
-    location,
-    town,
-    region,
-    postalCode,
-    mapsLocation,
-    formattedStart,
-    formattedEnd,
-    nameDay,
-    description: description || "",
-    tag,
-    slug: slug(title, originalFormattedStart, event.id),
-    startDate,
-    endDate,
-    imageUploaded: imageUploaded ? cloudinaryUrl(imageId) : null,
-    eventImage,
-    imageId,
-    isEventFinished: event.end
-      ? new Date(event.end.dateTime) < new Date()
-      : false,
-    duration: duration || "PT1H",
-    eventUrl,
-    videoUrl,
-    timeUntil,
-    durationInHours,
+    id: Number(event.id) || null,
+    start: startDate,
+    end: endDate,
+    name: event.name || '',
+    description: event.description || '',
+    price: Number(event.price) || 0,
+    image: event.image || '',
+    location: event.location || '',
+    category: event.category || '',
   };
 };
 
