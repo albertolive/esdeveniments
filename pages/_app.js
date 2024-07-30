@@ -1,4 +1,3 @@
-import React from 'react';
 import "@styles/globals.css";
 import { Suspense } from "react";
 import Script from "next/script";
