@@ -72,7 +72,7 @@ function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
   );
 }
 
-async function fetchHtmlContent(url, alternativeScrapper = false) {
+async function fetchHtmlContent(url, alternativeScrapper = false, isRSS = false) {
   let retries = RETRY_LIMIT;
   let delay = INITIAL_DELAY;
 
@@ -82,29 +82,38 @@ async function fetchHtmlContent(url, alternativeScrapper = false) {
 
   while (retries > 0) {
     try {
-      const response = await fetch(
-        new URL(
+      let response;
+      if (isRSS) {
+        console.log(`Fetching RSS feed from: ${url}`);
+        response = await fetch(url);
+      } else {
+        const fullUrl = new URL(
           `${apiUrl}?itemUrl=${encodeURIComponent(url)}`,
           siteUrl
-        ).toString()
-      );
-
-      if (!response.ok) {
-        throw new Error(`Edge API error! status: ${response.status}`);
+        ).toString();
+        console.log(`Fetching HTML content from: ${fullUrl}`);
+        response = await fetch(fullUrl);
       }
 
-      return await response.text();
+      if (!response.ok) {
+        throw new Error(`API error! status: ${response.status}`);
+      }
+
+      const content = await response.text();
+      console.log(`Successfully fetched content. Length: ${content.length} characters`);
+      return content;
     } catch (error) {
       retries--;
       console.error(
-        `Error fetching HTML content for ${url}, retries left: ${retries}`,
+        `Error fetching content for ${url}, retries left: ${retries}`,
         error
       );
       if (retries === 0) {
         throw new Error(
-          `Error fetching HTML content for ${url}: ${error.message}`
+          `Error fetching content for ${url}: ${error.message}`
         );
       }
+      console.log(`Retrying in ${delay}ms...`);
       await new Promise((resolve) => setTimeout(resolve, delay));
       delay *= 2; // Exponential backoff
     }
@@ -140,108 +149,7 @@ async function exhaustiveSearch(url, selectors, initialData = {}) {
   return data;
 }
 
-async function extractEventDetails(html, selectors) {
-  const $ = cheerio.load(html);
-  const events = [];
 
-  const items = $(selectors.listSelector).toArray();
-  const concurrencyLimit = CONCURRENCY_LIMIT; // Limit the number of concurrent requests
-  let index = 0;
-
-  const processBatch = async () => {
-    while (index < items.length) {
-      const batch = items.slice(index, index + concurrencyLimit);
-      index += concurrencyLimit;
-
-      await Promise.allSettled(
-        batch.map(async (element) => {
-          try {
-            const title = $(element)
-              .find(selectors.titleSelector)
-              .text()
-              .trim();
-            const url = $(element).find(selectors.urlSelector).attr("href");
-            const rssUrl =
-              url && url.includes(selectors.domain)
-                ? url
-                : `${selectors.domain}${url}`;
-
-            let date = selectors.dateAttr
-              ? $(element)
-                  .find(selectors.dateSelector)
-                  .attr(selectors.dateAttr)
-                  .trim()
-              : $(element).find(selectors.dateSelector).text().trim();
-            let time = $(element).find(selectors.timeSelector).text().trim();
-            let location = $(element)
-              .find(selectors.locationSelector)
-              .text()
-              .trim();
-            let description = $(element)
-              .find(selectors.descriptionSelector)
-              .text()
-              .trim();
-            let image = $(element).find(selectors.imageSelector).attr("src");
-
-            if (!date || !time || !location || !description || !image) {
-              ({ date, time, location, description, image } =
-                await exhaustiveSearch(rssUrl, selectors, {
-                  date,
-                  time,
-                  location,
-                  description,
-                  image,
-                }));
-            }
-
-            if (!location) location = selectors.defaultLocation;
-            if (!description) description = title;
-
-            const hash = createHash(title, url, location, date);
-            const rssDate =
-              date &&
-              convertToRSSDate(
-                date,
-                time,
-                selectors.dateRegex,
-                selectors.timeRegex
-              );
-            const rssImage = image
-              ? image.includes(selectors.domain)
-                ? image.replace(selectors.urlImage, "/")
-                : `${selectors.domain}${image.replace(selectors.urlImage, "/")}`
-              : image;
-
-            description += rssImage
-              ? ` <div class="hidden">${rssImage}</div>`
-              : "";
-            events.push({
-              id: hash,
-              url: rssUrl,
-              title,
-              location,
-              date: rssDate,
-              description,
-              image: rssImage,
-            });
-
-            // Add a delay between processing each event to avoid hitting rate limits
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          } catch (error) {
-            console.error(`Error processing event: ${error.message}`);
-          }
-        })
-      );
-    }
-  };
-
-  await processBatch();
-
-  console.log(
-    `Number of scraped events: ${events.length} from ${selectors.defaultLocation}`
-  );
-  return events;
-}
 
 function createRssFeed(events, city) {
   const feed = new RSS({
@@ -268,7 +176,87 @@ function createRssFeed(events, city) {
   return feed.xml({ indent: true });
 }
 
+async function extractEventDetails(content, selectors) {
+  try {
+    console.log('Parsing content...');
+    const contentType = detectContentType(content);
+    console.log('Detected content type:', contentType);
+
+    const $ = cheerio.load(content, { xmlMode: contentType !== 'HTML' });
+    const isHtml = contentType === 'HTML';
+
+    let items = isHtml ? $(selectors.listSelector) : $('item');
+    console.log(`Found ${items.length} items`);
+
+    if (items.length === 0 && !isHtml) {
+      for (const selector of ['entry', 'event']) {
+        items = $(selector);
+        if (items.length > 0) break;
+      }
+      console.log(`After trying alternative selectors, found ${items.length} items`);
+    }
+
+    const events = items.map((index, element) => {
+      try {
+        const title = $(element).find(isHtml ? selectors.titleSelector : 'title').text().trim();
+        const url = isHtml ? $(element).find(selectors.urlSelector).attr('href') : $(element).find('link').text().trim();
+        const description = $(element).find(isHtml ? selectors.descriptionSelector : 'description').text().trim();
+        const dateText = $(element).find(isHtml ? selectors.dateSelector : 'pubDate').text().trim();
+        const location = $(element).find(selectors.locationSelector).text().trim() || selectors.defaultLocation;
+        const category = $(element).find('category').text().trim();
+
+        if (!title || !url || !dateText) {
+          console.warn(`Skipping item ${index + 1} due to missing required fields.`);
+          return null;
+        }
+
+        const date = isHtml
+          ? convertToRSSDate(dateText, '', selectors.dateRegex, selectors.timeRegex)
+          : new Date(dateText);
+
+        if (!date || isNaN(date.getTime())) {
+          console.warn(`Invalid date format for item ${index + 1}: ${dateText}`);
+          return null;
+        }
+
+        const rssDate = date.toUTCString();
+        const hash = createHash(title + url + rssDate);
+        const image = $(element).find(isHtml ? selectors.imageSelector : 'enclosure[type="image/jpeg"], media\\:content[medium="image"]').attr(isHtml ? 'src' : 'url') || '';
+
+        return {
+          id: hash,
+          url: url.startsWith('http') ? url : `${selectors.domain}${url}`,
+          title,
+          location,
+          date: rssDate,
+          description,
+          category,
+          image,
+        };
+      } catch (itemError) {
+        console.error(`Error processing item ${index + 1}:`, itemError.message);
+        captureException(itemError);
+        return null;
+      }
+    }).get().filter(Boolean);
+
+    if (events.length === 0) {
+      console.warn('No valid events were extracted from the content.');
+      captureException(new Error('No valid events extracted'));
+    } else {
+      console.log(`Successfully extracted ${events.length} events from ${selectors.defaultLocation}`);
+    }
+
+    return events;
+  } catch (error) {
+    console.error('Error in extractEventDetails:', error.message);
+    captureException(error);
+    throw error;
+  }
+}
+
 async function createEventRss(city) {
+  console.log('Creating RSS feed for city:', city);
   const cityData = CITIES_SELECTORS[city];
 
   if (!cityData) {
@@ -279,22 +267,55 @@ async function createEventRss(city) {
   }
 
   try {
-    const html = await fetchHtmlContent(
+    console.log(`Fetching content for ${city} from ${cityData.url}`);
+    const content = await fetchHtmlContent(
       cityData.url,
-      cityData.alternativeScrapper
+      cityData.alternativeScrapper,
+      cityData.isRSS
     );
-    const events = await extractEventDetails(html, cityData);
+    console.log(`Content fetched for ${city}, length: ${content.length}`);
+
+    const contentType = detectContentType(content);
+    console.log(`Detected content type: ${contentType}`);
+
+    const events = await extractEventDetails(content, cityData);
+
+    if (!events || events.length === 0) {
+      console.warn(`No events extracted for ${city}`);
+      return null;
+    }
+
+    console.log(`Extracted ${events.length} events for ${city}`);
+    console.log('Creating RSS feed for events:', events);
     return createRssFeed(events, city);
   } catch (error) {
     console.error(`Error creating RSS feed for ${city}:`, error);
+    console.error('Error stack:', error.stack);
     captureException(error);
     return null;
   }
 }
 
+function detectContentType(content) {
+  const trimmedContent = content.trim().toLowerCase();
+  if (trimmedContent.startsWith('<?xml') ||
+      trimmedContent.startsWith('<rss') ||
+      trimmedContent.includes('<rss') ||
+      trimmedContent.includes('<feed') ||
+      trimmedContent.includes('<atom')) {
+    return 'RSS';
+  } else if (trimmedContent.startsWith('<')) {
+    return 'XML';
+  } else if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+    return 'JSON';
+  } else {
+    return 'HTML';
+  }
+}
+
 export default async function handler(req, res) {
   const { city } = req.query;
-  console.log(`Processing request for city: ${city}`);
+  console.log('Handler function called with city:', city);
 
   if (!city) {
     res.status(400).json({ error: "City parameter is missing" });
@@ -307,6 +328,9 @@ export default async function handler(req, res) {
     console.log(`Processing cities: ${cities}`);
     for (const singleCity of cities) {
       try {
+        const selector = CITIES_SELECTORS[singleCity];
+        console.log('Selector for city:', selector);
+
         const rssXml = await createEventRss(singleCity);
         results[singleCity] = rssXml || null;
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -335,7 +359,8 @@ export default async function handler(req, res) {
       res.status(500).json({ error: `Failed to create RSS feed for ${city}` });
     }
   } catch (error) {
-    console.error(`Error in scrapeEvents handler for ${city}:`, error);
+    console.error('Error in handler function:', error);
+    console.error('Error stack:', error.stack);
     captureException(error);
     res.status(500).json({
       error: `Failed to create RSS feed for ${city}`,
