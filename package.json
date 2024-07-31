@@ -56,11 +56,16 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.1.6",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.3",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "cross-env": "^7.0.3",
     "eslint": "8.34.0",
     "eslint-config-next": "^14.0.3",
     "next-sitemap": "^2.5.28",
-    "prettier-eslint": "^15.0.1"
+    "prettier-eslint": "^15.0.1",
+    "typescript": "^5.5.4"
   },
   "packageManager": "yarn@4.1.1"
 }
