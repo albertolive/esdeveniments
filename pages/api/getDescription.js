@@ -35,13 +35,6 @@ async function fetchWithTimeout(url, options = {}, timeout = 25000) {
     });
     clearTimeout(id);
 
-    // Log response details for debugging
-    console.log("Response status:", response.status);
-    console.log(
-      "Response headers:",
-      JSON.stringify(Object.fromEntries(response.headers))
-    );
-
     return response;
   } catch (error) {
     clearTimeout(id);

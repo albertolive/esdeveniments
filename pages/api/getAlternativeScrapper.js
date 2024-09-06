@@ -17,13 +17,15 @@ class ValidationError extends Error {
   }
 }
 
-async function fetchWithScrapingBee(url) {
+async function fetchWithScrapfly(url) {
   try {
-    const response = await axios.get("https://app.scrapingbee.com/api/v1/", {
+    const response = await axios.get("https://api.scrapfly.io/scrape", {
       params: {
-        api_key: process.env.NEXT_PUBLIC_SCRAPINGBEE,
+        key: process.env.NEXT_PUBLIC_SCRAPFLY,
         url: url,
-        render_js: "false",
+        render_js: false,
+        asp: false,
+        country: "es",
       },
     });
 
@@ -34,9 +36,9 @@ async function fetchWithScrapingBee(url) {
       );
     }
 
-    return response.data;
+    return response.data.result.content;
   } catch (error) {
-    console.error("Error in fetchWithScrapingBee:", error);
+    console.error("Error in fetchWithScrapfly:", error);
     throw error;
   }
 }
@@ -54,7 +56,7 @@ export default async function handler(req, res) {
       throw new ValidationError("Item URL is required");
     }
 
-    const html = await fetchWithScrapingBee(itemUrl);
+    const html = await fetchWithScrapfly(itemUrl);
 
     res.status(200).send(html);
   } catch (error) {
