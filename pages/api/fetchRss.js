@@ -1,3 +1,4 @@
+import axios from "axios";
 import { kv } from "@vercel/kv";
 import { load } from "cheerio";
 import Bottleneck from "bottleneck";
@@ -9,7 +10,9 @@ import { calculateDurationInHours } from "@utils/normalize";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
 import createHash from "@utils/createHash";
-import { siteUrl } from "@config/index";
+import { XMLParser } from "fast-xml-parser";
+
+const parser = new XMLParser();
 
 // Configuration
 const CONFIG = {
@@ -29,10 +32,10 @@ function logError(error, town, context) {
   const errorMessage = `Error in ${context} for town ${town || "Unknown"}: ${
     error.message
   }`;
-  console.error(errorMessage);
+  console.error(errorMessage, { stack: error.stack });
   captureException(new Error(errorMessage), {
     tags: { town: town || "Unknown", context },
-    extra: { originalError: error },
+    extra: { originalError: error, stack: error.stack },
   });
 }
 
@@ -64,42 +67,73 @@ async function fetchRSSFeed(
       }
     }
 
-    const edgeApiUrl = new URL("/api/getRss", siteUrl);
-    edgeApiUrl.searchParams.append("rssFeed", rssFeed);
+    const response = await axios.get(rssFeed, { responseType: "arraybuffer" });
 
-    const response = await fetch(edgeApiUrl.toString());
-
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error(
-        `Error fetching rss feed edge. status: ${response.status}`
+        `Failed to fetch Rss data for ${town}: ${response.status}`
       );
     }
 
-    const data = await response.json();
+    let data;
 
-    if (!data || !data.items || !Array.isArray(data.items)) {
-      throw new Error(
-        `Invalid data structure received for ${town}. Expected {items: Array}, got: ${JSON.stringify(
-          data
-        )}`
-      );
+    // Check the Content-Type header of the response
+    if (
+      response.headers["content-type"] &&
+      response.headers["content-type"].includes("application/json")
+    ) {
+      // If the Content-Type is JSON, parse the response data as JSON
+      data = JSON.parse(response.data);
+    } else {
+      // If the Content-Type is not JSON, decode the response data
+      let decoder = new TextDecoder("utf-8");
+      data = decoder.decode(response.data);
+
+      // If the decoded data contains unusual characters, try ISO-8859-1
+      if (data.includes("�")) {
+        decoder = new TextDecoder("iso-8859-1");
+        data = decoder.decode(response.data);
+      }
     }
 
-    const { items } = data;
+    // If data is not an array, it means that it's an RSS feed
+    if (!Array.isArray(data)) {
+      const json = parser.parse(data);
 
+      // Validate the data
+      if (
+        !json ||
+        !json.rss ||
+        !json.rss.channel ||
+        !Array.isArray(json.rss.channel.item)
+      ) {
+        console.log("Invalid RSS data format or no items in feed");
+        return [];
+      }
+
+      data = json.rss.channel.item;
+    }
+
+    // Cache the data
     if (shouldInteractWithKv) {
       try {
         await kv.set(`${env}_${town}_${CONFIG.rssFeedCacheKey}`, {
           timestamp: Date.now(),
-          data: items,
+          data,
         });
       } catch (err) {
-        logError(err, town, "caching RSS feed");
+        console.error(
+          `An error occurred while caching the RSS feed of ${town}: ${err}`
+        );
+        captureException(
+          new Error(`Failed to fetch RSS feed for ${town}: ${err.message}`)
+        );
+        throw new Error(`Failed to cache RSS feed: ${err}`);
       }
     }
 
-    console.log(`Returning ${items.length} items for ${town}`);
-    return items;
+    console.log(`Returning ${data.length} items for ${town}`);
+    return data;
   } catch (err) {
     logError(err, town, "fetching RSS feed");
     return [];
@@ -201,19 +235,19 @@ function getBaseUrl(url) {
 }
 
 // Fetches and decodes HTML content
-async function fetchAndDecodeHtml(url, sanitizeUrl = true, town = "Unknown") {
+async function fetchAndDecodeHtml(url, sanitizeUrl = true, town = "") {
   try {
     const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
-    const edgeApiUrl = new URL("/api/getDescription", siteUrl);
-    edgeApiUrl.searchParams.append("itemUrl", encodeURIComponent(sanitizedUrl));
+    const response = await fetch(sanitizedUrl);
+    const arrayBuffer = await response.arrayBuffer();
 
-    const response = await fetch(edgeApiUrl.toString());
+    let decoder = new TextDecoder("utf-8");
+    let html = decoder.decode(arrayBuffer);
 
-    if (!response.ok) {
-      throw new Error(`Edge API error! status: ${response.status}`);
+    if (html.includes("�")) {
+      decoder = new TextDecoder("iso-8859-1");
+      html = decoder.decode(arrayBuffer);
     }
-
-    const html = await response.text();
 
     return html;
   } catch (error) {
@@ -609,8 +643,10 @@ async function insertEventToCalendar(
     } else {
       console.log("event", event);
     }
+    return true;
   } catch (error) {
     logError(error, town, "insertEventToCalendar");
+    return false;
   }
 }
 
@@ -649,7 +685,7 @@ async function insertItemToCalendarWithRetry(
   token,
   shouldInteractWithKv
 ) {
-  if (!item) return;
+  if (!item) return false;
 
   const MAX_RETRIES = 3;
   let retries = 0;
@@ -664,7 +700,7 @@ async function insertItemToCalendarWithRetry(
         token,
         shouldInteractWithKv
       );
-      return;
+      return true;
     } catch (error) {
       console.error(
         `Error inserting item to calendar on attempt ${retries + 1}:`,
@@ -679,6 +715,8 @@ async function insertItemToCalendarWithRetry(
       await delay(Math.pow(2, retries) * 1000);
     }
   }
+
+  return false;
 }
 
 // Retrieves town data from the constants
@@ -755,8 +793,13 @@ export default async function handler(req, res) {
 
     // Ensure items is an array without full normalization
     if (!Array.isArray(items)) {
-      console.warn(`Items for ${town} is not an array. Attempting to correct.`);
-      items = Array.isArray(items.items) ? items.items : [items];
+      if (items && Array.isArray(items.item)) {
+        items = items.item;
+      } else {
+        console.error(`Unexpected items structure for ${town}:`, items);
+        res.status(500).json({ error: "Unexpected RSS feed structure." });
+        return;
+      }
     }
 
     // Log the structure in production for debugging
