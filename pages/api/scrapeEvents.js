@@ -77,7 +77,7 @@ async function fetchHtmlContent(url, alternativeScrapper = false) {
   let delay = INITIAL_DELAY;
 
   const apiUrl = alternativeScrapper
-    ? `/api/getAlternativeScrapper`
+    ? `/api/getDescription`
     : `/api/getDescription`;
 
   while (retries > 0) {

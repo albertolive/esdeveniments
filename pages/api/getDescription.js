@@ -43,35 +43,6 @@ async function fetchWithTimeout(url, options = {}, timeout = 25000) {
   }
 }
 
-function getDecoder(response) {
-  const contentType = response.headers.get("content-type");
-  const defaultEncoding = "utf-8";
-  const fallbackEncoding = "iso-8859-1";
-
-  if (contentType) {
-    const charset = contentType.match(/charset=([^;]+)/i);
-    if (charset && charset[1]) {
-      return new TextDecoder(charset[1]);
-    }
-  }
-
-  return {
-    decode: function (arrayBuffer) {
-      try {
-        const decodedText = new TextDecoder(defaultEncoding).decode(
-          arrayBuffer
-        );
-        if (decodedText.includes("�")) {
-          throw new Error("Invalid character detected, fallback needed");
-        }
-        return decodedText;
-      } catch (e) {
-        return new TextDecoder(fallbackEncoding).decode(arrayBuffer);
-      }
-    },
-  };
-}
-
 export default async function handler(req) {
   const { searchParams } = new URL(req.url);
   let itemUrl = searchParams.get("itemUrl");
