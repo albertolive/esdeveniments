@@ -76,8 +76,8 @@ function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
 async function fetchHtmlContent(url, selectors) {
   const { encoding } = selectors;
 
-  let retries = 3;
-  let delay = 1000;
+  let retries = RETRY_LIMIT;
+  let delay = INITIAL_DELAY;
 
   while (retries > 0) {
     try {
