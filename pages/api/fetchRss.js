@@ -1,3 +1,4 @@
+import axios from "axios";
 import { kv } from "@vercel/kv";
 import { load } from "cheerio";
 import Bottleneck from "bottleneck";
@@ -9,7 +10,9 @@ import { calculateDurationInHours } from "@utils/normalize";
 import { getAuthToken } from "@lib/auth";
 import { postToGoogleCalendar } from "@lib/apiHelpers";
 import createHash from "@utils/createHash";
-import { siteUrl } from "@config/index";
+import { XMLParser } from "fast-xml-parser";
+
+const parser = new XMLParser();
 
 // Configuration
 const CONFIG = {
@@ -29,10 +32,10 @@ function logError(error, town, context) {
   const errorMessage = `Error in ${context} for town ${town || "Unknown"}: ${
     error.message
   }`;
-  console.error(errorMessage);
-  captureException(new Error(errorMessage), {
+  console.error(errorMessage, { stack: error.stack, town, context });
+  captureException(error, {
     tags: { town: town || "Unknown", context },
-    extra: { originalError: error },
+    extra: { originalError: error, stack: error.stack },
   });
 }
 
@@ -64,44 +67,83 @@ async function fetchRSSFeed(
       }
     }
 
-    const edgeApiUrl = new URL("/api/getRss", siteUrl);
-    edgeApiUrl.searchParams.append("rssFeed", rssFeed);
+    const sanitizedRssFeed = sanitizeUrl(rssFeed);
+    const response = await axios.get(sanitizedRssFeed, {
+      responseType: "arraybuffer",
+    });
 
-    const response = await fetch(edgeApiUrl.toString());
-
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error(
-        `Error fetching rss feed edge. status: ${response.status}`
+        `Failed to fetch RSS data for ${town}: ${response.status}`
       );
     }
 
-    const data = await response.json();
+    let data;
 
-    if (!data || !data.items || !Array.isArray(data.items)) {
-      throw new Error(
-        `Invalid data structure received for ${town}. Expected {items: Array}, got: ${JSON.stringify(
-          data
-        )}`
-      );
+    // Convert arraybuffer to string
+    const decoder = new TextDecoder("utf-8");
+    const textData = decoder.decode(response.data);
+
+    // Check for unusual characters and try ISO-8859-1 if necessary
+    let finalTextData = textData.includes("�")
+      ? new TextDecoder("iso-8859-1").decode(response.data)
+      : textData;
+
+    // Attempt to parse JSON if Content-Type is JSON
+    if (
+      response.headers["content-type"] &&
+      response.headers["content-type"].includes("application/json")
+    ) {
+      try {
+        data = JSON.parse(finalTextData);
+      } catch (parseError) {
+        console.warn(`Failed to parse JSON for ${town}:`, parseError);
+        logError(parseError, town, `parsing JSON from ${sanitizedRssFeed}`);
+        data = null;
+      }
+    } else {
+      data = finalTextData;
     }
 
-    const { items } = data;
+    // If data is not an array, parse as RSS
+    if (!Array.isArray(data)) {
+      const json = parser.parse(data);
 
+      // Validate the data structure
+      if (
+        !json ||
+        !json.rss ||
+        !json.rss.channel ||
+        !Array.isArray(json.rss.channel.item)
+      ) {
+        console.log("Invalid RSS data format or no items in feed");
+        return [];
+      }
+
+      data = json.rss.channel.item;
+    }
+
+    // Cache the data
     if (shouldInteractWithKv) {
       try {
         await kv.set(`${env}_${town}_${CONFIG.rssFeedCacheKey}`, {
           timestamp: Date.now(),
-          data: items,
+          data,
         });
       } catch (err) {
-        logError(err, town, "caching RSS feed");
+        console.error(
+          `An error occurred while caching the RSS feed of ${town}:`,
+          err
+        );
+        logError(err, town, `caching RSS feed for ${sanitizedRssFeed}`);
+        throw err; // Rethrow to let the outer catch handle returning []
       }
     }
 
-    console.log(`Returning ${items.length} items for ${town}`);
-    return items;
+    console.log(`Returning ${data.length} items for ${town}`);
+    return data;
   } catch (err) {
-    logError(err, town, "fetching RSS feed");
+    logError(err, town, `fetching RSS feed from ${rssFeed}`);
     return [];
   }
 }
@@ -112,7 +154,19 @@ async function getProcessedItems(town) {
     const processedItems = await kv.get(
       `${env}_${town}_${CONFIG.processedItemsKey}`
     );
-    return processedItems ? new Map(processedItems) : new Map();
+
+    if (processedItems && Array.isArray(processedItems)) {
+      // New format: array of entries
+      return new Map(processedItems);
+    } else if (processedItems && typeof processedItems === "object") {
+      // Old format: assume it's a plain object, convert it into a Map
+      return new Map(Object.entries(processedItems));
+    }
+
+    console.warn(
+      `Processed items format invalid for ${town}. Expecting array or object.`
+    );
+    return new Map();
   } catch (err) {
     logError(err, town, "getting processed items");
     return new Map();
@@ -123,26 +177,43 @@ async function getProcessedItems(town) {
 async function setProcessedItems(processedItems, town) {
   try {
     console.log(`Setting processed items for ${town}`);
-    await kv.set(`${env}_${town}_${CONFIG.processedItemsKey}`, [
-      ...processedItems,
-    ]);
+    const serializedItems = Array.from(processedItems.entries());
+    await kv.set(`${env}_${town}_${CONFIG.processedItemsKey}`, serializedItems);
   } catch (err) {
     logError(err, town, "setting processed items");
   }
 }
 
 // Removes expired items from processed items
-async function removeExpiredItems(processedItems) {
+async function removeExpiredItems(processedItems, town) {
   const now = Date.now();
-  let removedItemsCount = 0;
-  for (const [item, timestamp] of processedItems) {
-    if (now - timestamp > CONFIG.maxAge) {
-      processedItems.delete(item);
-      removedItemsCount++;
+  const itemsToRemove = [];
+
+  // Handle both Map (new format) and Object (old format)
+  if (processedItems instanceof Map) {
+    for (const [item, timestamp] of processedItems.entries()) {
+      if (now - timestamp > CONFIG.maxAge) {
+        itemsToRemove.push(item);
+      }
+    }
+  } else if (typeof processedItems === "object") {
+    // Old format: Iterate over object keys/values
+    for (const item in processedItems) {
+      const timestamp = processedItems[item];
+      if (now - timestamp > CONFIG.maxAge) {
+        itemsToRemove.push(item);
+      }
     }
   }
+
+  // Remove expired items
+  itemsToRemove.forEach((item) => {
+    processedItems.delete(item); // For Map
+    delete processedItems[item]; // For Object
+  });
+
   console.log(
-    `Removed ${removedItemsCount} expired items from processed items`
+    `Removed ${itemsToRemove.length} expired items from processed items for ${town}`
   );
 }
 
@@ -151,7 +222,7 @@ async function cleanProcessedItems(processedItems, town) {
   console.log(
     `Initial processed items count for ${town}: ${processedItems.size}`
   );
-  await removeExpiredItems(processedItems);
+  await removeExpiredItems(processedItems, town);
   console.log(
     `Final processed items count for ${town}: ${processedItems.size}`
   );
@@ -201,19 +272,19 @@ function getBaseUrl(url) {
 }
 
 // Fetches and decodes HTML content
-async function fetchAndDecodeHtml(url, sanitizeUrl = true, town = "Unknown") {
+async function fetchAndDecodeHtml(url, sanitizeUrl = true, town = "") {
   try {
     const sanitizedUrl = sanitizeUrl ? sanitize(url) : url;
-    const edgeApiUrl = new URL("/api/getDescription", siteUrl);
-    edgeApiUrl.searchParams.append("itemUrl", encodeURIComponent(sanitizedUrl));
+    const response = await fetch(sanitizedUrl);
+    const arrayBuffer = await response.arrayBuffer();
 
-    const response = await fetch(edgeApiUrl.toString());
+    let decoder = new TextDecoder("utf-8");
+    let html = decoder.decode(arrayBuffer);
 
-    if (!response.ok) {
-      throw new Error(`Edge API error! status: ${response.status}`);
+    if (html.includes("�")) {
+      decoder = new TextDecoder("iso-8859-1");
+      html = decoder.decode(arrayBuffer);
     }
-
-    const html = await response.text();
 
     return html;
   } catch (error) {
@@ -253,7 +324,10 @@ async function getDescription(item, region, town) {
     const { sanitizeUrl: shouldSanitizeUrl } = getTownData(region, town);
     const html = await fetchAndDecodeHtml(url, shouldSanitizeUrl, town);
 
-    if (!html) return "";
+    if (!html) {
+      console.warn(`Failed to fetch or decode HTML for ${url}`);
+      return "";
+    }
 
     const $ = load(html);
     let $desc = $(descriptionSelector);
@@ -609,8 +683,10 @@ async function insertEventToCalendar(
     } else {
       console.log("event", event);
     }
+    return true;
   } catch (error) {
     logError(error, town, "insertEventToCalendar");
+    return false;
   }
 }
 
@@ -649,7 +725,7 @@ async function insertItemToCalendarWithRetry(
   token,
   shouldInteractWithKv
 ) {
-  if (!item) return;
+  if (!item) return false;
 
   const MAX_RETRIES = 3;
   let retries = 0;
@@ -664,7 +740,7 @@ async function insertItemToCalendarWithRetry(
         token,
         shouldInteractWithKv
       );
-      return;
+      return true;
     } catch (error) {
       console.error(
         `Error inserting item to calendar on attempt ${retries + 1}:`,
@@ -679,12 +755,23 @@ async function insertItemToCalendarWithRetry(
       await delay(Math.pow(2, retries) * 1000);
     }
   }
+
+  return false;
 }
 
 // Retrieves town data from the constants
 function getTownData(region, town) {
-  const { label: regionLabel, towns } = CITIES_DATA.get(region);
+  const regionData = CITIES_DATA.get(region);
+  if (!regionData) {
+    throw new Error(`Region data not found for ${region}`);
+  }
+
+  const { label: regionLabel, towns } = regionData;
   const townData = towns.get(town);
+  if (!townData) {
+    throw new Error(`Town data not found for ${town} in region ${region}`);
+  }
+
   return { regionLabel, ...townData };
 }
 
@@ -725,6 +812,10 @@ export default async function handler(req, res) {
   try {
     if (!region) throw new Error("Region parameter is missing");
     if (!town) throw new Error("Town parameter is missing");
+    if (typeof region !== "string")
+      throw new Error("Region parameter must be a string");
+    if (typeof town !== "string")
+      throw new Error("Town parameter must be a string");
     if (!CITIES_DATA.has(region)) throw new Error("Region not found");
 
     const { towns } = CITIES_DATA.get(region);
@@ -755,8 +846,13 @@ export default async function handler(req, res) {
 
     // Ensure items is an array without full normalization
     if (!Array.isArray(items)) {
-      console.warn(`Items for ${town} is not an array. Attempting to correct.`);
-      items = Array.isArray(items.items) ? items.items : [items];
+      if (items && Array.isArray(items.item)) {
+        items = items.item;
+      } else {
+        console.error(`Unexpected items structure for ${town}:`, items);
+        res.status(500).json({ error: "Unexpected RSS feed structure." });
+        return;
+      }
     }
 
     // Log the structure in production for debugging

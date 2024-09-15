@@ -1,3 +1,4 @@
+const axios = require("axios");
 const cheerio = require("cheerio");
 const RSS = require("rss");
 const { DateTime } = require("luxon");
@@ -72,33 +73,25 @@ function convertToRSSDate(dateString, timeString, dateRegex, timeRegex) {
   );
 }
 
-async function fetchHtmlContent(url, alternativeScrapper = false) {
+async function fetchHtmlContent(url, selectors) {
+  const { encoding } = selectors;
+
   let retries = RETRY_LIMIT;
   let delay = INITIAL_DELAY;
 
-  const apiUrl = alternativeScrapper
-    ? `/api/getAlternativeScrapper`
-    : `/api/getDescription`;
-
   while (retries > 0) {
     try {
-      const response = await fetch(
-        new URL(
-          `${apiUrl}?itemUrl=${encodeURIComponent(url)}`,
-          siteUrl
-        ).toString()
-      );
-
-      if (!response.ok) {
-        throw new Error(`Edge API error! status: ${response.status}`);
-      }
-
-      return await response.text();
+      const response = await axios.get(url, {
+        responseType: "arraybuffer",
+        timeout: 10000,
+      });
+      const decoder = new TextDecoder(encoding);
+      return decoder.decode(response.data);
     } catch (error) {
       retries--;
       console.error(
         `Error fetching HTML content for ${url}, retries left: ${retries}`,
-        error
+        error.message
       );
       if (retries === 0) {
         throw new Error(
@@ -119,9 +112,8 @@ async function exhaustiveSearch(url, selectors, initialData = {}) {
     timeSelector,
     descriptionSelector,
     imageSelector,
-    alternativeScrapper,
   } = selectors;
-  const html = await fetchHtmlContent(url, alternativeScrapper);
+  const html = await fetchHtmlContent(url, selectors);
   const $ = cheerio.load(html);
 
   const data = {
@@ -279,10 +271,7 @@ async function createEventRss(city) {
   }
 
   try {
-    const html = await fetchHtmlContent(
-      cityData.url,
-      cityData.alternativeScrapper
-    );
+    const html = await fetchHtmlContent(cityData.url, cityData);
     const events = await extractEventDetails(html, cityData);
     return createRssFeed(events, city);
   } catch (error) {
@@ -294,6 +283,7 @@ async function createEventRss(city) {
 
 export default async function handler(req, res) {
   const { city } = req.query;
+
   console.log(`Processing request for city: ${city}`);
 
   if (!city) {
@@ -332,7 +322,9 @@ export default async function handler(req, res) {
         res.status(200).json(results);
       }
     } else {
-      res.status(500).json({ error: `Failed to create RSS feed for ${city}` });
+      res
+        .status(500)
+        .json({ error: "Failed to create RSS feed for all cities" });
     }
   } catch (error) {
     console.error(`Error in scrapeEvents handler for ${city}:`, error);
