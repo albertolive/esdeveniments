@@ -154,11 +154,17 @@ async function getProcessedItems(town) {
     const processedItems = await kv.get(
       `${env}_${town}_${CONFIG.processedItemsKey}`
     );
+
     if (processedItems && Array.isArray(processedItems)) {
+      // New format: array of entries
       return new Map(processedItems);
+    } else if (processedItems && typeof processedItems === "object") {
+      // Old format: assume it's a plain object, convert it into a Map
+      return new Map(Object.entries(processedItems));
     }
+
     console.warn(
-      `Processed items format invalid for ${town}. Expecting array.`
+      `Processed items format invalid for ${town}. Expecting array or object.`
     );
     return new Map();
   } catch (err) {
@@ -182,12 +188,30 @@ async function setProcessedItems(processedItems, town) {
 async function removeExpiredItems(processedItems, town) {
   const now = Date.now();
   const itemsToRemove = [];
-  for (const [item, timestamp] of processedItems) {
-    if (now - timestamp > CONFIG.maxAge) {
-      itemsToRemove.push(item);
+
+  // Handle both Map (new format) and Object (old format)
+  if (processedItems instanceof Map) {
+    for (const [item, timestamp] of processedItems.entries()) {
+      if (now - timestamp > CONFIG.maxAge) {
+        itemsToRemove.push(item);
+      }
+    }
+  } else if (typeof processedItems === "object") {
+    // Old format: Iterate over object keys/values
+    for (const item in processedItems) {
+      const timestamp = processedItems[item];
+      if (now - timestamp > CONFIG.maxAge) {
+        itemsToRemove.push(item);
+      }
     }
   }
-  itemsToRemove.forEach((item) => processedItems.delete(item));
+
+  // Remove expired items
+  itemsToRemove.forEach((item) => {
+    processedItems.delete(item); // For Map
+    delete processedItems[item]; // For Object
+  });
+
   console.log(
     `Removed ${itemsToRemove.length} expired items from processed items for ${town}`
   );
