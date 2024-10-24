@@ -17,7 +17,7 @@ export default function Home({ initialState }) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            siteUrl: "https://www.esdeveniments.cat/",
+            siteUrl: "esdeveniments.cat",
             startDate: "2024-01-01",
             endDate: "2024-12-31",
           }),
