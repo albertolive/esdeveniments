@@ -18,8 +18,8 @@ export default function Home({ initialState }) {
           },
           body: JSON.stringify({
             siteUrl: "https://www.esdeveniments.cat/olost/setmana",
-            startDate: "2023-01-01",
-            endDate: "2023-12-31",
+            startDate: "2024-01-01",
+            endDate: "2024-12-31",
           }),
         });
 
