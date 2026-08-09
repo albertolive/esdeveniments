@@ -77,8 +77,11 @@ export default function NavbarClient({ navigation, labels }: NavbarClientProps) 
     >
       <div className="bg-background py-2 h-14">
         <div className="h-full flex flex-col justify-center">
-          <div className="flex justify-between items-center">
-            <div className="flex flex-1 nav:w-1/2 justify-start items-center py-2 px-3">
+          <div
+            className="flex justify-between items-center px-section-x nav:px-0"
+            data-testid="navbar-top-row"
+          >
+            <div className="flex flex-1 min-w-0 nav:w-1/2 justify-start items-center py-2 nav:px-3">
               <PressableLink
                 href="/"
                 prefetch={false}
@@ -101,11 +104,17 @@ export default function NavbarClient({ navigation, labels }: NavbarClientProps) 
                 Used below the desktop navigation breakpoint; nav items live in the bottom bar.
                 Logout lives on the profile page itself (see ProfileOwnerActions). */}
             <div
-              className="flex nav:hidden justify-end items-center gap-2"
+              className="flex nav:hidden shrink-0 justify-end items-center gap-2"
               data-testid="compact-navbar-actions"
             >
               <LanguageSwitcher />
-              {!isLoading && (
+              {isLoading ? (
+                <div
+                  className="w-11 h-11 shrink-0"
+                  aria-hidden="true"
+                  data-testid="mobile-auth-slot"
+                />
+              ) : (
                 isAuthenticated && user && !user.profileEnrichmentFailed ? (
                   <PressableLink
                     href={profileHref || "/perfil/edita"}
@@ -241,7 +250,7 @@ export default function NavbarClient({ navigation, labels }: NavbarClientProps) 
           </div>
 
           <div
-            className="fixed bottom-0 left-0 right-0 h-16 border-t border-border nav:hidden z-50 shadow-lg"
+            className="mobile-bottom-nav fixed bottom-0 left-0 right-0 border-t border-border nav:hidden z-50 shadow-lg"
             data-testid="mobile-bottom-nav"
           >
             <div

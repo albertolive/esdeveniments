@@ -25,6 +25,40 @@ html {
   font-synthesis-weight: none;
 }
 
+:root {
+  --mobile-nav-height: 4rem;
+  --mobile-nav-safe-area: env(safe-area-inset-bottom, 0px);
+  --mobile-nav-clearance: calc(
+    var(--mobile-nav-height) + var(--mobile-nav-safe-area)
+  );
+}
+
+@media (min-width: 950px) {
+  :root {
+    --mobile-nav-clearance: 0px;
+  }
+}
+
+.mobile-nav-content-safe-area {
+  padding-bottom: var(--mobile-nav-clearance);
+}
+
+.mobile-bottom-nav {
+  box-sizing: border-box;
+  height: var(--mobile-nav-clearance);
+  padding-bottom: var(--mobile-nav-safe-area);
+}
+
+@media (min-width: 950px) {
+  .mobile-nav-content-safe-area {
+    padding-bottom: 3rem;
+  }
+
+  .mobile-bottom-nav {
+    padding-bottom: 0;
+  }
+}
+
 body {
   @apply font-sans antialiased text-base leading-relaxed;
 }
