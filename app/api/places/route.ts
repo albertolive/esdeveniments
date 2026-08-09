@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 import { fetchPlacesAggregatedExternal } from "@lib/api/places-external";
 import { handleApiError } from "@utils/api-error-handler";
 
 export async function GET() {
+  await connection();
   try {
     const data = await fetchPlacesAggregatedExternal();
     return NextResponse.json(data, {

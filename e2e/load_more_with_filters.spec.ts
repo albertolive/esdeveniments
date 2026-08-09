@@ -225,11 +225,11 @@ test.describe("Load more with filters via proxy", () => {
     // First click activates and fetches page=1 (fallbackData is treated as page 0)
     // Set up listener before clicking
     let page1Fetched = false;
-    const responsePromise = page.waitForResponse(
-      (res) => {
-        if (!res.url().includes("/api/events")) return false;
+    const page1Request = page.waitForRequest(
+      (request) => {
+        if (!request.url().includes("/api/events")) return false;
         try {
-          const url = new URL(res.url());
+          const url = new URL(request.url());
           const pageParam = url.searchParams.get("page");
           if (pageParam === "1") {
             page1Fetched = true;
@@ -242,9 +242,8 @@ test.describe("Load more with filters via proxy", () => {
       },
       { timeout: 20000 }
     );
-    
-    await loadMore.click();
-    await responsePromise;
+
+    await Promise.all([page1Request, loadMore.click()]);
     expect(page1Fetched).toBe(true);
     await expect(page.getByTestId("appended-list")).toContainText(
       "E2E Event 3"
@@ -254,15 +253,14 @@ test.describe("Load more with filters via proxy", () => {
     );
 
     // Second click fetches page=2 and shows event 5, then button disappears
-    const responsePromise2 = page.waitForResponse(
-      (res) => {
-        const url = res.url();
+    const page2Request = page.waitForRequest(
+      (request) => {
+        const url = request.url();
         return url.includes("/api/events") && url.includes("page=2");
       },
       { timeout: 15000 }
     );
-    await loadMore.click();
-    await responsePromise2;
+    await Promise.all([page2Request, loadMore.click()]);
     // Ensure the last page item appears
     await expect(page.getByTestId("appended-list")).toContainText(
       "E2E Event 5"

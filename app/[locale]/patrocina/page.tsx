@@ -1,4 +1,4 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import { Link } from "@i18n/routing";
 import PricingSectionClient from "@components/ui/sponsor/PricingSectionClient";
@@ -13,8 +13,6 @@ import { locale as rootLocale } from "next/root-params";
 import type { AppLocale } from "types/i18n";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = (await rootLocale()) as AppLocale;
-  setRequestLocale(locale);
   const t = await getTranslations("Sponsorship");
 
   return {
@@ -29,7 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PatrocinaPage() {
   const locale = (await rootLocale()) as AppLocale;
-  setRequestLocale(locale);
 
   const t = await getTranslations("Sponsorship");
   const tComponents = await getTranslations("Components");

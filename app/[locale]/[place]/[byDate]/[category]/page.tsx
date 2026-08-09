@@ -35,6 +35,7 @@ import { toLocalDateString } from "@utils/helpers";
 import { twoWeeksDefault, getDateRangeFromByDate } from "@lib/dates";
 import { getTranslations } from "next-intl/server";
 import { redirect, notFound } from "next/navigation";
+import { connection } from "next/server";
 import { locale as rootLocale } from "next/root-params";
 import { toLocalizedUrl } from "@utils/i18n-seo";
 import type { AppLocale } from "types/i18n";
@@ -134,6 +135,10 @@ export default async function FilteredPage({
 }: {
   params: Promise<{ place: string; byDate: string; category: string }>;
 }) {
+  // Date filters depend on the request time. Opt out of cacheComponents
+  // prerendering before any work can evaluate the current date.
+  await connection();
+
   // Parallelize independent operations: params, locale, and categories fetch.
   const [resolvedParams, locale, categoriesResult] = await Promise.all([
     params,

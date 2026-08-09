@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getTranslations } from "next-intl/server";
+import { getRouteTranslations } from "@utils/route-translations";
 import {
   GooglePlaceResponse,
   GooglePlacesNearbyRequest,
@@ -11,14 +11,16 @@ import {
   OpeningSegment,
 } from "types/api/restaurant";
 import { handleApiError } from "@utils/api-error-handler";
+import { getLocaleSafely } from "@utils/i18n-seo";
 import {
   buildNearbyCacheKey,
   nearbySearchCenter,
 } from "@lib/places/nearby-cache-key";
 import { cacheGetJson, cacheSetJson } from "@lib/cache/redis-client";
 
-export async function GET(request: NextRequest) {
-  const t = await getTranslations("Api.PlacesNearby");
+export async function GET(request: NextRequest): Promise<Response> {
+  const locale = await getLocaleSafely();
+  const t = await getRouteTranslations(locale, "App.PlacesNearby");
   const { searchParams } = new URL(request.url);
   const latStr = searchParams.get("lat");
   const lngStr = searchParams.get("lng");

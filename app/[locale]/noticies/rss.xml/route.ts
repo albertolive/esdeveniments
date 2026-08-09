@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { connection } from "next/server";
+import { getRouteTranslations } from "@utils/route-translations";
 import { siteUrl } from "@config/index";
 import { Feed } from "feed";
 import { fetchNews } from "@lib/api/news";
@@ -6,8 +7,9 @@ import { getLocaleSafely, toLocalizedUrl } from "@utils/i18n-seo";
 import { localeToHrefLang } from "types/i18n";
 
 export async function GET() {
+  await connection();
   const locale = await getLocaleSafely();
-  const t = await getTranslations({ locale, namespace: "App.NewsRss" });
+  const t = await getRouteTranslations(locale, "App.NewsRss");
   const language = localeToHrefLang[locale] ?? locale;
   const feed = new Feed({
     id: toLocalizedUrl("/noticies", locale),

@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { siteUrl } from "@config/index";
 import { NEWS_HUBS } from "@utils/constants";
 import { fetchNews } from "@lib/api/news";
@@ -6,6 +7,7 @@ import type { SitemapField } from "types/sitemap";
 import { buildAlternateLinks } from "@utils/i18n-seo";
 
 export async function GET() {
+  await connection();
   // Include news list pages and a rolling window of article detail URLs per hub
   const listEntries: SitemapField[] = NEWS_HUBS.map((hub) => {
     const loc = `${siteUrl}/noticies/${hub.slug}`;

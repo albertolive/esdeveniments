@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 import { fetchRegionsOptionsExternal } from "@lib/api/regions-external";
 import { handleApiError } from "@utils/api-error-handler";
 
 export async function GET() {
+  await connection();
   try {
     const data = await fetchRegionsOptionsExternal();
     return NextResponse.json(data, {

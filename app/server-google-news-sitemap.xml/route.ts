@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { siteUrl } from "@config/index";
 import { NEWS_HUBS } from "@utils/constants";
 import { fetchNews, fetchNewsBySlug } from "@lib/api/news";
@@ -47,6 +48,7 @@ function buildNewsSitemap(
 }
 
 export async function GET() {
+  await connection();
   const now = Date.now();
   const cutoffMs = 48 * 60 * 60 * 1000; // 48 hours
   const candidates: {

@@ -7,7 +7,7 @@ import { captureException } from "@sentry/nextjs";
 import { escapeXml } from "@utils/xml-escape";
 import type { RssEvent } from "types/common";
 import { EventSummaryResponseDTO } from "types/api/event";
-import { getTranslations } from "next-intl/server";
+import { getRouteTranslations } from "@utils/route-translations";
 import { resolveLocaleFromHeaders, toLocalizedUrl } from "@utils/i18n-seo";
 import { DEFAULT_LOCALE, localeToHrefLang, type AppLocale } from "types/i18n";
 
@@ -87,7 +87,7 @@ const buildFeed = async (
   const defaultImage = `${siteUrl}/static/images/logo-seo-meta.webp`;
   const { label: regionLabel } = await getPlaceTypeAndLabel(region);
   const { label: townLabel } = await getPlaceTypeAndLabel(town);
-  const t = await getTranslations("Utils.Rss");
+  const t = await getRouteTranslations(locale, "Utils.Rss");
   const placeLabel = townLabel || regionLabel || "Catalunya";
   const feedTitle = t("feedTitle", { site: SITE_NAME, place: placeLabel });
   const feedDescription = t("feedDescription", {
@@ -163,8 +163,10 @@ export async function GET(request: NextRequest) {
   return new Response(feed.rss2(), {
     headers: {
       "Content-Type": "text/xml; charset=utf-8",
-      // Enable caching at the edge/CDN
+      // The feed title and localized URLs depend on request locale. Keep the
+      // public edge cache separated for each locale header.
       "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
+      Vary: "x-next-intl-locale, x-pathname",
     },
     status: 200,
   });

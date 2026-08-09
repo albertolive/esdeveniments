@@ -33,6 +33,7 @@ import {
 } from "@utils/url-filters";
 import { buildFallbackUrlForInvalidPlace } from "@utils/url-filters";
 import { redirect, notFound } from "next/navigation";
+import { connection } from "next/server";
 import {
   validatePlaceOrThrow,
   validatePlaceForMetadata,
@@ -137,6 +138,10 @@ export default async function ByDatePage({
 }: {
   params: Promise<{ place: string; byDate: string }>;
 }) {
+  // Date filters depend on the request time. Opt out of cacheComponents
+  // prerendering before any work can evaluate the current date.
+  await connection();
+
   // Parallelize independent operations: params, locale, and categories fetch.
   const [resolvedParams, locale, categoriesResult] = await Promise.all([
     params,

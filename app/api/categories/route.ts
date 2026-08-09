@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 import { fetchCategoriesExternal } from "@lib/api/categories-external";
 import { handleApiError } from "@utils/api-error-handler";
 
 export async function GET() {
+  await connection();
   try {
     const data = await fetchCategoriesExternal();
     return NextResponse.json(data, {

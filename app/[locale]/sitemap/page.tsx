@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { siteUrl } from "@config/index";
 import { fetchRegions } from "@lib/api/regions";
@@ -39,6 +40,10 @@ async function getData(): Promise<{
 }
 
 export default async function Page() {
+  // The data fetch signs an outbound request with the current timestamp.
+  // Establish the dynamic boundary before starting it so cacheComponents does
+  // not attempt to prerender a request-time HMAC value.
+  await connection();
   const dataPromise = getData();
   const locale = (await rootLocale()) as AppLocale;
   const tAppPromise = getTranslations({ locale, namespace: "App.Sitemap" });

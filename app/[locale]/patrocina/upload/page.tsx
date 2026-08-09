@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { locale as rootLocale } from "next/root-params";
-import type { AppLocale } from "types/i18n";
+import { getTranslations } from "next-intl/server";
 import SponsorUploadPageClient from "@components/ui/sponsor/SponsorUploadPageClient";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = (await rootLocale()) as AppLocale;
-  setRequestLocale(locale);
   const t = await getTranslations("Sponsorship");
   return {
     title: t("uploadPage.meta.title"),
@@ -30,9 +26,6 @@ function UploadPageSkeleton() {
 }
 
 export default async function PatrocinaUploadPage() {
-  const locale = (await rootLocale()) as AppLocale;
-  setRequestLocale(locale);
-
   return (
     <main className="min-h-screen bg-background py-section-y px-section-x">
       <div className="max-w-5xl mx-auto">

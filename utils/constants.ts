@@ -1,6 +1,5 @@
 import { PHASE_PRODUCTION_BUILD } from "next/constants";
 import type { ByDateOption, DateRangeShortcut } from "types/common";
-import { getTranslations } from "next-intl/server";
 import type { CategorySummaryResponseDTO } from "types/api/category";
 import { DEFAULT_LOCALE, type AppLocale } from "types/i18n";
 import caMessages from "../messages/ca.json";
@@ -344,18 +343,38 @@ export function getCategoryDisplayName(
 }
 
 // --- News UI constants ---
-export async function getNewsHubs(): Promise<{ slug: string; name: string }[]> {
-  const t = await getTranslations("Components.Constants.newsHubs");
+function getConstantTranslation(
+  locale: AppLocale,
+  namespace: string,
+  key: string,
+): string {
+  const messages = constantsLabelsByLocale[locale] ?? defaultConstantsLabels;
+  const translated = [namespace, ...key.split(".")].reduce<unknown>(
+    (current, segment) =>
+      current && typeof current === "object" && segment in current
+        ? (current as Record<string, unknown>)[segment]
+        : undefined,
+    messages,
+  );
+  return typeof translated === "string" ? translated : `${namespace}.${key}`;
+}
+
+export async function getNewsHubs(
+  locale: AppLocale = DEFAULT_LOCALE,
+): Promise<{ slug: string; name: string }[]> {
   return NEWS_HUBS.map((hub) => ({
     slug: hub.slug,
-    name: t(hub.slug),
+    name: getConstantTranslation(
+      locale,
+      "newsHubs",
+      hub.slug,
+    ),
   }));
 }
 
-export async function getNearbyPlacesByHub(): Promise<
-  Record<string, { slug: string; name: string }[]>
-> {
-  const t = await getTranslations("Components.Constants.nearbyHubs");
+export async function getNearbyPlacesByHub(
+  locale: AppLocale = DEFAULT_LOCALE,
+): Promise<Record<string, { slug: string; name: string }[]>> {
   return Object.fromEntries(
     Object.entries(
       defaultConstantsLabels.nearbyHubs as Record<
@@ -366,7 +385,11 @@ export async function getNearbyPlacesByHub(): Promise<
       hub,
       Object.entries(places).map(([slug]) => ({
         slug,
-        name: t(`${hub}.${slug}`),
+        name: getConstantTranslation(
+          locale,
+          "nearbyHubs",
+          `${hub}.${slug}`,
+        ),
       })),
     ]),
   );

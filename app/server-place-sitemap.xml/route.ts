@@ -1,9 +1,11 @@
+import { connection } from "next/server";
 import { siteUrl } from "@config/index";
 import { fetchPlaces } from "@lib/api/places";
 import { buildSitemapIndex } from "@utils/sitemap";
 import { SITEMAP_PLACES_PER_CHUNK } from "@utils/constants";
 
 export async function GET() {
+  await connection();
   // Sitemap index: references chunked place sitemaps to keep response sizes manageable
   // Each chunk handles a subset of places × dates × categories
   const places = await fetchPlaces();

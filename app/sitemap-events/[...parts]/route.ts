@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { siteUrl } from "@config/index";
 import { fetchEvents } from "@lib/api/events";
 import { EventSummaryResponseDTO } from "types/api/event";
@@ -16,6 +17,7 @@ export async function GET(
   _request: Request,
   context: SitemapPartsRouteContext
 ) {
+  await connection();
   const { parts } = await context.params;
 
   // Expected URL: /sitemap-events/1.xml, /sitemap-events/2.xml, etc.

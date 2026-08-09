@@ -1,12 +1,12 @@
 import { generateHmac } from "@utils/hmac";
-import { connection } from "next/server";
 
 export async function fetchWithHmac(
   url: string,
   options: RequestInit & { skipBodySigning?: boolean; timeout?: number } = {}
 ): Promise<Response> {
-  // Signal dynamic rendering before accessing current time (required by cacheComponents)
-  await connection();
+  // This timestamp signs the outbound request; it does not make the rendering
+  // result request-dependent. Dynamic rendering belongs at route/component
+  // boundaries, not in this shared transport helper.
   const timestamp = Date.now();
   let bodyToSign = "";
   let normalizedBody: BodyInit | null | undefined = options.body;
