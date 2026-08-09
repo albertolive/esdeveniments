@@ -163,8 +163,10 @@ export async function GET(request: NextRequest) {
   return new Response(feed.rss2(), {
     headers: {
       "Content-Type": "text/xml; charset=utf-8",
-      // Enable caching at the edge/CDN
+      // The feed title and localized URLs depend on request locale. Keep the
+      // public edge cache separated for each locale header.
       "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
+      Vary: "x-next-intl-locale, x-pathname",
     },
     status: 200,
   });
