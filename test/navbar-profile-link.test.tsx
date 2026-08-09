@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import type { AuthUser } from "types/auth";
 import type { NavbarLabels } from "types/props";
@@ -77,11 +77,10 @@ describe("NavbarClient profile link", () => {
       profileCompleted: false,
     };
     render(<NavbarClient navigation={[]} labels={labels} />);
-    fireEvent.click(screen.getByTestId("user-avatar-button"));
-
     expect(
-      screen.getByText("El meu perfil").closest("a")?.getAttribute("href")
+      screen.getByTestId("desktop-avatar-link").getAttribute("href")
     ).toBe("/perfil/edita");
+    expect(screen.queryByTestId("user-dropdown-menu")).toBeNull();
     expect(
       screen.getByTestId("mobile-avatar-link").getAttribute("href")
     ).toBe("/perfil/edita");
@@ -96,11 +95,10 @@ describe("NavbarClient profile link", () => {
       profileCompleted: true,
     };
     render(<NavbarClient navigation={[]} labels={labels} />);
-    fireEvent.click(screen.getByTestId("user-avatar-button"));
-
     expect(
-      screen.getByText("El meu perfil").closest("a")?.getAttribute("href")
+      screen.getByTestId("desktop-avatar-link").getAttribute("href")
     ).toBe("/perfil/alba");
+    expect(screen.queryByTestId("user-dropdown-menu")).toBeNull();
     expect(
       screen.getByTestId("mobile-avatar-link").getAttribute("href")
     ).toBe("/perfil/alba");
@@ -115,11 +113,10 @@ describe("NavbarClient profile link", () => {
       profileCompleted: undefined,
     };
     render(<NavbarClient navigation={[]} labels={labels} />);
-    fireEvent.click(screen.getByTestId("user-avatar-button"));
-
     expect(
-      screen.getByText("El meu perfil").closest("a")?.getAttribute("href")
+      screen.getByTestId("desktop-avatar-link").getAttribute("href")
     ).toBe("/perfil/alba");
+    expect(screen.queryByTestId("user-dropdown-menu")).toBeNull();
     expect(
       screen.getByTestId("mobile-avatar-link").getAttribute("href")
     ).toBe("/perfil/alba");
@@ -144,7 +141,22 @@ describe("NavbarClient profile link", () => {
     ).toBe("/perfil/edita");
   });
 
-  it("falls back to the re-auth link on mobile when the session is only partially enriched", () => {
+  it("uses the same edit-profile fallback on desktop when no usable slug exists", () => {
+    authUser = {
+      id: OWNER_ID,
+      email: "a@b.com",
+      name: "a@b.com",
+      username: "a@b.com",
+      profileCompleted: true,
+    };
+    render(<NavbarClient navigation={[]} labels={labels} />);
+
+    expect(
+      screen.getByTestId("desktop-avatar-link").getAttribute("href")
+    ).toBe("/perfil/edita");
+  });
+
+  it("falls back to the desktop login link when the session is only partially enriched", () => {
     authUser = {
       id: OWNER_ID,
       email: "a@b.com",
@@ -158,7 +170,11 @@ describe("NavbarClient profile link", () => {
     expect(
       screen.getByTestId("mobile-login-link").getAttribute("href")
     ).toBe("/iniciar-sessio");
+    expect(
+      screen.getByTestId("desktop-login-link").getAttribute("href")
+    ).toBe("/iniciar-sessio");
     expect(screen.queryByTestId("mobile-avatar-link")).toBeNull();
+    expect(screen.queryByTestId("desktop-avatar-link")).toBeNull();
   });
 
   it("shows the mobile login link, not the avatar, when signed out", () => {
@@ -169,7 +185,7 @@ describe("NavbarClient profile link", () => {
       screen.getByTestId("mobile-login-link").getAttribute("href")
     ).toBe("/iniciar-sessio");
     expect(screen.queryByTestId("mobile-avatar-link")).toBeNull();
-    expect(screen.queryByTestId("user-avatar-button")).toBeNull();
+    expect(screen.queryByTestId("desktop-avatar-link")).toBeNull();
   });
 });
 
