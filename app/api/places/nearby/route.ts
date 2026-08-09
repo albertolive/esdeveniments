@@ -18,7 +18,7 @@ import {
 } from "@lib/places/nearby-cache-key";
 import { cacheGetJson, cacheSetJson } from "@lib/cache/redis-client";
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<Response> {
   const locale = await getLocaleSafely();
   const t = await getRouteTranslations(locale, "App.PlacesNearby");
   const { searchParams } = new URL(request.url);

@@ -2,6 +2,7 @@ import {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
   type AppLocale,
+  type RouteTranslator,
 } from "types/i18n";
 
 const messagesLoaders: Record<
@@ -43,7 +44,7 @@ function formatMessage(
 export async function getRouteTranslations(
   locale: AppLocale = DEFAULT_LOCALE,
   namespace?: string,
-) {
+): Promise<RouteTranslator> {
   const resolvedLocale = SUPPORTED_LOCALES.includes(locale)
     ? locale
     : DEFAULT_LOCALE;

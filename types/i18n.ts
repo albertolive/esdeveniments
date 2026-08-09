@@ -10,6 +10,11 @@ export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 export const LOCALE_PREFIX_STRATEGY = "as-needed" as const;
 
+export type RouteTranslator = (
+  key: string,
+  values?: Record<string, string | number>,
+) => string;
+
 export const localeToOgLocale: Record<AppLocale, string> = {
   ca: "ca-ES",
   es: "es-ES",
