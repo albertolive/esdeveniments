@@ -82,7 +82,7 @@ describe("NavbarClient avatar", () => {
     const navbar = document.getElementById("site-navbar");
 
     expect(logo).toHaveClass("!h-auto", "aspect-[190/18]");
-    expect(navbar).toHaveClass("nav:sticky");
+    expect(navbar).toHaveClass("nav:sticky", "site-navbar-safe-area");
     expect(screen.getByTestId("navbar-top-row")).toHaveClass("px-section-x", "nav:px-0");
     expect(screen.getByTestId("compact-navbar-actions")).toHaveClass("nav:hidden", "shrink-0");
     expect(screen.getByTestId("desktop-navbar-actions")).toHaveClass("hidden", "nav:flex");

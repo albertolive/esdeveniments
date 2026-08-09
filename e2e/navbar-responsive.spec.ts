@@ -169,6 +169,7 @@ test.describe("Responsive navbar", () => {
     await page.setViewportSize({ width: 949, height: 844 });
     await page.goto("/", { waitUntil: "domcontentloaded", timeout: 90000 });
 
+    const navbar = page.locator("#site-navbar");
     const compactActions = page.getByTestId("compact-navbar-actions");
     const desktopActions = page.getByTestId("desktop-navbar-actions");
 
@@ -179,6 +180,7 @@ test.describe("Responsive navbar", () => {
 
     await expect(compactActions).toBeHidden();
     await expect(desktopActions).toBeVisible();
+    await expect(navbar).toHaveClass(/site-navbar-safe-area/);
 
     const desktopClearance = await page.evaluate(() => {
       const rootStyles = getComputedStyle(document.documentElement);
