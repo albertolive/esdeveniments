@@ -40,8 +40,12 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
 
   // --- Deployment Configuration ---
-  // Required for Docker/Coolify deployment (standalone server.js output)
-  output: "standalone",
+  // Docker/Coolify needs the minimal standalone server bundle. Vercel has its
+  // own output tracing and post-build packager; leaving `output: "standalone"`
+  // enabled there makes its onBuildComplete step look for a missing
+  // `.next/next-server.js.nft.json` file. Omit the option on Vercel so it uses
+  // the platform-native Next.js output.
+  ...(isVercel ? {} : { output: "standalone" }),
   outputFileTracingIncludes: {
     "/*": ["./cache-handler.mjs"],
   },
