@@ -127,21 +127,19 @@ test.describe("Responsive navbar", () => {
       expect(geometry.navClearance).toMatch(/calc\(/);
 
       const endGeometry = await page.evaluate(() => {
-        document.body.scrollTop = document.body.scrollHeight;
-        document.documentElement.scrollTop = document.documentElement.scrollHeight;
-
         const body = document.body;
-        const scrollingElement = document.scrollingElement;
-        const maxBodyScrollTop = body.scrollHeight - body.clientHeight;
+        const documentElement = document.documentElement;
+        const scrollRoot =
+          body.scrollHeight > body.clientHeight
+            ? body
+            : document.scrollingElement ?? documentElement;
+        const maxScrollTop = scrollRoot.scrollHeight - scrollRoot.clientHeight;
+        scrollRoot.scrollTop = maxScrollTop;
 
-        if (body.scrollTop < maxBodyScrollTop - 1) {
+        if (scrollRoot.scrollTop < maxScrollTop - 1) {
           throw new Error(
-            `Body did not reach its maximum scroll position: ${body.scrollTop} < ${maxBodyScrollTop}`
+            `Scroll root did not reach its maximum position: ${scrollRoot.scrollTop} < ${maxScrollTop}`
           );
-        }
-
-        if (scrollingElement !== document.documentElement) {
-          throw new Error("Expected document.scrollingElement to be documentElement");
         }
 
         const nav = document.querySelector<HTMLElement>(

@@ -73,7 +73,7 @@ export default function NavbarClient({ navigation, labels }: NavbarClientProps) 
   return (
     <nav
       id="site-navbar"
-      className="w-full bg-background nav:sticky nav:top-0 z-50 border-b border-border/50 nav:shadow-sm nav:backdrop-blur-sm"
+      className="site-navbar-safe-area w-full bg-background nav:sticky nav:top-0 z-50 border-b border-border/50 nav:shadow-sm nav:backdrop-blur-sm"
     >
       <div className="bg-background py-2 h-14">
         <div className="h-full flex flex-col justify-center">
