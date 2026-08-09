@@ -4,7 +4,6 @@ import { locale as rootLocale } from "next/root-params";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import {
   getMessages,
-  setRequestLocale,
   getTranslations,
 } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -130,9 +129,6 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
-
-  // Distribute the locale to all server components in this request
-  setRequestLocale(locale);
 
   return (
     <html lang={locale}>

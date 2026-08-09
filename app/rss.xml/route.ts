@@ -7,7 +7,7 @@ import { captureException } from "@sentry/nextjs";
 import { escapeXml } from "@utils/xml-escape";
 import type { RssEvent } from "types/common";
 import { EventSummaryResponseDTO } from "types/api/event";
-import { getTranslations } from "next-intl/server";
+import { getRouteTranslations } from "@utils/route-translations";
 import { resolveLocaleFromHeaders, toLocalizedUrl } from "@utils/i18n-seo";
 import { DEFAULT_LOCALE, localeToHrefLang, type AppLocale } from "types/i18n";
 
@@ -87,7 +87,7 @@ const buildFeed = async (
   const defaultImage = `${siteUrl}/static/images/logo-seo-meta.webp`;
   const { label: regionLabel } = await getPlaceTypeAndLabel(region);
   const { label: townLabel } = await getPlaceTypeAndLabel(town);
-  const t = await getTranslations("Utils.Rss");
+  const t = await getRouteTranslations(locale, "Utils.Rss");
   const placeLabel = townLabel || regionLabel || "Catalunya";
   const feedTitle = t("feedTitle", { site: SITE_NAME, place: placeLabel });
   const feedDescription = t("feedDescription", {

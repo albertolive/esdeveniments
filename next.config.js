@@ -91,7 +91,6 @@ const nextConfig = {
 
   // --- Experimental Features ---
   experimental: {
-    rootParams: true,
     scrollRestoration: true,
     inlineCss: true,
     // Tree-shake heavy libraries to reduce bundle size

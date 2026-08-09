@@ -1,3 +1,4 @@
+import * as rootParams from "next/root-params";
 import { getRequestConfig } from "next-intl/server";
 import type { AbstractIntlMessages } from "next-intl";
 
@@ -22,12 +23,12 @@ const messagesLoaders: Record<AppLocale, () => Promise<AbstractIntlMessages>> = 
     ),
 };
 
-export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale;
-
-  const resolvedLocale = locale && SUPPORTED_LOCALES.includes(locale as AppLocale)
-    ? (locale as AppLocale)
-    : DEFAULT_LOCALE;
+export default getRequestConfig(async ({ locale: explicitLocale }) => {
+  const locale = explicitLocale ?? (await rootParams.locale());
+  const resolvedLocale =
+    locale && SUPPORTED_LOCALES.includes(locale as AppLocale)
+      ? (locale as AppLocale)
+      : DEFAULT_LOCALE;
 
   const messages = await messagesLoaders[resolvedLocale]();
 
