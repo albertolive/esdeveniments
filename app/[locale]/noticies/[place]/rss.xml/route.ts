@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { getRouteTranslations } from "@utils/route-translations";
 import { siteUrl } from "@config/index";
 import { Feed } from "feed";
@@ -9,6 +10,7 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ place: string }> }
 ) {
+  await connection();
   const { place } = await params;
   const locale = await getLocaleSafely();
   const t = await getRouteTranslations(locale, "App.NewsPlaceRss");

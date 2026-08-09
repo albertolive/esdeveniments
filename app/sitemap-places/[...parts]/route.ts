@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { siteUrl } from "@config/index";
 import { fetchPlaces } from "@lib/api/places";
 import { fetchCategories } from "@lib/api/categories";
@@ -57,6 +58,7 @@ export async function GET(
   _request: Request,
   context: SitemapPartsRouteContext,
 ) {
+  await connection();
   const { parts } = await context.params;
 
   // Expected URL: /sitemap-places/1.xml, /sitemap-places/2.xml, etc.

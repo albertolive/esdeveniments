@@ -132,6 +132,9 @@ async function HomeContent({
 }: {
   locale: AppLocale;
 }): Promise<JSX.Element> {
+  // Establish the dynamic boundary before starting HMAC-backed data promises.
+  // The shared transport helper intentionally remains request-context agnostic.
+  await connection();
   const categorizedEventsPromise = getCategorizedEvents(5);
   const categoriesPromise = fetchCategories();
 

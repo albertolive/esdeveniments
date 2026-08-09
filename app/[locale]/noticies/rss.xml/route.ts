@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { getRouteTranslations } from "@utils/route-translations";
 import { siteUrl } from "@config/index";
 import { Feed } from "feed";
@@ -6,6 +7,7 @@ import { getLocaleSafely, toLocalizedUrl } from "@utils/i18n-seo";
 import { localeToHrefLang } from "types/i18n";
 
 export async function GET() {
+  await connection();
   const locale = await getLocaleSafely();
   const t = await getRouteTranslations(locale, "App.NewsRss");
   const language = localeToHrefLang[locale] ?? locale;
