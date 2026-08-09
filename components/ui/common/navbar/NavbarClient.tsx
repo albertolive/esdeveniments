@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { usePathname } from "next/navigation";
+import Image from "next/image";
+
 import {
   PlusIcon,
   HomeIcon,
@@ -11,7 +11,6 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 const PlusSmIcon = PlusIcon;
-import Image from "next/image";
 import ActiveLink from "@components/ui/common/link";
 import PressableLink from "@components/ui/primitives/PressableLink";
 import { useAuth } from "@components/hooks/useAuth";
@@ -22,10 +21,7 @@ import type { Href } from "types/common";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function NavbarClient({ navigation, labels }: NavbarClientProps) {
-  const pathname = usePathname();
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const userMenuRef = useRef<HTMLDivElement>(null);
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const logoAlt = labels.logoAlt?.trim() || "Esdeveniments";
 
   // Build a URL-safe slug for the /perfil/{slug} URL. Prefer the
@@ -47,28 +43,6 @@ export default function NavbarClient({ navigation, labels }: NavbarClientProps) 
       : profileSlug
         ? `/perfil/${encodeURIComponent(profileSlug)}`
         : null;
-
-  // Close the desktop user dropdown when pathname changes (navigation occurs)
-  // This is a legitimate effect that synchronizes state with an external system (route)
-  const previousPathname = useRef(pathname);
-  useEffect(() => {
-    if (previousPathname.current !== pathname) {
-      previousPathname.current = pathname;
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Syncing menu state with route changes is intentional
-      setIsUserMenuOpen(false);
-    }
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!isUserMenuOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
-        setIsUserMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isUserMenuOpen]);
 
   return (
     <nav
@@ -168,76 +142,32 @@ export default function NavbarClient({ navigation, labels }: NavbarClientProps) 
                 ))}
               </div>
 
-              {/* Desktop auth: avatar dropdown with profile + logout */}
+              {/* Desktop auth: one-click profile navigation, matching the compact header. */}
               {!isLoading && (
-                isAuthenticated && user ? (
-                  <div className="relative" ref={userMenuRef}>
-                    <button
-                      type="button"
-                      onClick={() => setIsUserMenuOpen((prev) => !prev)}
-                      className="flex-center w-9 h-9 rounded-full bg-primary text-white text-sm font-bold hover:opacity-90 transition-interactive focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                      aria-label={labels.userMenu}
-                      aria-expanded={isUserMenuOpen}
-                      data-testid="user-avatar-button"
-                    >
-                      {user.avatarUrl ? (
-                        // bg-background: the button behind this is bg-primary (for
-                        // the fallback-letter case). A transparent-background
-                        // upload (e.g. a logo) would otherwise let that red bleed
-                        // through instead of showing the actual image cleanly.
-                        <img
-                          src={user.avatarUrl}
-                          alt=""
-                          className="w-9 h-9 rounded-full object-cover bg-background"
-                        />
-                      ) : (
-                        (user.name || user.email).charAt(0).toUpperCase()
-                      )}
-                    </button>
-                    {isUserMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-48 card-bordered card-body shadow-md bg-background z-50 rounded-lg" data-testid="user-dropdown-menu">
-                        <p className="body-small text-foreground/60 truncate mb-2">
-                          {user.name || user.email}
-                        </p>
-                        {/* Surface "incomplete session" when the id_token is
-                              valid but the backend rejected our Bearer (or was
-                              unreachable). Without this, the user sees an empty
-                              dropdown — no profile link, only logout — and
-                              can't tell why. Clicking logout re-enters the
-                              Logto flow and may fix a stale cookie. */}
-                        {user.profileEnrichmentFailed && (
-                          <p
-                            className="body-small text-error mb-1 py-1"
-                            data-testid="navbar-session-warning"
-                            role="status"
-                            aria-live="polite"
-                          >
-                            {labels.incompleteProfile}
-                          </p>
-                        )}
-                        {profileHref && !user.profileEnrichmentFailed && (
-                          <ActiveLink
-                            href={profileHref}
-                            className="block w-full text-left label font-semibold text-foreground hover:text-primary transition-interactive py-1"
-                          >
-                            {labels.myProfile}
-                          </ActiveLink>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => { logout(); setIsUserMenuOpen(false); }}
-                          className="w-full text-left label font-semibold text-foreground hover:text-primary transition-interactive py-1"
-                          data-analytics-action="navbar_logout_desktop"
-                        >
-                          {labels.logout}
-                        </button>
-                      </div>
+                isAuthenticated && user && !user.profileEnrichmentFailed ? (
+                  <PressableLink
+                    href={profileHref || "/perfil/edita"}
+                    prefetch={false}
+                    variant="inline"
+                    className="flex-center w-9 h-9 rounded-full bg-primary text-white text-sm font-bold hover:opacity-90 transition-interactive focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    aria-label={labels.myProfile}
+                    data-testid="desktop-avatar-link"
+                  >
+                    {user.avatarUrl ? (
+                      <img
+                        src={user.avatarUrl}
+                        alt=""
+                        className="w-9 h-9 rounded-full object-cover bg-background"
+                      />
+                    ) : (
+                      (user.name || user.email).charAt(0).toUpperCase()
                     )}
-                  </div>
+                  </PressableLink>
                 ) : (
                   <ActiveLink
                     href="/iniciar-sessio"
                     className="btn-outline label font-semibold whitespace-nowrap"
+                    data-testid="desktop-login-link"
                     data-analytics-action="navbar_login_desktop"
                   >
                     {labels.login}

@@ -108,14 +108,15 @@ describe("NavbarClient avatar", () => {
 
   it("gives a transparent-background upload a neutral backdrop instead of the fallback button color", () => {
     render(<NavbarClient navigation={[]} labels={labels} />);
-    const img = screen.getByTestId("user-avatar-button").querySelector("img");
+    const img = screen.getByTestId("desktop-avatar-link").querySelector("img");
     expect(img).toHaveAttribute("src", authUser.avatarUrl);
     expect(img).toHaveClass("bg-background");
   });
 
   it("gives the avatar toggle a visible focus ring, matching every other nav control", () => {
     render(<NavbarClient navigation={[]} labels={labels} />);
-    const button = screen.getByTestId("user-avatar-button");
-    expect(button).toHaveClass("focus-visible:ring-2", "focus-visible:ring-primary");
+    const avatarLink = screen.getByTestId("desktop-avatar-link");
+    expect(avatarLink).toHaveAttribute("href", "/perfil/alba");
+    expect(avatarLink).toHaveClass("focus-visible:ring-2", "focus-visible:ring-primary");
   });
 });
