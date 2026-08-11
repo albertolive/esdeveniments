@@ -160,7 +160,7 @@ describe("getActivePromotedEvents", () => {
     expect(result).toHaveLength(8);
   });
 
-  it("does not call console.error/Sentry for a routine non-2xx", async () => {
+  it("does not call console.error for a routine non-2xx (getActivePromotedEvents never reports to Sentry)", async () => {
     process.env.PROMOTED_EVENTS_ENABLED = "true";
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});

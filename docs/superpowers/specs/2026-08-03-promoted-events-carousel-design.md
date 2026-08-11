@@ -108,19 +108,19 @@ export async function getActivePromotedEvents(
   outcome, not an exception. Log via `console.warn` (or nothing) and return `[]`; do not
   wire this into Sentry until the flag is flipped on and the endpoint is real — otherwise
   every deploy alerts on a "failure" that's actually just "not built yet."
-- **Request mechanics copy `fetchEventsInternal` exactly** (`lib/api/events.ts:128-139`), not
+- **Request mechanics copy `fetchEventsInternal`'s call shape** (`lib/api/events.ts:128-139`), not
   `createPromotionCheckout`'s mutation path — this is a public GET, not an authenticated
-  mutation, so there's no `requireMutationAuth()`/`skipBodySigning`:
+  mutation, so there's no `requireMutationAuth()`/`skipBodySigning`. Unlike `fetchEventsInternal`,
+  it does **not** opt into the Next fetch cache:
   ```ts
   const response = await fetchWithHmac(finalUrl, {
-    next: { revalidate: 300, tags: ["promoted-events"] },
     headers: { Accept: "application/json" },
   });
   ```
-  `revalidate: 300` (5 min) is shorter than `fetchEvents`'s `600` since a promotion activating
-  should surface reasonably quickly; adjust once real traffic patterns exist. Same
-  `tags: ["promoted-events"]` convention as `fetchEvents`'s `tags: ["events"]`, for future
-  on-demand revalidation.
+  No `next: { revalidate, tags }` here — external wrappers with high-cardinality per-scope URLs
+  caused a 146k-entry cache explosion previously (see
+  `docs/incidents/2026-01-20-fetch-cache-explosion.md`); this endpoint's per-place `scope`
+  parameter has the same shape, so it stays uncached at this layer.
 - **cacheComponents (PPR) compatibility.** `next.config` has `cacheComponents: true`, and
   `app/[locale]/[place]/page.tsx` already wraps its dynamic event fetch in a `Suspense`
   boundary so the static shell can flush first (see the comment at `page.tsx:80`). The new
@@ -167,7 +167,7 @@ async function PromotedEventsSection({ scope }: { scope: PromotionScope })
     jsonLdId={`promoted-events-${scopeKey}`}
   />
   ```
-  where `scopeKey = scope.type === "homepage" ? "homepage" : `${scope.type}-${scope.slug}``
+  where ``scopeKey = scope.type === "homepage" ? "homepage" : `${scope.type}-${scope.slug}` ``
   — this also becomes `HorizontalScroll`'s `hintStorageKey` (via `jsonLdId` passthrough in
   `EventsAroundServer`), so it must be unique per page or the first-scroll-nudge sessionStorage
   flag would incorrectly carry over between e.g. Cardedeu's and Mataró's promoted carousels.

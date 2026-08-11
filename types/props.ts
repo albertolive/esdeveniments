@@ -68,6 +68,7 @@ import { RegionsGroupedByCitiesResponseDTO } from "types/api/region";
 import { RouteSegments, URLQueryParams } from "types/url-filters";
 import type { NewsEventItemDTO, NewsSummaryResponseDTO } from "types/api/news";
 import type { AppLocale } from "types/i18n";
+import type { PromotionScope } from "types/event";
 
 // Google Scripts and WebsiteSchema no longer require nonce props (relaxed CSP)
 
@@ -1028,4 +1029,8 @@ export interface PwaBackButtonProps {
 // EventsListSkeleton/PlacePageSkeleton usage.
 export interface EventsGridSkeletonProps {
   count?: number;
+}
+
+export interface PromotedEventsSectionProps {
+  scope: PromotionScope;
 }

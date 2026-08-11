@@ -470,7 +470,14 @@ export async function ServerEventsCategorizedContent({
     categorySectionsToRender.length > 0 || featuredSections.length > 0;
 
   if (!hasEvents) {
-    return <NoEventsFound />;
+    return (
+      <>
+        <Suspense fallback={null}>
+          <PromotedEventsSection scope={{ type: "homepage" }} />
+        </Suspense>
+        <NoEventsFound />
+      </>
+    );
   }
 
   const tCategory = await getTranslations({

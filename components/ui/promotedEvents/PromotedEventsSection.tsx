@@ -1,9 +1,11 @@
 import { getTranslations } from "next-intl/server";
+import type { JSX } from "react";
 import EventsAroundServer from "@components/ui/eventsAround/EventsAroundServer";
 import SectionHeading from "@components/ui/common/SectionHeading";
 import { getActivePromotedEvents } from "@lib/api/promotedEvents";
 import { getLocaleSafely } from "@utils/i18n-seo";
 import type { PromotionScope } from "types/event";
+import type { PromotedEventsSectionProps } from "types/props";
 
 function scopeKey(scope: PromotionScope): string {
   return scope.type === "homepage" ? "homepage" : `${scope.type}-${scope.slug}`;
@@ -15,9 +17,7 @@ function scopePlaceSlug(scope: PromotionScope): string {
 
 export default async function PromotedEventsSection({
   scope,
-}: {
-  scope: PromotionScope;
-}) {
+}: PromotedEventsSectionProps): Promise<JSX.Element | null> {
   const promotedEvents = await getActivePromotedEvents(scope);
   if (promotedEvents.length === 0) {
     return null;
