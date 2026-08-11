@@ -492,8 +492,6 @@
       },
       "logoAlt": "Esdeveniments.cat logo",
       "aria": {
-        "openMenu": "Open menu",
-        "closeMenu": "Close menu",
         "home": "Home",
         "agenda": "Agenda",
         "favorites": "Favorites",

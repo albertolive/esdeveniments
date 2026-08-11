@@ -166,6 +166,7 @@ breakpoints:
   xs: "360px"
   sm: "576px"
   md: "768px"
+  nav: "950px"
   lg: "1024px"
   xl: "1280px"
 
@@ -329,7 +330,7 @@ components:
     itemBorderBottom: "2px solid transparent"
     countFontSize: "{typography.heading-3.fontSize}"
     countFontWeight: "{typography.heading-3.fontWeight}"
-    labelFontSize: "{typography.body-small.fontSize}"
+    labelFontSize: "{typography.heading-3.fontSize}"
     color: "{colors.foreground}"
     opacity: 0.8
   tab-bar-active:
@@ -653,13 +654,13 @@ titles vary.
 Z-layers are explicit: 10 sticky chrome, 100 dropdowns, 900 modals, 1000
 tooltips. Anything above 1000 is forbidden.
 
-Navigation is a top sticky bar on desktop, a fixed bottom tab bar on mobile
-— a deliberate native-app affordance for a product that's used walking
-around towns. The desktop bar is 56px tall with a backdrop blur and a
-hairline border. The mobile bar is 64px tall with five circular icon-only
-buttons (Home, Agenda, Favorites, Publish, News), each at least 44×44 px;
-the active route fills with `colors.primary-tint` and tints its icon
-primary red.
+Navigation is a top sticky bar on desktop, a fixed bottom tab bar below the
+950px navigation breakpoint — a deliberate native-app affordance for a
+product that's used walking around towns. The desktop bar is 56px tall with
+a backdrop blur and a hairline border. The mobile bar is 64px tall with five
+circular icon-only buttons (Home, Agenda, Favorites, Publish, News), each at
+least 44×44 px; the active route fills with `colors.primary-tint` and tints
+its icon primary red.
 
 ## Elevation & Depth
 
@@ -725,9 +726,9 @@ Passats), not a client-side tabpanel switch — each item is a link to its own
 route. A full-width hairline rail (`border-border`) carries items with a
 2px bottom border; the active item's border goes solid red with
 `foreground-strong` text, inactive items sit at `foreground/80` on a
-transparent border. The count renders above the label in `heading-3`,
-label below in `body-small`. Wrapped in the horizontal-scroll primitive on
-narrow screens so it never breaks the rail's height.
+transparent border. The count and label both use `heading-3` for a stronger, consistent tab hierarchy.
+Wrapped in the horizontal-scroll primitive on narrow screens so it never
+breaks the rail's height.
 
 **Empty states** (e.g. "no events yet") center a title + description with
 generous vertical padding (`spacing.3xl`) and an optional primary-pill CTA

@@ -247,7 +247,7 @@ test.describe("Publish integration (staging)", () => {
 
     // Verify we're logged in (avatar button visible in navbar)
     await expect(
-      page.getByTestId("user-avatar-button")
+      page.getByTestId("desktop-avatar-link")
     ).toBeVisible({ timeout: 15_000 });
 
     // Sanity check that we're logged in as *some* real account before

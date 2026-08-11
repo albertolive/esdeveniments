@@ -24,7 +24,8 @@ function findFavoriteButton(): HTMLButtonElement | null {
 
 /**
  * Sticky CTA bar for event detail pages on mobile.
- * Sits above the bottom navigation bar (bottom-16 = 64px to clear the h-16 nav).
+ * Sits above the bottom navigation bar using the shared mobile-nav-clearance
+ * variable, including the device safe-area inset when present.
  * Hidden on desktop (md:hidden) and only visible when user scrolls past the hero.
  *
  * The Save button delegates to the real FavoriteButton on the page to stay in sync
@@ -126,7 +127,7 @@ export default function EventStickyCTA({
   return (
     <div
       ref={ctaRef}
-      className="fixed bottom-16 left-0 right-0 z-40 md:hidden"
+      className="fixed bottom-[var(--mobile-nav-clearance)] left-0 right-0 z-40 md:hidden"
       role="toolbar"
       aria-label={t("toolbarAriaLabel")}
     >

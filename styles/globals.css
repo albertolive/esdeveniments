@@ -25,6 +25,49 @@ html {
   font-synthesis-weight: none;
 }
 
+:root {
+  --mobile-nav-height: 4rem;
+  --mobile-nav-safe-area: env(safe-area-inset-bottom, 0px);
+  --mobile-nav-clearance: calc(
+    var(--mobile-nav-height) + var(--mobile-nav-safe-area)
+  );
+}
+
+@media (min-width: 950px) {
+  :root {
+    --mobile-nav-clearance: 0px;
+  }
+}
+
+.site-navbar-safe-area {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-inline-start: env(safe-area-inset-left, 0px);
+  padding-inline-end: env(safe-area-inset-right, 0px);
+}
+
+.mobile-nav-content-safe-area {
+  padding-bottom: var(--mobile-nav-clearance);
+}
+
+.mobile-bottom-nav {
+  box-sizing: border-box;
+  height: var(--mobile-nav-clearance);
+  padding-bottom: var(--mobile-nav-safe-area);
+  left: env(safe-area-inset-left, 0px);
+  right: env(safe-area-inset-right, 0px);
+}
+
+@media (min-width: 950px) {
+  .mobile-nav-content-safe-area {
+    padding-bottom: 3rem;
+  }
+
+  .mobile-bottom-nav {
+    padding-bottom: 0;
+  }
+}
+
 body {
   @apply font-sans antialiased text-base leading-relaxed;
 }
@@ -150,6 +193,10 @@ p {
   /* SMALL: Metadata - Dates, locations, captions, badges */
   .body-small {
     @apply text-sm font-normal leading-relaxed tracking-normal;
+  }
+
+  .body-small-italic {
+    @apply body-small italic;
   }
 
   /* LABEL: UI elements - Small badges, uppercase labels */

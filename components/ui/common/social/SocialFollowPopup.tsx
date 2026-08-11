@@ -361,7 +361,7 @@ export default function SocialFollowPopup({ pathname }: { pathname: string }) {
   if (isMobile) {
     return (
       <div
-        className={`fixed bottom-16 inset-x-0 z-modal p-4 ${
+        className={`fixed bottom-[var(--mobile-nav-clearance)] inset-x-0 z-modal p-4 ${
           isClosing ? "animate-slide-down" : "animate-slide-up"
         }`}
         role="complementary"

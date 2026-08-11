@@ -64,7 +64,10 @@ export default async function Footer(): Promise<JSX.Element> {
 
   return (
     <footer className="w-full border-t border-border bg-gradient-to-b from-background to-muted/30">
-      <div className="container flex flex-col items-center gap-section-y-sm pt-section-y pb-20 md:pb-section-y px-section-x">
+      <div
+        className="container mobile-nav-content-safe-area flex flex-col items-center gap-section-y-sm pt-section-y px-section-x"
+        data-testid="mobile-nav-content-safe-area"
+      >
         {/* Social Media Section */}
         <div className="flex flex-col items-center gap-element-gap px-4 sm:px-0">
           <Social links={links} />
@@ -156,7 +159,10 @@ export default async function Footer(): Promise<JSX.Element> {
         <hr className="w-full max-w-4xl border-t border-border/50" />
 
         {/* Copyright Section */}
-        <div className="w-full flex flex-col items-center gap-element-gap-sm px-section-x">
+        <div
+          className="w-full flex flex-col items-center gap-element-gap-sm px-section-x"
+          data-testid="footer-last-content"
+        >
           <CopyrightNotice />
           <span className="text-xs text-muted-foreground text-center">
             {t("tagline")}
