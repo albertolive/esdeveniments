@@ -15,6 +15,11 @@ import { createClient } from "redis";
 /** Back off this long after a failure so a Redis outage can't trigger a connect attempt on every request. */
 const FAILURE_COOLDOWN_MS = 30_000;
 
+/** Bound a single Redis command so a connected-but-slow server can't hang the
+ * request path. The connect phase already has its own 2s timeout
+ * (socket.connectTimeout); this covers commands after the handshake. */
+const COMMAND_TIMEOUT_MS = 1_000;
+
 const globalForRedis = globalThis as unknown as {
   __appRedis?: Promise<ReturnType<typeof createClient> | null>;
   __appRedisFailedAt?: number;
@@ -103,7 +108,9 @@ export async function cacheGetJson<T>(key: string): Promise<T | null> {
   try {
     const client = await getClient();
     if (!client) return null;
-    const raw = await client.get(key);
+    const raw = await client
+      .withAbortSignal(AbortSignal.timeout(COMMAND_TIMEOUT_MS))
+      .get(key);
     return raw ? (JSON.parse(raw) as T) : null;
   } catch {
     return null;
@@ -120,7 +127,9 @@ export async function cacheSetJson(
     if (!client) return;
     // SETEX (dedicated helper) avoids the deprecated { EX } option and is
     // stable across redis v5/v6.
-    await client.setEx(key, ttlSeconds, JSON.stringify(value));
+    await client
+      .withAbortSignal(AbortSignal.timeout(COMMAND_TIMEOUT_MS))
+      .setEx(key, ttlSeconds, JSON.stringify(value));
   } catch (error) {
     // best-effort: a failed cache write must never fail the request, but log
     // it so write failures aren't silently swallowed.

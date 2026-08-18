@@ -379,8 +379,20 @@ export async function GET(request: Request) {
   const cached = await cacheGetJson<{ ct: string; b64: string }>(cacheKey);
   if (cached?.ct && cached.b64) {
     try {
+      // Validate before serving: bytes must be canonical base64, non-empty,
+      // and sniff back to the same image type the entry declares. A corrupt
+      // or tampered Redis value falls through to the upstream fetch instead
+      // of returning a 200 with invalid image data.
+      const cachedBytes = Buffer.from(cached.b64, "base64");
+      if (
+        cachedBytes.length === 0 ||
+        cachedBytes.toString("base64") !== cached.b64 ||
+        sniffImageContentType(cachedBytes) !== cached.ct
+      ) {
+        throw new Error("Corrupt image cache entry");
+      }
       return new NextResponse(
-        new Uint8Array(Buffer.from(cached.b64, "base64")),
+        new Uint8Array(cachedBytes),
         {
           status: 200,
           headers: {
