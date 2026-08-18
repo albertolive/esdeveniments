@@ -30,14 +30,14 @@ Plus a permanent attribution effect (not a leak): sessions arriving at productio
 
 1. **Cloudflare → Zaraz (zone `esdeveniments.cat`)** — **PENDING (manual, outside this PR):** remove the GA4 (and any Google Ads) integration from Zaraz, or restrict its triggers to `www.esdeveniments.cat` + `esdeveniments.cat`. The app implements GA4 + Ads + Consent Mode v2 natively; Zaraz's copy is redundant and is the leak. Update this doc with the completion date once done.
 2. **GitHub** — `NEXT_PUBLIC_GOOGLE_ANALYTICS` / `NEXT_PUBLIC_GOOGLE_ADS` set to **empty** on the `staging` environment (Aug 18), so staging builds stop baking prod IDs. A CI guard ("Blank Google tracking IDs for non-prod builds" in `deploy-coolify.yml`) now blanks both IDs on any non-main build and warns if it caught a non-empty value — deterministic regardless of GitHub's empty-secret precedence semantics.
-3. **Guardrail** — new E2E spec `e2e/no-google-tracking-on-non-prod.spec.ts` asserts zero Google tracking requests on the home page of the configured non-prod base URL (single-route smoke; PR CI runs it against localhost). A dedicated nightly workflow (`.github/workflows/no-google-tracking.yml`) runs it against the deployed staging host — the one place zone-wide Zaraz injection actually occurs. It fails today (that's the point) and goes green once Zaraz is fixed and the staging image is redeployed. Optionally extend `scripts/ga-dashboard.py` with a `hostName` alert for non-prod hosts.
+3. **Guardrail** — new E2E spec `e2e/no-google-tracking-on-non-prod.spec.ts` asserts zero Google tracking requests on the home page of the configured non-prod base URL (single-route smoke; PR CI runs it against localhost). A dedicated nightly workflow (`.github/workflows/no-google-tracking.yml`) runs it against the deployed staging host — the one place zone-wide Zaraz injection actually occurs. It fails today (that's the point) and goes green once Zaraz is fixed and the staging image is redeployed.
 
 ## Prevention
 
 1. **E2E no-Google-requests guard** (merged with this incident) — catches edge-injected trackers the app cannot see; run nightly against the deployed staging host, not just localhost.
 2. **CI blanking step** — non-prod images can never bake prod tracking IDs, even if environment secrets drift.
-3. **Optional GA4 data filter** — exclude `staging.*` / `coolify.*` hostnames as defense in depth.
-4. **Optional `ga-dashboard.py` hostname alert** — weekly dashboard fails loudly if a non-prod host appears.
+3. **Recommended GA4 data filter** — exclude `staging.*` / `coolify.*` (and `pr-*`) hostnames as the property-level defense in depth. Apply it *after* the Zaraz fix is confirmed by the nightly guard going green — while the leak is live you still want staging traffic visible so you can verify it stopped.
+4. **Rejected: `ga-dashboard.py` `hostName` alert** — considered and declined. It is redundant with the E2E guard (same leak, caught deterministically at the source) and would go permanently blind the moment the GA4 data filter above is applied. It also cannot reliably detect the `t=dc` cookieless pings that are the actual mechanism, since those do not carry `page_location`. Detection lives in the nightly E2E; cleanup lives in the GA4 filter.
 
 ## Lessons Learned
 
