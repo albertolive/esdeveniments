@@ -1,5 +1,7 @@
 # Incident: Cloudflare Zaraz fires production Google tags on staging and the Coolify dashboard (Aug 18, 2026)
 
+> **Status: OPEN** — the Cloudflare Zaraz remediation (resolution step 1) is a pending manual action outside this PR. The staging E2E guard stays red until it lands and the staging image is redeployed; that red is the alarm, not a false positive.
+
 ## Summary
 
 The production GA4 property (`G-1F86ZBKSJ0`) showed sessions attributed to `staging.esdeveniments.cat` and to the Coolify dashboard host (`coolify.esdeveniments.cat`), plus intermittent Google Ads signals. The app's own analytics code was *not* the source: `app/GoogleScripts.tsx` correctly gates gtag/Ads to the production host (www + apex allowlist, fix #374, June 26) and the deployed staging bundle provably contains that gating. The leak was **Cloudflare Zaraz** — the zone's edge tag manager — which is injected into **every hostname in the zone** and carries a Google Analytics 4 integration configured with the **production** measurement ID. Zaraz ran on staging and on the Coolify dashboard itself, sending Google pings (`stats.g.doubleclick.net/g/collect?t=dc&tid=G-1F86ZBKSJ0`) that the app-level host gating cannot stop.
@@ -26,13 +28,13 @@ Plus a permanent attribution effect (not a leak): sessions arriving at productio
 
 ## Resolution
 
-1. **Cloudflare → Zaraz (zone `esdeveniments.cat`)** — remove the GA4 (and any Google Ads) integration from Zaraz, or restrict its triggers to `www.esdeveniments.cat` + `esdeveniments.cat`. The app implements GA4 + Ads + Consent Mode v2 natively; Zaraz's copy is redundant and is the leak. **Manual step — done in the Cloudflare dashboard.**
+1. **Cloudflare → Zaraz (zone `esdeveniments.cat`)** — **PENDING (manual, outside this PR):** remove the GA4 (and any Google Ads) integration from Zaraz, or restrict its triggers to `www.esdeveniments.cat` + `esdeveniments.cat`. The app implements GA4 + Ads + Consent Mode v2 natively; Zaraz's copy is redundant and is the leak. Update this doc with the completion date once done.
 2. **GitHub** — `NEXT_PUBLIC_GOOGLE_ANALYTICS` / `NEXT_PUBLIC_GOOGLE_ADS` set to **empty** on the `staging` environment (Aug 18), so staging builds stop baking prod IDs. A CI guard ("Blank Google tracking IDs for non-prod builds" in `deploy-coolify.yml`) now blanks both IDs on any non-main build and warns if it caught a non-empty value — deterministic regardless of GitHub's empty-secret precedence semantics.
-3. **Guardrail** — new E2E spec `e2e/no-google-tracking-on-non-prod.spec.ts` asserts zero requests to Google tracking domains from any non-prod base URL. It fails on staging today (that's the point) and goes green once Zaraz + the staging image are clean. Optionally extend `scripts/ga-dashboard.py` with a `hostName` alert for non-prod hosts.
+3. **Guardrail** — new E2E spec `e2e/no-google-tracking-on-non-prod.spec.ts` asserts zero Google tracking requests on the home page of the configured non-prod base URL (single-route smoke; PR CI runs it against localhost). A dedicated nightly workflow (`.github/workflows/no-google-tracking.yml`) runs it against the deployed staging host — the one place zone-wide Zaraz injection actually occurs. It fails today (that's the point) and goes green once Zaraz is fixed and the staging image is redeployed. Optionally extend `scripts/ga-dashboard.py` with a `hostName` alert for non-prod hosts.
 
 ## Prevention
 
-1. **E2E no-Google-requests guard** (merged with this incident) — catches edge-injected trackers the app cannot see.
+1. **E2E no-Google-requests guard** (merged with this incident) — catches edge-injected trackers the app cannot see; run nightly against the deployed staging host, not just localhost.
 2. **CI blanking step** — non-prod images can never bake prod tracking IDs, even if environment secrets drift.
 3. **Optional GA4 data filter** — exclude `staging.*` / `coolify.*` hostnames as defense in depth.
 4. **Optional `ga-dashboard.py` hostname alert** — weekly dashboard fails loudly if a non-prod host appears.

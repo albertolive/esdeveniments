@@ -234,9 +234,10 @@ jobs:
       name: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     # Job-level defaults so `env.NEXT_PUBLIC_GOOGLE_*` resolves to the prod IDs
     # on main. The blanking step below overrides them to empty on non-main, so
-    # non-prod images can never bake the production GA/Ads IDs (the staging
-    # environment intentionally leaves these secrets unset, but `secrets.X`
-    # falls back to the repo-level prod values when it does).
+    # non-prod images can never bake the production GA/Ads IDs. The staging
+    # environment currently sets these secrets to empty values; the branch-
+    # gated step below remains the deterministic protection regardless of how
+    # the environment secrets drift.
     env:
       NEXT_PUBLIC_GOOGLE_ANALYTICS: ${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS }}
       NEXT_PUBLIC_GOOGLE_ADS: ${{ secrets.NEXT_PUBLIC_GOOGLE_ADS }}

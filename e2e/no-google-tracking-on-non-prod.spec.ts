@@ -1,11 +1,14 @@
 import { test, expect } from "@playwright/test";
 
-// Google tracking endpoints that must never be contacted from non-production
-// hosts. The app's own gtag/Ads scripts are gated to the production host
+// Single-route smoke guard: the home page of the configured base URL must not
+// contact Google tracking endpoints when the base URL is a non-production
+// host. The app's own gtag/Ads scripts are gated to the production host
 // (utils/production-host.ts), but Cloudflare Zaraz injects zone-wide and has
 // fired Google pings from staging and the Coolify dashboard, bypassing the
 // app-level gating entirely. This guard catches that class of leak — see
-// docs/incidents/2026-08-18-zaraz-zone-wide-google-tags.md.
+// docs/incidents/2026-08-18-zaraz-zone-wide-google-tags.md. Coverage is one
+// route on one host; it is not a proof that every non-prod host and route is
+// clean (a nightly workflow runs it against the deployed staging host).
 const GOOGLE_TRACKING_RE =
   /googletagmanager\.com|google-analytics\.com|googlesyndication\.com|fundingchoicesmessages\.google\.com|doubleclick\.net|googleadservices\.com|googletagservices\.com/;
 
