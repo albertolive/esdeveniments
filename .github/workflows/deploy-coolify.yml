@@ -263,12 +263,14 @@ jobs:
       # falls back to the repo-level (prod) values whenever the active environment
       # doesn't define them, so a staging build would otherwise bake the prod GA/Ads
       # IDs into the image. Branch-gate in bash (per repo convention) and blank them
-      # on any non-main build. The app's isProductionHost gating stays as the second
-      # layer; this keeps prod IDs out of non-prod bundles entirely. Without it, a
+      # on any non-main build. Compare the full ref (not ref_name): a tag named
+      # `main` would otherwise bypass blanking and bake prod IDs into a non-branch
+      # image. The app's isProductionHost gating stays as the second layer; this
+      # keeps prod IDs out of non-prod bundles entirely. Without it, a
       # Zaraz/edge-injected tag or a gating bug leaks staging traffic into prod GA4
       # (see docs/incidents/2026-08-18-zaraz-zone-wide-google-tags.md).
       - name: Blank Google tracking IDs for non-prod builds
-        if: github.ref_name != 'main'
+        if: github.ref != 'refs/heads/main'
         run: |
           if [ -n "$NEXT_PUBLIC_GOOGLE_ANALYTICS" ] || [ -n "$NEXT_PUBLIC_GOOGLE_ADS" ]; then
             echo "::warning::Non-prod build resolved prod Google tracking IDs (GA='${NEXT_PUBLIC_GOOGLE_ANALYTICS:+set}' ADS='${NEXT_PUBLIC_GOOGLE_ADS:+set}') — blanking them. Keep NEXT_PUBLIC_GOOGLE_ANALYTICS/NEXT_PUBLIC_GOOGLE_ADS unset (or empty) in the staging environment."
