@@ -8,6 +8,8 @@
 import { NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
 import { Agent, fetch as undiciFetch } from "undici";
+import { createHash } from "node:crypto";
+import { cacheGetJson, cacheSetJson } from "@lib/cache/redis-client";
 import {
   normalizeExternalImageUrl,
   isLegacyFileHandler,
@@ -23,6 +25,29 @@ const TIMEOUT_MS = 5000;
 const SNIFF_BYTES = 64;
 const ONE_YEAR = 31536000;
 const MAX_REDIRECTS = 2;
+
+// Origin-level cache (deploy-independent Redis, same layer as /api/places/nearby).
+// Cloudflare's Free plan does not edge-cache /api/* (see api-layer-patterns
+// skill), and the service worker only helps returning visitors. So a first-time
+// visitor's hero image was a full upstream municipal fetch + Sharp encode on
+// every request — the dominant cause of the ~2.6s field LCP on event pages.
+// This layer makes every request after the first one a near-instant Redis hit.
+const IMAGE_CACHE_PREFIX = "imgproxy:";
+const IMAGE_CACHE_TTL_SECONDS = 60 * 60 * 24; // 24h (matches CDN s-maxage)
+const IMAGE_CACHE_TTL_IMMUTABLE_SECONDS = 60 * 60 * 24 * 30; // 30d for cache-busted URLs
+
+function buildImageCacheKey(
+  normalized: string,
+  width: number,
+  quality: number,
+  useModernFormat: boolean
+): string {
+  // Hash the (potentially long) upstream URL. The source image type is fixed
+  // by that URL, so normalized + width + quality + format fully determines the
+  // output; no need to know the source type separately.
+  const digest = createHash("sha1").update(normalized).digest("hex").slice(0, 24);
+  return `${IMAGE_CACHE_PREFIX}${digest}:${width}:${quality}:${useModernFormat ? "webp" : "legacy"}`;
+}
 
 // Image optimization defaults
 const DEFAULT_QUALITY = 50; // Base quality for mobile - Lighthouse tests on mobile viewport
@@ -342,6 +367,35 @@ export async function GET(request: Request) {
 
   const candidates = buildFetchCandidates(upstreamUrl, originalWasHttp);
 
+  // Serve from the origin cache when possible (skips the slow upstream fetch +
+  // Sharp encode). Fails open: any miss/corrupt entry falls through to fetch.
+  const useModernFormat = preferAvif || preferWebp;
+  const cacheKey = buildImageCacheKey(
+    normalized,
+    width,
+    quality,
+    useModernFormat
+  );
+  const cached = await cacheGetJson<{ ct: string; b64: string }>(cacheKey);
+  if (cached?.ct && cached.b64) {
+    try {
+      return new NextResponse(
+        new Uint8Array(Buffer.from(cached.b64, "base64")),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": cached.ct,
+            "Cache-Control": getCacheControl(hasCacheKey),
+            Vary: "Accept",
+            "X-Image-Proxy-Cache": "hit",
+          },
+        }
+      );
+    } catch {
+      // Corrupt entry — fall through and re-fetch.
+    }
+  }
+
   for (const candidate of candidates) {
     try {
       const response = await fetchWithTimeout(candidate);
@@ -486,6 +540,14 @@ export async function GET(request: Request) {
           (1 - outputBuffer.length / imageBuffer.length) * 100
         );
 
+        // Store the optimized result so the next request skips fetch + encode.
+        // Best-effort: a failed write must never fail the image response.
+        await cacheSetJson(
+          cacheKey,
+          { ct: outputContentType, b64: outputBuffer.toString("base64") },
+          hasCacheKey ? IMAGE_CACHE_TTL_IMMUTABLE_SECONDS : IMAGE_CACHE_TTL_SECONDS
+        );
+
         return new NextResponse(responseBody, {
           status: 200,
           headers: {
@@ -493,6 +555,7 @@ export async function GET(request: Request) {
             "Cache-Control": getCacheControl(hasCacheKey),
             Vary: "Accept", // Cache different formats separately
             "X-Image-Proxy-Optimized": "true",
+            "X-Image-Proxy-Cache": "miss",
             "X-Image-Proxy-Savings": `${savingsPercent}%`,
             "X-Image-Proxy-Original-Size": String(imageBuffer.length),
             "X-Image-Proxy-Final-Size": String(outputBuffer.length),
