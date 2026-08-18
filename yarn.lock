@@ -11859,6 +11859,7 @@ __metadata:
     "@opentelemetry/core": "npm:^2.8.0"
     "@opentelemetry/sdk-trace-base": "npm:^2.8.0"
     "@playwright/test": "npm:1.60.0"
+    "@redis/client": "npm:5.11.0"
     "@sentry/nextjs": "npm:10.32.0"
     "@tailwindcss/aspect-ratio": "npm:^0.4.2"
     "@tailwindcss/forms": "npm:^0.5.3"
